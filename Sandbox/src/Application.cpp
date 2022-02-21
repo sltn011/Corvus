@@ -1,10 +1,29 @@
+#include <Corvus.h>
+
+class Sandbox : public Corvus::Application 
+{
+public:
+    
+    Sandbox(){}
+    ~Sandbox() {}
+
+};
 
 namespace Corvus {
+    
+    Application *CreateApplication()
+    {
+        return new Sandbox;
+    }
 
-    _declspec(dllimport) void Print();
+    bool DestroyApplication(Application *App)
+    {
+        if (!App) {
+            return false;
+        }
 
-}
+        delete App;
+        return true;
+    }
 
-void main() {
-    Corvus::Print();
 }
