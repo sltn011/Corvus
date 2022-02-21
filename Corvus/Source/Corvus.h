@@ -5,10 +5,13 @@
 
 #include "Corvus/Core/Base.h"
 
+#include "Corvus/Core/Application.h"
+#include "Corvus/Core/Log.h"
+
+
+
 // ENTRY POINT
 #include "Corvus/Core/EntryPoint.h"
-
-#include "Corvus/Core/Application.h"
 
 #endif // !CORVUS_SOURCE_CORVUS_H
 

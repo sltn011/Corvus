@@ -11,6 +11,20 @@
     
     int main(int argc, char **argv)
     {
+        Corvus::Log::Init();
+
+        CORVUS_CORE_TRACE("Trace");
+        CORVUS_CORE_INFO("Info");
+        CORVUS_CORE_WARN("Warn");
+        CORVUS_CORE_ERROR("Error");
+        CORVUS_CORE_CRITICAL("Critical");
+
+        CORVUS_TRACE("Trace");
+        CORVUS_INFO("Info");
+        CORVUS_WARN("Warn");
+        CORVUS_ERROR("Error");
+        CORVUS_CRITICAL("Critical");
+
         Corvus::Application *App = Corvus::CreateApplication();
         App->Run();
         DestroyApplication(App);

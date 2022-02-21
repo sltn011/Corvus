@@ -8,3 +8,6 @@ Binary-Intermediate/
 **.vcxproj
 **.vcxproj.filters
 **.vcxproj.user
+
+# Log files
+**.log
