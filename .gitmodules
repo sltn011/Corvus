@@ -1,0 +1,3 @@
+[submodule "Corvus/Dependencies/spdlog"]
+	path = Corvus/Dependencies/spdlog
+	url = https://github.com/gabime/spdlog

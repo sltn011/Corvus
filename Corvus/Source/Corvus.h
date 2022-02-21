@@ -1,5 +1,5 @@
-#ifndef CORVUS_SRC_CORVUS_H
-#define CORVUS_SRC_CORVUS_H
+#ifndef CORVUS_SOURCE_CORVUS_H
+#define CORVUS_SOURCE_CORVUS_H
 
 // For use by Corvus Engine applications
 
@@ -10,5 +10,5 @@
 
 #include "Corvus/Core/Application.h"
 
-#endif // !CORVUS_SRC_CORVUS_H
+#endif // !CORVUS_SOURCE_CORVUS_H
 

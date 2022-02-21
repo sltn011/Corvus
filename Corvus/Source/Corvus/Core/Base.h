@@ -1,0 +1,6 @@
+#ifndef CORVUS_SOURCE_CORVUS_CORE_BASE_H
+#define CORVUS_SOURCE_CORVUS_CORE_BASE_H
+
+#include "PlatformDetection.h"
+
+#endif //!CORVUS_SOURCE_CORVUS_CORE_BASE_H
