@@ -1,3 +1,6 @@
+# Build files
+Build/**
+
 # Binaries
 **/Binary/
 Binary-Intermediate/
