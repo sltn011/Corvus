@@ -8,6 +8,7 @@
 #include "Corvus/Core/Application.h"
 #include "Corvus/Core/Log.h"
 #include "Corvus/Core/Assert.h"
+#include "Corvus/Core/Delegate.h"
 
 
 

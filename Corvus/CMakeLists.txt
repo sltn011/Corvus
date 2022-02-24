@@ -21,6 +21,7 @@ set(PROJECT_CORE_FILES
     "${CORE_FILES_PATH}/PlatformDetection.h"
     "${CORE_FILES_PATH}/EntryPoint.h"
     "${CORE_FILES_PATH}/Assert.h"
+	"${CORE_FILES_PATH}/Delegate.h"
     "${CORE_FILES_PATH}/Application.h"
     "${CORE_FILES_PATH}/Application.cpp"
     "${CORE_FILES_PATH}/Log.h"

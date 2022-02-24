@@ -2,7 +2,10 @@
 #define CORVUS_SOURCE_CORVUS_CORE_LOG_H
 
 #include <memory>
+
+#pragma warning(push)
 #include "spdlog/spdlog.h"
+#pragma warning(pop)
 
 namespace Corvus 
 {
