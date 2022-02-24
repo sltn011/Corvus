@@ -11,7 +11,6 @@
         /* Windows x86 */
         #error "x86 builds are not supported!"
     #endif
-
 #else
     #error "Your platform currently not supported!"
 #endif

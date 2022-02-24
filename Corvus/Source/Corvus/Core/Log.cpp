@@ -1,11 +1,12 @@
-#include "Log.h"
+#include "Corvus/Core/Log.h"
 
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/sinks/basic_file_sink.h"
 
 #include <vector>
 
-namespace Corvus {
+namespace Corvus 
+{
 
     std::shared_ptr<spdlog::logger> Log::s_EngineLogger;
     std::shared_ptr<spdlog::logger> Log::s_ClientLogger;

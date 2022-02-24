@@ -20,6 +20,7 @@ set(PROJECT_CORE_FILES
     "${CORE_FILES_PATH}/Base.h"
     "${CORE_FILES_PATH}/PlatformDetection.h"
     "${CORE_FILES_PATH}/EntryPoint.h"
+    "${CORE_FILES_PATH}/Assert.h"
     "${CORE_FILES_PATH}/Application.h"
     "${CORE_FILES_PATH}/Application.cpp"
     "${CORE_FILES_PATH}/Log.h"
@@ -47,6 +48,7 @@ add_library(${PROJECT_NAME} STATIC ${PROJECT_ALL_FILES})
 #===============================================================================
 # Include directories
 target_include_directories(${PROJECT_NAME} PUBLIC
+	"${CMAKE_CURRENT_SOURCE_DIR}/Source"
     "${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/spdlog/include"
 )
 #===============================================================================
@@ -83,9 +85,15 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     "$<$<CONFIG:Debug>:"
         "_DEBUG"
+		
+		# Corvus specific definitions
+		"CORVUS_DEBUG"
     ">"
     "$<$<CONFIG:Release>:"
         "NDEBUG"
+		
+		# Corvus specific definitions
+		
     ">"
     "_CONSOLE;"
     "UNICODE;"

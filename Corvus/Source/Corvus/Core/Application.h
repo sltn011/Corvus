@@ -1,7 +1,8 @@
 #ifndef CORVUS_SOURCE_CORVUS_CORE_APPLICATION_H
 #define CORVUS_SOURCE_CORVUS_CORE_APPLICATION_H
 
-namespace Corvus {
+namespace Corvus 
+{
 
     class Application 
     {

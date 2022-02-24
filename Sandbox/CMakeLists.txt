@@ -69,9 +69,15 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     "$<$<CONFIG:Debug>:"
         "_DEBUG"
+		
+		# Corvus specific definitions
+		"CORVUS_DEBUG"
     ">"
     "$<$<CONFIG:Release>:"
         "NDEBUG"
+		
+		# Corvus specific definitions
+		
     ">"
     "_CONSOLE;"
     "UNICODE;"

@@ -4,7 +4,8 @@
 #include <memory>
 #include "spdlog/spdlog.h"
 
-namespace Corvus {
+namespace Corvus 
+{
 
     class Log
     {

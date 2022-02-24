@@ -1,6 +1,7 @@
-#include "Application.h"
+#include "Corvus/Core/Application.h"
 
-namespace Corvus {
+namespace Corvus 
+{
 
     Application::Application()
     {
