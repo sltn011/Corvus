@@ -2,6 +2,7 @@
 #define CORVUS_SOURCE_CORVUS_CORE_BASE_H
 
 #include "Corvus/Core/PlatformDetection.h"
+#include "Corvus/Core/CoreTypes.h"
 
 #ifdef CORVUS_DEBUG
     #define CORVUS_ENABLE_ASSERT
@@ -11,6 +12,10 @@
 #else
     #define CORVUS_DEBUG_BREAK()
 #endif
+
+#define BIT(x) (1 << x)
+
+#define STR(x) L##x
 
 #include "Corvus/Core/Assert.h"
 

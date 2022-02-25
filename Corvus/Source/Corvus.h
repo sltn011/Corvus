@@ -3,8 +3,11 @@
 
 // For use by Corvus Engine applications
 
+
 #include "Corvus/Core/Base.h"
 
+#include "Corvus/Core/CoreTypes.h"
+#include "Corvus/Core/KeyCodes.h"
 #include "Corvus/Core/Application.h"
 #include "Corvus/Core/Log.h"
 #include "Corvus/Core/Assert.h"

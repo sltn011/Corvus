@@ -19,7 +19,9 @@ set(CORE_FILES_PATH "${GENERAL_FILES_PATH}/Corvus/Core")
 set(PROJECT_CORE_FILES
     "${CORE_FILES_PATH}/Base.h"
     "${CORE_FILES_PATH}/PlatformDetection.h"
+    "${CORE_FILES_PATH}/CoreTypes.h"
     "${CORE_FILES_PATH}/EntryPoint.h"
+    "${CORE_FILES_PATH}/KeyCodes.h"
     "${CORE_FILES_PATH}/Assert.h"
 	"${CORE_FILES_PATH}/Delegate.h"
     "${CORE_FILES_PATH}/Application.h"
@@ -30,10 +32,22 @@ set(PROJECT_CORE_FILES
 source_group("${CORE_FILES_PATH}" FILES ${PROJECT_CORE_FILES})
 #===============================================================================
 #===============================================================================
+# Project Events files
+set(EVENTS_FILES_PATH "${GENERAL_FILES_PATH}/Corvus/Events")
+set(PROJECT_EVENTS_FILES
+    "${EVENTS_FILES_PATH}/EventBase.h"
+    "${EVENTS_FILES_PATH}/ApplicationEvent.h"
+    "${EVENTS_FILES_PATH}/MouseEvent.h"
+    "${EVENTS_FILES_PATH}/KeyboardEvent.h"
+)
+source_group("${EVENTS_FILES_PATH}" FILES ${PROJECT_EVENTS_FILES})
+#===============================================================================
+#===============================================================================
 # Project files combined
 set(PROJECT_ALL_FILES
     ${PROJECT_GENERAL_FILES}
     ${PROJECT_CORE_FILES}
+    ${PROJECT_EVENTS_FILES}
 )
 #===============================================================================
 
