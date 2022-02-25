@@ -10,6 +10,15 @@ namespace Corvus
     template<typename Signature>
     class Delegate;
 
+    template<typename Signature>
+    class MulticastDelegate;
+}
+
+#define CORVUS_DECLARE_DELEGATE(DelegateName, ReturnType, ...) using DelegateName = Corvus::Delegate<ReturnType(__VA_ARGS__)>;
+#define CORVUS_DECLARE_MULTICAST_DELEGATE(DelegateName, ...) using DelegateName = Corvus::MulticastDelegate<void(__VA_ARGS__)>;
+
+namespace Corvus
+{
     template<typename R, typename... Args>
     class Delegate<R(Args...)>
     {
@@ -126,7 +135,7 @@ namespace Corvus
     };
 
     template<typename... Args>
-    class MulticastDelegate
+    class MulticastDelegate<void(Args...)>
     {
     public:
 
@@ -175,8 +184,5 @@ namespace Corvus
         std::vector<Delegate<void(Args...)>> m_Bindings;
     };
 }
-
-#define CORVUS_DECLARE_DELEGATE(DelegateName, ReturnType, ...) using DelegateName = Corvus::Delegate<ReturnType(__VA_ARGS__)>;
-#define CORVUS_DECLARE_MULTICAST_DELEGATE(DelegateName, ...) using DelegateName = Corvus::MulticastDelegate<__VA_ARGS__>;
 
 #endif
