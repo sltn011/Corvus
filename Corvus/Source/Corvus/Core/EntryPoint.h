@@ -14,8 +14,22 @@
         Corvus::Log::Init();
 
         Corvus::Application *App = Corvus::CreateApplication();
-        App->Run();
-        DestroyApplication(App);
+        if (App)
+        {
+            CORVUS_CORE_TRACE("Application successfully created!");
+            CORVUS_CORE_TRACE("Running the application!");
+
+            App->Run();
+
+            CORVUS_CORE_TRACE("Application finished running!");
+
+            if (DestroyApplication(App)) {
+                CORVUS_CORE_TRACE("Application resources cleaned up successfully on exit!");
+            }
+            else {
+                CORVUS_CORE_ERROR("Error cleaning up application resources on exit!");
+            }
+        }
     }
 
 #endif
