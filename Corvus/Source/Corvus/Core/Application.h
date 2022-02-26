@@ -1,6 +1,8 @@
 #ifndef CORVUS_SOURCE_CORVUS_CORE_APPLICATION_H
 #define CORVUS_SOURCE_CORVUS_CORE_APPLICATION_H
 
+#include "Corvus/Core/Base.h"
+
 namespace Corvus 
 {
 

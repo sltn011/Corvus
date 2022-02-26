@@ -15,7 +15,11 @@ namespace Corvus
 
     void Application::Run()
     {
+        CORVUS_CORE_TRACE("Running the application!");
+
         while (1);
+
+        CORVUS_CORE_TRACE("Application finished running!");
     }
 
 }
