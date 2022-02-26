@@ -1,9 +1,6 @@
-# Build files
-Build/**
-
 # Binaries
-**/Binary/
-Binary-Intermediate/
+Binary/**
+Binary-Intermediate/**
 
 # Visual Studio files and folder
 .vs/

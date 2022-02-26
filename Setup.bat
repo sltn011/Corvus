@@ -1,5 +1,3 @@
 git submodule update --init
-mkdir Build
-cd Build
-cmake ../
+"./Dependencies/Premake/Binary/premake5.exe" vs2019
 PAUSE
