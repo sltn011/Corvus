@@ -2,7 +2,7 @@
 Corvus 3D Game Engine for Windows
   
 # Getting Started  
-You can just download zip and run Setup.bat file. Generated files can be found in Build folder.  
+You can just download zip and run Setup.bat file.   
   
 OR    
 ## 1. Download repository  
@@ -12,8 +12,6 @@ If repository was cloned non-recursive, open project folder and run ```git submo
 ## 2. Generate project files  
 Run these commands inside project using command prompt:
 ```bat
-mkdir Build  
-cd Build  
-cmake ../
+"./Dependencies/Premake/Binary/premake5.exe" vs2019
 ```  
-Generated files can be found in Build folder.  
+Generated solution file can be found in project root folder.  
