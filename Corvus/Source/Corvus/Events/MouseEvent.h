@@ -64,13 +64,16 @@ namespace Corvus
         CORVUS_EVENT_GENERATED_BODY(EEventCategory::Input | EEventCategory::Mouse | EEventCategory::MouseButton,
             EEventType::MouseButtonPress);
 
-        MouseButtonPressEvent(EMouseButtonKey ButtonCodeValue)
-            : ButtonCode{ ButtonCodeValue }
+        MouseButtonPressEvent(Key::EMouseButtonKey ButtonCodeValue,
+            bool bRepeatedValue = false, Key::EKeyModifierFlag ModifierValue = Key::EKeyModifierFlag::NONE)
+            : ButtonCode{ ButtonCodeValue }, bRepeated{ bRepeatedValue }, Modifier{ ModifierValue }
         {
 
         }
 
-        EMouseButtonKey ButtonCode;
+        Key::EMouseButtonKey ButtonCode;
+        bool bRepeated = false;
+        Key::EKeyModifierFlag Modifier;
 
     };
 
@@ -81,13 +84,13 @@ namespace Corvus
         CORVUS_EVENT_GENERATED_BODY(EEventCategory::Input | EEventCategory::Mouse | EEventCategory::MouseButton,
             EEventType::MouseButtonRelease);
 
-        MouseButtonReleaseEvent(EMouseButtonKey ButtonCodeValue)
+        MouseButtonReleaseEvent(Key::EMouseButtonKey ButtonCodeValue)
             : ButtonCode{ ButtonCodeValue }
         {
 
         }
 
-        EMouseButtonKey ButtonCode;
+        Key::EMouseButtonKey ButtonCode;
 
     };
 

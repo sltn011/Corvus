@@ -13,14 +13,16 @@ namespace Corvus
 
         CORVUS_EVENT_GENERATED_BODY(EEventCategory::Input | EEventCategory::Keyboard, EEventType::KeyPress);
 
-        KeyPressEvent(EKeyboardKey KeyCodeValue)
-            : KeyCode{ KeyCodeValue }
+        KeyPressEvent(Key::EKeyboardKey KeyCodeValue,
+            bool bRepeatedValue = false, Key::EKeyModifierFlag ModifierValue = Key::EKeyModifierFlag::NONE)
+            : KeyCode{ KeyCodeValue }, bRepeated{ bRepeatedValue }, Modifier{ ModifierValue }
         {
 
         }
 
-        EKeyboardKey KeyCode;
-
+        Key::EKeyboardKey KeyCode;
+        bool bRepeated = false;
+        Key::EKeyModifierFlag Modifier;
     };
 
     class KeyReleaseEvent : public EventBase
@@ -29,29 +31,13 @@ namespace Corvus
 
         CORVUS_EVENT_GENERATED_BODY(EEventCategory::Input | EEventCategory::Keyboard, EEventType::KeyRelease);
 
-        KeyReleaseEvent(EKeyboardKey KeyCodeValue)
+        KeyReleaseEvent(Key::EKeyboardKey KeyCodeValue)
             : KeyCode{ KeyCodeValue }
         {
 
         }
 
-        EKeyboardKey KeyCode;
-
-    };
-
-    class KeyHoldEvent : public EventBase
-    {
-    public:
-
-        CORVUS_EVENT_GENERATED_BODY(EEventCategory::Input | EEventCategory::Keyboard, EEventType::KeyHold);
-
-        KeyHoldEvent(EKeyboardKey KeyCodeValue)
-            : KeyCode{ KeyCodeValue }
-        {
-
-        }
-
-        EKeyboardKey KeyCode;
+        Key::EKeyboardKey KeyCode;
 
     };
 

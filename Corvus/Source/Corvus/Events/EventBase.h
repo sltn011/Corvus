@@ -20,7 +20,7 @@ namespace Corvus
     {
         NONE = 0,
         WindowClose, WindowResize, WindowChangeFocus,
-        KeyPress, KeyRelease, KeyHold,
+        KeyPress, KeyRelease,
         MouseMove, MouseScroll, 
         MouseButtonPress, MouseButtonRelease
     };
