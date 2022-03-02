@@ -68,7 +68,7 @@ namespace Corvus
 
         R Invoke(Args... args) const
         {
-            CORVUS_ASSERT_FMT(m_Invoker != nullptr, "Nothing bound to delegate!");
+            CORVUS_CORE_ASSERT_FMT(m_Invoker != nullptr, STR("Nothing bound to delegate!"));
             return m_Invoker->Invoke(std::forward<Args>(args)...);
         }
 
@@ -100,7 +100,7 @@ namespace Corvus
 
             virtual R Invoke(Args... args) const override
             {
-                CORVUS_ASSERT(m_Object != nullptr && m_Method != nullptr);
+                CORVUS_CORE_ASSERT(m_Object != nullptr && m_Method != nullptr);
                 return (m_Object->*m_Method)(std::forward<Args>(args)...);
             }
 
@@ -122,7 +122,7 @@ namespace Corvus
 
             R Invoke(Args... args) const override
             {
-                CORVUS_ASSERT(m_Function != nullptr);
+                CORVUS_CORE_ASSERT(m_Function != nullptr);
                 return (*m_Function)(std::forward<Args>(args)...);
             }
 

@@ -1,9 +1,10 @@
 #ifndef CORVUS_SOURCE_CORVUS_CORE_LOG_H
 #define CORVUS_SOURCE_CORVUS_CORE_LOG_H
 
-#include <memory>
+#include "Corvus/Core/Base.h"
 
 #pragma warning(push, 0)
+#define SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #include "spdlog/spdlog.h"
 #pragma warning(pop)
 
@@ -19,13 +20,13 @@ namespace Corvus
 
         static void Init();
 
-        static std::shared_ptr<spdlog::logger> &GetEngineLogger() { return s_EngineLogger; }
-        static std::shared_ptr<spdlog::logger> &GetClientLogger() { return s_ClientLogger; }
+        static Ref<spdlog::logger> &GetEngineLogger() { return s_EngineLogger; }
+        static Ref<spdlog::logger> &GetClientLogger() { return s_ClientLogger; }
 
     protected:
 
-        static std::shared_ptr<spdlog::logger> s_EngineLogger;
-        static std::shared_ptr<spdlog::logger> s_ClientLogger;
+        static Ref<spdlog::logger> s_EngineLogger;
+        static Ref<spdlog::logger> s_ClientLogger;
     };
 
 }

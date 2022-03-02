@@ -8,17 +8,17 @@ namespace Corvus
 
     enum EEventCategory
     {
-        NONE        = 0,
-        Input       = BIT(0),
-        Application = BIT(1),
-        Keyboard    = BIT(2),
-        Mouse       = BIT(3),
-        MouseButton = BIT(4)
+        NONECategory = 0,
+        Input        = BIT(0),
+        Application  = BIT(1),
+        Keyboard     = BIT(2),
+        Mouse        = BIT(3),
+        MouseButton  = BIT(4)
     };
 
     enum EEventType
     {
-        NONE = 0,
+        NONEType = 0,
         WindowClose, WindowResize, WindowChangeFocus,
         KeyPress, KeyRelease,
         MouseMove, MouseScroll, 
