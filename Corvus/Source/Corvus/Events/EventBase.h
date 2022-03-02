@@ -42,12 +42,12 @@ namespace Corvus
 
         bool WasHandled() const
         {
-            return bWasHandled;
+            return m_bWasHandled;
         }
 
         void SetHandled()
         {
-            bWasHandled = true;
+            m_bWasHandled = true;
         }
 
         bool IsInCategory(EEventCategory Category) {
@@ -60,7 +60,7 @@ namespace Corvus
 
     protected:
 
-        bool bWasHandled = false;
+        bool m_bWasHandled = false;
     };
 
 }
