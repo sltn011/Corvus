@@ -9,6 +9,9 @@ project "Corvus"
 	targetdir ("%{wks.location}/Binary/" .. outputpath .. "/%{prj.name}")
 	objdir ("%{wks.location}/Binary-Intermediate/" .. outputpath .. "/%{prj.name}")
 	
+	pchheader "CorvusPCH.h"
+	pchsource "Source/CorvusPCH.cpp"
+	
 	files
 	{
 		"Source/**.cpp",
