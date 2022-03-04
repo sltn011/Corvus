@@ -29,7 +29,21 @@ project "Corvus"
 	includedirs
 	{
 		"Source",
-		"Dependencies/spdlog/include"
+		"Dependencies/spdlog/include",
+		"Dependencies/GLFW/Source/include",
+		"Dependencies/GLAD/Source/include"
+	}
+	
+	links
+	{
+		"GLFW",
+		"GLAD",
+		"opengl32.lib"
+	}
+	
+	defines
+	{
+		"GLFW_INCLUDE_NONE"
 	}
 	
 	filter { "configurations:Debug" }

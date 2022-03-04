@@ -17,7 +17,7 @@ namespace Corvus
     void LayerBase::SetEnabled(bool bEnabled)
     {
         m_bEnabled = bEnabled;
-        CORVUS_CORE_INFO(STR("Layer {0} {1}"), m_LayerName, m_bEnabled ? STR("enabled") : STR("disabled"));
+        CORVUS_CORE_TRACE(STR("Layer {0} {1}"), m_LayerName, m_bEnabled ? STR("enabled") : STR("disabled"));
     }
 
     bool LayerBase::IsEnabled() const
@@ -27,12 +27,12 @@ namespace Corvus
 
     void LayerBase::OnPushed()
     {
-        CORVUS_CORE_INFO(STR("Layer {0} pushed on layers stack!"), m_LayerName);
+        CORVUS_CORE_TRACE(STR("Layer {0} pushed on layers stack!"), m_LayerName);
     }
 
     void LayerBase::OnPoped()
     {
-        CORVUS_CORE_INFO(STR("Layer {0} poped of layers stack!"), m_LayerName);
+        CORVUS_CORE_TRACE(STR("Layer {0} poped of layers stack!"), m_LayerName);
     }
 
     void LayerBase::OnUpdate(float DeltaTime)

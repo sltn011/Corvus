@@ -1,3 +1,6 @@
 [submodule "Corvus/Dependencies/spdlog"]
 	path = Corvus/Dependencies/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "Corvus/Dependencies/GLFW/Source"]
+	path = Corvus/Dependencies/GLFW/Source
+	url = https://github.com/glfw/glfw

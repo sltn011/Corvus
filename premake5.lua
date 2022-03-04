@@ -18,6 +18,7 @@ outputpath = "%{cfg.buildcfg}-%{cfg.architecture}"
 	
 include "Corvus"
 include "Sandbox"
-	
-	
+
+include "Corvus/Dependencies/GLFW"
+include "Corvus/Dependencies/GLAD"	
 	
