@@ -22,7 +22,7 @@ namespace Corvus
     void LayersStack::PushLayer(Own<LayerBase> NewLayer)
     {
         if (!NewLayer) {
-            CORVUS_CORE_ERROR(STR("Null-layer passed into Layers stack!"));
+            CORVUS_CORE_ERROR("Null-layer passed into Layers stack!");
             return;
         }
 
@@ -32,7 +32,7 @@ namespace Corvus
 
     Own<LayerBase> LayersStack::PopLayer()
     {
-        CORVUS_CORE_ASSERT_FMT(!m_Stack.empty(), STR("Can't pop layer from empty stack!"));
+        CORVUS_CORE_ASSERT_FMT(!m_Stack.empty(), "Can't pop layer from empty stack!");
 
         Own<LayerBase> PopedLayer = std::move(m_Stack.back());
         m_Stack.erase(End() - 1);

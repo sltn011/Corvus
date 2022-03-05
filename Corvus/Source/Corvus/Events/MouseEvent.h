@@ -23,8 +23,8 @@ namespace Corvus
 
         virtual String ToString() const override
         {
-            std::wstringstream ss;
-            ss << GetEventTypeString() << STR(" New Position: ") << NewX << STR(", ") << NewY;
+            std::stringstream ss;
+            ss << GetEventTypeString() << " New Position: " << NewX << ", " << NewY;
             return ss.str();
         }
 
@@ -47,8 +47,8 @@ namespace Corvus
 
         virtual String ToString() const override
         {
-            std::wstringstream ss;
-            ss << GetEventTypeString() << STR(" Offset: ") << OffsetX << STR(", ") << OffsetY;
+            std::stringstream ss;
+            ss << GetEventTypeString() << " Offset: " << OffsetX << ", " << OffsetY;
             return ss.str();
         }
 

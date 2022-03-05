@@ -21,7 +21,7 @@ namespace Corvus
     {
         if (m_bIsInitialized)
         {
-            CORVUS_CORE_ERROR(STR("Attempt to re-initialize already created window!"));
+            CORVUS_CORE_ERROR("Attempt to re-initialize already created window!");
             return false;
         }
 
@@ -29,7 +29,7 @@ namespace Corvus
         {
             bool GLFWInitialized = glfwInit();
             CORVUS_CORE_ASSERT(GLFWInitialized);
-            CORVUS_CORE_TRACE(STR("GLFW initialized successfully"));
+            CORVUS_CORE_TRACE("GLFW initialized successfully");
 
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -54,10 +54,10 @@ namespace Corvus
         if (!m_Window)
         {
             Destroy();
-            CORVUS_NO_ENTRY_FMT(STR("Failed to create window!"));
+            CORVUS_NO_ENTRY_FMT("Failed to create window!");
         }
 
-        CORVUS_CORE_INFO(STR("Window created"));
+        CORVUS_CORE_INFO("Window created");
 
         glfwSetWindowUserPointer(m_Window, this);
 
@@ -80,20 +80,20 @@ namespace Corvus
     {
         if (!m_bIsInitialized)
         {
-            CORVUS_CORE_TRACE(STR("Window is not initialized and does not need to be destroyed"));
+            CORVUS_CORE_TRACE("Window is not initialized and does not need to be destroyed");
             return;
         }
 
         glfwDestroyWindow(m_Window);
         m_Window = nullptr;
         m_bIsInitialized = false;
-        CORVUS_CORE_INFO(STR("Window destroyed"));
+        CORVUS_CORE_INFO("Window destroyed");
 
         --s_WindowsCount;
         if (!s_WindowsCount)
         {
             glfwTerminate();
-            CORVUS_CORE_TRACE(STR("GLFW terminated"));
+            CORVUS_CORE_TRACE("GLFW terminated");
         }
     }
 
@@ -140,7 +140,7 @@ namespace Corvus
 
     void Window::WindowErrorCallback(int ErrorCode, char const *Description)
     {
-        CORVUS_CORE_ERROR(STR("GLFW Window error - Code: {0}, Description: {1}"), ErrorCode, static_cast<void const *>(Description));
+        CORVUS_CORE_ERROR("GLFW Window error - Code: {0}, Description: {1}", ErrorCode, static_cast<void const *>(Description));
     }
 
 }

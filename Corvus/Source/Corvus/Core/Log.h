@@ -4,7 +4,6 @@
 #include "Corvus/Core/Base.h"
 
 #pragma warning(push, 0)
-#define SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #include "spdlog/spdlog.h"
 #pragma warning(pop)
 

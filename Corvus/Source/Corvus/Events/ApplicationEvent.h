@@ -30,8 +30,8 @@ namespace Corvus
 
         virtual String ToString() const override
         {
-            std::wstringstream ss;
-            ss << GetEventTypeString() << STR(" New Size = ") << NewWidth << STR(":") << NewHeight;
+            std::stringstream ss;
+            ss << GetEventTypeString() << " New Size = " << NewWidth << ":" << NewHeight;
             return ss.str();
         }
 
@@ -54,8 +54,8 @@ namespace Corvus
 
         virtual String ToString() const override
         {
-            std::wstringstream ss;
-            ss << GetEventTypeString() << (bSetFocus ? STR(" On") : STR(" Off"));
+            std::stringstream ss;
+            ss << GetEventTypeString() << (bSetFocus ? " On" : " Off");
             return ss.str();
         }
 

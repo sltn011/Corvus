@@ -27,7 +27,7 @@ namespace Corvus
 
 #define CORVUS_EVENT_GENERATED_BODY(Category, Type) virtual EEventCategory GetCategory() const override { return EEventCategory(Category); } \
                                                     virtual EEventType GetEventType() const override { return Type; } \
-                                                    virtual Char const *GetEventTypeString() const override { return STR(#Type); }
+                                                    virtual Char const *GetEventTypeString() const override { return #Type; }
 
     class EventBase
     {

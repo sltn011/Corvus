@@ -15,9 +15,8 @@ using UInt16 = std::uint16_t;
 using UInt32 = std::uint32_t;
 using UInt64 = std::uint64_t;
 
-using Char   = wchar_t;
+using Char   = char;
 using String = std::basic_string<Char>;
 using Name   = std::basic_string_view<Char>;
-using Label  = std::basic_string<char>; // Default std::string
 
 #endif //!CORVUS_SOURCE_CORVUS_CORE_CORETYPES_H

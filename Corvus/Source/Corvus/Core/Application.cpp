@@ -18,7 +18,7 @@ namespace Corvus
 
     void Application::Run()
     {
-        CORVUS_CORE_TRACE(STR("Running the application!"));
+        CORVUS_CORE_TRACE("Running the application!");
 
         WindowData WindowSettings;
         WindowSettings.WindowWidth = 500;
@@ -47,7 +47,7 @@ namespace Corvus
             glfwPollEvents();
         }
 
-        CORVUS_CORE_TRACE(STR("Application finished running!"));
+        CORVUS_CORE_TRACE("Application finished running!");
     }
 
 }

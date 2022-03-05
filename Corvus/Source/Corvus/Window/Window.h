@@ -10,7 +10,7 @@ namespace Corvus
 
     struct WindowData
     {
-        Label WindowName;
+        String WindowName;
         UInt32 WindowWidth;
         UInt32 WindowHeight;
 

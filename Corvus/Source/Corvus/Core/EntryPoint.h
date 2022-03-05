@@ -16,22 +16,22 @@
         Corvus::Application *App = Corvus::CreateApplication();
         if (App)
         {
-            CORVUS_CORE_TRACE(STR("Application successfully created!"));
+            CORVUS_CORE_TRACE("Application successfully created!");
 
             App->Run();
 
             if (DestroyApplication(App)) 
             {
-                CORVUS_CORE_TRACE(STR("Application resources cleaned up successfully on exit!"));
+                CORVUS_CORE_TRACE("Application resources cleaned up successfully on exit!");
             }
             else 
             {
-                CORVUS_CORE_ERROR(STR("Error cleaning up application resources on exit!"));
+                CORVUS_CORE_ERROR("Error cleaning up application resources on exit!");
             }
         }
         else
         {
-            CORVUS_CORE_CRITICAL(STR("Application was not created properly!"));
+            CORVUS_CORE_CRITICAL("Application was not created properly!");
         }
     }
 

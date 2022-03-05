@@ -17,8 +17,6 @@
 
 #define BIT(x) (1 << x)
 
-#define STR(x) L##x
-
 namespace Corvus
 {
     template<typename T>

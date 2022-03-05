@@ -68,7 +68,7 @@ namespace Corvus
 
         R Invoke(Args... args) const
         {
-            CORVUS_CORE_ASSERT_FMT(m_Invoker != nullptr, STR("Nothing bound to delegate!"));
+            CORVUS_CORE_ASSERT_FMT(m_Invoker != nullptr, "Nothing bound to delegate!");
             return m_Invoker->Invoke(std::forward<Args>(args)...);
         }
 

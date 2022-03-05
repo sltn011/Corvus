@@ -42,7 +42,7 @@ namespace Corvus
         s_ClientLogger->flush_on(spdlog::level::trace);
         spdlog::register_logger(s_ClientLogger);
 
-        CORVUS_CORE_INFO(STR("Log successfully initialized!"));
+        CORVUS_CORE_INFO("Log successfully initialized!");
     }
 
 }
