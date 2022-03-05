@@ -2,11 +2,15 @@
 #define CORVUS_SOURCE_CORVUS_WINDOW_WINDOW_H
 
 #include "Corvus/Core/Base.h"
+#include "Corvus/Core/Delegate.h"
+#include "Corvus/Events/EventBase.h"
 
 struct GLFWwindow;
 
 namespace Corvus
 {
+
+    CORVUS_DECLARE_MULTICAST_DELEGATE(OnEventDelegate, EventBase&);
 
     struct WindowData
     {
@@ -43,6 +47,8 @@ namespace Corvus
         GLFWwindow *GetWindow();
 
         static void WindowErrorCallback(int ErrorCode, char const *Description);
+
+        OnEventDelegate OnEvent;
 
     protected:
 

@@ -9,20 +9,21 @@ namespace Corvus
     enum EEventCategory
     {
         NONECategory = 0,
-        Input        = BIT(0),
-        Application  = BIT(1),
-        Keyboard     = BIT(2),
-        Mouse        = BIT(3),
-        MouseButton  = BIT(4)
+        CategoryInput        = BIT(0),
+        CategoryApplication  = BIT(1),
+        CategoryKeyboard     = BIT(2),
+        CategoryMouse        = BIT(3),
+        CategoryMouseButton  = BIT(4)
+
     };
 
     enum EEventType
     {
         NONEType = 0,
-        WindowClose, WindowResize, WindowChangeFocus,
-        KeyPress, KeyRelease,
-        MouseMove, MouseScroll, 
-        MouseButtonPress, MouseButtonRelease
+        TypeWindowClose, TypeWindowResize, TypeWindowChangeFocus,
+        TypeKeyPress, TypeKeyRelease,
+        TypeCursorMove, TypeMouseScroll,
+        TypeMouseButtonPress, TypeMouseButtonRelease
     };
 
 #define CORVUS_EVENT_GENERATED_BODY(Category, Type) virtual EEventCategory GetCategory() const override { return EEventCategory(Category); } \

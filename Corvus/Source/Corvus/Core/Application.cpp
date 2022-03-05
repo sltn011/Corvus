@@ -26,6 +26,7 @@ namespace Corvus
         WindowSettings.WindowName = "TestWindow";
 
         ApplicationWindow.Init(WindowSettings);
+        ApplicationWindow.OnEvent.BindObject(this, &Application::OnEventReceived);
 
         glfwMakeContextCurrent(ApplicationWindow.GetWindow());
 
@@ -48,6 +49,11 @@ namespace Corvus
         }
 
         CORVUS_CORE_TRACE("Application finished running!");
+    }
+
+    void Application::OnEventReceived(EventBase &Event)
+    {
+        CORVUS_CORE_INFO(Event.ToString());
     }
 
 }

@@ -9,13 +9,13 @@
 namespace Corvus
 {
 
-    class MouseMoveEvent : public EventBase
+    class CursorMoveEvent : public EventBase
     {
     public:
 
-        CORVUS_EVENT_GENERATED_BODY(EEventCategory::Input | EEventCategory::Mouse, EEventType::MouseMove);
+        CORVUS_EVENT_GENERATED_BODY(CategoryInput | CategoryMouse, TypeCursorMove);
 
-        MouseMoveEvent(float NewXValue, float NewYValue)
+        CursorMoveEvent(float NewXValue, float NewYValue)
             : NewX{ NewXValue }, NewY{ NewYValue }
         {
 
@@ -37,7 +37,7 @@ namespace Corvus
     {
     public:
 
-        CORVUS_EVENT_GENERATED_BODY(EEventCategory::Input | EEventCategory::Mouse, EEventType::MouseScroll);
+        CORVUS_EVENT_GENERATED_BODY(CategoryInput | CategoryMouse, TypeMouseScroll);
 
         MouseScrollEvent(float OffsetXValue, float OffsetYValue)
             : OffsetX{ OffsetXValue }, OffsetY{ OffsetYValue }
@@ -61,18 +61,16 @@ namespace Corvus
     {
     public:
 
-        CORVUS_EVENT_GENERATED_BODY(EEventCategory::Input | EEventCategory::Mouse | EEventCategory::MouseButton,
-            EEventType::MouseButtonPress);
+        CORVUS_EVENT_GENERATED_BODY(CategoryInput | CategoryMouse | CategoryMouseButton, TypeMouseButtonPress);
 
         MouseButtonPressEvent(Key::EMouseButtonKey ButtonCodeValue,
-            bool bRepeatedValue = false, Key::EKeyModifierFlag ModifierValue = Key::EKeyModifierFlag::NONE)
-            : ButtonCode{ ButtonCodeValue }, bRepeated{ bRepeatedValue }, Modifier{ ModifierValue }
+            Key::EKeyModifierFlag ModifierValue = Key::EKeyModifierFlag::NONE)
+            : ButtonCode{ ButtonCodeValue }, Modifier{ ModifierValue }
         {
 
         }
 
         Key::EMouseButtonKey ButtonCode;
-        bool bRepeated = false;
         Key::EKeyModifierFlag Modifier;
 
     };
@@ -81,8 +79,7 @@ namespace Corvus
     {
     public:
 
-        CORVUS_EVENT_GENERATED_BODY(EEventCategory::Input | EEventCategory::Mouse | EEventCategory::MouseButton,
-            EEventType::MouseButtonRelease);
+        CORVUS_EVENT_GENERATED_BODY(CategoryInput | CategoryMouse | CategoryMouseButton, TypeMouseButtonRelease);
 
         MouseButtonReleaseEvent(Key::EMouseButtonKey ButtonCodeValue)
             : ButtonCode{ ButtonCodeValue }

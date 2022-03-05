@@ -16,6 +16,8 @@ namespace Corvus
 
         void Run();
 
+        void OnEventReceived(EventBase &Event);
+
     protected:
 
         Window ApplicationWindow;

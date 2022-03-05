@@ -5,7 +5,7 @@
 
 namespace Corvus::Key
 {
-    // Taken from glfw3.h https://www.glfw.org/docs/3.3/group__keys.html
+    // Taken from glfw3.h https://www.glfw.org/docs/3.3/group__input.html
     enum class EKeyboardKey
     {
         Unknown = -1,
@@ -133,7 +133,7 @@ namespace Corvus::Key
         Menu           = 348
     };
 
-    // Taken from glfw3.h https://www.glfw.org/docs/3.3/group__keys.html
+    // Taken from glfw3.h https://www.glfw.org/docs/3.3/group__input.html
     enum class EMouseButtonKey
     {
         Button1      = 0,
@@ -150,7 +150,7 @@ namespace Corvus::Key
         ButtonMiddle = Button3
     };
 
-    // Taken from glfw3.h https://www.glfw.org/docs/3.3/group__keys.html
+    // Taken from glfw3.h https://www.glfw.org/docs/3.3/group__input.html
     enum EKeyModifierFlag
     {
         NONE     = 0,
@@ -160,6 +160,14 @@ namespace Corvus::Key
         Super    = BIT(3),
         CapsLock = BIT(4),
         NumLock  = BIT(5)
+    };
+
+    // Taken from glfw3.h https://www.glfw.org/docs/3.3/group__input.html
+    enum class EKeyAction
+    {
+        Release = 0,
+        Press   = 1,
+        Repeat  = 2
     };
 }
 

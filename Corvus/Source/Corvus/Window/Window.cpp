@@ -1,5 +1,8 @@
 #include "CorvusPCH.h"
-#include "Window.h"
+#include "Corvus/Window/Window.h"
+#include "Corvus/Events/ApplicationEvent.h"
+#include "Corvus/Events/KeyboardEvent.h"
+#include "Corvus/Events/MouseEvent.h"
 
 #include <GLFW/glfw3.h>
 
@@ -61,16 +64,82 @@ namespace Corvus
 
         glfwSetWindowUserPointer(m_Window, this);
 
-        glfwSetKeyCallback(m_Window, [](GLFWwindow *window, int key, int scancode, int action, int mods)
+        glfwSetWindowSizeCallback(m_Window, [](GLFWwindow *Caller, int NewWidth, int NewHeight)
         {
-            Key::EKeyboardKey Key = static_cast<Key::EKeyboardKey>(key);
-            switch (action) 
+            Window *Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+            WindowResizeEvent Event{ NewWidth, NewHeight };
+            Owner->OnEvent.Broadcast(Event);
+        });
+
+        glfwSetWindowCloseCallback(m_Window, [](GLFWwindow *Caller)
+        {
+            Window *Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+            WindowCloseEvent Event{};
+            Owner->OnEvent.Broadcast(Event);
+        });
+
+        glfwSetKeyCallback(m_Window, [](GLFWwindow *Caller, int Key, int Scancode, int Action, int Mods)
+        {
+            Window *Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+            
+            Key::EKeyboardKey EKey = static_cast<Key::EKeyboardKey>(Key);
+            Key::EKeyAction EAction = static_cast<Key::EKeyAction>(Action);
+            Key::EKeyModifierFlag EMods = static_cast<Key::EKeyModifierFlag>(Mods);
+
+            if (EAction == Key::EKeyAction::Press) 
             {
-            case GLFW_PRESS:
-                if (Key == Key::EKeyboardKey::Escape) {
-                    glfwSetWindowShouldClose(window, true);
-                }
+                KeyPressEvent Event{ EKey, false, EMods };
+                Owner->OnEvent.Broadcast(Event);
+                return;
             }
+            else if (EAction == Key::EKeyAction::Repeat)
+            {
+                KeyPressEvent Event{ EKey, true, EMods };
+                Owner->OnEvent.Broadcast(Event);
+                return;
+            }
+            else if (EAction == Key::EKeyAction::Release)
+            {
+                KeyReleaseEvent Event{ EKey };
+                Owner->OnEvent.Broadcast(Event);
+                return;
+            }
+        });
+
+        glfwSetMouseButtonCallback(m_Window, [](GLFWwindow *Caller, int Button, int Action, int Mods)
+        {
+            Window *Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+
+            Key::EMouseButtonKey EButton = static_cast<Key::EMouseButtonKey>(Button);
+            Key::EKeyAction EAction = static_cast<Key::EKeyAction>(Action);
+            Key::EKeyModifierFlag EMods = static_cast<Key::EKeyModifierFlag>(Mods);
+
+            if (EAction == Key::EKeyAction::Press)
+            {
+                MouseButtonPressEvent Event{ EButton, EMods };
+                Owner->OnEvent.Broadcast(Event);
+                return;
+            }
+            else if (EAction == Key::EKeyAction::Release)
+            {
+                MouseButtonReleaseEvent Event{ EButton };
+                Owner->OnEvent.Broadcast(Event);
+                return;
+            }
+        });
+
+        glfwSetCursorPosCallback(m_Window, [](GLFWwindow *Caller, double NewX, double NewY)
+        {
+            Window *Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+            CursorMoveEvent Event{ static_cast<float>(NewX), static_cast<float>(NewY) };
+            Owner->OnEvent(Event);
+        });
+
+        glfwSetScrollCallback(m_Window, [](GLFWwindow *Caller, double OffsetX, double OffsetY)
+        {
+            Window *Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+            MouseScrollEvent Event{ static_cast<float>(OffsetX), static_cast<float>(OffsetY) };
+            Owner->OnEvent(Event);
         });
 
         return true;
@@ -115,7 +184,15 @@ namespace Corvus
 
     void Window::SetVSyncEnabled(bool bValue)
     {
+        if (!m_bIsInitialized)
+        {
+            CORVUS_CORE_ERROR("Window not initialized - cant switch VSync on/off!");
+            return;
+        }
 
+        glfwSwapInterval(bValue ? 1 : 0);
+        m_WindowData.bVSyncEnabled = bValue;
+        CORVUS_CORE_TRACE("Window VSync {0}", bValue ? "On" : "Off");
     }
 
     bool Window::IsFullScreen() const
@@ -130,7 +207,7 @@ namespace Corvus
 
     void Window::SetFullScreen(bool bValue)
     {
-
+        CORVUS_CORE_ERROR("Changing window fullscreen mode not implemented yet!");
     }
 
     GLFWwindow *Window::GetWindow()
