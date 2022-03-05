@@ -2,6 +2,7 @@
 #define CORVUS_SOURCE_CORVUS_CORE_APPLICATION_H
 
 #include "Corvus/Core/Base.h"
+#include "Corvus/Window/Window.h"
 
 namespace Corvus 
 {
@@ -14,6 +15,10 @@ namespace Corvus
         virtual ~Application();
 
         void Run();
+
+    protected:
+
+        Window ApplicationWindow;
 
     };
 
