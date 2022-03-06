@@ -78,51 +78,51 @@ namespace Corvus
             Owner->OnEvent.Broadcast(Event);
         });
 
-        glfwSetKeyCallback(m_Window, [](GLFWwindow *Caller, int Key, int Scancode, int Action, int Mods)
+        glfwSetKeyCallback(m_Window, [](GLFWwindow *Caller, int RawKey, int RawScancode, int RawAction, int RawMods)
         {
             Window *Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
             
-            Key::EKeyboardKey EKey = static_cast<Key::EKeyboardKey>(Key);
-            Key::EKeyAction EAction = static_cast<Key::EKeyAction>(Action);
-            Key::EKeyModifierFlag EMods = static_cast<Key::EKeyModifierFlag>(Mods);
+            KeyCode Key = static_cast<KeyCode>(RawKey);
+            ActionCode Action = static_cast<ActionCode>(RawAction);
+            ModifierCode Mods = static_cast<ModifierCode>(RawMods);
 
-            if (EAction == Key::EKeyAction::Press) 
+            if (Action == Action::Press) 
             {
-                KeyPressEvent Event{ EKey, false, EMods };
+                KeyPressEvent Event{ Key, false, Mods };
                 Owner->OnEvent.Broadcast(Event);
                 return;
             }
-            else if (EAction == Key::EKeyAction::Repeat)
+            else if (Action == Action::Repeat)
             {
-                KeyPressEvent Event{ EKey, true, EMods };
+                KeyPressEvent Event{ Key, true, Mods };
                 Owner->OnEvent.Broadcast(Event);
                 return;
             }
-            else if (EAction == Key::EKeyAction::Release)
+            else if (Action == Action::Release)
             {
-                KeyReleaseEvent Event{ EKey };
+                KeyReleaseEvent Event{ Key };
                 Owner->OnEvent.Broadcast(Event);
                 return;
             }
         });
 
-        glfwSetMouseButtonCallback(m_Window, [](GLFWwindow *Caller, int Button, int Action, int Mods)
+        glfwSetMouseButtonCallback(m_Window, [](GLFWwindow *Caller, int RawButton, int RawAction, int RawMods)
         {
             Window *Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
 
-            Key::EMouseButtonKey EButton = static_cast<Key::EMouseButtonKey>(Button);
-            Key::EKeyAction EAction = static_cast<Key::EKeyAction>(Action);
-            Key::EKeyModifierFlag EMods = static_cast<Key::EKeyModifierFlag>(Mods);
+            MouseCode Button = static_cast<MouseCode>(RawButton);
+            ActionCode Action = static_cast<ActionCode>(RawAction);
+            ModifierCode Mods = static_cast<ModifierCode>(RawMods);
 
-            if (EAction == Key::EKeyAction::Press)
+            if (Action == Action::Press)
             {
-                MouseButtonPressEvent Event{ EButton, EMods };
+                MouseButtonPressEvent Event{ Button, Mods };
                 Owner->OnEvent.Broadcast(Event);
                 return;
             }
-            else if (EAction == Key::EKeyAction::Release)
+            else if (Action == Action::Release)
             {
-                MouseButtonReleaseEvent Event{ EButton };
+                MouseButtonReleaseEvent Event{ Button };
                 Owner->OnEvent.Broadcast(Event);
                 return;
             }

@@ -13,7 +13,7 @@ namespace Corvus
     {
     public:
 
-        CORVUS_EVENT_GENERATED_BODY(CategoryInput | CategoryMouse, TypeCursorMove);
+        CORVUS_EVENT_GENERATED_BODY(Event::ECategory::Input | Event::ECategory::Mouse, Event::EType::CursorMove);
 
         CursorMoveEvent(float NewXValue, float NewYValue)
             : NewX{ NewXValue }, NewY{ NewYValue }
@@ -37,7 +37,7 @@ namespace Corvus
     {
     public:
 
-        CORVUS_EVENT_GENERATED_BODY(CategoryInput | CategoryMouse, TypeMouseScroll);
+        CORVUS_EVENT_GENERATED_BODY(Event::ECategory::Input | Event::ECategory::Mouse, Event::EType::MouseScroll);
 
         MouseScrollEvent(float OffsetXValue, float OffsetYValue)
             : OffsetX{ OffsetXValue }, OffsetY{ OffsetYValue }
@@ -61,34 +61,35 @@ namespace Corvus
     {
     public:
 
-        CORVUS_EVENT_GENERATED_BODY(CategoryInput | CategoryMouse | CategoryMouseButton, TypeMouseButtonPress);
+        CORVUS_EVENT_GENERATED_BODY(
+            Event::ECategory::Input | Event::ECategory::Mouse | Event::ECategory::MouseButton,
+            Event::EType::MouseButtonPress);
 
-        MouseButtonPressEvent(Key::EMouseButtonKey ButtonCodeValue,
-            Key::EKeyModifierFlag ModifierValue = Key::EKeyModifierFlag::NONE)
-            : ButtonCode{ ButtonCodeValue }, Modifier{ ModifierValue }
+        MouseButtonPressEvent(MouseCode ButtonValue, ModifierCode ModifierValue)
+            : Button{ ButtonValue }, Modifier{ ModifierValue }
         {
 
         }
 
-        Key::EMouseButtonKey ButtonCode;
-        Key::EKeyModifierFlag Modifier;
-
+        MouseCode Button;
+        ModifierCode Modifier;
     };
 
     class MouseButtonReleaseEvent : public EventBase
     {
     public:
 
-        CORVUS_EVENT_GENERATED_BODY(CategoryInput | CategoryMouse | CategoryMouseButton, TypeMouseButtonRelease);
+        CORVUS_EVENT_GENERATED_BODY(
+            Event::ECategory::Input | Event::ECategory::Mouse | Event::ECategory::MouseButton,
+            Event::EType::MouseButtonRelease);
 
-        MouseButtonReleaseEvent(Key::EMouseButtonKey ButtonCodeValue)
-            : ButtonCode{ ButtonCodeValue }
+        MouseButtonReleaseEvent(MouseCode ButtonValue)
+            : Button{ ButtonValue }
         {
 
         }
 
-        Key::EMouseButtonKey ButtonCode;
-
+        MouseCode Button;
     };
 
 }
