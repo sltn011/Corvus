@@ -19,6 +19,13 @@ namespace Corvus
 
         }
 
+        virtual String ToString() const override
+        {
+            std::stringstream ss;
+            ss << GetEventTypeString() << " Key:" << Key << " Repeated:" << bRepeated;
+            return ss.str();
+        }
+
         KeyCode Key;
         bool bRepeated = false;
         ModifierCode Modifier;
@@ -34,6 +41,13 @@ namespace Corvus
             : Key{ KeyValue }
         {
 
+        }
+
+        virtual String ToString() const override
+        {
+            std::stringstream ss;
+            ss << GetEventTypeString() << " Key:" << Key;
+            return ss.str();
         }
 
         KeyCode Key;

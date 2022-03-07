@@ -1,6 +1,6 @@
 #include "CorvusPCH.h"
-#include "LayerBase.h"
-#include "LayersStack.h"
+#include "Corvus/Core/LayerBase.h"
+#include "Corvus/Core/LayersStack.h"
 
 namespace Corvus
 {

@@ -71,6 +71,13 @@ namespace Corvus
 
         }
 
+        virtual String ToString() const override
+        {
+            std::stringstream ss;
+            ss << GetEventTypeString() << " Button:" << Button;
+            return ss.str();
+        }
+
         MouseCode Button;
         ModifierCode Modifier;
     };
@@ -87,6 +94,13 @@ namespace Corvus
             : Button{ ButtonValue }
         {
 
+        }
+
+        virtual String ToString() const override
+        {
+            std::stringstream ss;
+            ss << GetEventTypeString() << " Button:" << Button;
+            return ss.str();
         }
 
         MouseCode Button;

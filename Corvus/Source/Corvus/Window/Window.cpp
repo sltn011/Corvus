@@ -1,8 +1,8 @@
 #include "CorvusPCH.h"
-#include "Corvus/Window/Window.h"
 #include "Corvus/Events/ApplicationEvent.h"
 #include "Corvus/Events/KeyboardEvent.h"
 #include "Corvus/Events/MouseEvent.h"
+#include "Corvus/Window/Window.h"
 
 #include <GLFW/glfw3.h>
 
@@ -24,7 +24,7 @@ namespace Corvus
     {
         if (m_bIsInitialized)
         {
-            CORVUS_CORE_ERROR("Attempt to re-initialize already created window!");
+            CORVUS_CORE_ERROR("Attempt to re-initialize already created window \"{0}\"!", m_WindowData.WindowName);
             return false;
         }
 
@@ -60,10 +60,92 @@ namespace Corvus
             CORVUS_NO_ENTRY_FMT("Failed to create window!");
         }
 
-        CORVUS_CORE_INFO("Window created");
+        CORVUS_CORE_INFO("Window \"{0}\" created", m_WindowData.WindowName);
 
         glfwSetWindowUserPointer(m_Window, this);
 
+        SetupWindowEventsHandlers();
+
+        return true;
+    }
+
+    void Window::Destroy()
+    {
+        if (!m_bIsInitialized)
+        {
+            CORVUS_CORE_TRACE("Window is not initialized and does not need to be destroyed");
+            return;
+        }
+
+        glfwDestroyWindow(m_Window);
+        m_Window = nullptr;
+        m_bIsInitialized = false;
+        CORVUS_CORE_INFO("Window \"{0}\" destroyed", m_WindowData.WindowName);
+
+        --s_WindowsCount;
+        if (!s_WindowsCount)
+        {
+            glfwTerminate();
+            CORVUS_CORE_TRACE("GLFW terminated");
+        }
+    }
+
+    void Window::OnUpdate()
+    {
+        CORVUS_CORE_ASSERT(m_bIsInitialized);
+        glfwPollEvents();
+    }
+
+    bool Window::IsVSyncEnabled() const
+    {
+        if (!m_bIsInitialized)
+        {
+            return false;
+        }
+
+        return m_WindowData.bVSyncEnabled;
+    }
+
+    void Window::SetVSyncEnabled(bool bValue)
+    {
+        if (!m_bIsInitialized)
+        {
+            CORVUS_CORE_ERROR("Window not initialized - cant switch VSync on/off!");
+            return;
+        }
+
+        glfwSwapInterval(bValue ? 1 : 0);
+        m_WindowData.bVSyncEnabled = bValue;
+        CORVUS_CORE_TRACE("Window \"{0}\" VSync {1}", m_WindowData.WindowName, bValue ? "On" : "Off");
+    }
+
+    bool Window::IsFullScreen() const
+    {
+        if (!m_bIsInitialized)
+        {
+            return false;
+        }
+
+        return m_WindowData.bFullScreen;
+    }
+
+    void Window::SetFullScreen(bool bValue)
+    {
+        CORVUS_CORE_ERROR("Changing window fullscreen mode not implemented yet!");
+    }
+
+    GLFWwindow *Window::GetWindow()
+    {
+        return m_Window;
+    }
+
+    void Window::WindowErrorCallback(int ErrorCode, char const *Description)
+    {
+        CORVUS_CORE_ERROR("GLFW Error - Code: {0}, Description: {1}", ErrorCode, static_cast<void const *>(Description));
+    }
+
+    void Window::SetupWindowEventsHandlers()
+    {
         glfwSetWindowSizeCallback(m_Window, [](GLFWwindow *Caller, int NewWidth, int NewHeight)
         {
             Window *Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
@@ -142,82 +224,7 @@ namespace Corvus
             Owner->OnEvent(Event);
         });
 
-        return true;
-    }
-
-    void Window::Destroy()
-    {
-        if (!m_bIsInitialized)
-        {
-            CORVUS_CORE_TRACE("Window is not initialized and does not need to be destroyed");
-            return;
-        }
-
-        glfwDestroyWindow(m_Window);
-        m_Window = nullptr;
-        m_bIsInitialized = false;
-        CORVUS_CORE_INFO("Window destroyed");
-
-        --s_WindowsCount;
-        if (!s_WindowsCount)
-        {
-            glfwTerminate();
-            CORVUS_CORE_TRACE("GLFW terminated");
-        }
-    }
-
-    void Window::OnUpdate()
-    {
-        CORVUS_CORE_ASSERT(m_bIsInitialized);
-        glfwPollEvents();
-    }
-
-    bool Window::IsVSyncEnabled() const
-    {
-        if (!m_bIsInitialized)
-        {
-            return false;
-        }
-
-        return m_WindowData.bVSyncEnabled;
-    }
-
-    void Window::SetVSyncEnabled(bool bValue)
-    {
-        if (!m_bIsInitialized)
-        {
-            CORVUS_CORE_ERROR("Window not initialized - cant switch VSync on/off!");
-            return;
-        }
-
-        glfwSwapInterval(bValue ? 1 : 0);
-        m_WindowData.bVSyncEnabled = bValue;
-        CORVUS_CORE_TRACE("Window VSync {0}", bValue ? "On" : "Off");
-    }
-
-    bool Window::IsFullScreen() const
-    {
-        if (!m_bIsInitialized)
-        {
-            return false;
-        }
-
-        return m_WindowData.bFullScreen;
-    }
-
-    void Window::SetFullScreen(bool bValue)
-    {
-        CORVUS_CORE_ERROR("Changing window fullscreen mode not implemented yet!");
-    }
-
-    GLFWwindow *Window::GetWindow()
-    {
-        return m_Window;
-    }
-
-    void Window::WindowErrorCallback(int ErrorCode, char const *Description)
-    {
-        CORVUS_CORE_ERROR("GLFW Window error - Code: {0}, Description: {1}", ErrorCode, static_cast<void const *>(Description));
+        CORVUS_CORE_TRACE("Window \"{0}\" event handlers created", m_WindowData.WindowName);
     }
 
 }

@@ -2,6 +2,7 @@
 #define CORVUS_SOURCE_CORVUS_CORE_APPLICATION_H
 
 #include "Corvus/Core/Base.h"
+#include "Corvus/Core/LayersStack.h"
 #include "Corvus/Window/Window.h"
 
 namespace Corvus 
@@ -16,12 +17,19 @@ namespace Corvus
 
         void Run();
 
+        void PushLayer(Own<LayerBase> NewLayer);
+        Own<LayerBase> PopLayer();
+
+        void OnUpdate();
         void OnEventReceived(EventBase &Event);
 
     protected:
 
-        Window ApplicationWindow;
+        void InitWindow();
+        void InitRenderingContext();
 
+        Window      m_ApplicationWindow;
+        LayersStack m_LayersStack;
     };
 
     // To be defined by Client

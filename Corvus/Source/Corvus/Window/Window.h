@@ -37,6 +37,7 @@ namespace Corvus
         bool IsInitialized() const { return m_bIsInitialized; }
         UInt32 GetWindowWidth() const { return m_WindowData.WindowWidth; }
         UInt32 GetWindowHeight() const { return m_WindowData.WindowHeight; }
+        String GetWindowName() const { return m_WindowData.WindowName; }
 
         bool IsVSyncEnabled() const;
         void SetVSyncEnabled(bool bValue);
@@ -51,6 +52,8 @@ namespace Corvus
         OnEventDelegate OnEvent;
 
     protected:
+
+        void SetupWindowEventsHandlers();
 
         GLFWwindow *m_Window;
         WindowData  m_WindowData;

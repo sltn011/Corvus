@@ -20,8 +20,7 @@ namespace Corvus
         virtual void OnPushed();
         virtual void OnPoped();
 
-        virtual void OnUpdate(float DeltaTime);
-
+        virtual void OnUpdate();
         virtual void OnEvent(EventBase &Event);
 
     protected:

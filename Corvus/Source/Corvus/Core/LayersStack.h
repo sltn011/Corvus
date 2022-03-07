@@ -30,6 +30,14 @@ namespace Corvus
         std::vector<Own<LayerBase>>::const_reverse_iterator RBegin() const { return m_Stack.rbegin(); }
         std::vector<Own<LayerBase>>::const_reverse_iterator REnd() const { return m_Stack.rend(); }
 
+
+        // For for-each loops
+        std::vector<Own<LayerBase>>::iterator begin() { return m_Stack.begin(); }
+        std::vector<Own<LayerBase>>::iterator end() { return m_Stack.end(); }
+
+        std::vector<Own<LayerBase>>::const_iterator begin() const { return m_Stack.begin(); }
+        std::vector<Own<LayerBase>>::const_iterator end() const { return m_Stack.end(); }
+
     protected:
 
         // Front - Stack's bottom, Back - Stack's top
