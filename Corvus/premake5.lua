@@ -15,7 +15,10 @@ project "Corvus"
 	files
 	{
 		"Source/**.cpp",
-		"Source/**.h"
+		"Source/**.h",
+		
+		"Dependencies/glm/glm/**.hpp",
+		"Dependencies/glm/glm/**.inl"
 	}
 	vpaths 
 	{ 
@@ -32,7 +35,8 @@ project "Corvus"
 		"Dependencies/spdlog/include",
 		"Dependencies/GLFW/Source/include",
 		"Dependencies/GLAD/Source/include",
-		"Dependencies/imgui/Source"
+		"Dependencies/imgui/Source",
+		"Dependencies/glm"
 	}
 	
 	links
