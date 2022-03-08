@@ -11,3 +11,6 @@ Binary-Intermediate/**
 
 # Log files
 **.log
+
+# Temp
+Sandbox/imgui.ini

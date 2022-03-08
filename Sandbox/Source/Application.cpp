@@ -1,7 +1,5 @@
 #include <Corvus.h>
 
-#include <Corvus/Debug/LayerDebug.h>
-
 class Sandbox : public Corvus::Application 
 {
 public:
@@ -16,7 +14,6 @@ namespace Corvus {
     Application *CreateApplication()
     {
         Sandbox *App = new Sandbox;
-        App->PushLayer(MakeOwned<LayerDebug>("Debug Layer", true));
         return App;
     }
 

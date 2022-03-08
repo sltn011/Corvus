@@ -134,7 +134,7 @@ namespace Corvus
         CORVUS_CORE_ERROR("Changing window fullscreen mode not implemented yet!");
     }
 
-    GLFWwindow *Window::GetWindow()
+    GLFWwindow *Window::GetRawWindow()
     {
         return m_Window;
     }

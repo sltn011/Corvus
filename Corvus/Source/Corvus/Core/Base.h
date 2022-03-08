@@ -7,6 +7,7 @@
 #include <memory>
 
 #ifdef CORVUS_DEBUG
+    #define CORVUS_ENABLE_LOG
     #define CORVUS_ENABLE_ASSERT
     #ifdef CORVUS_PLATFORM_WINDOWS
         #define CORVUS_DEBUG_BREAK() __debugbreak()

@@ -3,17 +3,22 @@
 
 #include "Corvus/Core/LayerBase.h"
 
+struct GLFWwindow;
+
 namespace Corvus
 {
 
-    class LayerDebug : public LayerBase
+    class LayerGUI : public LayerBase
     {
     public:
 
         using Super = LayerBase;
 
-        LayerDebug(String LayerName, bool bEnabled);
-        virtual ~LayerDebug();
+        LayerGUI(String LayerName, bool bEnabled);
+        virtual ~LayerGUI();
+
+        virtual void OnPushed() override;
+        virtual void OnPoped() override;
 
         virtual void OnUpdate() override;
         virtual void OnEvent(EventBase &Event) override;

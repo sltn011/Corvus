@@ -3,7 +3,7 @@
 
 namespace Corvus
 {
-    LayerDebug::LayerDebug(Name LayerName, bool bEnabled)
+    LayerDebug::LayerDebug(String LayerName, bool bEnabled)
         : Super { LayerName, bEnabled }
     {
     }
@@ -18,8 +18,6 @@ namespace Corvus
         {
             return;
         }
-
-        Super::OnUpdate();
     }
 
     void LayerDebug::OnEvent(EventBase &Event)
@@ -29,7 +27,6 @@ namespace Corvus
             return;
         }
 
-        Super::OnEvent(Event);
         CORVUS_CORE_TRACE("LayerDebug \"{0}\": {1}", m_LayerName, Event.ToString());
     }
 

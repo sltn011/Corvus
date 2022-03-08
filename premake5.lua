@@ -20,5 +20,6 @@ include "Corvus"
 include "Sandbox"
 
 include "Corvus/Dependencies/GLFW"
-include "Corvus/Dependencies/GLAD"	
+include "Corvus/Dependencies/GLAD"
+include "Corvus/Dependencies/imgui"	
 	

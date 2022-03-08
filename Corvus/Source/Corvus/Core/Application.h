@@ -23,6 +23,10 @@ namespace Corvus
         void OnUpdate();
         void OnEventReceived(EventBase &Event);
 
+        Window &GetWindow();
+
+        static Application &GetInstance() { return *s_ApplicationInstance; }
+
     protected:
 
         void InitWindow();
@@ -30,6 +34,10 @@ namespace Corvus
 
         Window      m_ApplicationWindow;
         LayersStack m_LayersStack;
+
+    private:
+
+        static Application *s_ApplicationInstance;
     };
 
     // To be defined by Client

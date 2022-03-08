@@ -6,9 +6,14 @@
 
 namespace Corvus 
 {
+    Application *Application::s_ApplicationInstance = nullptr;
 
     Application::Application()
     {
+        CORVUS_CORE_ASSERT_FMT(!s_ApplicationInstance, "Only one instance of application is allowed!");
+
+        s_ApplicationInstance = this;
+
         InitWindow();
         InitRenderingContext();
     }
@@ -22,13 +27,15 @@ namespace Corvus
     {
         CORVUS_CORE_INFO("Running the application!");
 
-        while (!glfwWindowShouldClose(m_ApplicationWindow.GetWindow())) {
+        while (!glfwWindowShouldClose(m_ApplicationWindow.GetRawWindow())) {
 
-            glClearColor(0.3f, 0.15f, 0.6f, 1.0f);
+            glClearColor(0.6f, 0.8f, 1.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
+            OnUpdate();
+
             // Swap front and back buffers
-            glfwSwapBuffers(m_ApplicationWindow.GetWindow());
+            glfwSwapBuffers(m_ApplicationWindow.GetRawWindow());
 
             // Process pending events
             glfwPollEvents();
@@ -66,11 +73,16 @@ namespace Corvus
         }
     }
 
+    Window &Application::GetWindow()
+    {
+        return m_ApplicationWindow;
+    }
+
     void Application::InitWindow()
     {
         WindowData WindowSettings;
-        WindowSettings.WindowWidth = 500;
-        WindowSettings.WindowHeight = 400;
+        WindowSettings.WindowWidth = 1280;
+        WindowSettings.WindowHeight = 720;
         WindowSettings.WindowName = "TestWindow";
 
         m_ApplicationWindow.Init(WindowSettings);
@@ -81,7 +93,7 @@ namespace Corvus
 
     void Application::InitRenderingContext()
     {
-        glfwMakeContextCurrent(m_ApplicationWindow.GetWindow());
+        glfwMakeContextCurrent(m_ApplicationWindow.GetRawWindow());
 
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
             CORVUS_NO_ENTRY_FMT("Failed to initialize rendering context!");

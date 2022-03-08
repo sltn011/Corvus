@@ -4,7 +4,7 @@
 namespace Corvus
 {
 
-    LayerBase::LayerBase(Name LayerName, bool bEnabled)
+    LayerBase::LayerBase(String LayerName, bool bEnabled)
         : m_LayerName{LayerName}, m_bEnabled{bEnabled}
     {
         CORVUS_CORE_TRACE("Layer \"{0}\" created and set to {1}", m_LayerName, m_bEnabled ? "enabled" : "disabled");
@@ -33,14 +33,6 @@ namespace Corvus
     void LayerBase::OnPoped()
     {
         CORVUS_CORE_TRACE("Layer \"{0}\" poped of layers stack!", m_LayerName);
-    }
-
-    void LayerBase::OnUpdate()
-    {
-    }
-
-    void LayerBase::OnEvent(EventBase &Event)
-    {
     }
 
 }

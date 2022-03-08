@@ -11,7 +11,7 @@ namespace Corvus
     {
     public:
 
-        LayerBase(Name LayerName, bool bEnabled);
+        LayerBase(String LayerName, bool bEnabled);
         virtual ~LayerBase();
 
         void SetEnabled(bool bEnabled);
@@ -20,12 +20,12 @@ namespace Corvus
         virtual void OnPushed();
         virtual void OnPoped();
 
-        virtual void OnUpdate();
-        virtual void OnEvent(EventBase &Event);
+        virtual void OnUpdate() = 0;
+        virtual void OnEvent(EventBase &Event) = 0;
 
     protected:
 
-        Name m_LayerName;
+        String m_LayerName;
         bool m_bEnabled;
     };
 

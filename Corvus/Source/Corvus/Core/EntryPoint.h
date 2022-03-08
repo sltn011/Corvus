@@ -4,6 +4,8 @@
 #include "Corvus/Core/Base.h"
 #include "Corvus/Core/Application.h"
 
+#include "Corvus/GUI/LayerGUI.h"
+
 #ifdef CORVUS_PLATFORM_WINDOWS
 
     extern Corvus::Application *Corvus::CreateApplication();
@@ -16,6 +18,9 @@
         Corvus::Application *App = Corvus::CreateApplication();
         if (App)
         {
+            Corvus::Own<Corvus::LayerGUI> GUILayer = Corvus::MakeOwned<Corvus::LayerGUI>("GUI", true);
+            App->PushLayer(std::move(GUILayer));
+
             CORVUS_CORE_TRACE("Application successfully created!");
 
             App->Run();

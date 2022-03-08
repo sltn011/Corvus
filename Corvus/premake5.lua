@@ -31,14 +31,16 @@ project "Corvus"
 		"Source",
 		"Dependencies/spdlog/include",
 		"Dependencies/GLFW/Source/include",
-		"Dependencies/GLAD/Source/include"
+		"Dependencies/GLAD/Source/include",
+		"Dependencies/imgui/Source"
 	}
 	
 	links
 	{
 		"GLFW",
 		"GLAD",
-		"opengl32.lib"
+		"imgui"
+		--"opengl32.lib"
 	}
 	
 	defines

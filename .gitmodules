@@ -4,3 +4,7 @@
 [submodule "Corvus/Dependencies/GLFW/Source"]
 	path = Corvus/Dependencies/GLFW/Source
 	url = https://github.com/glfw/glfw
+[submodule "Corvus/Dependencies/imgui/Source"]
+	path = Corvus/Dependencies/imgui/Source
+	url = https://github.com/ocornut/imgui
+	branch = docking
