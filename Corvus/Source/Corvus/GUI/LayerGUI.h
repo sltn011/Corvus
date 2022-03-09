@@ -1,5 +1,5 @@
-#ifndef CORVUS_SOURCE_CORVUS_DEBUG_LAYERDEBUG_H
-#define CORVUS_SOURCE_CORVUS_DEBUG_LAYERDEBUG_H
+#ifndef CORVUS_SOURCE_CORVUS_GUI_LAYERGUI_H
+#define CORVUS_SOURCE_CORVUS_GUI_LAYERGUI_H
 
 #include "Corvus/Core/LayerBase.h"
 
@@ -17,14 +17,14 @@ namespace Corvus
         LayerGUI(String LayerName, bool bEnabled);
         virtual ~LayerGUI();
 
-        virtual void OnPushed() override;
-        virtual void OnPoped() override;
+        virtual void Render() override;
 
-        virtual void OnUpdate() override;
-        virtual void OnEvent(EventBase &Event) override;
+    private:
+
+        static UInt8 s_NumImGUIInstances;
 
     };
 
 }
 
-#endif // !CORVUS_SOURCE_CORVUS_DEBUG_LAYERDEBUG_H
+#endif // !CORVUS_SOURCE_CORVUS_GUI_LAYERGUI_H

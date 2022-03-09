@@ -11,8 +11,7 @@ project "imgui"
 	
 	includedirs
 	{
-		"Source",
-		"../GLFW/Source/include"
+		"Source"
 	}
 	
 	files
@@ -28,12 +27,7 @@ project "imgui"
 		"Source/imgui_widgets.cpp",
 		"Source/imstb_rectpack.h",
 		"Source/imstb_textedit.h",
-		"Source/imstb_truetype.h",
-		
-		"Source/backends/imgui_impl_glfw.cpp",
-		"Source/backends/imgui_impl_glfw.h",
-		"Source/backends/imgui_impl_opengl3.cpp",
-		"Source/backends/imgui_impl_opengl3.h"
+		"Source/imstb_truetype.h"
 	}	
 	
 	filter { "system:windows" }

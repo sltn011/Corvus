@@ -35,4 +35,16 @@ namespace Corvus
         CORVUS_CORE_TRACE("Layer \"{0}\" poped of layers stack!", m_LayerName);
     }
 
+    void LayerBase::OnUpdate()
+    {
+    }
+
+    void LayerBase::OnEvent(EventBase &Event)
+    {
+    }
+
+    void LayerBase::Render()
+    {
+    }
+
 }

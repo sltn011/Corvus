@@ -20,8 +20,10 @@ namespace Corvus
         virtual void OnPushed();
         virtual void OnPoped();
 
-        virtual void OnUpdate() = 0;
-        virtual void OnEvent(EventBase &Event) = 0;
+        virtual void OnUpdate();
+        virtual void OnEvent(EventBase &Event);
+
+        virtual void Render();
 
     protected:
 

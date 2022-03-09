@@ -16,6 +16,7 @@ namespace Corvus
 
         InitWindow();
         InitRenderingContext();
+        InitGUIRenderingContext();
     }
 
     Application::~Application()
@@ -32,7 +33,8 @@ namespace Corvus
             glClearColor(0.6f, 0.8f, 1.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            OnUpdate();
+            UpdateLayers();
+            RenderLayers();
 
             // Swap front and back buffers
             glfwSwapBuffers(m_ApplicationWindow.GetRawWindow());
@@ -54,12 +56,27 @@ namespace Corvus
         return m_LayersStack.PopLayer();
     }
 
-    void Application::OnUpdate()
+    void Application::UpdateLayers()
     {
         for (auto It = m_LayersStack.Begin(); It != m_LayersStack.End(); ++It)
         {
             (*It)->OnUpdate();
         }
+    }
+
+    void Application::RenderLayers()
+    {
+        if (!m_GUIController.IsInitialized())
+        {
+            return;
+        }
+
+        m_GUIController.BeginFrame();
+        for (auto It = m_LayersStack.Begin(); It != m_LayersStack.End(); ++It)
+        {
+            (*It)->Render();
+        }
+        m_GUIController.EndFrame();
     }
 
     void Application::OnEventReceived(EventBase &Event)
@@ -102,6 +119,11 @@ namespace Corvus
         glViewport(0, 0, m_ApplicationWindow.GetWindowWidth(), m_ApplicationWindow.GetWindowHeight());
 
         CORVUS_CORE_INFO("Rendering context initialized for Window \"{0}\"", m_ApplicationWindow.GetWindowName());
+    }
+
+    void Application::InitGUIRenderingContext()
+    {
+        m_GUIController.Init();
     }
 
 }

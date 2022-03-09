@@ -3,6 +3,7 @@
 
 #include "Corvus/Core/Base.h"
 #include "Corvus/Core/LayersStack.h"
+#include "Corvus/GUI/GUIController.h"
 #include "Corvus/Window/Window.h"
 
 namespace Corvus 
@@ -20,7 +21,8 @@ namespace Corvus
         void PushLayer(Own<LayerBase> NewLayer);
         Own<LayerBase> PopLayer();
 
-        void OnUpdate();
+        void UpdateLayers();
+        void RenderLayers();
         void OnEventReceived(EventBase &Event);
 
         Window &GetWindow();
@@ -31,9 +33,11 @@ namespace Corvus
 
         void InitWindow();
         void InitRenderingContext();
+        void InitGUIRenderingContext();
 
         Window      m_ApplicationWindow;
         LayersStack m_LayersStack;
+        GUIController m_GUIController;
 
     private:
 
