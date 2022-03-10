@@ -5,7 +5,7 @@
 
 namespace Corvus
 {
-
+    
     using KeyCode      = UInt16;
     using MouseCode    = UInt8;
     using ModifierCode = UInt8;

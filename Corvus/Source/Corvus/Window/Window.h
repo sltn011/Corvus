@@ -45,7 +45,7 @@ namespace Corvus
         bool IsFullScreen() const;
         void SetFullScreen(bool bValue);
 
-        GLFWwindow *GetRawWindow();
+        void *GetRawWindow();
 
         static void WindowErrorCallback(int ErrorCode, char const *Description);
 

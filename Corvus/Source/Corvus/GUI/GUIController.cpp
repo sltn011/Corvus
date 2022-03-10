@@ -43,7 +43,7 @@ namespace Corvus
         //ImGui::StyleColorsClassic();
 
         Application &App = Application::GetInstance();
-        ImGui_ImplGlfw_InitForOpenGL(App.GetWindow().GetRawWindow(), true);
+        ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow*>(App.GetWindow().GetRawWindow()), true);
         ImGui_ImplOpenGL3_Init("#version 460");
 
         s_Instance = this;

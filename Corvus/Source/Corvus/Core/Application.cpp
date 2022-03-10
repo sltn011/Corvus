@@ -28,7 +28,7 @@ namespace Corvus
     {
         CORVUS_CORE_INFO("Running the application!");
 
-        while (!glfwWindowShouldClose(m_ApplicationWindow.GetRawWindow())) {
+        while (!glfwWindowShouldClose(static_cast<GLFWwindow *>(m_ApplicationWindow.GetRawWindow()))) {
 
             glClearColor(0.6f, 0.8f, 1.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
@@ -37,7 +37,7 @@ namespace Corvus
             RenderLayers();
 
             // Swap front and back buffers
-            glfwSwapBuffers(m_ApplicationWindow.GetRawWindow());
+            glfwSwapBuffers(static_cast<GLFWwindow *>(m_ApplicationWindow.GetRawWindow()));
 
             // Process pending events
             glfwPollEvents();
@@ -110,7 +110,7 @@ namespace Corvus
 
     void Application::InitRenderingContext()
     {
-        glfwMakeContextCurrent(m_ApplicationWindow.GetRawWindow());
+        glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_ApplicationWindow.GetRawWindow()));
 
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
             CORVUS_NO_ENTRY_FMT("Failed to initialize rendering context!");
