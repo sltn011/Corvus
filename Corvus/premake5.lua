@@ -44,12 +44,12 @@ project "Corvus"
 		"GLFW",
 		"GLAD",
 		"imgui"
-		--"opengl32.lib"
 	}
 	
 	defines
 	{
-		"GLFW_INCLUDE_NONE"
+		"GLFW_INCLUDE_NONE",
+		"_CRT_SECURE_NO_WARNINGS"
 	}
 	
 	filter { "configurations:Debug" }
