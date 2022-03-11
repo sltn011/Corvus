@@ -38,4 +38,8 @@ namespace Corvus
 
         return m_WindowData.bFullScreen;
     }
+    GUIController &Window::GetGUIController()
+    {
+        return m_GUIController;
+    }
 }

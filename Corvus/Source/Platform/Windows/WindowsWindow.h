@@ -12,6 +12,9 @@ namespace Corvus
         virtual ~WindowsWindow();
 
         virtual void Init(WindowData const &Settings) override;
+        virtual void InitRenderingContext() override;
+        virtual void InitGUIRenderingContext() override;
+
         void Destroy(); 
 
         virtual void OnUpdate() override;

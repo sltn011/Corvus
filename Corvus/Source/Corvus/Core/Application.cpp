@@ -15,8 +15,6 @@ namespace Corvus
         s_ApplicationInstance = this;
 
         InitWindow();
-        InitRenderingContext();
-        InitGUIRenderingContext();
     }
 
     Application::~Application()
@@ -36,11 +34,7 @@ namespace Corvus
             UpdateLayers();
             RenderLayers();
 
-            // Swap front and back buffers
-            glfwSwapBuffers(static_cast<GLFWwindow *>(m_Window->GetRawWindow()));
-
-            // Process pending events
-            glfwPollEvents();
+            m_Window->OnUpdate();
         }
 
         CORVUS_CORE_INFO("Application finished running!");
@@ -66,17 +60,17 @@ namespace Corvus
 
     void Application::RenderLayers()
     {
-        if (!m_GUIController.IsInitialized())
+        if (!m_Window->GetGUIController().IsInitialized())
         {
             return;
         }
 
-        m_GUIController.BeginFrame();
+        m_Window->GetGUIController().BeginFrame();
         for (auto It = m_LayersStack.Begin(); It != m_LayersStack.End(); ++It)
         {
             (*It)->Render();
         }
-        m_GUIController.EndFrame();
+        m_Window->GetGUIController().EndFrame();
     }
 
     void Application::OnEventReceived(EventBase &Event)
@@ -101,6 +95,7 @@ namespace Corvus
         WindowSettings.WindowWidth = 1280;
         WindowSettings.WindowHeight = 720;
         WindowSettings.WindowName = "TestWindow";
+        WindowSettings.bVSyncEnabled = true;
 
         m_Window = Window::Create();
         CORVUS_CORE_ASSERT(m_Window);
@@ -110,23 +105,4 @@ namespace Corvus
         CORVUS_CORE_INFO("Application Window \"{0}\" {1}x{2} initialized", 
             m_Window->GetWindowName(), m_Window->GetWindowWidth(), m_Window->GetWindowHeight());
     }
-
-    void Application::InitRenderingContext()
-    {
-        glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_Window->GetRawWindow()));
-
-        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-            CORVUS_NO_ENTRY_FMT("Failed to initialize rendering context!");
-        }
-
-        glViewport(0, 0, m_Window->GetWindowWidth(), m_Window->GetWindowHeight());
-
-        CORVUS_CORE_INFO("Rendering context initialized for Window \"{0}\"", m_Window->GetWindowName());
-    }
-
-    void Application::InitGUIRenderingContext()
-    {
-        m_GUIController.Init();
-    }
-
 }

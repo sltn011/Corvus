@@ -61,6 +61,29 @@ namespace Corvus
         glfwSetWindowUserPointer(m_Window, this);
 
         SetupWindowEventsHandlers();
+
+        InitRenderingContext();
+        InitGUIRenderingContext();
+
+        SetFullScreen(m_WindowData.bFullScreen);
+        SetVSyncEnabled(m_WindowData.bVSyncEnabled);
+
+        CORVUS_CORE_ASSERT(m_Window);
+        CORVUS_CORE_ASSERT(m_RenderingContext);
+    }
+
+    void WindowsWindow::InitRenderingContext()
+    {
+        m_RenderingContext = RenderingContextBase::Create(*this);
+        CORVUS_CORE_ASSERT(m_RenderingContext);
+        m_RenderingContext->Init();
+        CORVUS_CORE_INFO("Rendering context created");
+    }
+
+    void WindowsWindow::InitGUIRenderingContext()
+    {
+        m_GUIController.Init();
+        CORVUS_CORE_INFO("GUI rendering context created");
     }
 
     void WindowsWindow::Destroy()
@@ -70,6 +93,9 @@ namespace Corvus
             CORVUS_CORE_TRACE("Window is not initialized and does not need to be destroyed");
             return;
         }
+
+        m_RenderingContext.reset();
+        m_GUIController.Destroy();
 
         glfwDestroyWindow(m_Window);
         m_Window = nullptr;
@@ -88,6 +114,7 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT(m_bIsInitialized);
         glfwPollEvents();
+        m_RenderingContext->SwapBuffers();
     }
 
     void WindowsWindow::SetVSyncEnabled(bool bValue)
@@ -115,7 +142,7 @@ namespace Corvus
 
     void WindowsWindow::WindowErrorCallback(int ErrorCode, char const *Description)
     {
-        CORVUS_CORE_ERROR("GLFW Error - Code: {0}, Description: {1}", ErrorCode, static_cast<void const *>(Description));
+        CORVUS_CORE_ERROR("GLFW Error - Code: {0}, Description: {1:s}", ErrorCode, Description);
     }
 
     void WindowsWindow::SetupWindowEventsHandlers()

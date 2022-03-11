@@ -4,6 +4,8 @@
 #include "Corvus/Core/Base.h"
 #include "Corvus/Core/Delegate.h"
 #include "Corvus/Events/EventBase.h"
+#include "Corvus/GUI/GUIController.h"
+#include "Corvus/Renderer/RenderingContextBase.h"
 
 struct GLFWwindow;
 
@@ -32,6 +34,8 @@ namespace Corvus
         virtual ~Window();
 
         virtual void Init(WindowData const &Settings) = 0;
+        virtual void InitRenderingContext() = 0;
+        virtual void InitGUIRenderingContext() = 0;
 
         virtual void OnUpdate() = 0;
 
@@ -48,14 +52,17 @@ namespace Corvus
 
         virtual void *GetRawWindow() = 0;
 
+        GUIController &GetGUIController();
+
         OnEventDelegate OnEvent;
 
     protected:
 
         WindowData  m_WindowData;
-
         bool m_bIsInitialized;
 
+        Own<RenderingContextBase> m_RenderingContext;
+        GUIController m_GUIController;
     };
 
 }
