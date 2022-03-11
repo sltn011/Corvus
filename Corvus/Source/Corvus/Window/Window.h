@@ -26,13 +26,14 @@ namespace Corvus
     {
     public:
 
+        static Own<Window> Create();
+
         Window();
-        ~Window();
+        virtual ~Window();
 
-        bool Init(WindowData const &Settings);
-        void Destroy();
+        virtual void Init(WindowData const &Settings) = 0;
 
-        void OnUpdate();
+        virtual void OnUpdate() = 0;
 
         bool IsInitialized() const { return m_bIsInitialized; }
         UInt32 GetWindowWidth() const { return m_WindowData.WindowWidth; }
@@ -40,29 +41,21 @@ namespace Corvus
         String GetWindowName() const { return m_WindowData.WindowName; }
 
         bool IsVSyncEnabled() const;
-        void SetVSyncEnabled(bool bValue);
+        virtual void SetVSyncEnabled(bool bValue) = 0;
 
         bool IsFullScreen() const;
-        void SetFullScreen(bool bValue);
+        virtual void SetFullScreen(bool bValue) = 0;
 
-        void *GetRawWindow();
-
-        static void WindowErrorCallback(int ErrorCode, char const *Description);
+        virtual void *GetRawWindow() = 0;
 
         OnEventDelegate OnEvent;
 
     protected:
 
-        void SetupWindowEventsHandlers();
-
-        GLFWwindow *m_Window;
         WindowData  m_WindowData;
-
-    private:
 
         bool m_bIsInitialized;
 
-        static Int8 s_WindowsCount;
     };
 
 }

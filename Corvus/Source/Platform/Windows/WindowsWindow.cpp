@@ -2,33 +2,29 @@
 #include "Corvus/Events/ApplicationEvent.h"
 #include "Corvus/Events/KeyboardEvent.h"
 #include "Corvus/Events/MouseEvent.h"
-#include "Corvus/Window/Window.h"
+#include "Platform/Windows/WindowsWindow.h"
 
 #include <GLFW/glfw3.h>
 
 namespace Corvus
 {
-    Int8 Window::s_WindowsCount = 0;
+    Int8 WindowsWindow::s_WindowsCount = 0;
 
-    Window::Window()
-        : m_Window { nullptr }, m_bIsInitialized{ false }
+    WindowsWindow::WindowsWindow()
+        : m_Window{ nullptr }
     {
     }
 
-    Window::~Window()
+    WindowsWindow::~WindowsWindow()
     {
         Destroy();
     }
 
-    bool Window::Init(WindowData const &Settings)
+    void WindowsWindow::Init(WindowData const &Settings)
     {
-        if (m_bIsInitialized)
-        {
-            CORVUS_CORE_ERROR("Attempt to re-initialize already created window \"{0}\"!", m_WindowData.WindowName);
-            return false;
-        }
+        CORVUS_CORE_ASSERT_FMT(!m_bIsInitialized, "Can not re-initialize already created window \"{0}\"!", m_WindowData.WindowName);
 
-        if (!s_WindowsCount) 
+        if (!s_WindowsCount)
         {
             bool GLFWInitialized = glfwInit();
             CORVUS_CORE_ASSERT(GLFWInitialized);
@@ -65,11 +61,9 @@ namespace Corvus
         glfwSetWindowUserPointer(m_Window, this);
 
         SetupWindowEventsHandlers();
-
-        return true;
     }
 
-    void Window::Destroy()
+    void WindowsWindow::Destroy()
     {
         if (!m_bIsInitialized)
         {
@@ -90,23 +84,13 @@ namespace Corvus
         }
     }
 
-    void Window::OnUpdate()
+    void WindowsWindow::OnUpdate()
     {
         CORVUS_CORE_ASSERT(m_bIsInitialized);
         glfwPollEvents();
     }
 
-    bool Window::IsVSyncEnabled() const
-    {
-        if (!m_bIsInitialized)
-        {
-            return false;
-        }
-
-        return m_WindowData.bVSyncEnabled;
-    }
-
-    void Window::SetVSyncEnabled(bool bValue)
+    void WindowsWindow::SetVSyncEnabled(bool bValue)
     {
         if (!m_bIsInitialized)
         {
@@ -119,32 +103,22 @@ namespace Corvus
         CORVUS_CORE_TRACE("Window \"{0}\" VSync {1}", m_WindowData.WindowName, bValue ? "On" : "Off");
     }
 
-    bool Window::IsFullScreen() const
+    void WindowsWindow::SetFullScreen(bool bValue)
     {
-        if (!m_bIsInitialized)
-        {
-            return false;
-        }
-
-        return m_WindowData.bFullScreen;
+        CORVUS_CORE_ERROR("Switching Windows Window fullscreen on/off not yet implemented!");
     }
 
-    void Window::SetFullScreen(bool bValue)
-    {
-        CORVUS_CORE_ERROR("Changing window fullscreen mode not implemented yet!");
-    }
-
-    void *Window::GetRawWindow()
+    void *WindowsWindow::GetRawWindow()
     {
         return m_Window;
     }
 
-    void Window::WindowErrorCallback(int ErrorCode, char const *Description)
+    void WindowsWindow::WindowErrorCallback(int ErrorCode, char const *Description)
     {
         CORVUS_CORE_ERROR("GLFW Error - Code: {0}, Description: {1}", ErrorCode, static_cast<void const *>(Description));
     }
 
-    void Window::SetupWindowEventsHandlers()
+    void WindowsWindow::SetupWindowEventsHandlers()
     {
         glfwSetWindowSizeCallback(m_Window, [](GLFWwindow *Caller, int NewWidth, int NewHeight)
         {
@@ -163,12 +137,12 @@ namespace Corvus
         glfwSetKeyCallback(m_Window, [](GLFWwindow *Caller, int RawKey, int RawScancode, int RawAction, int RawMods)
         {
             Window *Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
-            
+
             KeyCode Key = static_cast<KeyCode>(RawKey);
             ActionCode Action = static_cast<ActionCode>(RawAction);
             ModifierCode Mods = static_cast<ModifierCode>(RawMods);
 
-            if (Action == Action::Press) 
+            if (Action == Action::Press)
             {
                 KeyPressEvent Event{ Key, false, Mods };
                 Owner->OnEvent.Broadcast(Event);

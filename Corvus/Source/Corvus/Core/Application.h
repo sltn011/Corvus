@@ -35,8 +35,8 @@ namespace Corvus
         void InitRenderingContext();
         void InitGUIRenderingContext();
 
-        Window      m_ApplicationWindow;
-        LayersStack m_LayersStack;
+        Own<Window>   m_Window;
+        LayersStack   m_LayersStack;
         GUIController m_GUIController;
 
     private:
