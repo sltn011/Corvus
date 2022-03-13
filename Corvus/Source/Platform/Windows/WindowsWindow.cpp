@@ -132,7 +132,7 @@ namespace Corvus
 
     void WindowsWindow::SetFullScreen(bool bValue)
     {
-        CORVUS_CORE_ERROR("Switching Windows Window fullscreen on/off not yet implemented!");
+        CORVUS_CORE_ERROR("Switching WindowsWindow fullscreen on/off not yet implemented!");
     }
 
     void *WindowsWindow::GetRawWindow()
