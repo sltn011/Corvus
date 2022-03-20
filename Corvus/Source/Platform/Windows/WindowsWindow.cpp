@@ -24,7 +24,7 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT_FMT(!m_bIsInitialized, "Can not re-initialize already created window \"{0}\"!", m_WindowData.WindowName);
 
-        if (!s_WindowsCount)
+        if (s_WindowsCount == 0)
         {
             bool GLFWInitialized = glfwInit();
             CORVUS_CORE_ASSERT(GLFWInitialized);

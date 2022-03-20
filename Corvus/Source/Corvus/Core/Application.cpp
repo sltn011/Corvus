@@ -1,6 +1,8 @@
 #include "CorvusPCH.h"
 #include "Corvus/Core/Application.h"
 
+#include "Corvus/Renderer/ShaderBase.h"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -55,72 +57,15 @@ namespace Corvus
         glBindVertexArray(0);
 
         // Shader
-        GLuint Shader = glCreateProgram();
-        GLchar ShaderLog[512];
-        GLint Status;
-
-        String VertexCode =
-            "#version 460 core\n"
-            "\n"
-            "layout(location = 0) in vec4 inPos;\n"
-            "\n"
-            "void main()\n"
-            "{\n"
-            "    gl_Position = inPos;\n"
-            "}\n";
-
-        GLuint VertexShader = glCreateShader(GL_VERTEX_SHADER);
-        GLchar const *VertexShaderCode = VertexCode.c_str();
-        glShaderSource(VertexShader, 1, &VertexShaderCode, nullptr);
-        glCompileShader(VertexShader);
-        glGetShaderiv(VertexShader, GL_COMPILE_STATUS, &Status);
-        if (!Status)
-        {
-            glGetShaderInfoLog(VertexShader, 512, nullptr, ShaderLog);
-            CORVUS_CORE_ERROR("{:s}", ShaderLog);
-        }
-
-        String FragmentCode =
-            "#version 460 core\n"
-            "\n"
-            "out vec4 outColor;\n"
-            "\n"
-            "void main()\n"
-            "{\n"
-            "    outColor = vec4(0.1f, 0.5f, 0.1f, 1.0f);\n"
-            "}\n";
-
-        GLuint FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        GLchar const *FragmentShaderCode = FragmentCode.c_str();
-        glShaderSource(FragmentShader, 1, &FragmentShaderCode, nullptr);
-        glCompileShader(FragmentShader);
-        glGetShaderiv(FragmentShader, GL_COMPILE_STATUS, &Status);
-        if (!Status)
-        {
-            glGetShaderInfoLog(FragmentShader, 512, nullptr, ShaderLog);
-            CORVUS_CORE_ERROR("{:s}", ShaderLog);
-        }
-
-        glAttachShader(Shader, VertexShader);
-        glAttachShader(Shader, FragmentShader);
-        glLinkProgram(Shader);
-        glGetProgramiv(Shader, GL_LINK_STATUS, &Status);
-        if (!Status)
-        {
-            glGetProgramInfoLog(Shader, 512, nullptr, ShaderLog);
-            CORVUS_CORE_ERROR("{:s}", ShaderLog);
-        }
-
-        glDeleteShader(VertexShader);
-        glDeleteShader(FragmentShader);
-
+        Own<ShaderBase> TestShader = ShaderBase::CreateFromFile("./Assets/Shaders/TestShader.glsl");
 
         while (!glfwWindowShouldClose(static_cast<GLFWwindow *>(m_Window->GetRawWindow()))) {
 
             glClearColor(0.6f, 0.8f, 1.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            glUseProgram(Shader);
+            TestShader->Bind();
+            TestShader->SetVec3("u_Color", glm::vec3{ 1.0f, 0.2f, 0.1f });
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);

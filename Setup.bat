@@ -1,3 +1,3 @@
 git submodule update --init
-"./Dependencies/Premake/Binary/premake5.exe" vs2019
+call RunPremake.bat
 PAUSE

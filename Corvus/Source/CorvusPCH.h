@@ -12,11 +12,13 @@
 #include "Corvus/Core/PlatformDetection.h"
 
 #include <array>
+#include <fstream>
 #include <memory>
 #include <sstream>
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #endif // !CORVUS_SOURCE_CORVUSPCH_H
