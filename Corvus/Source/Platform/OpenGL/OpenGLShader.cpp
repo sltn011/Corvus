@@ -93,7 +93,7 @@ namespace Corvus
     void OpenGLShader::SetBool(String const &Name, bool Value)
     {
         GLint Location = GetUniformLocation(Name);
-        glUniform1i(Location, Value);
+        glUniform1i(Location, static_cast<Int32>(Value));
     }
 
     void OpenGLShader::SetInt32(String const &Name, Int32 Value)
