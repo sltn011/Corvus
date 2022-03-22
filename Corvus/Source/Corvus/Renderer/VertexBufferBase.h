@@ -11,17 +11,22 @@ namespace Corvus
     {
     public:
 
-        static Own<VertexBufferBase> Create(void *Data, UInt32 NumVertices, VertexBufferLayout const &Layout);
+        static Own<VertexBufferBase> Create(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout);
+
+        virtual ~VertexBufferBase();
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
+
+        virtual void SetData(void const *Data, UInt32 NumVertices) = 0;
+        virtual void SetData(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout) = 0;
 
         UInt32 GetNumVertices() const;
         VertexBufferLayout &GetLayout();
 
     protected:
 
-        UInt32 m_NumVertices;
+        UInt32 m_NumVertices = 0;
         VertexBufferLayout m_Layout;
 
     };

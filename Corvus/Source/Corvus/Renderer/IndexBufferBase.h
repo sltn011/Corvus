@@ -10,10 +10,14 @@ namespace Corvus
     {
     public:
 
-        static Own<IndexBufferBase> Create(UInt32 *Data, UInt32 NumIndices);
+        static Own<IndexBufferBase> Create(UInt32 const *Data, UInt32 NumIndices);
+
+        virtual ~IndexBufferBase();
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
+
+        virtual void SetData(UInt32 const *Data, UInt32 NumIndices) = 0;
 
         UInt32 GetNumIndices() const;
 

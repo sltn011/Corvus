@@ -29,6 +29,7 @@ namespace Corvus
             case BufferDataType::Vec4:  return 4;
             case BufferDataType::Mat3:  return 3 * 3;
             case BufferDataType::Mat4:  return 4 * 4;
+
             default: CORVUS_CORE_NO_ENTRY_FMT("Unknown BufferDataType used!");
         }
 
@@ -47,6 +48,7 @@ namespace Corvus
             case BufferDataType::Vec4:  return 4 * 4;
             case BufferDataType::Mat3:  return 4 * 3 * 3;
             case BufferDataType::Mat4:  return 4 * 4 * 4;
+
             default: CORVUS_CORE_NO_ENTRY_FMT("Unknown BufferDataType used!");
         }
 

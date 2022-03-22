@@ -3,22 +3,25 @@
 #type vertex
 #version 460 core
 
-layout (location = 0) in vec4 inPos;
+layout (location = 0) in vec3 inPos;
+layout (location = 1) in vec3 inColor;
+
+out vec4 VertexColor;
 
 void main()
 {
-	gl_Position = inPos;
+	VertexColor = vec4(inColor, 1.0f);
+	gl_Position = vec4(inPos, 1.0f);
 }
 
 
 #type fragment
 #version 460 core
 
-uniform vec3 u_Color;
-
-out vec4 Color;
+in vec4 VertexColor;
+out vec4 FragColor;
 
 void main()
 {
-	Color = vec4(u_Color, 1.0f);
+	FragColor = VertexColor;
 }

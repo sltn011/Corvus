@@ -1,6 +1,8 @@
 #include "CorvusPCH.h"
 #include "Corvus/Core/Application.h"
 
+#include "Corvus/Renderer/VertexBufferBase.h"
+#include "Corvus/Renderer/IndexBufferBase.h"
 #include "Corvus/Renderer/ShaderBase.h"
 
 #include <glad/glad.h>
@@ -29,30 +31,29 @@ namespace Corvus
         CORVUS_CORE_INFO("Running the application!");
 
         // Triangle Data
-        GLuint VAO, VBO, EBO;
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-        glGenBuffers(1, &EBO);
-
+        GLuint VAO;
+        glCreateVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
-        float vertices[] = {
-            -0.2f, -0.2f, 0.0f,
-            +0.2f, -0.2f, 0.0f,
-            +0.0f, +0.5f, 0.0f
+        float Vertices[] = {
+            -0.2f, -0.2f, 0.0f, 1.0f, 0.0f, 0.0f,
+            +0.2f, -0.2f, 0.0f, 0.0f, 1.0f, 0.0f,
+            +0.0f, +0.5f, 0.0f, 0.0f, 0.0f, 1.0f
         };
 
-        int indices[] = {
+        UInt32 Indices[] = {
             0, 1, 2
         };
 
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+        VertexBufferLayout Layout;
+        Layout.PushBack(BufferLayoutElement{ BufferDataType::Vec3 });
+        Layout.PushBack(BufferLayoutElement{ BufferDataType::Vec3 });
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
-        glEnableVertexAttribArray(0);
+        Own<VertexBufferBase> VBO = VertexBufferBase::Create(Vertices, 3, Layout);
+        Own<IndexBufferBase> EBO = IndexBufferBase::Create(Indices, 3);
+
+        VBO->Bind();
+        EBO->Bind();
 
         glBindVertexArray(0);
 
@@ -65,9 +66,8 @@ namespace Corvus
             glClear(GL_COLOR_BUFFER_BIT);
 
             TestShader->Bind();
-            TestShader->SetVec3("u_Color", glm::vec3{ 1.0f, 0.2f, 0.1f });
             glBindVertexArray(VAO);
-            glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, EBO->GetNumIndices(), GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
 
             UpdateLayers();

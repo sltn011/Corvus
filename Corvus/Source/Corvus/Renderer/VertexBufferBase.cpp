@@ -1,12 +1,18 @@
 #include "CorvusPCH.h"
 #include "Corvus/Renderer/VertexBufferBase.h"
 
+#include "Platform/OpenGL/OpenGLVertexBuffer.h"
+
 namespace Corvus
 {
-    Own<VertexBufferBase> VertexBufferBase::Create(void *Data, UInt32 NumVertices, VertexBufferLayout const &Layout)
+
+    Own<VertexBufferBase> VertexBufferBase::Create(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout)
     {
-        // TODO
-        return Own<VertexBufferBase>();
+        return MakeOwned<OpenGLVertexBuffer>(Data, NumVertices, Layout);
+    }
+
+    VertexBufferBase::~VertexBufferBase()
+    {
     }
 
     UInt32 VertexBufferBase::GetNumVertices() const
@@ -18,4 +24,5 @@ namespace Corvus
     {
         return m_Layout;
     }
+
 }
