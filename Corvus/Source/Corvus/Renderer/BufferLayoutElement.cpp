@@ -34,4 +34,42 @@ namespace Corvus
     {
         return m_bShouldNormalize;
     }
+
+    UInt8 NumComponentsInBufferDataType(BufferDataType Type)
+    {
+        switch (Type)
+        {
+            case BufferDataType::Bool:  return 1;
+            case BufferDataType::Int:   return 1;
+            case BufferDataType::Float: return 1;
+            case BufferDataType::Vec2:  return 2;
+            case BufferDataType::Vec3:  return 3;
+            case BufferDataType::Vec4:  return 4;
+            case BufferDataType::Mat3:  return 3 * 3;
+            case BufferDataType::Mat4:  return 4 * 4;
+
+            default: CORVUS_CORE_NO_ENTRY_FMT("Unknown BufferDataType used!");
+        }
+
+        return 0;
+    }
+
+    UInt8 SizeofBufferDataType(BufferDataType Type)
+    {
+        switch (Type)
+        {
+            case BufferDataType::Bool:  return 1;
+            case BufferDataType::Int:   return 4;
+            case BufferDataType::Float: return 4;
+            case BufferDataType::Vec2:  return 4 * 2;
+            case BufferDataType::Vec3:  return 4 * 3;
+            case BufferDataType::Vec4:  return 4 * 4;
+            case BufferDataType::Mat3:  return 4 * 3 * 3;
+            case BufferDataType::Mat4:  return 4 * 4 * 4;
+
+            default: CORVUS_CORE_NO_ENTRY_FMT("Unknown BufferDataType used!");
+        }
+
+        return 0;
+    }
 }

@@ -76,7 +76,7 @@ namespace Corvus
 
             GLint         NumComponents    = static_cast<GLint>(Element.GetNumComponents());
             GLenum        Type             = BufferLayoutTypeToGLType(Element.GetType());
-            GLboolean     bShouldNormalize = static_cast<GLboolean>(Element.ShouldNormalize());
+            GLboolean     bShouldNormalize = Element.ShouldNormalize() ? GL_TRUE : GL_FALSE;
             GLvoid const *OffsetPtr        = reinterpret_cast<GLvoid*>(Offset);
 
             glVertexAttribPointer(i, NumComponents, Type, bShouldNormalize, Stride, OffsetPtr);
