@@ -5,17 +5,17 @@ namespace Corvus
 {
     OpenGLVertexBuffer::OpenGLVertexBuffer(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout)
     {
-        glCreateBuffers(1, &m_ID);
+        glCreateBuffers(1, &m_VBO);
         SetData(Data, NumVertices, Layout);
     }
 
     OpenGLVertexBuffer::~OpenGLVertexBuffer()
     {
-        glDeleteBuffers(1, &m_ID);
+        glDeleteBuffers(1, &m_VBO);
     }
 
     OpenGLVertexBuffer::OpenGLVertexBuffer(OpenGLVertexBuffer &&Rhs) noexcept
-        : m_ID{ std::exchange(Rhs.m_ID, 0) }
+        : m_VBO{ std::exchange(Rhs.m_VBO, 0) }
     {
         m_NumVertices = Rhs.m_NumVertices;
         m_Layout = std::move(Rhs.m_Layout);
@@ -25,28 +25,33 @@ namespace Corvus
     {
         if (this != &Rhs)
         {
-            m_ID = std::exchange(Rhs.m_ID, 0);
+            m_VBO = std::exchange(Rhs.m_VBO, 0);
             m_NumVertices = Rhs.m_NumVertices;
             m_Layout = std::move(Rhs.m_Layout);
         }
         return *this;
     }
 
+    GLuint OpenGLVertexBuffer::GetID() const
+    {
+        return m_VBO;
+    }
+
     void OpenGLVertexBuffer::Bind()
     {
-        glBindBuffer(GL_ARRAY_BUFFER, m_ID);
+        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     }
 
     void OpenGLVertexBuffer::Unbind()
     {
-        glBindBuffer(GL_ARRAY_BUFFER, m_ID);
+        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     }
 
     void OpenGLVertexBuffer::SetData(void const *Data, UInt32 NumVertices)
     {
         m_NumVertices = NumVertices;
         UInt32 VertexSize = m_Layout.Stride();
-        glNamedBufferData(m_ID, static_cast<GLsizei>(VertexSize * m_NumVertices), Data, GL_STATIC_DRAW);
+        glNamedBufferData(m_VBO, static_cast<GLsizei>(VertexSize * m_NumVertices), Data, GL_STATIC_DRAW);
     }
 
     void OpenGLVertexBuffer::SetData(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout)

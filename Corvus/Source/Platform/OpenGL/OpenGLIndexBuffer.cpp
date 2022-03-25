@@ -5,17 +5,17 @@ namespace Corvus
 {
     OpenGLIndexBuffer::OpenGLIndexBuffer(UInt32 const *Data, UInt32 NumIndices)
     {
-        glCreateBuffers(1, &m_ID);
+        glCreateBuffers(1, &m_EBO);
         SetData(Data, NumIndices);
     }
 
     OpenGLIndexBuffer::~OpenGLIndexBuffer()
     {
-        glDeleteBuffers(1, &m_ID);
+        glDeleteBuffers(1, &m_EBO);
     }
 
     OpenGLIndexBuffer::OpenGLIndexBuffer(OpenGLIndexBuffer &&Rhs) noexcept
-        : m_ID{ std::exchange(Rhs.m_ID, 0) }
+        : m_EBO{ std::exchange(Rhs.m_EBO, 0) }
     {
         m_NumIndices = Rhs.m_NumIndices;
     }
@@ -24,15 +24,20 @@ namespace Corvus
     {
         if (this != &Rhs)
         {
-            m_ID = std::exchange(Rhs.m_ID, 0);
+            m_EBO = std::exchange(Rhs.m_EBO, 0);
             m_NumIndices = Rhs.m_NumIndices;
         }
         return *this;
     }
 
+    GLuint OpenGLIndexBuffer::GetID() const
+    {
+        return m_EBO;
+    }
+
     void OpenGLIndexBuffer::Bind()
     {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ID);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     }
 
     void OpenGLIndexBuffer::Unbind()
@@ -45,6 +50,6 @@ namespace Corvus
         Bind(); // GL_ELEMENT_ARRAY_BUFFER should stay binded inside vertex array
 
         m_NumIndices = NumIndices;
-        glNamedBufferData(m_ID, static_cast<GLsizei>(sizeof(GLuint) * NumIndices), Data, GL_STATIC_DRAW);
+        glNamedBufferData(m_EBO, static_cast<GLsizei>(sizeof(GLuint) * NumIndices), Data, GL_STATIC_DRAW);
     }
 }

@@ -20,6 +20,8 @@ namespace Corvus
         OpenGLIndexBuffer &operator=(OpenGLIndexBuffer const &) = delete;
         OpenGLIndexBuffer &operator=(OpenGLIndexBuffer &&Rhs) noexcept;
 
+        GLuint GetID() const;
+
         virtual void Bind() override;
         virtual void Unbind() override;
 
@@ -27,7 +29,7 @@ namespace Corvus
 
     protected:
 
-        GLuint m_ID = 0;
+        GLuint m_EBO = 0;
 
     };
 

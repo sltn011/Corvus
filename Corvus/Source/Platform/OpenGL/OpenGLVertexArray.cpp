@@ -8,16 +8,16 @@ namespace Corvus
 {
     OpenGLVertexArray::OpenGLVertexArray()
     {
-        glCreateVertexArrays(1, &m_ID);
+        glCreateVertexArrays(1, &m_VAO);
     }
 
     OpenGLVertexArray::~OpenGLVertexArray()
     {
-        glDeleteVertexArrays(1, &m_ID);
+        glDeleteVertexArrays(1, &m_VAO);
     }
 
     OpenGLVertexArray::OpenGLVertexArray(OpenGLVertexArray &&Rhs) noexcept
-        : m_ID{ std::exchange(Rhs.m_ID, 0) }
+        : m_VAO{ std::exchange(Rhs.m_VAO, 0) }
     {
         m_IndexBuffer = std::move(Rhs.m_IndexBuffer);
         m_VertexBuffer = std::move(Rhs.m_VertexBuffer);
@@ -27,7 +27,7 @@ namespace Corvus
     {
         if (this != &Rhs)
         {
-            m_ID = std::exchange(Rhs.m_ID, 0);
+            m_VAO = std::exchange(Rhs.m_VAO, 0);
             m_IndexBuffer = std::move(Rhs.m_IndexBuffer);
             m_VertexBuffer = std::move(Rhs.m_VertexBuffer);
         }
@@ -36,7 +36,7 @@ namespace Corvus
 
     void OpenGLVertexArray::Bind()
     {
-        glBindVertexArray(m_ID);
+        glBindVertexArray(m_VAO);
     }
 
     void OpenGLVertexArray::Unbind()
@@ -48,20 +48,17 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT(IndexBuffer);
 
-        glBindVertexArray(m_ID);
-
         m_IndexBuffer = std::move(IndexBuffer);
-        m_IndexBuffer->Bind(); // Index buffer binding is stored inside Vertex Array
+
+        GLuint EBO = ((OpenGLIndexBuffer *)m_IndexBuffer.get())->GetID();
+        glVertexArrayElementBuffer(m_VAO, EBO);
     }
 
     void OpenGLVertexArray::AddVertexBuffer(Own<VertexBufferBase> &&VertexBuffer)
     {
         CORVUS_CORE_ASSERT(VertexBuffer);
 
-        glBindVertexArray(m_ID);
-
         m_VertexBuffer = std::move(VertexBuffer);
-        m_VertexBuffer->Bind(); // Vertex buffer ID is stored in attribute but I still leave it binded
 
         DisableVertexAttributes();
         EnableVertexAttributes();
@@ -74,8 +71,10 @@ namespace Corvus
         VertexBufferLayout &Layout = m_VertexBuffer->GetLayout();
 
         GLsizei Stride = static_cast<GLsizei>(Layout.Stride());
-        UInt64  Offset = 0;
+        GLuint VBO = ((OpenGLVertexBuffer *)m_VertexBuffer.get())->GetID();
+        glVertexArrayVertexBuffer(m_VAO, 0, VBO, 0, Stride);
 
+        GLuint  Offset = 0;
         for (UInt32 i = 0; i < Layout.Size(); ++i)
         {
             BufferLayoutElement &Element = Layout[i];
@@ -83,12 +82,12 @@ namespace Corvus
             GLint         NumComponents = static_cast<GLint>(Element.GetNumComponents());
             GLenum        Type = OpenGLVertexBuffer::BufferLayoutTypeToGLType(Element.GetType());
             GLboolean     bShouldNormalize = Element.ShouldNormalize() ? GL_TRUE : GL_FALSE;
-            GLvoid const *OffsetPtr = reinterpret_cast<GLvoid *>(Offset);
 
-            glVertexAttribPointer(i, NumComponents, Type, bShouldNormalize, Stride, OffsetPtr);
-            glEnableVertexAttribArray(i);
+            glEnableVertexArrayAttrib(m_VAO, i);
+            glVertexArrayAttribBinding(m_VAO, i, 0);
+            glVertexArrayAttribFormat(m_VAO, i, NumComponents, Type, bShouldNormalize, Offset);
 
-            Offset += Element.GetSize();
+            Offset += static_cast<GLuint>(Element.GetSize());
         }
     }
 
@@ -98,7 +97,7 @@ namespace Corvus
 
         for (UInt32 i = 0; i < m_VertexBuffer->GetLayout().Size(); ++i)
         {
-            glDisableVertexAttribArray(static_cast<GLuint>(i));
+            glDisableVertexArrayAttrib(m_VAO, static_cast<GLuint>(i));
         }
     }
 }

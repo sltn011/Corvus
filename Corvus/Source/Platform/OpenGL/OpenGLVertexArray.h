@@ -31,7 +31,7 @@ namespace Corvus
         void EnableVertexAttributes();
         void DisableVertexAttributes();
 
-        GLuint m_ID = 0;
+        GLuint m_VAO = 0;
 
     };
 

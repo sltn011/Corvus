@@ -20,6 +20,8 @@ namespace Corvus
         OpenGLVertexBuffer &operator=(OpenGLVertexBuffer const &) = delete;
         OpenGLVertexBuffer &operator=(OpenGLVertexBuffer &&Rhs) noexcept;
 
+        GLuint GetID() const;
+
         virtual void Bind() override;
         virtual void Unbind() override;
 
@@ -30,7 +32,7 @@ namespace Corvus
 
     protected:
 
-        GLuint m_ID = 0;
+        GLuint m_VBO = 0;
 
     };
 
