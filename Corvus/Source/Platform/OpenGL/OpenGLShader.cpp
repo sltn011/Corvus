@@ -44,8 +44,6 @@ namespace Corvus
         GLuint FragmentShader = CreateShader(GL_FRAGMENT_SHADER, FragmentCode);
 
         m_ID = glCreateProgram();
-        CORVUS_CORE_ASSERT_FMT(m_ID != 0, "Failed to create OpenGL Shader Program!");
-
         glAttachShader(m_ID, VertexShader);
         glAttachShader(m_ID, FragmentShader);
         glLinkProgram(m_ID);
@@ -79,7 +77,6 @@ namespace Corvus
 
     void OpenGLShader::Bind()
     {
-        CORVUS_CORE_ASSERT_FMT(m_ID != 0, "Invalid OpenGL Shader Programm ID specified!");
         glUseProgram(m_ID);
     }
 

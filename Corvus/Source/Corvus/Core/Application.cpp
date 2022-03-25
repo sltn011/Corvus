@@ -1,6 +1,7 @@
 #include "CorvusPCH.h"
 #include "Corvus/Core/Application.h"
 
+#include "Corvus/Renderer/VertexArrayBase.h"
 #include "Corvus/Renderer/VertexBufferBase.h"
 #include "Corvus/Renderer/IndexBufferBase.h"
 #include "Corvus/Renderer/ShaderBase.h"
@@ -30,11 +31,6 @@ namespace Corvus
     {
         CORVUS_CORE_INFO("Running the application!");
 
-        // Triangle Data
-        GLuint VAO;
-        glCreateVertexArrays(1, &VAO);
-        glBindVertexArray(VAO);
-
         float Vertices[] = {
             -0.2f, -0.2f, 0.0f, 1.0f, 0.0f, 0.0f,
             +0.2f, -0.2f, 0.0f, 0.0f, 1.0f, 0.0f,
@@ -53,9 +49,10 @@ namespace Corvus
         Own<VertexBufferBase> VBO = VertexBufferBase::Create(Vertices, 3, Layout);
         Own<IndexBufferBase> EBO = IndexBufferBase::Create(Indices, 3);
 
-        glBindVertexArray(0);
+        Own<VertexArrayBase> VAO = VertexArrayBase::Create();
+        VAO->AddVertexBuffer(std::move(VBO));
+        VAO->AddIndexBuffer(std::move(EBO));
 
-        // Shader
         Own<ShaderBase> TestShader = ShaderBase::CreateFromFile("./Assets/Shaders/TestShader.glsl");
 
         while (!glfwWindowShouldClose(static_cast<GLFWwindow *>(m_Window->GetRawWindow()))) {
@@ -64,9 +61,8 @@ namespace Corvus
             glClear(GL_COLOR_BUFFER_BIT);
 
             TestShader->Bind();
-            glBindVertexArray(VAO);
-            glDrawElements(GL_TRIANGLES, EBO->GetNumIndices(), GL_UNSIGNED_INT, 0);
-            glBindVertexArray(0);
+            VAO->Bind();
+            glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
             UpdateLayers();
             RenderLayers();

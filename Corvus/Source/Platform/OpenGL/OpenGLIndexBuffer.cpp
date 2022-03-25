@@ -6,8 +6,6 @@ namespace Corvus
     OpenGLIndexBuffer::OpenGLIndexBuffer(UInt32 const *Data, UInt32 NumIndices)
     {
         glCreateBuffers(1, &m_ID);
-        CORVUS_CORE_ASSERT_FMT(m_ID != 0, "Failed to create OpenGL Buffer!");
-
         SetData(Data, NumIndices);
     }
 
@@ -34,7 +32,6 @@ namespace Corvus
 
     void OpenGLIndexBuffer::Bind()
     {
-        CORVUS_CORE_ASSERT_FMT(m_ID != 0, "Invalid OpenGL Index Buffer specified!");
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ID);
     }
 

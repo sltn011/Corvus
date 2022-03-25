@@ -6,8 +6,6 @@ namespace Corvus
     OpenGLVertexBuffer::OpenGLVertexBuffer(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout)
     {
         glCreateBuffers(1, &m_ID);
-        CORVUS_CORE_ASSERT_FMT(m_ID != 0, "Failed to create OpenGL Buffer!");
-        
         SetData(Data, NumVertices, Layout);
     }
 
@@ -36,7 +34,6 @@ namespace Corvus
 
     void OpenGLVertexBuffer::Bind()
     {
-        CORVUS_CORE_ASSERT_FMT(m_ID != 0, "Invalid OpenGL Vertex Buffer specified!");
         glBindBuffer(GL_ARRAY_BUFFER, m_ID);
     }
 
@@ -48,50 +45,14 @@ namespace Corvus
     void OpenGLVertexBuffer::SetData(void const *Data, UInt32 NumVertices)
     {
         m_NumVertices = NumVertices;
-
         UInt32 VertexSize = m_Layout.Stride();
         glNamedBufferData(m_ID, static_cast<GLsizei>(VertexSize * m_NumVertices), Data, GL_STATIC_DRAW);
     }
 
     void OpenGLVertexBuffer::SetData(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout)
     {
-        Bind(); // GL_ARRAY_BUFFER can be unbinded after enabling vertex attributes, but I left it binded
-        DisableVertexAttributes();
-
         m_Layout = Layout;
-
         SetData(Data, NumVertices);
-
-        EnableVertexAttributes();
-    }
-
-    void OpenGLVertexBuffer::EnableVertexAttributes()
-    {
-        GLsizei Stride = static_cast<GLsizei>(m_Layout.Stride());
-        UInt64  Offset = 0;
-
-        for (UInt32 i = 0; i < m_Layout.Size(); ++i)
-        {
-            BufferLayoutElement &Element = m_Layout[i];
-
-            GLint         NumComponents    = static_cast<GLint>(Element.GetNumComponents());
-            GLenum        Type             = BufferLayoutTypeToGLType(Element.GetType());
-            GLboolean     bShouldNormalize = Element.ShouldNormalize() ? GL_TRUE : GL_FALSE;
-            GLvoid const *OffsetPtr        = reinterpret_cast<GLvoid*>(Offset);
-
-            glVertexAttribPointer(i, NumComponents, Type, bShouldNormalize, Stride, OffsetPtr);
-            glEnableVertexAttribArray(i);
-
-            Offset += Element.GetSize();
-        }
-    }
-
-    void OpenGLVertexBuffer::DisableVertexAttributes()
-    {
-        for (UInt32 i = 0; i < m_Layout.Size(); ++i)
-        {
-            glDisableVertexAttribArray(i);
-        }
     }
 
     GLenum OpenGLVertexBuffer::BufferLayoutTypeToGLType(BufferDataType Type)
