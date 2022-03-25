@@ -55,7 +55,7 @@ namespace Corvus
 
     void OpenGLVertexBuffer::SetData(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout)
     {
-        Bind();
+        Bind(); // GL_ARRAY_BUFFER can be unbinded after enabling vertex attributes, but I left it binded
         DisableVertexAttributes();
 
         m_Layout = Layout;
@@ -63,13 +63,12 @@ namespace Corvus
         SetData(Data, NumVertices);
 
         EnableVertexAttributes();
-        Unbind();
     }
 
     void OpenGLVertexBuffer::EnableVertexAttributes()
     {
         GLsizei Stride = static_cast<GLsizei>(m_Layout.Stride());
-        UInt32  Offset = 0;
+        UInt64  Offset = 0;
 
         for (UInt32 i = 0; i < m_Layout.Size(); ++i)
         {

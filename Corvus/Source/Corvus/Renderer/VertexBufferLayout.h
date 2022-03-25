@@ -11,6 +11,9 @@ namespace Corvus
     {
     public:
 
+        VertexBufferLayout() = default;
+        VertexBufferLayout(std::initializer_list<BufferLayoutElement> InitList);
+
         UInt32 Size() const;
         UInt32 Stride();
 
@@ -45,8 +48,8 @@ namespace Corvus
 
         std::vector<BufferLayoutElement> m_Layout;
 
-        UInt32 m_Stride;
-        bool m_StrideDirty;
+        UInt32 m_Stride = 0;
+        bool m_StrideDirty = true;
 
     private:
 

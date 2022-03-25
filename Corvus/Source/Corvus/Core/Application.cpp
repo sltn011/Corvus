@@ -45,15 +45,13 @@ namespace Corvus
             0, 1, 2
         };
 
-        VertexBufferLayout Layout;
-        Layout.PushBack(BufferLayoutElement{ BufferDataType::Vec3 });
-        Layout.PushBack(BufferLayoutElement{ BufferDataType::Vec3 });
+        VertexBufferLayout Layout = {
+            { BufferDataType::Vec3 },
+            { BufferDataType::Vec3 }
+        };
 
         Own<VertexBufferBase> VBO = VertexBufferBase::Create(Vertices, 3, Layout);
         Own<IndexBufferBase> EBO = IndexBufferBase::Create(Indices, 3);
-
-        VBO->Bind();
-        EBO->Bind();
 
         glBindVertexArray(0);
 

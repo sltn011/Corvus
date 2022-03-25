@@ -45,11 +45,9 @@ namespace Corvus
 
     void OpenGLIndexBuffer::SetData(UInt32 const *Data, UInt32 NumIndices)
     {
-        Bind();
+        Bind(); // GL_ELEMENT_ARRAY_BUFFER should stay binded inside vertex array
 
         m_NumIndices = NumIndices;
         glNamedBufferData(m_ID, static_cast<GLsizei>(sizeof(GLuint) * NumIndices), Data, GL_STATIC_DRAW);
-
-        Unbind();
     }
 }

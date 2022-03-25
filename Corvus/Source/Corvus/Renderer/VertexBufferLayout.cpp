@@ -4,6 +4,11 @@
 
 namespace Corvus
 {
+    VertexBufferLayout::VertexBufferLayout(std::initializer_list<BufferLayoutElement> InitList)
+        : m_Layout{ InitList }
+    {
+    }
+
     UInt32 VertexBufferLayout::Size() const
     {
         return static_cast<UInt32>(m_Layout.size());
@@ -22,7 +27,7 @@ namespace Corvus
     BufferLayoutElement &VertexBufferLayout::At(UInt32 Index)
     {
         CORVUS_CORE_ASSERT(Index < Size());
-        m_StrideDirty = true;
+        m_StrideDirty = true; // In case buffer layout will be changed through element reference
         return m_Layout.at(Index);
     }
 
