@@ -23,6 +23,9 @@ namespace Corvus
         virtual void AddIndexBuffer(Own<IndexBuffer> &&IndexBuffer) = 0;
         virtual void AddVertexBuffer(Own<VertexBuffer> &&VertexBuffer) = 0;
 
+        Own<IndexBuffer> &GetIndexBuffer();
+        Own<VertexBuffer> &GetVertexBuffer();
+
     protected:
 
         Own<IndexBuffer> m_IndexBuffer;

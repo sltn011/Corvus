@@ -1,6 +1,7 @@
 #include "CorvusPCH.h"
 #include "Corvus/Core/Application.h"
 
+#include "Corvus/Renderer/Renderer.h"
 #include "Corvus/Renderer/VertexArray.h"
 #include "Corvus/Renderer/VertexBuffer.h"
 #include "Corvus/Renderer/IndexBuffer.h"
@@ -20,6 +21,7 @@ namespace Corvus
         s_ApplicationInstance = this;
 
         InitWindow();
+        Renderer::Init();
     }
 
     Application::~Application()
@@ -57,12 +59,14 @@ namespace Corvus
 
         while (!glfwWindowShouldClose(static_cast<GLFWwindow *>(m_Window->GetRawWindow()))) {
 
-            glClearColor(0.6f, 0.8f, 1.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
+            Renderer::BeginScene();
 
-            TestShader->Bind();
-            VAO->Bind();
-            glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+            Renderer::SetClearColor({ 0.6f, 0.8f, 1.0f, 1.0f });
+            Renderer::Clear();
+
+            Renderer::Submit(VAO, TestShader);
+
+            Renderer::EndScene();
 
             UpdateLayers();
             RenderLayers();

@@ -19,7 +19,11 @@ namespace Corvus
         static Own<GraphicsAPI> Create();
         static API GetAPI() { return m_API; }
 
+        virtual ~GraphicsAPI();
+
         virtual void Init() = 0;
+
+        virtual void ViewportResize(UInt32 Width, UInt32 Height) = 0;
 
         virtual void SetClearColor(glm::vec4 ClearColor) = 0;
         virtual void Clear(bool bColorBuffer = true, bool bDepthBuffer = true, bool bStencilBuffer = true) = 0;

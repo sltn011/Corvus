@@ -23,4 +23,14 @@ namespace Corvus
     {
     }
 
+    Own<IndexBuffer> &VertexArray::GetIndexBuffer()
+    {
+        return m_IndexBuffer;
+    }
+
+    Own<VertexBuffer> &VertexArray::GetVertexBuffer()
+    {
+        return m_VertexBuffer;
+    }
+
 }

@@ -17,4 +17,8 @@ namespace Corvus
         return nullptr;
     }
 
+    GraphicsAPI::~GraphicsAPI()
+    {
+    }
+
 }
