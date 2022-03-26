@@ -74,7 +74,7 @@ namespace Corvus
 
     void WindowsWindow::InitRenderingContext()
     {
-        m_RenderingContext = RenderingContextBase::Create(*this);
+        m_RenderingContext = RenderingContext::Create(*this);
         CORVUS_CORE_ASSERT(m_RenderingContext);
         m_RenderingContext->Init();
         CORVUS_CORE_INFO("Rendering context created");

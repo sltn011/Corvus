@@ -1,7 +1,7 @@
 #ifndef CORVUS_SOURCE_CORVUS_EVENTS_MOUSEEVENT_H
 #define CORVUS_SOURCE_CORVUS_EVENTS_MOUSEEVENT_H
 
-#include "Corvus/Events/EventBase.h"
+#include "Corvus/Events/Event.h"
 #include "Corvus/Core/KeyCodes.h"
 
 #include <sstream>
@@ -9,7 +9,7 @@
 namespace Corvus
 {
 
-    class CursorMoveEvent : public EventBase
+    class CursorMoveEvent : public Event
     {
     public:
 
@@ -33,7 +33,7 @@ namespace Corvus
 
     };
 
-    class MouseScrollEvent : public EventBase
+    class MouseScrollEvent : public Event
     {
     public:
 
@@ -57,7 +57,7 @@ namespace Corvus
 
     };
 
-    class MouseButtonPressEvent : public EventBase
+    class MouseButtonPressEvent : public Event
     {
     public:
 
@@ -82,7 +82,7 @@ namespace Corvus
         ModifierCode Modifier;
     };
 
-    class MouseButtonReleaseEvent : public EventBase
+    class MouseButtonReleaseEvent : public Event
     {
     public:
 

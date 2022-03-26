@@ -1,10 +1,10 @@
 #include "CorvusPCH.h"
 #include "Corvus/Core/Application.h"
 
-#include "Corvus/Renderer/VertexArrayBase.h"
-#include "Corvus/Renderer/VertexBufferBase.h"
-#include "Corvus/Renderer/IndexBufferBase.h"
-#include "Corvus/Renderer/ShaderBase.h"
+#include "Corvus/Renderer/VertexArray.h"
+#include "Corvus/Renderer/VertexBuffer.h"
+#include "Corvus/Renderer/IndexBuffer.h"
+#include "Corvus/Renderer/Shader.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -46,14 +46,14 @@ namespace Corvus
             { BufferDataType::Vec3 }
         };
 
-        Own<VertexBufferBase> VBO = VertexBufferBase::Create(Vertices, 3, Layout);
-        Own<IndexBufferBase> EBO = IndexBufferBase::Create(Indices, 3);
+        Own<VertexBuffer> VBO = VertexBuffer::Create(Vertices, 3, Layout);
+        Own<IndexBuffer> EBO = IndexBuffer::Create(Indices, 3);
 
-        Own<VertexArrayBase> VAO = VertexArrayBase::Create();
+        Own<VertexArray> VAO = VertexArray::Create();
         VAO->AddVertexBuffer(std::move(VBO));
         VAO->AddIndexBuffer(std::move(EBO));
 
-        Own<ShaderBase> TestShader = ShaderBase::CreateFromFile("./Assets/Shaders/TestShader.glsl");
+        Own<Shader> TestShader = Shader::CreateFromFile("./Assets/Shaders/TestShader.glsl");
 
         while (!glfwWindowShouldClose(static_cast<GLFWwindow *>(m_Window->GetRawWindow()))) {
 
@@ -73,12 +73,12 @@ namespace Corvus
         CORVUS_CORE_INFO("Application finished running!");
     }
 
-    void Application::PushLayer(Own<LayerBase> NewLayer)
+    void Application::PushLayer(Own<Layer> NewLayer)
     {
         m_LayersStack.PushLayer(std::move(NewLayer));
     }
 
-    Own<LayerBase> Application::PopLayer()
+    Own<Layer> Application::PopLayer()
     {
         return m_LayersStack.PopLayer();
     }
@@ -106,7 +106,7 @@ namespace Corvus
         m_Window->GetGUIController().EndFrame();
     }
 
-    void Application::OnEventReceived(EventBase &Event)
+    void Application::OnEventReceived(Event &Event)
     {
         for (auto It = m_LayersStack.RBegin(); It != m_LayersStack.REnd(); ++It) 
         {

@@ -1,18 +1,18 @@
-#ifndef CORVUS_SOURCE_CORVUS_CORE_LAYERBASE_H
-#define CORVUS_SOURCE_CORVUS_CORE_LAYERBASE_H
+#ifndef CORVUS_SOURCE_CORVUS_CORE_LAYER_H
+#define CORVUS_SOURCE_CORVUS_CORE_LAYER_H
 
 #include "Corvus/Core/CoreTypes.h"
-#include "Corvus/Events/EventBase.h"
+#include "Corvus/Events/Event.h"
 
 namespace Corvus
 {
 
-    class LayerBase
+    class Layer
     {
     public:
 
-        LayerBase(String LayerName, bool bEnabled);
-        virtual ~LayerBase();
+        Layer(String LayerName, bool bEnabled);
+        virtual ~Layer();
 
         void SetEnabled(bool bEnabled);
         bool IsEnabled() const;
@@ -21,7 +21,7 @@ namespace Corvus
         virtual void OnPoped();
 
         virtual void OnUpdate();
-        virtual void OnEvent(EventBase &Event);
+        virtual void OnEvent(Event &Event);
 
         virtual void Render();
 
@@ -33,4 +33,4 @@ namespace Corvus
 
 }
 
-#endif // !CORVUS_SOURCE_CORVUS_CORE_LAYERBASE_H
+#endif // !CORVUS_SOURCE_CORVUS_CORE_LAYER_H

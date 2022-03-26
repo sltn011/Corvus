@@ -44,7 +44,7 @@ namespace Corvus
         glBindVertexArray(0);
     }
 
-    void OpenGLVertexArray::AddIndexBuffer(Own<IndexBufferBase> &&IndexBuffer)
+    void OpenGLVertexArray::AddIndexBuffer(Own<IndexBuffer> &&IndexBuffer)
     {
         CORVUS_CORE_ASSERT(IndexBuffer);
 
@@ -54,7 +54,7 @@ namespace Corvus
         glVertexArrayElementBuffer(m_VAO, EBO);
     }
 
-    void OpenGLVertexArray::AddVertexBuffer(Own<VertexBufferBase> &&VertexBuffer)
+    void OpenGLVertexArray::AddVertexBuffer(Own<VertexBuffer> &&VertexBuffer)
     {
         CORVUS_CORE_ASSERT(VertexBuffer);
 

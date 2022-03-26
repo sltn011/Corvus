@@ -1,18 +1,18 @@
 #ifndef CORVUS_SOURCE_CORVUS_GUI_LAYERGUI_H
 #define CORVUS_SOURCE_CORVUS_GUI_LAYERGUI_H
 
-#include "Corvus/Core/LayerBase.h"
+#include "Corvus/Core/Layer.h"
 
 struct GLFWwindow;
 
 namespace Corvus
 {
 
-    class LayerGUI : public LayerBase
+    class LayerGUI : public Layer
     {
     public:
 
-        using Super = LayerBase;
+        using Super = Layer;
 
         LayerGUI(String LayerName, bool bEnabled);
         virtual ~LayerGUI();

@@ -1,5 +1,5 @@
 #include "CorvusPCH.h"
-#include "Corvus/Renderer/VertexBufferBase.h"
+#include "Corvus/Renderer/VertexBuffer.h"
 #include "VertexBufferLayout.h"
 
 namespace Corvus

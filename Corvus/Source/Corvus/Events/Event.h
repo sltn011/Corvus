@@ -1,20 +1,27 @@
-#ifndef CORVUS_SOURCE_CORVUS_EVENTS_EVENTBASE_H
-#define CORVUS_SOURCE_CORVUS_EVENTS_EVENTBASE_H
+#ifndef CORVUS_SOURCE_CORVUS_EVENTS_EVENT_H
+#define CORVUS_SOURCE_CORVUS_EVENTS_EVENT_H
 
 #include "Corvus/Core/Base.h"
 
 namespace Corvus
 {
-    namespace Event
+
+#define CORVUS_EVENT_GENERATED_BODY(Category, Type) virtual UInt8 GetCategoryFlags() const override { return Category; } \
+                                                    virtual Event::EType GetEventType() const override { return Type; } \
+                                                    virtual Char const *GetEventTypeString() const override { return #Type; }
+
+    class Event
     {
+    public:
+
         enum ECategory : UInt8
         {
             NoneCategory = 0,
-            Input        = BIT(0),
-            Application  = BIT(1),
-            Keyboard     = BIT(2),
-            Mouse        = BIT(3),
-            MouseButton  = BIT(4)
+            Input = BIT(0),
+            Application = BIT(1),
+            Keyboard = BIT(2),
+            Mouse = BIT(3),
+            MouseButton = BIT(4)
         };
 
         enum class EType : UInt8
@@ -25,18 +32,8 @@ namespace Corvus
             CursorMove, MouseScroll,
             MouseButtonPress, MouseButtonRelease
         };
-    }
-    
 
-#define CORVUS_EVENT_GENERATED_BODY(Category, Type) virtual UInt8 GetCategoryFlags() const override { return Category; } \
-                                                    virtual Event::EType GetEventType() const override { return Type; } \
-                                                    virtual Char const *GetEventTypeString() const override { return #Type; }
-
-    class EventBase
-    {
-    public:
-
-        virtual ~EventBase() = default;
+        virtual ~Event() = default;
 
         // Defined by child classes using CORVUS_EVENT_GENERATED_BODY macro
         virtual UInt8 GetCategoryFlags() const = 0;
@@ -68,4 +65,4 @@ namespace Corvus
 
 }
 
-#endif //!CORVUS_SOURCE_CORVUS_EVENTS_EVENTBASE_H
+#endif //!CORVUS_SOURCE_CORVUS_EVENTS_EVENT_H

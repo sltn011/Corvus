@@ -2,7 +2,7 @@
 #define CORVUS_SOURCE_CORVUS_CORE_LAYERSSTACK_H
 
 #include "Corvus/Core/Base.h"
-#include "Corvus/Core/LayerBase.h"
+#include "Corvus/Core/Layer.h"
 
 #include <memory>
 #include <vector>
@@ -17,31 +17,31 @@ namespace Corvus
         LayersStack();
         ~LayersStack();
 
-        void PushLayer(Own<LayerBase> NewLayer);
-        [[nodiscard]] Own<LayerBase> PopLayer();
+        void PushLayer(Own<Layer> NewLayer);
+        [[nodiscard]] Own<Layer> PopLayer();
 
-        std::vector<Own<LayerBase>>::iterator Begin() { return m_Stack.begin(); }
-        std::vector<Own<LayerBase>>::iterator End() { return m_Stack.end(); }
-        std::vector<Own<LayerBase>>::reverse_iterator RBegin() { return m_Stack.rbegin(); }
-        std::vector<Own<LayerBase>>::reverse_iterator REnd() { return m_Stack.rend(); }
+        std::vector<Own<Layer>>::iterator Begin() { return m_Stack.begin(); }
+        std::vector<Own<Layer>>::iterator End() { return m_Stack.end(); }
+        std::vector<Own<Layer>>::reverse_iterator RBegin() { return m_Stack.rbegin(); }
+        std::vector<Own<Layer>>::reverse_iterator REnd() { return m_Stack.rend(); }
 
-        std::vector<Own<LayerBase>>::const_iterator Begin() const { return m_Stack.begin(); }
-        std::vector<Own<LayerBase>>::const_iterator End() const { return m_Stack.end(); }
-        std::vector<Own<LayerBase>>::const_reverse_iterator RBegin() const { return m_Stack.rbegin(); }
-        std::vector<Own<LayerBase>>::const_reverse_iterator REnd() const { return m_Stack.rend(); }
+        std::vector<Own<Layer>>::const_iterator Begin() const { return m_Stack.begin(); }
+        std::vector<Own<Layer>>::const_iterator End() const { return m_Stack.end(); }
+        std::vector<Own<Layer>>::const_reverse_iterator RBegin() const { return m_Stack.rbegin(); }
+        std::vector<Own<Layer>>::const_reverse_iterator REnd() const { return m_Stack.rend(); }
 
 
         // For for-each loops
-        std::vector<Own<LayerBase>>::iterator begin() { return m_Stack.begin(); }
-        std::vector<Own<LayerBase>>::iterator end() { return m_Stack.end(); }
+        std::vector<Own<Layer>>::iterator begin() { return m_Stack.begin(); }
+        std::vector<Own<Layer>>::iterator end() { return m_Stack.end(); }
 
-        std::vector<Own<LayerBase>>::const_iterator begin() const { return m_Stack.begin(); }
-        std::vector<Own<LayerBase>>::const_iterator end() const { return m_Stack.end(); }
+        std::vector<Own<Layer>>::const_iterator begin() const { return m_Stack.begin(); }
+        std::vector<Own<Layer>>::const_iterator end() const { return m_Stack.end(); }
 
     protected:
 
         // Front - Stack's bottom, Back - Stack's top
-        std::vector<Own<LayerBase>> m_Stack;
+        std::vector<Own<Layer>> m_Stack;
     };
 
 }

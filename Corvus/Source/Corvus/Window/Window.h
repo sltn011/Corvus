@@ -3,16 +3,16 @@
 
 #include "Corvus/Core/Base.h"
 #include "Corvus/Core/Delegate.h"
-#include "Corvus/Events/EventBase.h"
+#include "Corvus/Events/Event.h"
 #include "Corvus/GUI/GUIController.h"
-#include "Corvus/Renderer/RenderingContextBase.h"
+#include "Corvus/Renderer/RenderingContext.h"
 
 struct GLFWwindow;
 
 namespace Corvus
 {
 
-    CORVUS_DECLARE_MULTICAST_DELEGATE(OnEventDelegate, EventBase&);
+    CORVUS_DECLARE_MULTICAST_DELEGATE(OnEventDelegate, Event&);
 
     struct WindowData
     {
@@ -61,7 +61,7 @@ namespace Corvus
         WindowData  m_WindowData;
         bool m_bIsInitialized;
 
-        Own<RenderingContextBase> m_RenderingContext;
+        Own<RenderingContext> m_RenderingContext;
         GUIController m_GUIController;
     };
 

@@ -1,5 +1,5 @@
-#ifndef CORVUS_SOURCE_CORVUS_RENDERER_SHADERBASE_H
-#define CORVUS_SOURCE_CORVUS_RENDERER_SHADERBASE_H
+#ifndef CORVUS_SOURCE_CORVUS_RENDERER_SHADER_H
+#define CORVUS_SOURCE_CORVUS_RENDERER_SHADER_H
 
 #include "Corvus/Core/Base.h"
 
@@ -8,13 +8,13 @@
 namespace Corvus
 {
     
-    class ShaderBase
+    class Shader
     {
     public:
 
-        static Own<ShaderBase> CreateFromFile(String const &FilePath);
+        static Own<Shader> CreateFromFile(String const &FilePath);
 
-        virtual ~ShaderBase();
+        virtual ~Shader();
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
@@ -34,4 +34,4 @@ namespace Corvus
 
 }
 
-#endif // !CORVUS_SOURCE_CORVUS_RENDERER_SHADERBASE_H
+#endif // !CORVUS_SOURCE_CORVUS_RENDERER_SHADER_H

@@ -1,14 +1,14 @@
 #ifndef CORVUS_SOURCE_PLATFORM_OPENGL_OPENGLVERTEXBUFFER_H
 #define CORVUS_SOURCE_PLATFORM_OPENGL_OPENGLVERTEXBUFFER_H
 
-#include "Corvus/Renderer/VertexBufferBase.h"
+#include "Corvus/Renderer/VertexBuffer.h"
 
 #include <glad/glad.h>
 
 namespace Corvus
 {
     
-    class OpenGLVertexBuffer : public VertexBufferBase
+    class OpenGLVertexBuffer : public VertexBuffer
     {
     public:
 

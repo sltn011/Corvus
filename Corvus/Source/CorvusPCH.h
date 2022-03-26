@@ -11,6 +11,8 @@
 #include "Corvus/Core/Log.h"
 #include "Corvus/Core/PlatformDetection.h"
 
+#include "Corvus/Renderer/GraphicsAPI.h"
+
 #include <array>
 #include <fstream>
 #include <memory>

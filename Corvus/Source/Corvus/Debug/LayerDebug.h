@@ -1,22 +1,22 @@
 #ifndef CORVUS_SOURCE_CORVUS_DEBUG_LAYERDEBUG_H
 #define CORVUS_SOURCE_CORVUS_DEBUG_LAYERDEBUG_H
 
-#include "Corvus/Core/LayerBase.h"
+#include "Corvus/Core/Layer.h"
 
 namespace Corvus
 {
 
-    class LayerDebug : public LayerBase
+    class LayerDebug : public Layer
     {
     public:
 
-        using Super = LayerBase;
+        using Super = Layer;
 
         LayerDebug(String LayerName, bool bEnabled);
         virtual ~LayerDebug();
 
         virtual void OnUpdate() override;
-        virtual void OnEvent(EventBase &Event) override;
+        virtual void OnEvent(Event &Event) override;
 
     };
 

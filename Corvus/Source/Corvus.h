@@ -13,7 +13,7 @@
 #include "Corvus/Core/Log.h"
 #include "Corvus/Core/Assert.h"
 #include "Corvus/Core/Delegate.h"
-#include "Corvus/Core/LayerBase.h"
+#include "Corvus/Core/Layer.h"
 
 
 

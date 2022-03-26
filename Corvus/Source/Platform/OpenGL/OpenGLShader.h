@@ -1,14 +1,14 @@
 #ifndef CORVUS_SOURCE_PLATFORM_OPENGL_OPENGLSHADER_H
 #define CORVUS_SOURCE_PLATFORM_OPENGL_OPENGLSHADER_H
 
-#include "Corvus/Renderer/ShaderBase.h"
+#include "Corvus/Renderer/Shader.h"
 
 #include <glad/glad.h>
 
 namespace Corvus
 {
 
-    class OpenGLShader : public ShaderBase
+    class OpenGLShader : public Shader
     {
     public:
 

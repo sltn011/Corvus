@@ -1,5 +1,5 @@
-#ifndef CORVUS_SOURCE_CORVUS_RENDERER_VERTEXBUFFERBASE_H
-#define CORVUS_SOURCE_CORVUS_RENDERER_VERTEXBUFFERBASE_H
+#ifndef CORVUS_SOURCE_CORVUS_RENDERER_VERTEXBUFFER_H
+#define CORVUS_SOURCE_CORVUS_RENDERER_VERTEXBUFFER_H
 
 #include "Corvus/Core/Base.h"
 #include "Corvus/Renderer/VertexBufferLayout.h"
@@ -7,13 +7,13 @@
 namespace Corvus
 {
 
-    class VertexBufferBase
+    class VertexBuffer
     {
     public:
 
-        static Own<VertexBufferBase> Create(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout);
+        static Own<VertexBuffer> Create(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout);
 
-        virtual ~VertexBufferBase();
+        virtual ~VertexBuffer();
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
@@ -33,4 +33,4 @@ namespace Corvus
 
 }
 
-#endif // !CORVUS_SOURCE_CORVUS_RENDERER_VERTEXBUFFERBASE_H
+#endif // !CORVUS_SOURCE_CORVUS_RENDERER_VERTEXBUFFER_H

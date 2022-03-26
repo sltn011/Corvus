@@ -1,14 +1,14 @@
 #ifndef CORVUS_SOURCE_CORVUS_EVENTS_APPLICATIONEVENT_H
 #define CORVUS_SOURCE_CORVUS_EVENTS_APPLICATIONEVENT_H
 
-#include "Corvus/Events/EventBase.h"
+#include "Corvus/Events/Event.h"
 
 #include <sstream>
 
 namespace Corvus
 {
 
-    class WindowCloseEvent : public EventBase
+    class WindowCloseEvent : public Event
     {
     public:
 
@@ -16,7 +16,7 @@ namespace Corvus
 
     };
 
-    class WindowResizeEvent : public EventBase
+    class WindowResizeEvent : public Event
     {
     public:
 
@@ -39,7 +39,7 @@ namespace Corvus
         Int32 NewHeight = 0;
     };
 
-    class WindowChangeFocusEvent : public EventBase
+    class WindowChangeFocusEvent : public Event
     {
     public:
 

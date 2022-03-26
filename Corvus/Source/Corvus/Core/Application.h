@@ -17,12 +17,12 @@ namespace Corvus
 
         void Run();
 
-        void PushLayer(Own<LayerBase> NewLayer);
-        Own<LayerBase> PopLayer();
+        void PushLayer(Own<Layer> NewLayer);
+        Own<Layer> PopLayer();
 
         void UpdateLayers();
         void RenderLayers();
-        void OnEventReceived(EventBase &Event);
+        void OnEventReceived(Event &Event);
 
         Window &GetWindow();
 
@@ -31,7 +31,6 @@ namespace Corvus
     protected:
 
         void InitWindow();
-        void InitRenderingContext();
 
         Own<Window>   m_Window;
         LayersStack   m_LayersStack;

@@ -20,7 +20,7 @@ namespace Corvus
         }
     }
 
-    void LayerDebug::OnEvent(EventBase &Event)
+    void LayerDebug::OnEvent(Event &Event)
     {
         if (!m_bEnabled)
         {

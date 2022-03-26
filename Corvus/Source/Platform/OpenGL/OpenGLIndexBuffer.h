@@ -1,14 +1,14 @@
 #ifndef CORVUS_SOURCE_PLATFORM_OPENGL_OPENGLINDEXBUFFER_H
 #define CORVUS_SOURCE_PLATFORM_OPENGL_OPENGLINDEXBUFFER_H
 
-#include "Corvus/Renderer/IndexBufferBase.h"
+#include "Corvus/Renderer/IndexBuffer.h"
 
 #include <glad/glad.h>
 
 namespace Corvus
 {
 
-    class OpenGLIndexBuffer : public IndexBufferBase
+    class OpenGLIndexBuffer : public IndexBuffer
     {
     public:
 

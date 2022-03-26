@@ -1,13 +1,13 @@
 #ifndef CORVUS_SOURCE_CORVUS_EVENTS_KEYBOARDEVENT_H
 #define CORVUS_SOURCE_CORVUS_EVENTS_KEYBOARDEVENT_H
 
-#include "Corvus/Events/EventBase.h"
+#include "Corvus/Events/Event.h"
 #include "Corvus/Core/KeyCodes.h"
 
 namespace Corvus
 {
 
-    class KeyPressEvent : public EventBase
+    class KeyPressEvent : public Event
     {
     public:
 
@@ -31,7 +31,7 @@ namespace Corvus
         ModifierCode Modifier;
     };
 
-    class KeyReleaseEvent : public EventBase
+    class KeyReleaseEvent : public Event
     {
     public:
 

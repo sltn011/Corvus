@@ -1,5 +1,5 @@
 #include "CorvusPCH.h"
-#include "Corvus/Core/LayerBase.h"
+#include "Corvus/Core/Layer.h"
 #include "Corvus/Core/LayersStack.h"
 
 namespace Corvus
@@ -19,7 +19,7 @@ namespace Corvus
         }
     }
 
-    void LayersStack::PushLayer(Own<LayerBase> NewLayer)
+    void LayersStack::PushLayer(Own<Layer> NewLayer)
     {
         if (!NewLayer) {
             CORVUS_CORE_ERROR("Null-layer passed into Layers stack!");
@@ -30,11 +30,11 @@ namespace Corvus
         m_Stack.back()->OnPushed();
     }
 
-    Own<LayerBase> LayersStack::PopLayer()
+    Own<Layer> LayersStack::PopLayer()
     {
         CORVUS_CORE_ASSERT_FMT(!m_Stack.empty(), "Can't pop layer from empty stack!");
 
-        Own<LayerBase> PopedLayer = std::move(m_Stack.back());
+        Own<Layer> PopedLayer = std::move(m_Stack.back());
         m_Stack.erase(End() - 1);
         PopedLayer->OnPoped();
 

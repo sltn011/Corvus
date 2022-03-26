@@ -1,7 +1,7 @@
 #ifndef CORVUS_SOURCE_PLATFORM_OPENGL_OPENGLCONTEXT_H
 #define CORVUS_SOURCE_PLATFORM_OPENGL_OPENGLCONTEXT_H
 
-#include "Corvus/Renderer/RenderingContextBase.h"
+#include "Corvus/Renderer/RenderingContext.h"
 
 struct GLFWwindow;
 
@@ -9,7 +9,7 @@ namespace Corvus
 {
     class Window;
 
-    class OpenGLContext : public RenderingContextBase
+    class OpenGLContext : public RenderingContext
     {
     public:
 
@@ -26,4 +26,4 @@ namespace Corvus
 
 }
 
-#endif // !CORVUS_SOURCE_CORVUS_RENDERING_RENDERINGCONTEXTBASE_H
+#endif // !CORVUS_SOURCE_PLATFORM_OPENGL_OPENGLCONTEXT_H
