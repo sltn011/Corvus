@@ -13,7 +13,7 @@ namespace Corvus
     {
     public:
 
-        CORVUS_EVENT_GENERATED_BODY(Event::ECategory::Input | Event::ECategory::Mouse, Event::EType::CursorMove);
+        CORVUS_EVENT_GENERATED_BODY(Event::ECategory::Input | Event::ECategory::Mouse, Event::EType::MouseCursorMove);
 
         CursorMoveEvent(float NewXValue, float NewYValue)
             : NewX{ NewXValue }, NewY{ NewYValue }

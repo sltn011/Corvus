@@ -19,6 +19,9 @@ namespace Corvus
 
         virtual void OnUpdate() override;
 
+        virtual bool ShouldClose() const override;
+        virtual void SetShouldClose() override;
+
         virtual void SetVSyncEnabled(bool bValue) override;
         virtual void SetFullScreen(bool bValue) override;
 

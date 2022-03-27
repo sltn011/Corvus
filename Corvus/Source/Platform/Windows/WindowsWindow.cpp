@@ -117,6 +117,16 @@ namespace Corvus
         m_RenderingContext->SwapBuffers();
     }
 
+    bool WindowsWindow::ShouldClose() const
+    {
+        return glfwWindowShouldClose(m_Window);
+    }
+
+    void WindowsWindow::SetShouldClose()
+    {
+        glfwSetWindowShouldClose(m_Window, true);
+    }
+
     void WindowsWindow::SetVSyncEnabled(bool bValue)
     {
         if (!m_bIsInitialized)

@@ -29,7 +29,7 @@ namespace Corvus
             NoneType = 0,
             WindowClose, WindowResize, WindowChangeFocus,
             KeyPress, KeyRelease,
-            CursorMove, MouseScroll,
+            MouseCursorMove, MouseScroll,
             MouseButtonPress, MouseButtonRelease
         };
 
@@ -40,7 +40,7 @@ namespace Corvus
         virtual Event::EType GetEventType() const = 0;
         virtual Char const *GetEventTypeString() const = 0;
 
-        bool WasHandled() const
+        [[nodiscard]] bool WasHandled() const
         {
             return m_bWasHandled;
         }

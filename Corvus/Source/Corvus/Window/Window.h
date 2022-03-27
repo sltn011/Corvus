@@ -44,6 +44,9 @@ namespace Corvus
         UInt32 GetWindowHeight() const { return m_WindowData.WindowHeight; }
         String GetWindowName() const { return m_WindowData.WindowName; }
 
+        virtual bool ShouldClose() const = 0;
+        virtual void SetShouldClose() = 0;
+
         bool IsVSyncEnabled() const;
         virtual void SetVSyncEnabled(bool bValue) = 0;
 

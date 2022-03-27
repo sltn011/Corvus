@@ -1,13 +1,14 @@
 #include "CorvusPCH.h"
 #include "Corvus/Core/Application.h"
 
+#include "Corvus/Core/CoreLayer.h"
+
 #include "Corvus/Renderer/Renderer.h"
 #include "Corvus/Renderer/VertexArray.h"
 #include "Corvus/Renderer/VertexBuffer.h"
 #include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Shader.h"
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 namespace Corvus 
@@ -22,6 +23,8 @@ namespace Corvus
 
         InitWindow();
         Renderer::Init();
+
+        PushLayer(MakeOwned<CoreLayer>());
     }
 
     Application::~Application()
@@ -57,7 +60,7 @@ namespace Corvus
 
         Own<Shader> TestShader = Shader::CreateFromFile("./Assets/Shaders/TestShader.glsl");
 
-        while (!glfwWindowShouldClose(static_cast<GLFWwindow *>(m_Window->GetRawWindow()))) {
+        while (!m_Window->ShouldClose()) {
 
             Renderer::BeginScene();
 

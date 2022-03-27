@@ -11,6 +11,10 @@
 #include "Corvus/Core/Log.h"
 #include "Corvus/Core/PlatformDetection.h"
 
+#include "Corvus/Events/ApplicationEvent.h"
+#include "Corvus/Events/KeyboardEvent.h"
+#include "Corvus/Events/MouseEvent.h"
+
 #include "Corvus/Renderer/GraphicsAPI.h"
 
 #include <array>
