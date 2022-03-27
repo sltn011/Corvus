@@ -9,6 +9,8 @@
 #include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Shader.h"
 
+#include "Corvus/World/SceneCamera.h"
+
 #include <GLFW/glfw3.h>
 
 namespace Corvus 
@@ -37,9 +39,9 @@ namespace Corvus
         CORVUS_CORE_INFO("Running the application!");
 
         float Vertices[] = {
-            -0.2f, -0.2f, 0.0f, 1.0f, 0.0f, 0.0f,
-            +0.2f, -0.2f, 0.0f, 0.0f, 1.0f, 0.0f,
-            +0.0f, +0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+            +1.0f, -0.2f, -0.2f, 1.0f, 0.0f, 0.0f,
+            +1.0f, -0.2f, +0.2f, 0.0f, 1.0f, 0.0f,
+            +1.0f, +0.5f, +0.0f, 0.0f, 0.0f, 1.0f
         };
 
         UInt32 Indices[] = {
@@ -60,13 +62,20 @@ namespace Corvus
 
         Own<Shader> TestShader = Shader::CreateFromFile("./Assets/Shaders/TestShader.glsl");
 
+        SceneCamera Camera;
+        Camera.SetPerspectiveMode(60.0f);
+
         while (!m_Window->ShouldClose()) {
+
+            Camera.SetViewportSize(m_Window->GetWindowWidth(), m_Window->GetWindowHeight());
 
             Renderer::BeginScene();
 
             Renderer::SetClearColor({ 0.6f, 0.8f, 1.0f, 1.0f });
             Renderer::Clear();
 
+            TestShader->Bind();
+            TestShader->SetMat4("u_ProjView", Camera.GetProjectionViewMatrix());
             Renderer::Submit(VAO, TestShader);
 
             Renderer::EndScene();
