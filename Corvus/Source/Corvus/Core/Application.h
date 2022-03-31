@@ -15,6 +15,7 @@ namespace Corvus
         Application();
         virtual ~Application();
 
+        void Init();
         void Run();
 
         void PushLayer(Own<Layer> NewLayer);
@@ -31,6 +32,7 @@ namespace Corvus
     protected:
 
         void InitWindow();
+        void InitRenderer();
 
         Own<Window>   m_Window;
         LayersStack   m_LayersStack;

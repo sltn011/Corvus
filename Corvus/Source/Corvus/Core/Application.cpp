@@ -3,6 +3,8 @@
 
 #include "Corvus/Core/CoreLayer.h"
 
+#include "Corvus/GUI/LayerGUI.h"
+
 #include "Corvus/Renderer/Renderer.h"
 #include "Corvus/Renderer/VertexArray.h"
 #include "Corvus/Renderer/VertexBuffer.h"
@@ -22,11 +24,6 @@ namespace Corvus
         CORVUS_CORE_ASSERT_FMT(!s_ApplicationInstance, "Only one instance of application is allowed!");
 
         s_ApplicationInstance = this;
-
-        InitWindow();
-        Renderer::Init();
-
-        PushLayer(MakeOwned<CoreLayer>());
     }
 
     Application::~Application()
@@ -34,10 +31,17 @@ namespace Corvus
 
     }
 
+    void Application::Init()
+    {
+        InitWindow();
+        InitRenderer();
+
+        PushLayer(MakeOwned<CoreLayer>());
+        PushLayer(MakeOwned<LayerGUI>("GUI", true));
+    }
+
     void Application::Run()
     {
-        CORVUS_CORE_INFO("Running the application!");
-
         float Vertices[] = {
             +1.0f, -0.2f, -0.2f, 1.0f, 0.0f, 0.0f,
             +1.0f, -0.2f, +0.2f, 0.0f, 1.0f, 0.0f,
@@ -85,8 +89,6 @@ namespace Corvus
 
             m_Window->OnUpdate();
         }
-
-        CORVUS_CORE_INFO("Application finished running!");
     }
 
     void Application::PushLayer(Own<Layer> NewLayer)
@@ -117,6 +119,11 @@ namespace Corvus
         m_Window->GetGUIController().BeginFrame();
         for (auto It = m_LayersStack.Begin(); It != m_LayersStack.End(); ++It)
         {
+            if (!(*It)->IsEnabled())
+            {
+                continue;
+            }
+
             (*It)->Render();
         }
         m_Window->GetGUIController().EndFrame();
@@ -153,5 +160,11 @@ namespace Corvus
 
         CORVUS_CORE_INFO("Application Window \"{0}\" {1}x{2} initialized", 
             m_Window->GetWindowName(), m_Window->GetWindowWidth(), m_Window->GetWindowHeight());
+    }
+
+    void Application::InitRenderer()
+    {
+        Renderer::Init();
+        CORVUS_CORE_INFO("Renderer initialized");
     }
 }

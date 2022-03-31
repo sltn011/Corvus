@@ -18,12 +18,13 @@
         Corvus::Application *App = Corvus::CreateApplication();
         if (App)
         {
-            Corvus::Own<Corvus::LayerGUI> GUILayer = Corvus::MakeOwned<Corvus::LayerGUI>("GUI", true);
-            App->PushLayer(std::move(GUILayer));
-
             CORVUS_CORE_TRACE("Application successfully created!");
+            App->Init();
+            CORVUS_CORE_TRACE("Application successfully initialized!");
 
+            CORVUS_CORE_INFO("Running the application!");
             App->Run();
+            CORVUS_CORE_INFO("Application finished running!");
 
             if (DestroyApplication(App)) 
             {

@@ -8,6 +8,7 @@ namespace Corvus
     class WindowsWindow : public Window
     {
     public:
+
         WindowsWindow();
         virtual ~WindowsWindow();
 

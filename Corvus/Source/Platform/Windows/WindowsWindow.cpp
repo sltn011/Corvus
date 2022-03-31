@@ -58,12 +58,12 @@ namespace Corvus
 
         CORVUS_CORE_INFO("Window \"{0}\" created", m_WindowData.WindowName);
 
+        InitRenderingContext();
+        InitGUIRenderingContext();
+
         glfwSetWindowUserPointer(m_Window, this);
 
         SetupWindowEventsHandlers();
-
-        InitRenderingContext();
-        InitGUIRenderingContext();
 
         SetFullScreen(m_WindowData.bFullScreen);
         SetVSyncEnabled(m_WindowData.bVSyncEnabled);
