@@ -49,7 +49,7 @@ namespace Corvus
 
     void SceneCamera::UpdateViewMatrix()
     {
-        m_ViewMatrix = glm::lookAt(m_Transform.WorldPosition, m_Transform.ForwardVec, m_Transform.UpVec);
+        m_ViewMatrix = glm::lookAt(m_Transform.WorldPosition, m_Transform.ForwardVec + m_Transform.WorldPosition, m_Transform.UpVec);
     }
 
     void SceneCamera::UpdateProjectionMatrix()
