@@ -1,6 +1,9 @@
 #include "CorvusPCH.h"
 #include "Corvus/Core/Application.h"
 
+#include "Corvus/Camera/OrthographicCamera.h"
+#include "Corvus/Camera/PerspectiveCamera.h"
+
 #include "Corvus/Core/CoreLayer.h"
 
 #include "Corvus/GUI/LayerGUI.h"
@@ -10,8 +13,6 @@
 #include "Corvus/Renderer/VertexBuffer.h"
 #include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Shader.h"
-
-#include "Corvus/World/SceneCamera.h"
 
 #include <GLFW/glfw3.h>
 
@@ -66,8 +67,7 @@ namespace Corvus
 
         Own<Shader> TestShader = Shader::CreateFromFile("./Assets/Shaders/TestShader.glsl");
 
-        SceneCamera Camera;
-        Camera.SetPerspectiveMode(60.0f);
+        PerspectiveCamera Camera;
 
         while (!m_Window->ShouldClose()) {
 
