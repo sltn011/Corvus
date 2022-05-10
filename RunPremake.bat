@@ -1,1 +1,1 @@
-"./Dependencies/Premake/Binary/premake5.exe" vs2019
+"./Dependencies/Premake/Binary/premake5.exe" vs2022
