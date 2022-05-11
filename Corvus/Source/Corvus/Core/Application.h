@@ -18,7 +18,7 @@ namespace Corvus
         void Init();
         void Run();
 
-        void PushLayer(Own<Layer> NewLayer);
+        void PushLayer(Own<Layer> &&NewLayer);
         Own<Layer> PopLayer();
 
         void UpdateLayers();

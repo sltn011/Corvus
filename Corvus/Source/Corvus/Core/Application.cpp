@@ -5,6 +5,7 @@
 #include "Corvus/Camera/PerspectiveCamera.h"
 
 #include "Corvus/Core/CoreLayer.h"
+#include "Corvus/Core/TimePoint.h"
 
 #include "Corvus/GUI/LayerGUI.h"
 
@@ -69,7 +70,11 @@ namespace Corvus
 
         PerspectiveCamera Camera;
 
+        TimePoint TimePointOld;
         while (!m_Window->ShouldClose()) {
+            TimePoint TimePointNew;
+            float ElapsedTimeSeconds = TimePointNew - TimePointOld;
+            TimePointOld = TimePointNew;
 
             Camera.SetViewportSize(m_Window->GetWindowWidth(), m_Window->GetWindowHeight());
 
@@ -91,7 +96,7 @@ namespace Corvus
         }
     }
 
-    void Application::PushLayer(Own<Layer> NewLayer)
+    void Application::PushLayer(Own<Layer> &&NewLayer)
     {
         m_LayersStack.PushLayer(std::move(NewLayer));
     }
