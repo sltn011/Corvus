@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+#include "Corvus/Core/TimePoint.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 #include <glm/gtc/type_ptr.hpp>
@@ -8,8 +9,11 @@ namespace Corvus
     OpenGLShader::OpenGLShader(String const &FilePath)
         : m_ID{ 0 }
     {
+        CORVUS_CORE_TRACE("Creating OpenGL Shader {}", FilePath.c_str());
+        TimePoint ShaderCreationBegin;
+
         std::ifstream CodeFile(FilePath);
-        CORVUS_CORE_ASSERT_FMT(CodeFile.is_open(), "Error opening Shader file {1}", FilePath);
+        CORVUS_CORE_ASSERT_FMT(CodeFile.is_open(), "Error opening OpenGL Shader file {1}", FilePath);
         
         std::stringstream ShadersCode[static_cast<UInt8>(ShaderType::MAX)];
         ShaderType Type = ShaderType::NONE;
@@ -52,7 +56,9 @@ namespace Corvus
         glDeleteShader(VertexShader);
         glDeleteShader(FragmentShader);
 
-        CORVUS_CORE_TRACE("Successfully created OpenGL Shader from {0} file", FilePath);
+        TimePoint ShaderCreationEnd;
+        float ShaderCreationTimeSeconds = ShaderCreationEnd - ShaderCreationBegin;
+        CORVUS_CORE_TRACE("Created OpenGL Shader {0}, took {1}ms", FilePath.c_str(), ShaderCreationTimeSeconds * 1000.0f);
     }
 
     OpenGLShader::~OpenGLShader()
