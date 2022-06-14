@@ -17,7 +17,7 @@ namespace Corvus
         virtual void OnPushed() override;
         virtual void OnPoped() override;
 
-        virtual void OnUpdate() override;
+        virtual void OnUpdate(TimeDelta ElapsedTime) override;
         virtual void OnEvent(Event &Event) override;
 
         virtual void Render() override;

@@ -5,7 +5,6 @@
 #include "Corvus/Camera/PerspectiveCamera.h"
 
 #include "Corvus/Core/CoreLayer.h"
-#include "Corvus/Core/TimePoint.h"
 
 #include "Corvus/GUI/LayerGUI.h"
 
@@ -14,6 +13,9 @@
 #include "Corvus/Renderer/VertexBuffer.h"
 #include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Shader.h"
+
+#include "Corvus/Time/TimeDelta.h"
+#include "Corvus/Time/TimePoint.h"
 
 #include <GLFW/glfw3.h>
 
@@ -73,7 +75,7 @@ namespace Corvus
         TimePoint TimePointOld;
         while (!m_Window->ShouldClose()) {
             TimePoint TimePointNew;
-            float ElapsedTimeSeconds = TimePointNew - TimePointOld;
+            TimeDelta ElapsedTime = TimePointNew - TimePointOld;
             TimePointOld = TimePointNew;
 
             Camera.SetViewportSize(m_Window->GetWindowWidth(), m_Window->GetWindowHeight());
@@ -89,7 +91,7 @@ namespace Corvus
 
             Renderer::EndScene();
 
-            UpdateLayers();
+            UpdateLayers(ElapsedTime);
             RenderLayers();
 
             m_Window->OnUpdate();
@@ -106,11 +108,11 @@ namespace Corvus
         return m_LayersStack.PopLayer();
     }
 
-    void Application::UpdateLayers()
+    void Application::UpdateLayers(TimeDelta ElapsedTime)
     {
         for (auto It = m_LayersStack.Begin(); It != m_LayersStack.End(); ++It)
         {
-            (*It)->OnUpdate();
+            (*It)->OnUpdate(ElapsedTime);
         }
     }
 

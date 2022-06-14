@@ -8,6 +8,8 @@
 namespace Corvus 
 {
 
+    class TimeDelta;
+
     class Application 
     {
     public:
@@ -21,7 +23,7 @@ namespace Corvus
         void PushLayer(Own<Layer> &&NewLayer);
         Own<Layer> PopLayer();
 
-        void UpdateLayers();
+        void UpdateLayers(TimeDelta ElapsedTime);
         void RenderLayers();
         void OnEventReceived(Event &Event);
 

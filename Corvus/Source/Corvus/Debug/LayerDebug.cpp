@@ -1,6 +1,8 @@
 #include "CorvusPCH.h"
 #include "Corvus/Debug/LayerDebug.h"
 
+#include "Corvus/Time/TimeDelta.h"
+
 namespace Corvus
 {
     LayerDebug::LayerDebug(String LayerName, bool bEnabled)
@@ -12,7 +14,7 @@ namespace Corvus
     {
     }
 
-    void LayerDebug::OnUpdate()
+    void LayerDebug::OnUpdate(TimeDelta ElapsedTime)
     {
         if (!m_bEnabled)
         {

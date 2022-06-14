@@ -1,6 +1,9 @@
 #include "CorvusPCH.h"
 #include "Corvus/Core/Layer.h"
 
+#include "Corvus/Events/Event.h"
+#include "Corvus/Time/TimeDelta.h"
+
 namespace Corvus
 {
 
@@ -35,7 +38,7 @@ namespace Corvus
         CORVUS_CORE_TRACE("Layer \"{0}\" poped of layers stack!", m_LayerName);
     }
 
-    void Layer::OnUpdate()
+    void Layer::OnUpdate(TimeDelta ElapsedTime)
     {
     }
 

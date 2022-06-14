@@ -2,7 +2,9 @@
 #include "Corvus/Core/CoreLayer.h"
 
 #include "Corvus/Core/Application.h"
+#include "Corvus/Events/Event.h"
 #include "Corvus/Renderer/Renderer.h"
+#include "Corvus/Time/TimeDelta.h"
 
 namespace Corvus
 {
@@ -22,8 +24,9 @@ namespace Corvus
         Super::OnPoped();
     }
 
-    void CoreLayer::OnUpdate()
+    void CoreLayer::OnUpdate(TimeDelta ElapsedTime)
     {
+
     }
 
     void CoreLayer::OnEvent(Event &Event)

@@ -6,6 +6,8 @@
 namespace Corvus
 {
 
+    class TimeDelta;
+
     class LayerDebug : public Layer
     {
     public:
@@ -15,7 +17,7 @@ namespace Corvus
         LayerDebug(String LayerName, bool bEnabled);
         virtual ~LayerDebug();
 
-        virtual void OnUpdate() override;
+        virtual void OnUpdate(TimeDelta ElapsedTime) override;
         virtual void OnEvent(Event &Event) override;
 
     };

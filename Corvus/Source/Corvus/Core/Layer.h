@@ -2,10 +2,12 @@
 #define CORVUS_SOURCE_CORVUS_CORE_LAYER_H
 
 #include "Corvus/Core/CoreTypes.h"
-#include "Corvus/Events/Event.h"
 
 namespace Corvus
 {
+
+    class Event;
+    class TimeDelta;
 
     class Layer
     {
@@ -20,7 +22,7 @@ namespace Corvus
         virtual void OnPushed();
         virtual void OnPoped();
 
-        virtual void OnUpdate();
+        virtual void OnUpdate(TimeDelta ElapsedTime);
         virtual void OnEvent(Event &Event);
 
         virtual void Render();

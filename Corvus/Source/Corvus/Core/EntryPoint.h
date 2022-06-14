@@ -16,29 +16,29 @@
         Corvus::Log::Init();
 
         Corvus::Application *App = Corvus::CreateApplication();
-        if (App)
+        if (!App)
         {
-            CORVUS_CORE_TRACE("Application successfully created!");
-            App->Init();
-            CORVUS_CORE_TRACE("Application successfully initialized!");
+            CORVUS_CORE_NO_ENTRY_FMT("Application was not created properly!");
+        }
+        
+        CORVUS_CORE_TRACE("Application successfully created!");
+        App->Init();
+        CORVUS_CORE_TRACE("Application successfully initialized!");
 
-            CORVUS_CORE_INFO("Running the application!");
-            App->Run();
-            CORVUS_CORE_INFO("Application finished running!");
+        CORVUS_CORE_INFO("Running the application!");
+        App->Run();
+        CORVUS_CORE_INFO("Application finished running!");
 
-            if (DestroyApplication(App)) 
-            {
-                CORVUS_CORE_TRACE("Application resources cleaned up successfully on exit!");
-            }
-            else 
-            {
-                CORVUS_CORE_ERROR("Error cleaning up application resources on exit!");
-            }
+        if (DestroyApplication(App))
+        {
+            CORVUS_CORE_TRACE("Application resources cleaned up successfully on exit!");
         }
         else
         {
-            CORVUS_CORE_CRITICAL("Application was not created properly!");
+            CORVUS_CORE_ERROR("Error cleaning up application resources on exit!");
         }
+
+        return 0;
     }
 
 #endif

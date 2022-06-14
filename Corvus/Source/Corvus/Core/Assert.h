@@ -5,7 +5,7 @@
 #include "Corvus/Core/Log.h"
 
 #ifdef CORVUS_ENABLE_ASSERT
-    #define CORVUS_ASSERT_IMPL(type, expr, msg, ...) {if(!(expr)) {CORVUS##type##CRITICAL(msg, __VA_ARGS__); CORVUS_DEBUG_BREAK();}}
+    #define CORVUS_ASSERT_IMPL(type, expr, msg, ...) {if(!(expr)) {CORVUS##type##CRITICAL(msg, __VA_ARGS__); CORVUS_DEBUG_BREAK(); std::exit(1);}}
 
     #define CORVUS_ASSERT(expr) CORVUS_ASSERT_IMPL(_, expr, "Assertion failed: '{0}'!", #expr);
     #define CORVUS_ASSERT_FMT(expr, msg, ...) CORVUS_ASSERT_IMPL(_, expr, "Assertion failed: '{0}'! " msg, #expr, __VA_ARGS__);
