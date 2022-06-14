@@ -142,7 +142,48 @@ namespace Corvus
 
     void WindowsWindow::SetFullScreen(bool bValue)
     {
-        CORVUS_CORE_ERROR("Switching WindowsWindow fullscreen on/off not yet implemented!");
+        if (!m_bIsInitialized)
+        {
+            CORVUS_CORE_ERROR("Window not initialized - cant switch FullScreen on/off!");
+            return;
+        }
+
+        if (bValue)
+        {
+            glfwSetWindowMonitor(
+                m_Window,
+                glfwGetPrimaryMonitor(),
+                0, 0, m_WindowData.WindowWidth, m_WindowData.WindowHeight,
+                GLFW_DONT_CARE
+            );
+        }
+        else
+        {
+            glfwSetWindowMonitor(
+                m_Window,
+                nullptr,
+                0, 0, m_WindowData.WindowWidth, m_WindowData.WindowHeight,
+                GLFW_DONT_CARE
+            );
+
+            glm::ivec2 MonitorTopLeft, MonitorBottomRight;
+            glfwGetMonitorWorkarea(
+                glfwGetPrimaryMonitor(),
+                &MonitorTopLeft.x, &MonitorTopLeft.y,
+                &MonitorBottomRight.x, &MonitorBottomRight.y
+            );
+
+            glm::ivec2 MonitorCenter = (MonitorBottomRight - MonitorTopLeft) / 2;
+
+            glm::ivec2 WindowTopLeft;
+            WindowTopLeft.x = glm::max(0, MonitorCenter.x - m_WindowData.WindowWidth / 2);
+            WindowTopLeft.y = glm::max(0, MonitorCenter.y - m_WindowData.WindowHeight / 2);
+
+            glfwSetWindowPos(m_Window, WindowTopLeft.x, WindowTopLeft.y);
+        }
+
+        m_WindowData.bFullScreen = bValue;
+        CORVUS_CORE_TRACE("Window \"{0}\" FullScreen {1}", m_WindowData.WindowName, bValue ? "On" : "Off");
     }
 
     void *WindowsWindow::GetRawWindow()

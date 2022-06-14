@@ -131,6 +131,12 @@ namespace Corvus
 
     void CoreLayer::OnKeyPressed(Event &Event)
     {
+        KeyPressEvent &KPEvent = static_cast<KeyPressEvent &>(Event);
+        if (KPEvent.Key == Key::F1)
+        {
+            bool b = Application::GetInstance().GetWindow().IsFullScreen();
+            Application::GetInstance().GetWindow().SetFullScreen(!b);
+        }
     }
 
     void CoreLayer::OnKeyReleased(Event &Event)

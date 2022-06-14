@@ -7,6 +7,12 @@
 
 namespace Corvus 
 {
+    class Application;
+
+    // To be defined by Client
+    Application *CreateApplication();
+    bool DestroyApplication(Application *App);
+    //=========================================
 
     class TimeDelta;
 
@@ -43,10 +49,6 @@ namespace Corvus
 
         static Application *s_ApplicationInstance;
     };
-
-    // To be defined by Client
-    Application *CreateApplication();
-    bool DestroyApplication(Application *App);
 
 }
 

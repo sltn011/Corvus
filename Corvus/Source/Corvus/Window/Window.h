@@ -17,8 +17,8 @@ namespace Corvus
     struct WindowData
     {
         String WindowName;
-        UInt32 WindowWidth = 0;
-        UInt32 WindowHeight = 0;
+        Int32 WindowWidth = 0;
+        Int32 WindowHeight = 0;
 
         bool  bVSyncEnabled = false;
         bool  bFullScreen = false;
