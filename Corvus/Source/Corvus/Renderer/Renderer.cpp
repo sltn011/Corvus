@@ -1,6 +1,7 @@
 #include "CorvusPCH.h"
 #include "Corvus/Renderer/Renderer.h"
 
+#include "Corvus/Renderer/GraphicsAPI.h"
 #include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Shader.h"
 #include "Corvus/Renderer/VertexArray.h"

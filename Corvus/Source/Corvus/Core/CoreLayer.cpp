@@ -114,7 +114,7 @@ namespace Corvus
 
     void CoreLayer::OnWindowResize(Event &Event)
     {
-        WindowResizeEvent &WREvent = static_cast<WindowResizeEvent&>(Event);
+        WindowResizeEvent &WREvent = CastEvent<WindowResizeEvent>(Event);
         Renderer::ViewportResize(WREvent.NewWidth, WREvent.NewHeight);
         Event.SetHandled();
     }
@@ -131,12 +131,13 @@ namespace Corvus
 
     void CoreLayer::OnKeyPressed(Event &Event)
     {
-        KeyPressEvent &KPEvent = static_cast<KeyPressEvent &>(Event);
+        KeyPressEvent &KPEvent = CastEvent<KeyPressEvent &>(Event);
         if (KPEvent.Key == Key::F1)
         {
             bool b = Application::GetInstance().GetWindow().IsFullScreen();
             Application::GetInstance().GetWindow().SetFullScreen(!b);
         }
+        Event.SetHandled();
     }
 
     void CoreLayer::OnKeyReleased(Event &Event)

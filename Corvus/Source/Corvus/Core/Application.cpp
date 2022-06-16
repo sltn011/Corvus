@@ -28,6 +28,8 @@ namespace Corvus
         CORVUS_CORE_ASSERT_FMT(!s_ApplicationInstance, "Only one instance of application is allowed!");
 
         s_ApplicationInstance = this;
+
+        Init();
     }
 
     Application::~Application()
@@ -46,50 +48,11 @@ namespace Corvus
 
     void Application::Run()
     {
-        float Vertices[] = {
-            +1.0f, -0.2f, -0.2f, 1.0f, 0.0f, 0.0f,
-            +1.0f, -0.2f, +0.2f, 0.0f, 1.0f, 0.0f,
-            +1.0f, +0.5f, +0.0f, 0.0f, 0.0f, 1.0f
-        };
-
-        UInt32 Indices[] = {
-            0, 1, 2
-        };
-
-        VertexBufferLayout Layout = {
-            { BufferDataType::Vec3 },
-            { BufferDataType::Vec3 }
-        };
-
-        Own<VertexBuffer> VBO = VertexBuffer::Create(Vertices, 3, Layout);
-        Own<IndexBuffer> EBO = IndexBuffer::Create(Indices, 3);
-
-        Own<VertexArray> VAO = VertexArray::Create();
-        VAO->AddVertexBuffer(std::move(VBO));
-        VAO->AddIndexBuffer(std::move(EBO));
-
-        Own<Shader> TestShader = Shader::CreateFromFile("./Assets/Shaders/TestShader.glsl");
-
-        PerspectiveCamera Camera;
-
         TimePoint TimePointOld;
         while (!m_Window->ShouldClose()) {
             TimePoint TimePointNew;
             TimeDelta ElapsedTime = TimePointNew - TimePointOld;
             TimePointOld = TimePointNew;
-
-            Camera.SetViewportSize(m_Window->GetWindowWidth(), m_Window->GetWindowHeight());
-
-            Renderer::BeginScene();
-
-            Renderer::SetClearColor({ 0.6f, 0.8f, 1.0f, 1.0f });
-            Renderer::Clear();
-
-            TestShader->Bind();
-            TestShader->SetMat4("u_ProjView", Camera.GetProjectionViewMatrix());
-            Renderer::Submit(VAO, TestShader);
-
-            Renderer::EndScene();
 
             UpdateLayers(ElapsedTime);
             RenderLayers();

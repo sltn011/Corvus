@@ -10,6 +10,14 @@ namespace Corvus
                                                     virtual Event::EType GetEventType() const override { return Type; } \
                                                     virtual Char const *GetEventTypeString() const override { return #Type; }
 
+    class Event;
+
+    template<typename OtherEvent>
+    OtherEvent &CastEvent(Event &BaseEvent)
+    {
+        return static_cast<OtherEvent &>(BaseEvent);
+    }
+
     class Event
     {
     public:

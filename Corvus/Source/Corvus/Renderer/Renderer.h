@@ -2,12 +2,13 @@
 #define CORVUS_SOURCE_CORVUS_RENDERER_RENDERER_H
 
 #include "Corvus/Core/Base.h"
-#include "Corvus/Renderer/GraphicsAPI.h"
-#include "Corvus/Renderer/Shader.h"
-#include "Corvus/Renderer/VertexArray.h"
 
 namespace Corvus
 {
+
+    class GraphicsAPI;
+    class Shader;
+    class VertexArray;
 
     class Renderer
     {

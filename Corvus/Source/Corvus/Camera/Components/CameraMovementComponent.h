@@ -6,6 +6,8 @@
 namespace Corvus
 {
 
+    class TimeDelta;
+
     class CameraMovementComponent
     {
     public:
@@ -14,7 +16,7 @@ namespace Corvus
 
         void SetMovementSpeed(float MovementSpeed);
 
-        void ProcessMovementInput(Camera::MoveDirection Direction);
+        void ProcessMovementInput(Camera::MoveDirection Direction, TimeDelta ElapsedTime);
         void ProcessRotationInput(float XOffset, float YOffset, float Sensitivity);
 
     protected:

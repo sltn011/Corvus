@@ -2,6 +2,7 @@
 #include "Corvus/Camera/Camera.h"
 
 #include "Corvus/Camera/Components/CameraMovementComponent.h"
+#include "Corvus/Time/TimeDelta.h"
 
 namespace Corvus
 {
@@ -28,11 +29,11 @@ namespace Corvus
         }
     }
 
-    void Camera::ProcessMovementInput(MoveDirection Direction)
+    void Camera::ProcessMovementInput(MoveDirection Direction, TimeDelta ElapsedTime)
     {
         if (m_IsPlayerControlled)
         {
-            m_MovementComponent->ProcessMovementInput(Direction);
+            m_MovementComponent->ProcessMovementInput(Direction, ElapsedTime);
         }
     }
 

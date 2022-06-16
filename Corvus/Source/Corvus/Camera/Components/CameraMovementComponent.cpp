@@ -1,6 +1,8 @@
 #include "CorvusPCH.h"
 #include "Corvus/Camera/Components/CameraMovementComponent.h"
 
+#include "Corvus/Time/TimeDelta.h"
+
 namespace Corvus
 {
 
@@ -15,33 +17,34 @@ namespace Corvus
         m_MoveSpeed = MovementSpeed;
     }
 
-    void CameraMovementComponent::ProcessMovementInput(Camera::MoveDirection Direction)
+    void CameraMovementComponent::ProcessMovementInput(Camera::MoveDirection Direction, TimeDelta ElapsedTime)
     {
         Camera::Transform Transform = m_Owner->GetTransform();
+        float Seconds = ElapsedTime.Seconds();
 
         switch (Direction) {
         case Camera::MoveDirection::Forward:
-            Transform.WorldPosition += Transform.ForwardVec * m_MoveSpeed;
+            Transform.WorldPosition += Transform.ForwardVec * m_MoveSpeed * Seconds;
             break;
 
         case Camera::MoveDirection::Backward:
-            Transform.WorldPosition -= Transform.ForwardVec * m_MoveSpeed;
+            Transform.WorldPosition -= Transform.ForwardVec * m_MoveSpeed * Seconds;
             break;
 
         case Camera::MoveDirection::Left:
-            Transform.WorldPosition -= Transform.RightVec * m_MoveSpeed;
+            Transform.WorldPosition -= Transform.RightVec * m_MoveSpeed * Seconds;
             break;
 
         case Camera::MoveDirection::Right:
-            Transform.WorldPosition += Transform.RightVec * m_MoveSpeed;
+            Transform.WorldPosition += Transform.RightVec * m_MoveSpeed * Seconds;
             break;
 
         case Camera::MoveDirection::Up:
-            Transform.WorldPosition += Transform.UpVec * m_MoveSpeed;
+            Transform.WorldPosition += Transform.UpVec * m_MoveSpeed * Seconds;
             break;
 
         case Camera::MoveDirection::Down:
-            Transform.WorldPosition -= Transform.UpVec * m_MoveSpeed;
+            Transform.WorldPosition -= Transform.UpVec * m_MoveSpeed * Seconds;
             break;
 
         default:

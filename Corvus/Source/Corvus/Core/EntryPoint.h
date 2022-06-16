@@ -20,10 +20,7 @@
         {
             CORVUS_CORE_NO_ENTRY_FMT("Application was not created properly!");
         }
-        
-        CORVUS_CORE_TRACE("Application successfully created!");
-        App->Init();
-        CORVUS_CORE_TRACE("Application successfully initialized!");
+        CORVUS_CORE_INFO("Application successfully created and initialized!");
 
         CORVUS_CORE_INFO("Running the application!");
         App->Run();

@@ -9,6 +9,7 @@
 namespace Corvus
 {
     class CameraMovementComponent;
+    class TimeDelta;
 
     class Camera
     {
@@ -47,7 +48,7 @@ namespace Corvus
         virtual ~Camera();
 
         void SwitchPlayerControl(bool IsPlayerControlled, float CameraMoveSpeed = 0.0f);
-        void ProcessMovementInput(MoveDirection Direction);
+        void ProcessMovementInput(MoveDirection Direction, TimeDelta ElapsedTime);
         void ProcessRotationInput(float XOffset, float YOffset, float Sensitivity);
 
         Transform GetTransform() const;
