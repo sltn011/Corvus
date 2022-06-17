@@ -14,7 +14,7 @@ namespace Corvus
 
     public:
 
-        static Own<IndexBuffer> Create(UInt32 const *Data, UInt32 NumIndices);
+        static [[nodiscard]] Own<IndexBuffer> Create(UInt32 const *Data, UInt32 NumIndices);
 
         virtual ~IndexBuffer() = default;
         IndexBuffer(IndexBuffer const &) = delete; 

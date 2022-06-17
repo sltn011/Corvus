@@ -27,7 +27,7 @@ namespace Corvus
         void Run();
 
         void PushLayer(Own<Layer> &&NewLayer);
-        Own<Layer> PopLayer();
+        [[nodiscard]] Own<Layer> PopLayer();
 
         void UpdateLayers(TimeDelta ElapsedTime);
         void RenderLayers();

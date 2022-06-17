@@ -32,7 +32,7 @@ namespace Corvus
 
     public:
 
-        static Own<Window> Create();
+        static [[nodiscard]] Own<Window> Create();
 
         virtual ~Window() = default;
         Window(Window const &) = delete;

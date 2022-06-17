@@ -15,7 +15,7 @@ namespace Corvus
 
     public:
 
-        static Own<VertexBuffer> Create(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout);
+        static [[nodiscard]] Own<VertexBuffer> Create(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout);
 
         virtual ~VertexBuffer() = default;
         VertexBuffer(VertexBuffer const &) = delete;

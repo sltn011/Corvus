@@ -17,7 +17,7 @@ namespace Corvus
 
     public:
 
-        static Own<VertexArray> Create();
+        static [[nodiscard]] Own<VertexArray> Create();
 
         virtual ~VertexArray() = default;
         VertexArray(VertexArray const &) = delete;

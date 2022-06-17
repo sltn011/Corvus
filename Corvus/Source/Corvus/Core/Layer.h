@@ -18,7 +18,7 @@ namespace Corvus
     public:
 
         template<typename LayerType, typename ...Args>
-        static Own<Layer> Create(Args &&...args)
+        static [[nodiscard]] Own<Layer> Create(Args &&...args)
         {
             return MakeOwned<LayerType>(std::forward<Args>(args)...);
         }

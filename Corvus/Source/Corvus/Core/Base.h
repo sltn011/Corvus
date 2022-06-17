@@ -24,7 +24,7 @@ namespace Corvus
     using Own = std::unique_ptr<T>;
 
     template<typename T, typename... Args>
-    Own<T> MakeOwned(Args&&... args)
+    [[nodiscard]] Own<T> MakeOwned(Args&&... args)
     {
         return std::make_unique<T>(std::forward<Args>(args)...);
     }
@@ -33,7 +33,7 @@ namespace Corvus
     using Ref = std::shared_ptr<T>;
 
     template<typename T, typename... Args>
-    Ref<T> MakeRef(Args&&... args)
+    [[nodiscard]] Ref<T> MakeRef(Args&&... args)
     {
         return std::make_shared<T>(std::forward<Args>(args)...);
     }
