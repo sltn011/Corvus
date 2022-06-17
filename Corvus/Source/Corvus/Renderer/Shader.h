@@ -10,6 +10,10 @@ namespace Corvus
     
     class Shader
     {
+    protected:
+
+        Shader() = default;
+
     public:
 
         static Own<Shader> CreateFromFile(String const &FilePath);
@@ -34,10 +38,6 @@ namespace Corvus
 
         virtual void SetMat3(String const &Name, glm::mat3 const &Value) = 0;
         virtual void SetMat4(String const &Name, glm::mat4 const &Value) = 0;
-
-    protected:
-
-        Shader() = default;
 
     };
 

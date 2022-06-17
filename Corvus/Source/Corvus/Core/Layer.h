@@ -11,6 +11,10 @@ namespace Corvus
 
     class Layer
     {
+    protected:
+
+        Layer(String LayerName, bool bEnabled);
+
     public:
 
         template<typename LayerType, typename ...Args>
@@ -38,10 +42,9 @@ namespace Corvus
 
     protected:
 
-        Layer(String LayerName, bool bEnabled);
-
         String m_LayerName;
         bool m_bEnabled;
+
     };
 
 }

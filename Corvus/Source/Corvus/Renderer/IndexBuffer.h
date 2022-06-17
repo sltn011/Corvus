@@ -8,6 +8,10 @@ namespace Corvus
 
     class IndexBuffer
     {
+    protected:
+
+        IndexBuffer() = default;
+
     public:
 
         static Own<IndexBuffer> Create(UInt32 const *Data, UInt32 NumIndices);
@@ -26,8 +30,6 @@ namespace Corvus
         UInt32 GetNumIndices() const;
 
     protected:
-
-        IndexBuffer() = default;
 
         UInt32 m_NumIndices;
 

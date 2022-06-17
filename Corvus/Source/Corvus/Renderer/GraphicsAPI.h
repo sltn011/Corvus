@@ -10,6 +10,10 @@ namespace Corvus
 
     class GraphicsAPI
     {
+    protected:
+
+        GraphicsAPI() = default;
+
     public:
 
         enum class API : UInt8 {
@@ -35,8 +39,6 @@ namespace Corvus
         virtual void DrawIndexed(UInt32 NumIndices) = 0;
 
     protected:
-
-        GraphicsAPI() = default;
 
         static constexpr API m_API = API::OpenGL;
 

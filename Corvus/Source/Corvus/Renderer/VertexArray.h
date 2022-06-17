@@ -11,6 +11,10 @@ namespace Corvus
 
     class VertexArray
     {
+    protected:
+
+        VertexArray() = default;
+
     public:
 
         static Own<VertexArray> Create();
@@ -31,8 +35,6 @@ namespace Corvus
         Own<VertexBuffer> &GetVertexBuffer();
 
     protected:
-
-        VertexArray() = default;
 
         Own<IndexBuffer> m_IndexBuffer;
         Own<VertexBuffer> m_VertexBuffer;

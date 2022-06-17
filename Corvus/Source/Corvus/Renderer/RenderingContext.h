@@ -9,6 +9,10 @@ namespace Corvus
 
     class RenderingContext
     {
+    protected:
+
+        RenderingContext() = default;
+
     public:
 
         static Own<RenderingContext> Create(Window &OwnerWindow);
@@ -21,10 +25,6 @@ namespace Corvus
 
         virtual void Init() = 0;
         virtual void SwapBuffers() = 0;
-
-    protected:
-
-        RenderingContext() = default;
 
     };
     

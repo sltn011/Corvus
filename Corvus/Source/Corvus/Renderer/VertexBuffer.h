@@ -9,6 +9,10 @@ namespace Corvus
 
     class VertexBuffer
     {
+    protected:
+
+        VertexBuffer() = default;
+
     public:
 
         static Own<VertexBuffer> Create(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout);
@@ -29,8 +33,6 @@ namespace Corvus
         VertexBufferLayout &GetLayout();
 
     protected:
-
-        VertexBuffer() = default;
 
         UInt32 m_NumVertices = 0;
         VertexBufferLayout m_Layout;
