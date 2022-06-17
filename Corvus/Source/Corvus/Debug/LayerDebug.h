@@ -15,7 +15,6 @@ namespace Corvus
         using Super = Layer;
 
         LayerDebug(String LayerName, bool bEnabled);
-        virtual ~LayerDebug();
 
         virtual void OnUpdate(TimeDelta ElapsedTime) override;
         virtual void OnEvent(Event &Event) override;

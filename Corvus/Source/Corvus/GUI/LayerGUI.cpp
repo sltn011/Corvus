@@ -13,11 +13,6 @@ namespace Corvus
 
     }
 
-    LayerGUI::~LayerGUI()
-    {
-
-    }
-
     void LayerGUI::Render()
     {
         static bool bShow = true;

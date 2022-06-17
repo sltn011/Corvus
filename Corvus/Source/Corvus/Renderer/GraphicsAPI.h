@@ -19,7 +19,11 @@ namespace Corvus
         static Own<GraphicsAPI> Create();
         static API GetAPI() { return m_API; }
 
-        virtual ~GraphicsAPI();
+        virtual ~GraphicsAPI() = default;
+        GraphicsAPI(GraphicsAPI const &) = delete;
+        GraphicsAPI &operator=(GraphicsAPI const &) = delete;
+        GraphicsAPI(GraphicsAPI &&) = default;
+        GraphicsAPI &operator=(GraphicsAPI &&) = default;
 
         virtual void Init() = 0;
 
@@ -31,6 +35,8 @@ namespace Corvus
         virtual void DrawIndexed(UInt32 NumIndices) = 0;
 
     protected:
+
+        GraphicsAPI() = default;
 
         static constexpr API m_API = API::OpenGL;
 

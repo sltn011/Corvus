@@ -26,12 +26,19 @@ namespace Corvus
 
     class Window
     {
+    protected:
+
+        Window() = default;
+
     public:
 
         static Own<Window> Create();
 
-        Window();
-        virtual ~Window();
+        virtual ~Window() = default;
+        Window(Window const &) = delete;
+        Window &operator=(Window const &) = delete;
+        Window(Window &&) = default;
+        Window &operator=(Window &&) = default;
 
         virtual void Init(WindowData const &Settings) = 0;
         virtual void InitRenderingContext() = 0;
@@ -62,7 +69,7 @@ namespace Corvus
     protected:
 
         WindowData  m_WindowData;
-        bool m_bIsInitialized;
+        bool m_bIsInitialized = false;
 
         Own<RenderingContext> m_RenderingContext;
         GUIController m_GUIController;

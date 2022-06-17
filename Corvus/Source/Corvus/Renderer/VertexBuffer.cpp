@@ -19,10 +19,6 @@ namespace Corvus
         return nullptr;
     }
 
-    VertexBuffer::~VertexBuffer()
-    {
-    }
-
     UInt32 VertexBuffer::GetNumVertices() const
     {
         return m_NumVertices;

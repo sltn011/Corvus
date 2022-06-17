@@ -10,11 +10,13 @@ namespace Corvus
     public:
 
         WindowsWindow();
-        virtual ~WindowsWindow();
+        ~WindowsWindow();
+        WindowsWindow(WindowsWindow const &) = delete;
+        WindowsWindow &operator=(WindowsWindow const &) = delete;
+        WindowsWindow(WindowsWindow &&) = default;
+        WindowsWindow &operator=(WindowsWindow &&) = default;
 
         virtual void Init(WindowData const &Settings) override;
-        virtual void InitRenderingContext() override;
-        virtual void InitGUIRenderingContext() override;
 
         void Destroy(); 
 
@@ -31,6 +33,9 @@ namespace Corvus
         static void WindowErrorCallback(int ErrorCode, char const *Description);
 
     protected:
+
+        virtual void InitRenderingContext() override;
+        virtual void InitGUIRenderingContext() override;
 
         void SetupWindowEventsHandlers();
 

@@ -21,10 +21,6 @@ namespace Corvus
         return nullptr;
     }
 
-    VertexArray::~VertexArray()
-    {
-    }
-
     Own<IndexBuffer> &VertexArray::GetIndexBuffer()
     {
         return m_IndexBuffer;

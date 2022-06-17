@@ -13,7 +13,11 @@ namespace Corvus
 
         static Own<VertexBuffer> Create(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout);
 
-        virtual ~VertexBuffer();
+        virtual ~VertexBuffer() = default;
+        VertexBuffer(VertexBuffer const &) = delete;
+        VertexBuffer &operator=(VertexBuffer const &) = delete;
+        VertexBuffer(VertexBuffer &&) = default;
+        VertexBuffer &operator=(VertexBuffer &&) = default;
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
@@ -25,6 +29,8 @@ namespace Corvus
         VertexBufferLayout &GetLayout();
 
     protected:
+
+        VertexBuffer() = default;
 
         UInt32 m_NumVertices = 0;
         VertexBufferLayout m_Layout;

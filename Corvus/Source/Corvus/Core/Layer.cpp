@@ -13,10 +13,6 @@ namespace Corvus
         CORVUS_CORE_TRACE("Layer \"{0}\" created and set to {1}", m_LayerName, m_bEnabled ? "enabled" : "disabled");
     }
 
-    Layer::~Layer()
-    {
-    }
-
     void Layer::SetEnabled(bool bEnabled)
     {
         m_bEnabled = bEnabled;

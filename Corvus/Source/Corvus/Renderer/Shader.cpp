@@ -17,8 +17,4 @@ namespace Corvus
         }
         return nullptr;
     }
-
-    Shader::~Shader()
-    {
-    }
 }

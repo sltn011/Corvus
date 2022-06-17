@@ -19,10 +19,6 @@ namespace Corvus
         return nullptr;
     }
 
-    IndexBuffer::~IndexBuffer()
-    {
-    }
-
     UInt32 IndexBuffer::GetNumIndices() const
     {
         return m_NumIndices;

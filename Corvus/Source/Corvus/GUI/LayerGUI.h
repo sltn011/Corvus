@@ -15,7 +15,6 @@ namespace Corvus
         using Super = Layer;
 
         LayerGUI(String LayerName, bool bEnabled);
-        virtual ~LayerGUI();
 
         virtual void Render() override;
 

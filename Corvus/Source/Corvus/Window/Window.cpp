@@ -10,15 +10,6 @@ namespace Corvus
         return MakeOwned<WindowsWindow>();
     }
 
-    Window::Window()
-        : m_bIsInitialized{ false }
-    {
-    }
-
-    Window::~Window()
-    {
-    }
-
     bool Window::IsVSyncEnabled() const
     {
         if (!m_bIsInitialized)

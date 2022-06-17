@@ -15,7 +15,11 @@ namespace Corvus
 
         static Own<VertexArray> Create();
 
-        virtual ~VertexArray();
+        virtual ~VertexArray() = default;
+        VertexArray(VertexArray const &) = delete;
+        VertexArray &operator=(VertexArray const &) = delete;
+        VertexArray(VertexArray &&) = default;
+        VertexArray &operator=(VertexArray &&) = default;
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
@@ -27,6 +31,8 @@ namespace Corvus
         Own<VertexBuffer> &GetVertexBuffer();
 
     protected:
+
+        VertexArray() = default;
 
         Own<IndexBuffer> m_IndexBuffer;
         Own<VertexBuffer> m_VertexBuffer;

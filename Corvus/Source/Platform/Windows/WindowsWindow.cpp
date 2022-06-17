@@ -72,20 +72,6 @@ namespace Corvus
         CORVUS_CORE_ASSERT(m_RenderingContext);
     }
 
-    void WindowsWindow::InitRenderingContext()
-    {
-        m_RenderingContext = RenderingContext::Create(*this);
-        CORVUS_CORE_ASSERT(m_RenderingContext);
-        m_RenderingContext->Init();
-        CORVUS_CORE_INFO("Rendering context created");
-    }
-
-    void WindowsWindow::InitGUIRenderingContext()
-    {
-        m_GUIController.Init();
-        CORVUS_CORE_INFO("GUI rendering context created");
-    }
-
     void WindowsWindow::Destroy()
     {
         if (!m_bIsInitialized)
@@ -194,6 +180,20 @@ namespace Corvus
     void WindowsWindow::WindowErrorCallback(int ErrorCode, char const *Description)
     {
         CORVUS_CORE_ERROR("GLFW Error - Code: {0}, Description: {1:s}", ErrorCode, Description);
+    }
+
+    void WindowsWindow::InitRenderingContext()
+    {
+        m_RenderingContext = RenderingContext::Create(*this);
+        CORVUS_CORE_ASSERT(m_RenderingContext);
+        m_RenderingContext->Init();
+        CORVUS_CORE_INFO("Rendering context created");
+    }
+
+    void WindowsWindow::InitGUIRenderingContext()
+    {
+        m_GUIController.Init();
+        CORVUS_CORE_INFO("GUI rendering context created");
     }
 
     void WindowsWindow::SetupWindowEventsHandlers()

@@ -14,7 +14,11 @@ namespace Corvus
 
         static Own<Shader> CreateFromFile(String const &FilePath);
 
-        virtual ~Shader();
+        virtual ~Shader() = default;
+        Shader(Shader const &) = delete;
+        Shader &operator=(Shader const &) = delete;
+        Shader(Shader &&) = default;
+        Shader &operator=(Shader &&) = default;
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
@@ -30,6 +34,11 @@ namespace Corvus
 
         virtual void SetMat3(String const &Name, glm::mat3 const &Value) = 0;
         virtual void SetMat4(String const &Name, glm::mat4 const &Value) = 0;
+
+    protected:
+
+        Shader() = default;
+
     };
 
 }

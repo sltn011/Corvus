@@ -12,7 +12,11 @@ namespace Corvus
 
         static Own<IndexBuffer> Create(UInt32 const *Data, UInt32 NumIndices);
 
-        virtual ~IndexBuffer();
+        virtual ~IndexBuffer() = default;
+        IndexBuffer(IndexBuffer const &) = delete; 
+        IndexBuffer &operator=(IndexBuffer const &) = delete;
+        IndexBuffer(IndexBuffer &&) = default; 
+        IndexBuffer &operator=(IndexBuffer &&) = default;
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
@@ -22,6 +26,8 @@ namespace Corvus
         UInt32 GetNumIndices() const;
 
     protected:
+
+        IndexBuffer() = default;
 
         UInt32 m_NumIndices;
 

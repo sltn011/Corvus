@@ -42,8 +42,8 @@ namespace Corvus
         InitWindow();
         InitRenderer();
 
-        PushLayer(MakeOwned<CoreLayer>());
-        PushLayer(MakeOwned<LayerGUI>("GUI", true));
+        PushLayer(Layer::Create<CoreLayer>());
+        PushLayer(Layer::Create<LayerGUI>("GUI", true));
     }
 
     void Application::Run()

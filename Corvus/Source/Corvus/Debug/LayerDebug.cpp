@@ -10,10 +10,6 @@ namespace Corvus
     {
     }
 
-    LayerDebug::~LayerDebug()
-    {
-    }
-
     void LayerDebug::OnUpdate(TimeDelta ElapsedTime)
     {
         if (!m_bEnabled)

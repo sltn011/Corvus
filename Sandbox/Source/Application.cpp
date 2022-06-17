@@ -43,8 +43,6 @@ public:
         Camera.SwitchPlayerControl(true, 1.0f);
     }
 
-    virtual ~ApplicationLayer() {}
-
     virtual void OnUpdate(Corvus::TimeDelta ElapsedTime)
     {
         Corvus::Renderer::BeginScene();
@@ -102,7 +100,7 @@ namespace Corvus {
     Application *CreateApplication()
     {
         Sandbox *App = new Sandbox;
-        App->PushLayer(Corvus::MakeOwned<ApplicationLayer>());
+        App->PushLayer(Layer::Create<ApplicationLayer>());
         return App;
     }
 
