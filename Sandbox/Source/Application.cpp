@@ -86,7 +86,15 @@ namespace Corvus {
 
         virtual void OnEvent(Event &Event)
         {
-
+            if (Event.GetEventType() == Event::EType::MouseCursorMove)
+            {
+                CursorMoveEvent &CMEvent = CastEvent<CursorMoveEvent>(Event);
+                glm::vec2 NewPos = glm::vec2{ CMEvent.NewX, CMEvent.NewY };
+                glm::vec2 Delta = NewPos - MousePos;
+                MousePos = NewPos;
+                Camera.ProcessRotationInput(Delta.x, -Delta.y, 0.1f);
+                Event.SetHandled();
+            }
         }
 
     protected:
@@ -94,6 +102,8 @@ namespace Corvus {
         Own<VertexArray>  VAO;
         Own<Shader>       TestShader;
         PerspectiveCamera Camera;
+
+        glm::vec2 MousePos;
 
     };
 

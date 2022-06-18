@@ -43,7 +43,7 @@ namespace Corvus
         InitRenderer();
 
         PushLayer(Layer::Create<CoreLayer>());
-        PushLayer(Layer::Create<LayerGUI>("GUI", true));
+        //PushLayer(Layer::Create<LayerGUI>("GUI", true));
     }
 
     void Application::Run()
