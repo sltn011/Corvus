@@ -46,6 +46,14 @@ namespace Corvus
         return IsButtonInState(Button, Action::Release);
     }
 
+    void Input::SetCursorEnabled(bool bEnabled)
+    {
+        Application &App = Application::GetInstance();
+        GLFWwindow *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
+
+        glfwSetInputMode(Window, GLFW_CURSOR, bEnabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+    }
+
     glm::vec2 Input::GetCursorPos()
     {
         Application &App = Application::GetInstance();
@@ -65,5 +73,13 @@ namespace Corvus
     float Input::GetCursorY()
     {
         return GetCursorPos().y;
+    }
+
+    void Input::SetCursorPos(glm::vec2 Pos)
+    {
+        Application &App = Application::GetInstance();
+        GLFWwindow *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
+
+        glfwSetCursorPos(Window, Pos.x, Pos.y);
     }
 }

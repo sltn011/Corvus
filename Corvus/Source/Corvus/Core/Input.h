@@ -10,34 +10,30 @@ namespace Corvus
 
     struct Input
     {
-        // Check if keyboard key is in specified state
+        // KEYBOARD
+        
         static bool IsKeyInState(KeyCode Key, ActionCode State);
-
-        // Check if keyboard key is pressed
         static bool IsKeyPressed(KeyCode Key);
-
-        // Check if keyboard key is released
         static bool IsKeyReleased(KeyCode Key);
-
-        // Check if keyboard key is repeated
         static bool IsKeyRepeated(KeyCode Key);
 
 
 
-        // Check if mouse button is in specified state
+        // MOUSE
+        
         static bool IsButtonInState(MouseCode Button, ActionCode State);
-
-        // Check if mouse button is pressed
         static bool IsButtonPressed(MouseCode Button);
-
-        // Check if mouse button is released
         static bool IsButtonReleased(MouseCode Button);
 
 
 
+        // CURSOR
+
+        static void SetCursorEnabled(bool bEnabled);
         static glm::vec2 GetCursorPos();
         static float GetCursorX();
         static float GetCursorY();
+        static void SetCursorPos(glm::vec2 Pos);
     };
 
 }

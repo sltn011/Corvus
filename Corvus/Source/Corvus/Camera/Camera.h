@@ -49,7 +49,7 @@ namespace Corvus
 
         void SwitchPlayerControl(bool IsPlayerControlled, float CameraMoveSpeed = 0.0f);
         void ProcessMovementInput(MoveDirection Direction, TimeDelta ElapsedTime);
-        void ProcessRotationInput(float XOffset, float YOffset, float Sensitivity);
+        void ProcessRotationInput(float XOffset, float YOffset, float Sensitivity, TimeDelta ElapsedTime);
 
         Transform GetTransform() const;
         Rotation GetRotation() const;

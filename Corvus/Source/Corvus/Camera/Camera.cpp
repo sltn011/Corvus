@@ -37,11 +37,11 @@ namespace Corvus
         }
     }
 
-    void Camera::ProcessRotationInput(float XOffset, float YOffset, float Sensitivity)
+    void Camera::ProcessRotationInput(float XOffset, float YOffset, float Sensitivity, TimeDelta ElapsedTime)
     {
         if (m_IsPlayerControlled)
         {
-            m_MovementComponent->ProcessRotationInput(XOffset, YOffset, Sensitivity);
+            m_MovementComponent->ProcessRotationInput(XOffset, YOffset, Sensitivity, ElapsedTime);
         }
     }
 

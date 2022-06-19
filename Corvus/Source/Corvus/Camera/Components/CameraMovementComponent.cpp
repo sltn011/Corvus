@@ -54,7 +54,7 @@ namespace Corvus
         m_Owner->SetTransform(Transform);
     }
 
-    void CameraMovementComponent::ProcessRotationInput(float XOffset, float YOffset, float Sensitivity)
+    void CameraMovementComponent::ProcessRotationInput(float XOffset, float YOffset, float Sensitivity, TimeDelta ElapsedTime)
     {
         static bool firstTime = true;
         if (firstTime) {
@@ -63,9 +63,10 @@ namespace Corvus
         }
 
         Camera::Rotation Rotation = m_Owner->GetRotation();
+        float Seconds = ElapsedTime.Seconds();
 
-        XOffset *= Sensitivity;
-        YOffset *= Sensitivity;
+        XOffset *= Sensitivity * Seconds;
+        YOffset *= Sensitivity * Seconds;
 
         Rotation.YawRadians += glm::radians(XOffset);
         Rotation.PitchRadians += glm::radians(YOffset);

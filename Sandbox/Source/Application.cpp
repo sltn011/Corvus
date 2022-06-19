@@ -52,29 +52,41 @@ namespace Corvus {
             Renderer::SetClearColor({ 0.6f, 0.8f, 1.0f, 1.0f });
             Renderer::Clear();
 
-            if (Input::IsKeyPressed(Key::W))
+            if (bCameraMode)
             {
-                Camera.ProcessMovementInput(Camera::MoveDirection::Forward, ElapsedTime);
+                if (Input::IsKeyPressed(Key::W))
+                {
+                    Camera.ProcessMovementInput(Camera::MoveDirection::Forward, ElapsedTime);
+                }
+                if (Input::IsKeyPressed(Key::A))
+                {
+                    Camera.ProcessMovementInput(Camera::MoveDirection::Left, ElapsedTime);
+                }
+                if (Input::IsKeyPressed(Key::S))
+                {
+                    Camera.ProcessMovementInput(Camera::MoveDirection::Backward, ElapsedTime);
+                }
+                if (Input::IsKeyPressed(Key::D))
+                {
+                    Camera.ProcessMovementInput(Camera::MoveDirection::Right, ElapsedTime);
+                }
+                if (Input::IsKeyPressed(Key::Space))
+                {
+                    Camera.ProcessMovementInput(Camera::MoveDirection::Up, ElapsedTime);
+                }
+                if (Input::IsKeyPressed(Key::LeftShift))
+                {
+                    Camera.ProcessMovementInput(Camera::MoveDirection::Down, ElapsedTime);
+                }
+
             }
-            if (Input::IsKeyPressed(Key::A))
+
+            glm::vec2 NewPos = Input::GetCursorPos();
+            glm::vec2 Delta = NewPos - CursorPos;
+            CursorPos = NewPos;
+            if (bCameraMode)
             {
-                Camera.ProcessMovementInput(Camera::MoveDirection::Left, ElapsedTime);
-            }
-            if (Input::IsKeyPressed(Key::S))
-            {
-                Camera.ProcessMovementInput(Camera::MoveDirection::Backward, ElapsedTime);
-            }
-            if (Input::IsKeyPressed(Key::D))
-            {
-                Camera.ProcessMovementInput(Camera::MoveDirection::Right, ElapsedTime);
-            }
-            if (Input::IsKeyPressed(Key::Space))
-            {
-                Camera.ProcessMovementInput(Camera::MoveDirection::Up, ElapsedTime);
-            }
-            if (Input::IsKeyPressed(Key::LeftShift))
-            {
-                Camera.ProcessMovementInput(Camera::MoveDirection::Down, ElapsedTime);
+                Camera.ProcessRotationInput(Delta.x, -Delta.y, 10.0f, ElapsedTime);
             }
 
             TestShader->Bind();
@@ -86,14 +98,16 @@ namespace Corvus {
 
         virtual void OnEvent(Event &Event)
         {
-            if (Event.GetEventType() == Event::EType::MouseCursorMove)
+            if (Event.GetEventType() == Event::EType::KeyPress)
             {
-                CursorMoveEvent &CMEvent = CastEvent<CursorMoveEvent>(Event);
-                glm::vec2 NewPos = glm::vec2{ CMEvent.NewX, CMEvent.NewY };
-                glm::vec2 Delta = NewPos - MousePos;
-                MousePos = NewPos;
-                Camera.ProcessRotationInput(Delta.x, -Delta.y, 0.1f);
-                Event.SetHandled();
+                KeyPressEvent &KPEvent = CastEvent<KeyPressEvent>(Event);
+                if (KPEvent.Key == Key::C)
+                {
+                    bCameraMode = !bCameraMode;
+                    Input::SetCursorEnabled(!bCameraMode);
+
+                    Event.SetHandled();
+                }
             }
         }
 
@@ -103,7 +117,8 @@ namespace Corvus {
         Own<Shader>       TestShader;
         PerspectiveCamera Camera;
 
-        glm::vec2 MousePos;
+        bool bCameraMode = false;
+        glm::vec2 CursorPos;
 
     };
 

@@ -118,8 +118,8 @@ namespace Corvus
     void Application::InitWindow()
     {
         WindowData WindowSettings;
-        WindowSettings.WindowWidth = 1280;
-        WindowSettings.WindowHeight = 720;
+        WindowSettings.WindowWidth = 1600;
+        WindowSettings.WindowHeight = 900;
         WindowSettings.WindowName = "TestWindow";
         WindowSettings.bVSyncEnabled = true;
 
