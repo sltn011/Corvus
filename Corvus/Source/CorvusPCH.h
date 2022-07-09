@@ -15,6 +15,10 @@
 #include "Corvus/Events/KeyboardEvent.h"
 #include "Corvus/Events/MouseEvent.h"
 
+#include "Corvus/Math/Color.h"
+#include "Corvus/Math/Matrix.h"
+#include "Corvus/Math/Vector.h"
+
 #include "Corvus/Renderer/GraphicsAPI.h"
 
 #include "Corvus/Time/TimeDelta.h"

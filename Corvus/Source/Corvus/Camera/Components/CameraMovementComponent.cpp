@@ -92,7 +92,7 @@ namespace Corvus
         Transform.ForwardVec.z = std::cos(Rotation.PitchRadians) * std::sin(Rotation.YawRadians);
         Transform.ForwardVec = glm::normalize(Transform.ForwardVec);
 
-        Transform.RightVec = glm::normalize(glm::cross(Transform.ForwardVec, Vector::WorldUp));
+        Transform.RightVec = glm::normalize(glm::cross(Transform.ForwardVec, Vector::Up));
         Transform.UpVec = glm::normalize(glm::cross(Transform.RightVec, Transform.ForwardVec));
 
         m_Owner->SetTransform(Transform);

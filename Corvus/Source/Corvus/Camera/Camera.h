@@ -1,10 +1,8 @@
 #ifndef CORVUS_SOURCE_CORVUS_CAMERA_CAMERA_H
 #define CORVUS_SOURCE_CORVUS_CAMERA_CAMERA_H
 
-#include "Corvus/Core/Base.h"
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "Corvus/Math/Matrix.h"
+#include "Corvus/Math/Vector.h"
 
 namespace Corvus
 {
@@ -26,9 +24,9 @@ namespace Corvus
         {
             glm::vec3 WorldPosition = Vector::ZeroVec;
 
-            glm::vec3 ForwardVec = Vector::WorldForward;
-            glm::vec3 UpVec = Vector::WorldUp;
-            glm::vec3 RightVec = Vector::WorldRight;
+            glm::vec3 ForwardVec = Vector::Forward;
+            glm::vec3 UpVec      = Vector::Up;
+            glm::vec3 RightVec   = Vector::Right;
 
             Rotation Rotation;
         };
