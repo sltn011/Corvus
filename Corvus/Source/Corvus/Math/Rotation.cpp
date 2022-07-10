@@ -5,39 +5,100 @@ namespace Corvus
 {
 
     Rotation::Rotation(RotationOrder Order)
-        : m_RotationOrder{ Order }
+        : m_Angles{ Vector::ZeroVec }, m_RotationOrder{ Order }
     {
     }
 
-    void Rotation::AddRotationYaw(float YawAngle)
+    glm::mat4 Rotation::GetRotationMatrix() const
     {
-        float YawRadians = glm::radians(YawAngle);
-        glm::quat NewRotation = glm::angleAxis(YawRadians, Vector::Up);
-        m_Quaternion = NewRotation * m_Quaternion;
+        glm::mat4 Roll  = GetRollMatrix();
+        glm::mat4 Yaw   = GetYawMatrix();
+        glm::mat4 Pitch = GetPitchMatrix();
+
+        switch (m_RotationOrder)
+        {
+        case Corvus::RotationOrder::XYZ:
+            return Pitch * Yaw * Roll;
+
+        case Corvus::RotationOrder::XZY:
+            return Yaw * Pitch * Roll;
+
+        case Corvus::RotationOrder::YXZ:
+            return Pitch * Roll * Yaw;
+
+        case Corvus::RotationOrder::YZX:
+            return Roll * Pitch * Yaw;
+
+        case Corvus::RotationOrder::ZXY:
+            return Yaw * Roll * Pitch;
+
+        case Corvus::RotationOrder::ZYX:
+            return Roll * Yaw * Pitch;
+
+        default:
+            CORVUS_CORE_ERROR("Unexpected Rotation Order value!");
+            return glm::mat4(1.0f);
+        }
     }
 
-    void Rotation::AddRotationPitch(float PitchAngle)
+    glm::mat4 Rotation::GetRollMatrix() const
     {
-        float PitchRadians = glm::radians(PitchAngle);
-        glm::quat NewRotation = glm::angleAxis(PitchRadians, Vector::Right);
-        m_Quaternion = NewRotation * m_Quaternion;
+        return glm::rotate(glm::mat4(1.0f), glm::radians(m_Angles.x), Vector::Forward);
     }
 
-    void Rotation::AddRotationRoll(float RollAngle)
+    glm::mat4 Rotation::GetYawMatrix() const
     {
-        float RollRadians = glm::radians(RollAngle);
-        glm::quat NewRotation = glm::angleAxis(RollRadians, Vector::Forward);
-        m_Quaternion = NewRotation * m_Quaternion;
+        return glm::rotate(glm::mat4(1.0f), glm::radians(m_Angles.y), Vector::Up);
     }
 
-    glm::quat Rotation::GetQuaternion() const
+    glm::mat4 Rotation::GetPitchMatrix() const
     {
-        return m_Quaternion;
+        return glm::rotate(glm::mat4(1.0f), glm::radians(m_Angles.z), Vector::Right);
     }
 
-    void Rotation::SetQuaternion(glm::quat const &Quaternion)
+    void Rotation::AddRollAngle(float RollAngle)
     {
-        m_Quaternion = Quaternion;
+        m_Angles.x += RollAngle;
+    }
+
+    void Rotation::AddYawAngle(float YawAngle)
+    {
+        m_Angles.y += YawAngle;
+    }
+
+    void Rotation::AddPitchAngle(float PitchAngle)
+    {
+        m_Angles.z += PitchAngle;
+    }
+
+    float Rotation::GetRollAngle() const
+    {
+        return m_Angles.x;
+    }
+
+    float Rotation::GetYawAngle() const
+    {
+        return m_Angles.y;
+    }
+
+    float Rotation::GetPitchAngle() const
+    {
+        return m_Angles.z;
+    }
+
+    void Rotation::SetRollAngle(float RollAngle)
+    {
+        m_Angles.x = RollAngle;
+    }
+
+    void Rotation::SetYawAngle(float YawAngle)
+    {
+        m_Angles.y = YawAngle;
+    }
+
+    void Rotation::SetPitchAngle(float PitchAngle)
+    {
+        m_Angles.z = PitchAngle;
     }
 
     RotationOrder Rotation::GetRotationOrder() const

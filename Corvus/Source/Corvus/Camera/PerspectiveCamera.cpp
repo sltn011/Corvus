@@ -48,10 +48,12 @@ namespace Corvus
 
     void PerspectiveCamera::RecalculateViewMatrix()
     {
+        glm::vec3 WorldPosition = m_Transform.GetWorldPosition();
+
         m_ViewMatrix = glm::lookAt(
-            m_Transform.WorldPosition,
-            m_Transform.WorldPosition + m_Transform.ForwardVec,
-            m_Transform.UpVec
+            WorldPosition,
+            WorldPosition + m_ForwardVector,
+            m_UpVector
         );
     }
 

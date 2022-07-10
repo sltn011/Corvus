@@ -19,39 +19,46 @@ namespace Corvus
 
     void CameraMovementComponent::ProcessMovementInput(Camera::MoveDirection Direction, TimeDelta ElapsedTime)
     {
-        Camera::Transform Transform = m_Owner->GetTransform();
+        Transform CameraTransform = m_Owner->GetTransform();
         float Seconds = ElapsedTime.Seconds();
+
+        glm::vec3 WorldPosition = CameraTransform.GetWorldPosition();
+
+        glm::vec3 ForwardVector = m_Owner->GetForwardVector();
+        glm::vec3 UpVector      = m_Owner->GetUpVector();
+        glm::vec3 RightVector   = m_Owner->GetRightVector();
 
         switch (Direction) {
         case Camera::MoveDirection::Forward:
-            Transform.WorldPosition += Transform.ForwardVec * m_MoveSpeed * Seconds;
+            WorldPosition += ForwardVector * m_MoveSpeed * Seconds;
             break;
 
         case Camera::MoveDirection::Backward:
-            Transform.WorldPosition -= Transform.ForwardVec * m_MoveSpeed * Seconds;
+            WorldPosition -= ForwardVector * m_MoveSpeed * Seconds;
             break;
 
         case Camera::MoveDirection::Left:
-            Transform.WorldPosition -= Transform.RightVec * m_MoveSpeed * Seconds;
+            WorldPosition -= RightVector * m_MoveSpeed * Seconds;
             break;
 
         case Camera::MoveDirection::Right:
-            Transform.WorldPosition += Transform.RightVec * m_MoveSpeed * Seconds;
+            WorldPosition += RightVector * m_MoveSpeed * Seconds;
             break;
 
         case Camera::MoveDirection::Up:
-            Transform.WorldPosition += Transform.UpVec * m_MoveSpeed * Seconds;
+            WorldPosition += UpVector * m_MoveSpeed * Seconds;
             break;
 
         case Camera::MoveDirection::Down:
-            Transform.WorldPosition -= Transform.UpVec * m_MoveSpeed * Seconds;
+            WorldPosition -= UpVector * m_MoveSpeed * Seconds;
             break;
 
         default:
             break;
         }
 
-        m_Owner->SetTransform(Transform);
+        CameraTransform.SetWorldPosition(WorldPosition);
+        m_Owner->SetTransform(CameraTransform);
     }
 
     void CameraMovementComponent::ProcessRotationInput(float XOffset, float YOffset, float Sensitivity, TimeDelta ElapsedTime)
@@ -62,40 +69,23 @@ namespace Corvus
             return;
         }
 
-        Camera::Rotation Rotation = m_Owner->GetRotation();
+        Rotation CameraRotation = m_Owner->GetRotation();
         float Seconds = ElapsedTime.Seconds();
 
         XOffset *= Sensitivity * Seconds;
         YOffset *= Sensitivity * Seconds;
 
-        Rotation.YawRadians += glm::radians(XOffset);
-        Rotation.PitchRadians += glm::radians(YOffset);
+        CameraRotation.AddYawAngle(XOffset);
+        CameraRotation.AddPitchAngle(YOffset);
 
-        if (Rotation.PitchRadians > glm::radians(89.0f)) {
-            Rotation.PitchRadians = glm::radians(89.0f);
+        if (CameraRotation.GetPitchAngle() > 89.0f) {
+            CameraRotation.SetPitchAngle(89.0f);
         }
-        if (Rotation.PitchRadians < glm::radians(-89.0f)) {
-            Rotation.PitchRadians = glm::radians(-89.0f);
+        if (CameraRotation.GetPitchAngle() < -89.0f) {
+            CameraRotation.SetPitchAngle(-89.0f);
         }
 
-        m_Owner->SetRotation(Rotation);
-        UpdateOwnerVectors();
-    }
-
-    void CameraMovementComponent::UpdateOwnerVectors()
-    {
-        Camera::Transform Transform = m_Owner->GetTransform();
-        Camera::Rotation Rotation = Transform.Rotation;
-
-        Transform.ForwardVec.x = std::cos(Rotation.PitchRadians) * std::cos(Rotation.YawRadians);
-        Transform.ForwardVec.y = std::sin(Rotation.PitchRadians);
-        Transform.ForwardVec.z = std::cos(Rotation.PitchRadians) * std::sin(Rotation.YawRadians);
-        Transform.ForwardVec = glm::normalize(Transform.ForwardVec);
-
-        Transform.RightVec = glm::normalize(glm::cross(Transform.ForwardVec, Vector::Up));
-        Transform.UpVec = glm::normalize(glm::cross(Transform.RightVec, Transform.ForwardVec));
-
-        m_Owner->SetTransform(Transform);
+        m_Owner->SetRotation(CameraRotation);
     }
 
 }

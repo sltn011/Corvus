@@ -1,8 +1,7 @@
 #ifndef CORVUS_SOURCE_CORVUS_CAMERA_CAMERA_H
 #define CORVUS_SOURCE_CORVUS_CAMERA_CAMERA_H
 
-#include "Corvus/Math/Matrix.h"
-#include "Corvus/Math/Vector.h"
+#include "Corvus/Math/Transform.h"
 
 namespace Corvus
 {
@@ -12,24 +11,6 @@ namespace Corvus
     class Camera
     {
     public:
-
-        struct Rotation
-        {
-            float YawRadians = 0.0f;
-            float PitchRadians = 0.0f;
-            float RollRadians = 0.0f;
-        };
-
-        struct Transform
-        {
-            glm::vec3 WorldPosition = Vector::ZeroVec;
-
-            glm::vec3 ForwardVec = Vector::Forward;
-            glm::vec3 UpVec      = Vector::Up;
-            glm::vec3 RightVec   = Vector::Right;
-
-            Rotation Rotation;
-        };
 
         enum class MoveDirection
         {
@@ -50,7 +31,11 @@ namespace Corvus
         void ProcessRotationInput(float XOffset, float YOffset, float Sensitivity, TimeDelta ElapsedTime);
 
         Transform GetTransform() const;
-        Rotation GetRotation() const;
+        Rotation  GetRotation() const;
+
+        glm::vec3 GetForwardVector() const;
+        glm::vec3 GetUpVector() const;
+        glm::vec3 GetRightVector() const;
 
         void SetMoveSpeed(float CameraMoveSpeed);
         void SetTransform(Transform const &Transform);
@@ -67,20 +52,26 @@ namespace Corvus
         virtual void RecalculateProjectionMatrix() = 0;
         virtual void RecalculateProjectionViewMatrix() = 0;
 
+        void UpdateVectors();
+
     protected:
 
         Own<CameraMovementComponent> m_MovementComponent;
         bool m_IsPlayerControlled = false;
 
-        glm::mat4 m_ViewMatrix = glm::identity<glm::mat4>();
-        glm::mat4 m_ProjectionMatrix = glm::identity<glm::mat4>();
-        glm::mat4 m_ProjectionViewMatrix = glm::identity<glm::mat4>();
-
         Transform m_Transform;
 
-        float m_Aspect = 1.0f;
+        glm::vec3 m_ForwardVector = Vector::Forward;
+        glm::vec3 m_UpVector      = Vector::Up;
+        glm::vec3 m_RightVector   = Vector::Right;
+
+        glm::mat4 m_ViewMatrix           = glm::mat4(1.0f);
+        glm::mat4 m_ProjectionMatrix     = glm::mat4(1.0f);
+        glm::mat4 m_ProjectionViewMatrix = glm::mat4(1.0f);
+
+        float m_Aspect   = 1.0f;
         float m_NearClip = 0.1f;
-        float m_FarClip = 100.0f;
+        float m_FarClip  = 100.0f;
 
     };
 

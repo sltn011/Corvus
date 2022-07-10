@@ -21,8 +21,6 @@ namespace Corvus
 
     protected:
 
-        void UpdateOwnerVectors();
-
         Camera *m_Owner = nullptr;
         float m_MoveSpeed = 1.0f;
         

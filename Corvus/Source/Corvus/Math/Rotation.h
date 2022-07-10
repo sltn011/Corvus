@@ -1,7 +1,7 @@
 #ifndef CORVUS_SOURCE_CORVUS_MATH_ROTATION_H
 #define CORVUS_SOURCE_CORVUS_MATH_ROTATION_H
 
-#include "Corvus/Math/Quaternion.h"
+#include "Corvus/Math/Vector.h"
 
 namespace Corvus
 {
@@ -21,19 +21,29 @@ namespace Corvus
 
         Rotation(RotationOrder Order = RotationOrder::YXZ);
 
-        void AddRotationYaw(float YawAngle);
-        void AddRotationPitch(float PitchAngle);
-        void AddRotationRoll(float RollAngle);
+        glm::mat4 GetRotationMatrix() const;
+        glm::mat4 GetRollMatrix() const;
+        glm::mat4 GetYawMatrix() const;
+        glm::mat4 GetPitchMatrix() const;
 
-        glm::quat GetQuaternion() const;
-        void SetQuaternion(glm::quat const &Quaternion);
+        void AddRollAngle(float RollAngle);
+        void AddYawAngle(float YawAngle);
+        void AddPitchAngle(float PitchAngle);
+
+        float GetRollAngle() const;
+        float GetYawAngle() const;
+        float GetPitchAngle() const;
+
+        void SetRollAngle(float RollAngle);
+        void SetYawAngle(float YawAngle);
+        void SetPitchAngle(float PitchAngle);
 
         RotationOrder GetRotationOrder() const;
         void SetRotationOrder(RotationOrder Order);
 
     private:
 
-        glm::quat     m_Quaternion = glm::identity<glm::quat>();
+        glm::vec3     m_Angles; // Roll, Yaw, Pitch
         RotationOrder m_RotationOrder;
 
     };

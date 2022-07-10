@@ -53,26 +53,43 @@ namespace Corvus
         }
     }
 
-    Camera::Transform Camera::GetTransform() const
+    Transform Camera::GetTransform() const
     {
         return m_Transform;
     }
 
-    Camera::Rotation Camera::GetRotation() const
+    Rotation Camera::GetRotation() const
     {
-        return m_Transform.Rotation;
+        return m_Transform.GetRotation();
+    }
+
+    glm::vec3 Camera::GetForwardVector() const
+    {
+        return m_ForwardVector;
+    }
+
+    glm::vec3 Camera::GetUpVector() const
+    {
+        return m_UpVector;
+    }
+
+    glm::vec3 Camera::GetRightVector() const
+    {
+        return m_RightVector;
     }
 
     void Camera::SetTransform(Transform const &Transform)
     {
         m_Transform = Transform;
+        UpdateVectors();
         RecalculateViewMatrix();
         RecalculateProjectionViewMatrix();
     }
 
     void Camera::SetRotation(Rotation const &Rotation)
     {
-        m_Transform.Rotation = Rotation;
+        m_Transform.SetRotation(Rotation);
+        UpdateVectors();
         RecalculateViewMatrix();
         RecalculateProjectionViewMatrix();
     }
@@ -87,6 +104,22 @@ namespace Corvus
     {
         m_NearClip = NearClip;
         m_FarClip = FarClip;
+    }
+
+    void Camera::UpdateVectors()
+    {
+        Rotation Rotation  = m_Transform.GetRotation();
+        float RollRadians  = glm::radians(Rotation.GetRollAngle());
+        float YawRadians   = glm::radians(Rotation.GetYawAngle());
+        float PitchRadians = glm::radians(Rotation.GetPitchAngle());
+
+        m_ForwardVector.x = std::cos(PitchRadians) * std::cos(YawRadians);
+        m_ForwardVector.y = std::sin(PitchRadians);
+        m_ForwardVector.z = std::cos(PitchRadians) * std::sin(YawRadians);
+        m_ForwardVector = glm::normalize(m_ForwardVector);
+
+        m_RightVector = glm::normalize(glm::cross(m_ForwardVector, Vector::Up));
+        m_UpVector    = glm::normalize(glm::cross(m_RightVector, m_ForwardVector));
     }
 
 }
