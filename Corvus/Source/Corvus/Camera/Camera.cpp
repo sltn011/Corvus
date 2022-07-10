@@ -96,12 +96,16 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT(Width > 0 && Height > 0);
         m_Aspect = Width / Height;
+        RecalculateProjectionMatrix();
+        RecalculateProjectionViewMatrix();
     }
 
     void Camera::SetClipPlanes(float NearClip, float FarClip)
     {
         m_NearClip = NearClip;
         m_FarClip = FarClip;
+        RecalculateProjectionMatrix();
+        RecalculateProjectionViewMatrix();
     }
 
 }

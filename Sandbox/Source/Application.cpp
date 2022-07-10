@@ -19,13 +19,14 @@ namespace Corvus {
             : Layer{ "ApplicationLayer", true }
         {
             float Vertices[] = {
-                +1.0f, -0.2f, -0.2f, 1.0f, 0.0f, 0.0f,
-                +1.0f, -0.2f, +0.2f, 0.0f, 1.0f, 0.0f,
-                +1.0f, +0.5f, +0.0f, 0.0f, 0.0f, 1.0f
+                +0.0f, -0.2f, -0.2f, 1.0f, 0.0f, 0.0f,
+                +0.0f, -0.2f, +0.2f, 0.0f, 1.0f, 0.0f,
+                +0.0f, +0.2f, +0.2f, 0.0f, 0.0f, 1.0f,
+                +0.0f, +0.2f, -0.2f, 1.0f, 1.0f, 0.0f
             };
 
             UInt32 Indices[] = {
-                0, 1, 2
+                0, 1, 2, 0, 2, 3
             };
 
             VertexBufferLayout Layout = {
@@ -33,8 +34,8 @@ namespace Corvus {
                 { BufferDataType::Vec3 }
             };
 
-            Own<VertexBuffer> VBO = VertexBuffer::Create(Vertices, 3, Layout);
-            Own<IndexBuffer> EBO = IndexBuffer::Create(Indices, 3);
+            Own<VertexBuffer> VBO = VertexBuffer::Create(Vertices, 4, Layout);
+            Own<IndexBuffer> EBO = IndexBuffer::Create(Indices, 6);
 
             VAO = VertexArray::Create();
             VAO->AddVertexBuffer(std::move(VBO));
@@ -42,7 +43,18 @@ namespace Corvus {
 
             TestShader = Shader::CreateFromFile("./Assets/Shaders/TestShader.glsl");
 
+            UInt32 WindowWidth  = Application::GetInstance().GetWindow().GetWindowWidth();
+            UInt32 WindowHeight = Application::GetInstance().GetWindow().GetWindowHeight();
+            Camera.SetViewportSize(WindowWidth, WindowHeight);
+            Camera.SetFoVAngle(60.0f);
+            Camera.SetClipPlanes(0.01f, 100.0f);
             Camera.SwitchPlayerControl(true, 1.0f);
+
+            ObjectTransform.SetWorldPosition(glm::vec3(1.0f, 0.0f, 0.0f));
+            Rotation ObjectRotation = ObjectTransform.GetRotation();
+            ObjectRotation.SetRotationOrder(RotationOrder::YXZ);
+            ObjectRotation.SetRollAngle(30.0f);
+            ObjectTransform.SetRotation(ObjectRotation);
         }
 
         virtual void OnUpdate(TimeDelta ElapsedTime)
@@ -89,7 +101,12 @@ namespace Corvus {
                 Camera.ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
             }
 
+            Rotation Rotator = ObjectTransform.GetRotation();
+            Rotator.AddYawAngle(20.0f * ElapsedTime.Seconds());
+            ObjectTransform.SetRotation(Rotator);
+
             TestShader->Bind();
+            TestShader->SetMat4("u_Transform", ObjectTransform.GetTransformMatrix());
             TestShader->SetMat4("u_ProjView", Camera.GetProjectionViewMatrix());
             Renderer::Submit(VAO, TestShader);
 
@@ -109,6 +126,11 @@ namespace Corvus {
                     Event.SetHandled();
                 }
             }
+            else if (Event.GetEventType() == Event::EType::WindowResize)
+            {
+                WindowResizeEvent &WREvent = CastEvent<WindowResizeEvent>(Event);
+                Camera.SetViewportSize(WREvent.NewWidth, WREvent.NewHeight);
+            }
         }
 
     protected:
@@ -120,6 +142,7 @@ namespace Corvus {
         bool bCameraMode = false;
         glm::vec2 CursorPos;
 
+        Transform ObjectTransform;
     };
 
     Application *CreateApplication()
