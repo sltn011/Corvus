@@ -33,9 +33,9 @@ namespace Corvus
         Transform GetTransform() const;
         Rotation  GetRotation() const;
 
-        glm::vec3 GetForwardVector() const;
-        glm::vec3 GetUpVector() const;
-        glm::vec3 GetRightVector() const;
+        glm::vec3 GetForwardVector();
+        glm::vec3 GetUpVector() ;
+        glm::vec3 GetRightVector();
 
         void SetMoveSpeed(float CameraMoveSpeed);
         void SetTransform(Transform const &Transform);
@@ -52,18 +52,12 @@ namespace Corvus
         virtual void RecalculateProjectionMatrix() = 0;
         virtual void RecalculateProjectionViewMatrix() = 0;
 
-        void UpdateVectors();
-
     protected:
 
         Own<CameraMovementComponent> m_MovementComponent;
         bool m_IsPlayerControlled = false;
 
         Transform m_Transform;
-
-        glm::vec3 m_ForwardVector = Vector::Forward;
-        glm::vec3 m_UpVector      = Vector::Up;
-        glm::vec3 m_RightVector   = Vector::Right;
 
         glm::mat4 m_ViewMatrix           = glm::mat4(1.0f);
         glm::mat4 m_ProjectionMatrix     = glm::mat4(1.0f);

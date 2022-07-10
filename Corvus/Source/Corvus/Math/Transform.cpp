@@ -28,7 +28,7 @@ namespace Corvus
     {
     }
 
-    glm::mat4 Transform::GetTransformMatrix() const
+    glm::mat4 Transform::GetTransformMatrix()
     {
         return GetTranslationMatrix() * GetRotationMatrix() * GetScaleMatrix();
     }
@@ -43,7 +43,7 @@ namespace Corvus
         return glm::scale(glm::mat4(1.0f), m_Scale);
     }
 
-    glm::mat4 Transform::GetRotationMatrix() const
+    glm::mat4 Transform::GetRotationMatrix()
     {
         return m_Rotation.GetRotationMatrix();
     }

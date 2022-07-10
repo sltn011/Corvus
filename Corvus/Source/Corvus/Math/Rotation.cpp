@@ -9,36 +9,14 @@ namespace Corvus
     {
     }
 
-    glm::mat4 Rotation::GetRotationMatrix() const
+    glm::mat4 Rotation::GetRotationMatrix()
     {
-        glm::mat4 Roll  = GetRollMatrix();
-        glm::mat4 Yaw   = GetYawMatrix();
-        glm::mat4 Pitch = GetPitchMatrix();
-
-        switch (m_RotationOrder)
+        if (m_IsMatrixDirty)
         {
-        case Corvus::RotationOrder::XYZ:
-            return Pitch * Yaw * Roll;
-
-        case Corvus::RotationOrder::XZY:
-            return Yaw * Pitch * Roll;
-
-        case Corvus::RotationOrder::YXZ:
-            return Pitch * Roll * Yaw;
-
-        case Corvus::RotationOrder::YZX:
-            return Roll * Pitch * Yaw;
-
-        case Corvus::RotationOrder::ZXY:
-            return Yaw * Roll * Pitch;
-
-        case Corvus::RotationOrder::ZYX:
-            return Roll * Yaw * Pitch;
-
-        default:
-            CORVUS_CORE_ERROR("Unexpected Rotation Order value!");
-            return glm::mat4(1.0f);
+            RecalculateRotationMatrix();
         }
+
+        return m_RotationMatrix;
     }
 
     glm::mat4 Rotation::GetRollMatrix() const
@@ -59,16 +37,19 @@ namespace Corvus
     void Rotation::AddRollAngle(float RollAngle)
     {
         m_Angles.x += RollAngle;
+        m_IsMatrixDirty = true;
     }
 
     void Rotation::AddYawAngle(float YawAngle)
     {
         m_Angles.y += YawAngle;
+        m_IsMatrixDirty = true;
     }
 
     void Rotation::AddPitchAngle(float PitchAngle)
     {
         m_Angles.z += PitchAngle;
+        m_IsMatrixDirty = true;
     }
 
     float Rotation::GetRollAngle() const
@@ -89,16 +70,19 @@ namespace Corvus
     void Rotation::SetRollAngle(float RollAngle)
     {
         m_Angles.x = RollAngle;
+        m_IsMatrixDirty = true;
     }
 
     void Rotation::SetYawAngle(float YawAngle)
     {
         m_Angles.y = YawAngle;
+        m_IsMatrixDirty = true;
     }
 
     void Rotation::SetPitchAngle(float PitchAngle)
     {
         m_Angles.z = PitchAngle;
+        m_IsMatrixDirty = true;
     }
 
     RotationOrder Rotation::GetRotationOrder() const
@@ -109,6 +93,47 @@ namespace Corvus
     void Rotation::SetRotationOrder(RotationOrder Order)
     {
         m_RotationOrder = Order;
+        m_IsMatrixDirty = true;
+    }
+
+    void Rotation::RecalculateRotationMatrix()
+    {
+        glm::mat4 Roll = GetRollMatrix();
+        glm::mat4 Yaw = GetYawMatrix();
+        glm::mat4 Pitch = GetPitchMatrix();
+
+        switch (m_RotationOrder)
+        {
+        case Corvus::RotationOrder::XYZ:
+            m_RotationMatrix = Pitch * Yaw * Roll;
+            break;
+
+        case Corvus::RotationOrder::XZY:
+            m_RotationMatrix = Yaw * Pitch * Roll;
+            break;
+
+        case Corvus::RotationOrder::YXZ:
+            m_RotationMatrix = Pitch * Roll * Yaw;
+            break;
+
+        case Corvus::RotationOrder::YZX:
+            m_RotationMatrix = Roll * Pitch * Yaw;
+            break;
+
+        case Corvus::RotationOrder::ZXY:
+            m_RotationMatrix = Yaw * Roll * Pitch;
+            break;
+
+        case Corvus::RotationOrder::ZYX:
+            m_RotationMatrix = Roll * Yaw * Pitch;
+            break;
+
+        default:
+            CORVUS_CORE_ERROR("Unexpected Rotation Order value!");
+            break;
+        }
+
+        m_IsMatrixDirty = false;
     }
 
 }

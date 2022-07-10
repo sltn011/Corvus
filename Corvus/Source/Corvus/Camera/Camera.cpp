@@ -63,25 +63,24 @@ namespace Corvus
         return m_Transform.GetRotation();
     }
 
-    glm::vec3 Camera::GetForwardVector() const
+    glm::vec3 Camera::GetForwardVector()
     {
-        return m_ForwardVector;
+        return glm::normalize(glm::vec3(glm::transpose(m_Transform.GetRotationMatrix())[0]));
     }
 
-    glm::vec3 Camera::GetUpVector() const
+    glm::vec3 Camera::GetUpVector()
     {
-        return m_UpVector;
+        return glm::normalize(glm::vec3(glm::transpose(m_Transform.GetRotationMatrix())[1]));
     }
 
-    glm::vec3 Camera::GetRightVector() const
+    glm::vec3 Camera::GetRightVector()
     {
-        return m_RightVector;
+        return glm::normalize(glm::vec3(glm::transpose(m_Transform.GetRotationMatrix())[2]));
     }
 
     void Camera::SetTransform(Transform const &Transform)
     {
         m_Transform = Transform;
-        UpdateVectors();
         RecalculateViewMatrix();
         RecalculateProjectionViewMatrix();
     }
@@ -89,7 +88,6 @@ namespace Corvus
     void Camera::SetRotation(Rotation const &Rotation)
     {
         m_Transform.SetRotation(Rotation);
-        UpdateVectors();
         RecalculateViewMatrix();
         RecalculateProjectionViewMatrix();
     }
@@ -104,22 +102,6 @@ namespace Corvus
     {
         m_NearClip = NearClip;
         m_FarClip = FarClip;
-    }
-
-    void Camera::UpdateVectors()
-    {
-        Rotation Rotation  = m_Transform.GetRotation();
-        float RollRadians  = glm::radians(Rotation.GetRollAngle());
-        float YawRadians   = glm::radians(Rotation.GetYawAngle());
-        float PitchRadians = glm::radians(Rotation.GetPitchAngle());
-
-        m_ForwardVector.x = std::cos(PitchRadians) * std::cos(YawRadians);
-        m_ForwardVector.y = std::sin(PitchRadians);
-        m_ForwardVector.z = std::cos(PitchRadians) * std::sin(YawRadians);
-        m_ForwardVector = glm::normalize(m_ForwardVector);
-
-        m_RightVector = glm::normalize(glm::cross(m_ForwardVector, Vector::Up));
-        m_UpVector    = glm::normalize(glm::cross(m_RightVector, m_ForwardVector));
     }
 
 }

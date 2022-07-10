@@ -17,10 +17,10 @@ namespace Corvus
         Transform(glm::vec3 const &WorldPosition, Rotation const &Rotation);
         Transform(glm::vec3 const &WorldPosition, glm::vec3 const &Scale, Rotation const &Rotation);
 
-        glm::mat4 GetTransformMatrix() const;
+        glm::mat4 GetTransformMatrix();
         glm::mat4 GetTranslationMatrix() const;
         glm::mat4 GetScaleMatrix() const;
-        glm::mat4 GetRotationMatrix() const;
+        glm::mat4 GetRotationMatrix();
 
         glm::vec3 GetWorldPosition() const;
         void SetWorldPosition(glm::vec3 const &WorldPosition);

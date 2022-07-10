@@ -86,7 +86,7 @@ namespace Corvus {
             CursorPos = NewPos;
             if (bCameraMode)
             {
-                Camera.ProcessRotationInput(Delta.x, -Delta.y, 10.0f, ElapsedTime);
+                Camera.ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
             }
 
             TestShader->Bind();
