@@ -46,13 +46,13 @@ namespace Corvus
 
     void OrthographicCamera::RecalculateViewMatrix()
     {
-        glm::vec3 WorldPosition = m_Transform.GetWorldPosition();
+        glm::vec3 Position = m_Transform.GetPosition();
         glm::vec3 ForwardVector = GetForwardVector();
         glm::vec3 UpVector = GetUpVector();
 
         m_ViewMatrix = glm::lookAt(
-            WorldPosition,
-            WorldPosition + ForwardVector,
+            Position,
+            Position + ForwardVector,
             UpVector
         );
     }

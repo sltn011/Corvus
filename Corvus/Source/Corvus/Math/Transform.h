@@ -12,18 +12,18 @@ namespace Corvus
     public:
 
         Transform();
-        Transform(glm::vec3 const &WorldPosition);
-        Transform(glm::vec3 const &WorldPosition, glm::vec3 const &Scale);
-        Transform(glm::vec3 const &WorldPosition, Rotation const &Rotation);
-        Transform(glm::vec3 const &WorldPosition, glm::vec3 const &Scale, Rotation const &Rotation);
+        Transform(glm::vec3 const &Position);
+        Transform(glm::vec3 const &Position, glm::vec3 const &Scale);
+        Transform(glm::vec3 const &Position, Rotation const &Rotation);
+        Transform(glm::vec3 const &Position, glm::vec3 const &Scale, Rotation const &Rotation);
 
         glm::mat4 GetTransformMatrix();
         glm::mat4 GetTranslationMatrix() const;
         glm::mat4 GetScaleMatrix() const;
         glm::mat4 GetRotationMatrix();
 
-        glm::vec3 GetWorldPosition() const;
-        void SetWorldPosition(glm::vec3 const &WorldPosition);
+        glm::vec3 GetPosition() const;
+        void SetPosition(glm::vec3 const &Position);
 
         glm::vec3 GetScale() const;
         void SetScale(glm::vec3 const &Scale);
@@ -33,9 +33,14 @@ namespace Corvus
 
     private:
 
-        glm::vec3 m_WorldPosition;
-        glm::vec3 m_Scale;
+        void RecalculateMatrix();
+
+        glm::mat4 m_TransformMatrix = glm::mat4(1.0f);
+        bool      m_bIsDirty = true;
+
+        glm::vec3 m_Position;
         Rotation  m_Rotation;
+        glm::vec3 m_Scale;
 
     };
 }

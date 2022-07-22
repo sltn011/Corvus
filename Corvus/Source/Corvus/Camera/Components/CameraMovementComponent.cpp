@@ -22,7 +22,7 @@ namespace Corvus
         Transform CameraTransform = m_Owner->GetTransform();
         float Seconds = ElapsedTime.Seconds();
 
-        glm::vec3 WorldPosition = CameraTransform.GetWorldPosition();
+        glm::vec3 Position = CameraTransform.GetPosition();
 
         glm::vec3 ForwardVector = m_Owner->GetForwardVector();
         glm::vec3 UpVector      = m_Owner->GetUpVector();
@@ -30,34 +30,34 @@ namespace Corvus
 
         switch (Direction) {
         case Camera::MoveDirection::Forward:
-            WorldPosition += ForwardVector * m_MoveSpeed * Seconds;
+            Position += ForwardVector * m_MoveSpeed * Seconds;
             break;
 
         case Camera::MoveDirection::Backward:
-            WorldPosition -= ForwardVector * m_MoveSpeed * Seconds;
+            Position -= ForwardVector * m_MoveSpeed * Seconds;
             break;
 
         case Camera::MoveDirection::Left:
-            WorldPosition -= RightVector * m_MoveSpeed * Seconds;
+            Position -= RightVector * m_MoveSpeed * Seconds;
             break;
 
         case Camera::MoveDirection::Right:
-            WorldPosition += RightVector * m_MoveSpeed * Seconds;
+            Position += RightVector * m_MoveSpeed * Seconds;
             break;
 
         case Camera::MoveDirection::Up:
-            WorldPosition += UpVector * m_MoveSpeed * Seconds;
+            Position += UpVector * m_MoveSpeed * Seconds;
             break;
 
         case Camera::MoveDirection::Down:
-            WorldPosition -= UpVector * m_MoveSpeed * Seconds;
+            Position -= UpVector * m_MoveSpeed * Seconds;
             break;
 
         default:
             break;
         }
 
-        CameraTransform.SetWorldPosition(WorldPosition);
+        CameraTransform.SetPosition(Position);
         m_Owner->SetTransform(CameraTransform);
     }
 

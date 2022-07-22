@@ -9,9 +9,14 @@ namespace Corvus
     {
     }
 
+    Rotation::Rotation(RotationOrder Order, glm::vec3 const &Angles)
+        : m_Angles{ Angles }, m_RotationOrder{ Order }
+    {
+    }
+
     glm::mat4 Rotation::GetRotationMatrix()
     {
-        if (m_IsMatrixDirty)
+        if (m_bIsDirty)
         {
             RecalculateRotationMatrix();
         }
@@ -37,19 +42,19 @@ namespace Corvus
     void Rotation::AddRollAngle(float RollAngle)
     {
         m_Angles.x += RollAngle;
-        m_IsMatrixDirty = true;
+        m_bIsDirty = true;
     }
 
     void Rotation::AddYawAngle(float YawAngle)
     {
         m_Angles.y += YawAngle;
-        m_IsMatrixDirty = true;
+        m_bIsDirty = true;
     }
 
     void Rotation::AddPitchAngle(float PitchAngle)
     {
         m_Angles.z += PitchAngle;
-        m_IsMatrixDirty = true;
+        m_bIsDirty = true;
     }
 
     float Rotation::GetRollAngle() const
@@ -70,19 +75,19 @@ namespace Corvus
     void Rotation::SetRollAngle(float RollAngle)
     {
         m_Angles.x = RollAngle;
-        m_IsMatrixDirty = true;
+        m_bIsDirty = true;
     }
 
     void Rotation::SetYawAngle(float YawAngle)
     {
         m_Angles.y = YawAngle;
-        m_IsMatrixDirty = true;
+        m_bIsDirty = true;
     }
 
     void Rotation::SetPitchAngle(float PitchAngle)
     {
         m_Angles.z = PitchAngle;
-        m_IsMatrixDirty = true;
+        m_bIsDirty = true;
     }
 
     RotationOrder Rotation::GetRotationOrder() const
@@ -93,7 +98,7 @@ namespace Corvus
     void Rotation::SetRotationOrder(RotationOrder Order)
     {
         m_RotationOrder = Order;
-        m_IsMatrixDirty = true;
+        m_bIsDirty = true;
     }
 
     void Rotation::RecalculateRotationMatrix()
@@ -133,7 +138,7 @@ namespace Corvus
             break;
         }
 
-        m_IsMatrixDirty = false;
+        m_bIsDirty = false;
     }
 
 }

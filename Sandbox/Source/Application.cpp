@@ -45,16 +45,24 @@ namespace Corvus {
 
             UInt32 WindowWidth  = Application::GetInstance().GetWindow().GetWindowWidth();
             UInt32 WindowHeight = Application::GetInstance().GetWindow().GetWindowHeight();
-            Camera.SetViewportSize(WindowWidth, WindowHeight);
+            Camera.SetViewportSize(static_cast<float>(WindowWidth), static_cast<float>(WindowHeight));
             Camera.SetFoVAngle(60.0f);
             Camera.SetClipPlanes(0.01f, 100.0f);
             Camera.SwitchPlayerControl(true, 1.0f);
 
-            ObjectTransform.SetWorldPosition(glm::vec3(1.0f, 0.0f, 0.0f));
-            Rotation ObjectRotation = ObjectTransform.GetRotation();
-            ObjectRotation.SetRotationOrder(RotationOrder::YXZ);
-            ObjectRotation.SetRollAngle(30.0f);
-            ObjectTransform.SetRotation(ObjectRotation);
+            Entities.emplace_back(
+                TestShader,
+                VAO, 
+                Transform{ {1.0f, 0.0f, 0.0f}, Vector::OneVec, {RotationOrder::YXZ, {30.0f, 0.0f, 0.0f}} }
+            );
+
+            Entities.emplace_back(
+                TestShader,
+                VAO,
+                Transform{ {0.0f, 0.0f, 0.5f}, Vector::OneVec * 0.5f, {RotationOrder::YXZ, {0.0f, 0.0f, 45.0f}} }
+            );
+
+            Entities[0].AddChild(&Entities[1]);
         }
 
         virtual void OnUpdate(TimeDelta ElapsedTime)
@@ -101,14 +109,19 @@ namespace Corvus {
                 Camera.ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
             }
 
-            Rotation Rotator = ObjectTransform.GetRotation();
-            Rotator.AddYawAngle(20.0f * ElapsedTime.Seconds());
-            ObjectTransform.SetRotation(Rotator);
+            for (Entity &SceneEntity : Entities)
+            {
+                Transform EntityTransform = SceneEntity.GetTransform();
+                Rotation Rotator = EntityTransform.GetRotation();
+                Rotator.AddYawAngle(-20.0f * ElapsedTime.Seconds());
+                EntityTransform.SetRotation(Rotator);
+                SceneEntity.SetTransform(EntityTransform);
 
-            TestShader->Bind();
-            TestShader->SetMat4("u_Transform", ObjectTransform.GetTransformMatrix());
-            TestShader->SetMat4("u_ProjView", Camera.GetProjectionViewMatrix());
-            Renderer::Submit(VAO, TestShader);
+                TestShader->Bind();
+                TestShader->SetMat4("u_Transform", SceneEntity.GetSceneTransformMatrix());
+                TestShader->SetMat4("u_ProjView", Camera.GetProjectionViewMatrix());
+                Renderer::Submit(VAO, TestShader);
+            }
 
             Renderer::EndScene();
         }
@@ -129,20 +142,20 @@ namespace Corvus {
             else if (Event.GetEventType() == Event::EType::WindowResize)
             {
                 WindowResizeEvent &WREvent = CastEvent<WindowResizeEvent>(Event);
-                Camera.SetViewportSize(WREvent.NewWidth, WREvent.NewHeight);
+                Camera.SetViewportSize(static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight));
             }
         }
 
     protected:
 
-        Own<VertexArray>  VAO;
-        Own<Shader>       TestShader;
-        PerspectiveCamera Camera;
+        std::vector<Entity> Entities;
+        PerspectiveCamera   Camera;
+
+        Own<Shader>      TestShader;
+        Own<VertexArray> VAO;
 
         bool bCameraMode = false;
         glm::vec2 CursorPos;
-
-        Transform ObjectTransform;
     };
 
     Application *CreateApplication()

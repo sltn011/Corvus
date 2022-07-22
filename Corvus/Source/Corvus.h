@@ -23,6 +23,10 @@
 #include "Corvus/Camera/OrthographicCamera.h"
 #include "Corvus/Camera/PerspectiveCamera.h"
 
+// Scene
+#include "Corvus/Scene/Entity.h"
+#include "Corvus/Scene/Scene.h"
+
 // Renderer
 #include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Renderer.h"
