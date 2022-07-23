@@ -26,6 +26,16 @@ namespace Corvus
         );
     }
 
+    void OpenGLGraphicsAPI::EnableDepthTest()
+    {
+        glEnable(GL_DEPTH_TEST);
+    }
+
+    void OpenGLGraphicsAPI::DisableDepthTest()
+    {
+        glDisable(GL_DEPTH_TEST);
+    }
+
     void OpenGLGraphicsAPI::DrawIndexed(UInt32 NumIndices)
     {
         glDrawElements(GL_TRIANGLES, NumIndices, GL_UNSIGNED_INT, nullptr);

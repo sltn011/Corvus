@@ -25,6 +25,9 @@ namespace Corvus
         static void SetClearColor(glm::vec4 ClearColor);
         static void Clear(bool bColorBuffer = true, bool bDepthBuffer = true, bool bStencilBuffer = true);
 
+        static void EnableDepthTest();
+        static void DisableDepthTest();
+
         static void Submit(Own<VertexArray> &VAO, Own<Shader> &Shader);
 
     protected:

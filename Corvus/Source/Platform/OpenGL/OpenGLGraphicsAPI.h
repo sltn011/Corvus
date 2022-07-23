@@ -19,6 +19,9 @@ namespace Corvus
         virtual void SetClearColor(glm::vec4 ClearColor) override;
         virtual void Clear(bool bColorBuffer = true, bool bDepthBuffer = true, bool bStencilBuffer = true) override;
 
+        virtual void EnableDepthTest();
+        virtual void DisableDepthTest();
+
         virtual void DrawIndexed(UInt32 NumIndices) override;
 
     };

@@ -45,6 +45,18 @@ namespace Corvus
         s_GraphicsAPI->Clear(bColorBuffer, bDepthBuffer, bStencilBuffer);
     }
 
+    void Renderer::EnableDepthTest()
+    {
+        s_GraphicsAPI->EnableDepthTest();
+        CORVUS_CORE_TRACE("Depth test enabled");
+    }
+
+    void Renderer::DisableDepthTest()
+    {
+        s_GraphicsAPI->DisableDepthTest();
+        CORVUS_CORE_TRACE("Depth test disabled");
+    }
+
     void Renderer::Submit(Own<VertexArray> &VAO, Own<Shader> &Shader)
     {
         Shader->Bind();
