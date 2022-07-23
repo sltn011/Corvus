@@ -2,12 +2,12 @@
 
 namespace Corvus {
     
-    class Sandbox : public Application
+    class Playground : public Application
     {
     public:
 
-        Sandbox() {}
-        ~Sandbox() {}
+        Playground() {}
+        ~Playground() {}
 
     };
 
@@ -162,7 +162,7 @@ namespace Corvus {
 
     Application *CreateApplication()
     {
-        Sandbox *App = new Sandbox;
+        Playground *App = new Playground;
         App->PushLayer(Layer::Create<ApplicationLayer>());
         return App;
     }

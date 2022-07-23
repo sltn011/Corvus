@@ -1,6 +1,6 @@
 --premake5.lua
 
-project "Sandbox"
+project "Playground"
 	language "C++"
 	cppdialect "C++17"
 	kind "ConsoleApp"
@@ -16,7 +16,7 @@ project "Sandbox"
 	}
 	vpaths 
 	{ 
-		["../Sandbox/Source/*"] = 
+		["../Playground/Source/*"] = 
 		{ 
 			"Source/**.cpp",
 			"Source/**.h" 

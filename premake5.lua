@@ -5,7 +5,7 @@ workspace "Corvus"
 	architecture "x86_64"
 	system "Windows"
 	
-	startproject "Sandbox"
+	startproject "Playground"
 
 	configurations 
 	{
@@ -17,7 +17,7 @@ workspace "Corvus"
 outputpath = "%{cfg.buildcfg}-%{cfg.architecture}"
 	
 include "Corvus"
-include "Sandbox"
+include "Playground"
 
 
 group "Dependencies"
