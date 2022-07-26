@@ -65,6 +65,71 @@ namespace Corvus {
             );
 
             Entities[0].AddChild(&Entities[1]);
+
+            CORVUS_ERROR("Start of memory pooling showcase!");
+
+            size_t PoolID1 = AppPools::AddPool({ {2, 4} }); // Pool of 2 objects with size 4 bytes
+            size_t PoolID2 = AppPools::AddPool({ {3, 10} }); // Pool of 3 objects with size 10 bytes
+            CORVUS_TRACE("Created two pools with IDs {} and {}", PoolID1, PoolID2);
+            CORVUS_TRACE("Pool {} for 2 objects with size 4 bytes", PoolID1);
+            CORVUS_TRACE("Pool {} for 3 objects with size 10 bytes", PoolID2);
+
+            CORVUS_TRACE("3 blocks requested from Pool {} (has space for 2 only) and 1 from Pool {}", PoolID1, PoolID2);
+            PI1 = AppPools::Request(PoolID1, 0);
+            PI2 = AppPools::Request(PoolID1, 0);
+            PI3 = AppPools::Request(PoolID1, 0);
+            PI4 = AppPools::Request(PoolID2, 0);
+
+            uint8_t *n1 = PI1.GetRaw();
+            int     *n2 = PI2.Get<int>();
+            uint8_t *n3 = PI3.GetRaw();
+            uint8_t *n4 = PI4.GetRaw();
+            CORVUS_TRACE("Pointers to pooled objects: {}, {}, {}; {}", (void *)n1, (void *)n2, (void *)n3, (void *)n4);
+
+            PI1.Free();
+            n1 = PI1.GetRaw();
+            n2 = PI2.Get<int>();
+            n3 = PI3.GetRaw();
+            n4 = PI4.GetRaw();
+            CORVUS_TRACE("After freeing memory in pool index 1:");
+            CORVUS_TRACE("Pointers to pooled objects: {}, {}, {}; {}", (void *)n1, (void *)n2, (void *)n3, (void *)n4);
+
+            PI2.Free();
+            n1 = PI1.GetRaw();
+            n2 = PI2.Get<int>();
+            n3 = PI3.GetRaw();
+            n4 = PI4.GetRaw();
+            CORVUS_TRACE("After freeing memory in pool index 2:");
+            CORVUS_TRACE("Pointers to pooled objects: {}, {}, {}; {}", (void *)n1, (void *)n2, (void *)n3, (void *)n4);
+
+            PI3.Free();
+            n1 = PI1.GetRaw();
+            n2 = PI2.Get<int>();
+            n3 = PI3.GetRaw();
+            n4 = PI4.GetRaw();
+            CORVUS_TRACE("After freeing memory in pool index 3(invalid index):");
+            CORVUS_TRACE("Pointers to pooled objects: {}, {}, {}; {}", (void *)n1, (void *)n2, (void *)n3, (void *)n4);
+
+            PI4.Free();
+            n1 = PI1.GetRaw();
+            n2 = PI2.Get<int>();
+            n3 = PI3.GetRaw();
+            n4 = PI4.GetRaw();
+            CORVUS_TRACE("After freeing memory in pool index 4:");
+            CORVUS_TRACE("Pointers to pooled objects: {}, {}, {}; {}", (void *)n1, (void *)n2, (void *)n3, (void *)n4);
+
+            CORVUS_TRACE("Re-requesting 3 blocks from Pool {} and 1 from Pool {}", PoolID1, PoolID2);
+            PI1 = AppPools::Request(PoolID1, 0);
+            PI2 = AppPools::Request(PoolID1, 0);
+            PI3 = AppPools::Request(PoolID1, 0);
+            PI4 = AppPools::Request(PoolID2, 0);
+            n1 = PI1.GetRaw();
+            n2 = PI2.Get<int>();
+            n3 = PI3.GetRaw();
+            n4 = PI4.GetRaw();
+            CORVUS_TRACE("Pointers to pooled objects: {}, {}, {}; {}", (void *)n1, (void *)n2, (void *)n3, (void *)n4);
+
+            CORVUS_ERROR("End of memory pooling showcase!");
         }
 
         virtual void OnUpdate(TimeDelta ElapsedTime)
@@ -149,6 +214,8 @@ namespace Corvus {
         }
 
     protected:
+
+        PoolIndex PI1, PI2, PI3, PI4;
 
         std::vector<Entity> Entities;
         PerspectiveCamera   Camera;

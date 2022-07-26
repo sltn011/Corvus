@@ -6,18 +6,21 @@
 namespace Corvus
 {
 
+    class AppPools;
     class Pool;
 
     class PoolIndex
     {
     protected:
 
+        friend class AppPools;
         friend class Pool;
 
-        PoolIndex(Pool *Pool, size_t BlockID, size_t ElementID);
+        PoolIndex(size_t PoolID, size_t BlockID, size_t ElementID);
 
     public:
 
+        PoolIndex() = default;
         ~PoolIndex();
 
         PoolIndex(PoolIndex const &) = delete;
@@ -39,9 +42,9 @@ namespace Corvus
 
     protected:
 
-        Pool  *m_Pool;
-        size_t m_BlockID;
-        size_t m_ElementID;
+        size_t m_PoolID    = 0;
+        size_t m_BlockID   = 0;
+        size_t m_ElementID = 0;
     };
 
 }

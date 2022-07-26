@@ -7,11 +7,17 @@
 namespace Corvus
 {
 
+    class AppPools;
+
     class Pool
     {
-    public:
+    protected:
 
-        Pool(PoolLayout PoolLayout);
+        friend class AppPools;
+
+        Pool(size_t PoolID, PoolLayout PoolLayout);
+
+    public:
 
         PoolIndex Request(size_t BlockID);
 
@@ -27,6 +33,8 @@ namespace Corvus
             uint8_t  *BlockBegin = nullptr;
             uint8_t  *FreeBegin  = nullptr;
         };
+
+        size_t m_PoolID = 0;
 
         PoolLayout             m_Layout;
 

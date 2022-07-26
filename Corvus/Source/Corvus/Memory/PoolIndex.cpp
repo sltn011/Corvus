@@ -1,13 +1,13 @@
 #include "CorvusPCH.h"
 #include "Corvus/Memory/PoolIndex.h"
 
-#include "Corvus/Memory/Pool.h"
+#include "Corvus/Memory/AppPools.h"
 
 namespace Corvus
 {
 
-    PoolIndex::PoolIndex(Pool *Pool, size_t BlockID, size_t ElementID)
-        : m_Pool{ Pool }, m_BlockID{ BlockID }, m_ElementID{ ElementID }
+    PoolIndex::PoolIndex(size_t PoolID, size_t BlockID, size_t ElementID)
+        : m_PoolID{ PoolID }, m_BlockID{ BlockID }, m_ElementID{ ElementID }
     {
     }
 
@@ -17,7 +17,7 @@ namespace Corvus
     }
 
     PoolIndex::PoolIndex(PoolIndex &&Rhs) noexcept
-        : m_Pool{ Rhs.m_Pool }, m_BlockID{ Rhs.m_BlockID }, m_ElementID{ std::exchange(Rhs.m_ElementID, 0) }
+        : m_PoolID{ Rhs.m_PoolID }, m_BlockID{ Rhs.m_BlockID }, m_ElementID{ std::exchange(Rhs.m_ElementID, 0) }
     {
     }
 
@@ -25,7 +25,7 @@ namespace Corvus
     {
         if (this != &Rhs)
         {
-            m_Pool = Rhs.m_Pool;
+            m_PoolID = Rhs.m_PoolID;
             m_BlockID = Rhs.m_BlockID;
             m_ElementID = std::exchange(Rhs.m_ElementID, 0);
         }
@@ -41,13 +41,18 @@ namespace Corvus
     {
         if (IsValid())
         {
-            m_Pool->Free(*this);
+            Pool *Pool = AppPools::GetPool(m_PoolID);
+            if (Pool)
+            {
+                Pool->Free(*this);
+            }
         }
     }
 
     uint8_t *PoolIndex::GetRaw() const
     {
-        return m_Pool->Get(*this);
+        Pool *Pool = AppPools::GetPool(m_PoolID);
+        return Pool ? Pool->Get(*this) : nullptr;
     }
 
 }

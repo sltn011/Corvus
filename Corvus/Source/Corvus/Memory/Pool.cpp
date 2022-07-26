@@ -4,8 +4,8 @@
 namespace Corvus
 {
 
-    Pool::Pool(PoolLayout PoolLayout)
-        : m_Layout{ std::move(PoolLayout) }
+    Pool::Pool(size_t PoolID, PoolLayout PoolLayout)
+        : m_PoolID{ PoolID }, m_Layout{ std::move(PoolLayout) }
     {
         size_t IDTablesTotalSize = 0;
         for (PoolBlock const &Block : m_Layout)
@@ -40,7 +40,7 @@ namespace Corvus
     {
         if (BlockID > m_BlocksInfo.size())
         {
-            return PoolIndex{ this, BlockID, 0 };
+            return PoolIndex{ m_PoolID, BlockID, 0 };
         }
 
         PoolBlock  Layout  = m_Layout[BlockID];
@@ -50,8 +50,8 @@ namespace Corvus
 
         if (Offsets.FreeBegin + Layout.ElementSize > Offsets.BlockBegin + BlockSize)
         {
-            CORVUS_CORE_WARN("Block {} in Pool is out of memory!", BlockID);
-            return PoolIndex{ this, BlockID, 0 };
+            CORVUS_CORE_WARN("Block {} in Pool {} is out of memory!", BlockID, m_PoolID);
+            return PoolIndex{ m_PoolID, BlockID, 0 };
         }
 
         size_t Index = 0;
@@ -67,7 +67,7 @@ namespace Corvus
         Offsets.IDTable[Index] = Offsets.FreeBegin;
         Offsets.FreeBegin += Layout.ElementSize;
 
-        return PoolIndex{ this, BlockID, Index + 1 };
+        return PoolIndex{ m_PoolID, BlockID, Index + 1 };
     }
 
     uint8_t *Pool::Get(PoolIndex const &Index)
