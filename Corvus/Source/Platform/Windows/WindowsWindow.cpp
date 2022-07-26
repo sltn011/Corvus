@@ -26,7 +26,7 @@ namespace Corvus
 
         if (s_WindowsCount == 0)
         {
-            bool GLFWInitialized = glfwInit();
+            bool const GLFWInitialized = glfwInit();
             CORVUS_CORE_ASSERT(GLFWInitialized);
             CORVUS_CORE_TRACE("GLFW initialized successfully");
 
@@ -159,7 +159,7 @@ namespace Corvus
                 &MonitorBottomRight.x, &MonitorBottomRight.y
             );
 
-            glm::ivec2 MonitorCenter = (MonitorBottomRight - MonitorTopLeft) / 2;
+            glm::ivec2 const MonitorCenter = (MonitorBottomRight - MonitorTopLeft) / 2;
 
             glm::ivec2 WindowTopLeft;
             WindowTopLeft.x = glm::max(0, MonitorCenter.x - m_WindowData.WindowWidth / 2);
@@ -200,25 +200,25 @@ namespace Corvus
     {
         glfwSetWindowSizeCallback(m_Window, [](GLFWwindow *Caller, int NewWidth, int NewHeight)
         {
-            Window *Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+            Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
             WindowResizeEvent Event{ NewWidth, NewHeight };
             Owner->OnEvent.Broadcast(Event);
         });
 
         glfwSetWindowCloseCallback(m_Window, [](GLFWwindow *Caller)
         {
-            Window *Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+            Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
             WindowCloseEvent Event{};
             Owner->OnEvent.Broadcast(Event);
         });
 
         glfwSetKeyCallback(m_Window, [](GLFWwindow *Caller, int RawKey, int RawScancode, int RawAction, int RawMods)
         {
-            Window *Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+            Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
 
-            KeyCode Key = static_cast<KeyCode>(RawKey);
-            ActionCode Action = static_cast<ActionCode>(RawAction);
-            ModifierCode Mods = static_cast<ModifierCode>(RawMods);
+            KeyCode      const Key    = static_cast<KeyCode>(RawKey);
+            ActionCode   const Action = static_cast<ActionCode>(RawAction);
+            ModifierCode const Mods   = static_cast<ModifierCode>(RawMods);
 
             if (Action == Action::Press)
             {
@@ -242,11 +242,11 @@ namespace Corvus
 
         glfwSetMouseButtonCallback(m_Window, [](GLFWwindow *Caller, int RawButton, int RawAction, int RawMods)
         {
-            Window *Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+            Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
 
-            MouseCode Button = static_cast<MouseCode>(RawButton);
-            ActionCode Action = static_cast<ActionCode>(RawAction);
-            ModifierCode Mods = static_cast<ModifierCode>(RawMods);
+            MouseCode    const Button = static_cast<MouseCode>(RawButton);
+            ActionCode   const Action = static_cast<ActionCode>(RawAction);
+            ModifierCode const Mods   = static_cast<ModifierCode>(RawMods);
 
             if (Action == Action::Press)
             {
@@ -264,14 +264,14 @@ namespace Corvus
 
         glfwSetCursorPosCallback(m_Window, [](GLFWwindow *Caller, double NewX, double NewY)
         {
-            Window *Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+            Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
             CursorMoveEvent Event{ static_cast<float>(NewX), static_cast<float>(NewY) };
             Owner->OnEvent(Event);
         });
 
         glfwSetScrollCallback(m_Window, [](GLFWwindow *Caller, double OffsetX, double OffsetY)
         {
-            Window *Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+            Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
             MouseScrollEvent Event{ static_cast<float>(OffsetX), static_cast<float>(OffsetY) };
             Owner->OnEvent(Event);
         });

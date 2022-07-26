@@ -8,7 +8,7 @@ namespace Corvus
 
     size_t AppPools::AddPool(PoolLayout Layout)
     {
-        size_t PoolID = s_Pools.size();
+        size_t const PoolID = s_Pools.size();
         s_Pools.emplace_back(Pool{ PoolID, std::move(Layout) });
         return PoolID;
     }
@@ -20,7 +20,7 @@ namespace Corvus
 
     PoolIndex AppPools::Request(size_t PoolID, size_t BlockID)
     {
-        Pool *Pool = GetPool(PoolID);
+        Pool *const Pool = GetPool(PoolID);
         if (!Pool)
         {
             return PoolIndex{ PoolID, BlockID, 0 };

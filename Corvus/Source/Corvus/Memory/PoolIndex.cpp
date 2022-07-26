@@ -41,7 +41,7 @@ namespace Corvus
     {
         if (IsValid())
         {
-            Pool *Pool = AppPools::GetPool(m_PoolID);
+            Pool *const Pool = AppPools::GetPool(m_PoolID);
             if (Pool)
             {
                 Pool->Free(*this);
@@ -51,7 +51,7 @@ namespace Corvus
 
     uint8_t *PoolIndex::GetRaw() const
     {
-        Pool *Pool = AppPools::GetPool(m_PoolID);
+        Pool *const Pool = AppPools::GetPool(m_PoolID);
         return Pool ? Pool->Get(*this) : nullptr;
     }
 

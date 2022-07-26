@@ -9,7 +9,7 @@ namespace Corvus
         : m_ID{ 0 }
     {
         CORVUS_CORE_TRACE("Creating OpenGL Shader {}", FilePath);
-        TimePoint ShaderCreationBegin;
+        TimePoint const ShaderCreationBegin;
 
         std::ifstream CodeFile(FilePath);
         CORVUS_CORE_ASSERT_FMT(CodeFile.is_open(), "Error opening OpenGL Shader file {1}", FilePath);
@@ -55,8 +55,8 @@ namespace Corvus
         glDeleteShader(VertexShader);
         glDeleteShader(FragmentShader);
 
-        TimePoint ShaderCreationEnd;
-        TimeDelta ShaderCreationTime = ShaderCreationEnd - ShaderCreationBegin;
+        TimePoint const ShaderCreationEnd;
+        TimeDelta const ShaderCreationTime = ShaderCreationEnd - ShaderCreationBegin;
         CORVUS_CORE_TRACE("Created OpenGL Shader {0}, took {1}ms", FilePath, ShaderCreationTime.MilliSeconds());
     }
 
@@ -92,64 +92,64 @@ namespace Corvus
 
     void OpenGLShader::SetBool(String const &Name, bool Value)
     {
-        GLint Location = GetUniformLocation(Name);
+        GLint const Location = GetUniformLocation(Name);
         glUniform1i(Location, static_cast<Int32>(Value));
     }
 
     void OpenGLShader::SetInt32(String const &Name, Int32 Value)
     {
-        GLint Location = GetUniformLocation(Name);
+        GLint const Location = GetUniformLocation(Name);
         glUniform1i(Location, Value);
     }
 
     void OpenGLShader::SetUInt32(String const &Name, UInt32 Value)
     {
-        GLint Location = GetUniformLocation(Name);
+        GLint const Location = GetUniformLocation(Name);
         glUniform1i(Location, Value);
     }
 
     void OpenGLShader::SetFloat(String const &Name, float Value)
     {
-        GLint Location = GetUniformLocation(Name);
+        GLint const Location = GetUniformLocation(Name);
         glUniform1f(Location, Value);
     }
 
     void OpenGLShader::SetVec2(String const &Name, glm::vec2 const &Value)
     {
-        GLint Location = GetUniformLocation(Name);
+        GLint const Location = GetUniformLocation(Name);
         glUniform2fv(Location, 1, &(Value.x));
     }
 
     void OpenGLShader::SetVec3(String const &Name, glm::vec3 const &Value)
     {
-        GLint Location = GetUniformLocation(Name);
+        GLint const Location = GetUniformLocation(Name);
         glUniform3fv(Location, 1, &(Value.x));
     }
 
     void OpenGLShader::SetVec4(String const &Name, glm::vec4 const &Value)
     {
-        GLint Location = GetUniformLocation(Name);
+        GLint const Location = GetUniformLocation(Name);
         glUniform4fv(Location, 1, &(Value.x));
     }
 
     void OpenGLShader::SetMat3(String const &Name, glm::mat3 const &Value)
     {
-        GLint Location = GetUniformLocation(Name);
+        GLint const Location = GetUniformLocation(Name);
         glUniformMatrix3fv(Location, 1, false, glm::value_ptr(Value));
     }
 
     void OpenGLShader::SetMat4(String const &Name, glm::mat4 const &Value)
     {
-        GLint Location = GetUniformLocation(Name);
+        GLint const Location = GetUniformLocation(Name);
         glUniformMatrix4fv(Location, 1, false, glm::value_ptr(Value));
     }
 
     GLuint OpenGLShader::CreateShader(GLenum ShaderType, String const &SourceCode) const
     {
-        GLuint Shader = glCreateShader(ShaderType);
+        GLuint const Shader = glCreateShader(ShaderType);
         CORVUS_CORE_ASSERT_FMT(Shader != 0, "Failed to create OpenGL Shader!");
 
-        char const *SourceCodeString = SourceCode.c_str();
+        char const *const SourceCodeString = SourceCode.c_str();
         glShaderSource(Shader, 1, &SourceCodeString, nullptr);
 
         glCompileShader(Shader);
@@ -188,7 +188,7 @@ namespace Corvus
     GLint OpenGLShader::GetUniformLocation(String const &Name)
     {
         GLint Location = -1;
-        auto It = m_UniformLocationCache.find(Name);
+        auto const It = m_UniformLocationCache.find(Name);
         if (It == m_UniformLocationCache.end())
         {
             Location = glGetUniformLocation(m_ID, Name.c_str());

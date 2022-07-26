@@ -50,7 +50,7 @@ namespace Corvus
     void OpenGLVertexBuffer::SetData(void const *Data, UInt32 NumVertices)
     {
         m_NumVertices = NumVertices;
-        UInt32 VertexSize = m_Layout.Stride();
+        UInt32 const VertexSize = m_Layout.Stride();
         glNamedBufferData(m_VBO, static_cast<GLsizei>(VertexSize * m_NumVertices), Data, GL_STATIC_DRAW);
     }
 

@@ -17,16 +17,16 @@ namespace Corvus
         m_MoveSpeed = MovementSpeed;
     }
 
-    void CameraMovementComponent::ProcessMovementInput(Camera::MoveDirection Direction, TimeDelta ElapsedTime)
+    void CameraMovementComponent::ProcessMovementInput(Camera::MoveDirection const Direction, TimeDelta const ElapsedTime)
     {
         Transform CameraTransform = m_Owner->GetTransform();
-        float Seconds = ElapsedTime.Seconds();
+        float const Seconds = ElapsedTime.Seconds();
 
         glm::vec3 Position = CameraTransform.GetPosition();
 
-        glm::vec3 ForwardVector = m_Owner->GetForwardVector();
-        glm::vec3 UpVector      = m_Owner->GetUpVector();
-        glm::vec3 RightVector   = m_Owner->GetRightVector();
+        glm::vec3 const ForwardVector = m_Owner->GetForwardVector();
+        glm::vec3 const UpVector      = m_Owner->GetUpVector();
+        glm::vec3 const RightVector   = m_Owner->GetRightVector();
 
         switch (Direction) {
         case Camera::MoveDirection::Forward:
@@ -61,7 +61,7 @@ namespace Corvus
         m_Owner->SetTransform(CameraTransform);
     }
 
-    void CameraMovementComponent::ProcessRotationInput(float XOffset, float YOffset, float Sensitivity, TimeDelta ElapsedTime)
+    void CameraMovementComponent::ProcessRotationInput(float XOffset, float YOffset, float Sensitivity, TimeDelta const ElapsedTime)
     {
         static bool firstTime = true;
         if (firstTime) {

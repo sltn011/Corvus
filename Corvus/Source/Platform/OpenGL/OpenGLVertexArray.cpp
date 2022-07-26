@@ -50,7 +50,7 @@ namespace Corvus
 
         m_IndexBuffer = std::move(IndexBuffer);
 
-        GLuint EBO = ((OpenGLIndexBuffer *)m_IndexBuffer.get())->GetID();
+        GLuint const EBO = ((OpenGLIndexBuffer *)m_IndexBuffer.get())->GetID();
         glVertexArrayElementBuffer(m_VAO, EBO);
     }
 
@@ -70,8 +70,8 @@ namespace Corvus
 
         VertexBufferLayout &Layout = m_VertexBuffer->GetLayout();
 
-        GLsizei Stride = static_cast<GLsizei>(Layout.Stride());
-        GLuint VBO = ((OpenGLVertexBuffer *)m_VertexBuffer.get())->GetID();
+        GLsizei const Stride = static_cast<GLsizei>(Layout.Stride());
+        GLuint  const VBO    = ((OpenGLVertexBuffer *)m_VertexBuffer.get())->GetID();
         glVertexArrayVertexBuffer(m_VAO, 0, VBO, 0, Stride);
 
         GLuint  Offset = 0;
@@ -79,9 +79,9 @@ namespace Corvus
         {
             BufferLayoutElement &Element = Layout[i];
 
-            GLint         NumComponents = static_cast<GLint>(Element.GetNumComponents());
-            GLenum        Type = OpenGLVertexBuffer::BufferLayoutTypeToGLType(Element.GetType());
-            GLboolean     bShouldNormalize = Element.ShouldNormalize() ? GL_TRUE : GL_FALSE;
+            GLint     const NumComponents    = static_cast<GLint>(Element.GetNumComponents());
+            GLenum    const Type             = OpenGLVertexBuffer::BufferLayoutTypeToGLType(Element.GetType());
+            GLboolean const bShouldNormalize = Element.ShouldNormalize() ? GL_TRUE : GL_FALSE;
 
             glEnableVertexArrayAttrib(m_VAO, i);
             glVertexArrayAttribBinding(m_VAO, i, 0);

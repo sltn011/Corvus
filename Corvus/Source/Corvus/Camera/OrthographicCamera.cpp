@@ -59,13 +59,13 @@ namespace Corvus
 
     void OrthographicCamera::RecalculateProjectionMatrix()
     {
-        float OrthSizeW = m_OrthoSize;
-        float OrthSizeH = m_OrthoSize / m_Aspect;
+        float const OrthSizeW = m_OrthoSize;
+        float const OrthSizeH = m_OrthoSize / m_Aspect;
 
-        float OrthTop    = +OrthSizeH * 0.5f;
-        float OrthBottom = -OrthSizeH * 0.5f;
-        float OrthLeft   = -OrthSizeW * 0.5f;
-        float OrthRight  = +OrthSizeW * 0.5f;
+        float const OrthTop    = +OrthSizeH * 0.5f;
+        float const OrthBottom = -OrthSizeH * 0.5f;
+        float const OrthLeft   = -OrthSizeW * 0.5f;
+        float const OrthRight  = +OrthSizeW * 0.5f;
         m_ProjectionMatrix = glm::ortho(OrthLeft, OrthRight, OrthBottom, OrthTop, m_NearClip, m_FarClip);
     }
 

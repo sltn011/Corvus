@@ -103,9 +103,9 @@ namespace Corvus
 
     void Rotation::RecalculateRotationMatrix()
     {
-        glm::mat4 Roll = GetRollMatrix();
-        glm::mat4 Yaw = GetYawMatrix();
-        glm::mat4 Pitch = GetPitchMatrix();
+        glm::mat4 const Roll  = GetRollMatrix();
+        glm::mat4 const Yaw   = GetYawMatrix();
+        glm::mat4 const Pitch = GetPitchMatrix();
 
         switch (m_RotationOrder)
         {

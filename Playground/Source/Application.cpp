@@ -20,24 +20,24 @@ namespace Corvus {
         {
             Renderer::EnableDepthTest();
 
-            float Vertices[] = {
+            float const Vertices[] = {
                 +0.0f, -0.2f, -0.2f, 1.0f, 0.0f, 0.0f,
                 +0.0f, -0.2f, +0.2f, 0.0f, 1.0f, 0.0f,
                 +0.0f, +0.2f, +0.2f, 0.0f, 0.0f, 1.0f,
                 +0.0f, +0.2f, -0.2f, 1.0f, 1.0f, 0.0f
             };
 
-            UInt32 Indices[] = {
+            UInt32 const Indices[] = {
                 0, 1, 2, 0, 2, 3
             };
 
-            VertexBufferLayout Layout = {
+            VertexBufferLayout const Layout = {
                 { BufferDataType::Vec3 },
                 { BufferDataType::Vec3 }
             };
 
             Own<VertexBuffer> VBO = VertexBuffer::Create(Vertices, 4, Layout);
-            Own<IndexBuffer> EBO = IndexBuffer::Create(Indices, 6);
+            Own<IndexBuffer>  EBO = IndexBuffer::Create(Indices, 6);
 
             VAO = VertexArray::Create();
             VAO->AddVertexBuffer(std::move(VBO));
@@ -45,8 +45,8 @@ namespace Corvus {
 
             TestShader = Shader::CreateFromFile("./Assets/Shaders/TestShader.glsl");
 
-            UInt32 WindowWidth  = Application::GetInstance().GetWindow().GetWindowWidth();
-            UInt32 WindowHeight = Application::GetInstance().GetWindow().GetWindowHeight();
+            UInt32 const WindowWidth  = Application::GetInstance().GetWindow().GetWindowWidth();
+            UInt32 const WindowHeight = Application::GetInstance().GetWindow().GetWindowHeight();
             Camera.SetViewportSize(static_cast<float>(WindowWidth), static_cast<float>(WindowHeight));
             Camera.SetFoVAngle(60.0f);
             Camera.SetClipPlanes(0.01f, 100.0f);
@@ -68,8 +68,8 @@ namespace Corvus {
 
             CORVUS_ERROR("Start of memory pooling showcase!");
 
-            size_t PoolID1 = AppPools::AddPool({ {2, 4} }); // Pool of 2 objects with size 4 bytes
-            size_t PoolID2 = AppPools::AddPool({ {3, 10} }); // Pool of 3 objects with size 10 bytes
+            size_t const PoolID1 = AppPools::AddPool({ {2, 4} }); // Pool of 2 objects with size 4 bytes
+            size_t const PoolID2 = AppPools::AddPool({ {3, 10} }); // Pool of 3 objects with size 10 bytes
             CORVUS_TRACE("Created two pools with IDs {} and {}", PoolID1, PoolID2);
             CORVUS_TRACE("Pool {} for 2 objects with size 4 bytes", PoolID1);
             CORVUS_TRACE("Pool {} for 3 objects with size 10 bytes", PoolID2);
@@ -168,8 +168,8 @@ namespace Corvus {
 
             }
 
-            glm::vec2 NewPos = Input::GetCursorPos();
-            glm::vec2 Delta = NewPos - CursorPos;
+            glm::vec2 const NewPos = Input::GetCursorPos();
+            glm::vec2 const Delta = NewPos - CursorPos;
             CursorPos = NewPos;
             if (bCameraMode)
             {

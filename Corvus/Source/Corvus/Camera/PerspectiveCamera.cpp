@@ -48,9 +48,9 @@ namespace Corvus
 
     void PerspectiveCamera::RecalculateViewMatrix()
     {
-        glm::vec3 Position = m_Transform.GetPosition();
-        glm::vec3 ForwardVector = GetForwardVector();
-        glm::vec3 UpVector = GetUpVector();
+        glm::vec3 const Position = m_Transform.GetPosition();
+        glm::vec3 const ForwardVector = GetForwardVector();
+        glm::vec3 const UpVector = GetUpVector();
         
         m_ViewMatrix = glm::lookAt(
             Position,

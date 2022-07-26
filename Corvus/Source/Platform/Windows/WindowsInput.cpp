@@ -10,7 +10,7 @@ namespace Corvus
     bool Input::IsKeyInState(KeyCode Key, ActionCode State)
     {
         Application &App = Application::GetInstance();
-        GLFWwindow *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
+        GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
         return glfwGetKey(Window, static_cast<int>(Key)) == State;
     }
 
@@ -32,7 +32,7 @@ namespace Corvus
     bool Input::IsButtonInState(MouseCode Button, ActionCode State)
     {
         Application &App = Application::GetInstance();
-        GLFWwindow *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
+        GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
         return glfwGetMouseButton(Window, static_cast<int>(Button)) == State;
     }
 
@@ -49,7 +49,7 @@ namespace Corvus
     void Input::SetCursorEnabled(bool bEnabled)
     {
         Application &App = Application::GetInstance();
-        GLFWwindow *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
+        GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
 
         glfwSetInputMode(Window, GLFW_CURSOR, bEnabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
     }
@@ -57,7 +57,7 @@ namespace Corvus
     glm::vec2 Input::GetCursorPos()
     {
         Application &App = Application::GetInstance();
-        GLFWwindow *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
+        GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
 
         double XPos, YPos;
         glfwGetCursorPos(Window, &XPos, &YPos);
@@ -78,7 +78,7 @@ namespace Corvus
     void Input::SetCursorPos(glm::vec2 Pos)
     {
         Application &App = Application::GetInstance();
-        GLFWwindow *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
+        GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
 
         glfwSetCursorPos(Window, Pos.x, Pos.y);
     }

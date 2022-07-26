@@ -14,7 +14,7 @@ namespace Corvus
         }
         IDTablesTotalSize *= sizeof(uint8_t *);
 
-        size_t PoolSize = m_Layout.PoolSize() + IDTablesTotalSize;
+        size_t const PoolSize = m_Layout.PoolSize() + IDTablesTotalSize;
         m_Pool = MakeOwned<uint8_t[]>(PoolSize);
         m_BlocksInfo.resize(m_Layout.NumBlocks());
 
@@ -22,13 +22,13 @@ namespace Corvus
         size_t OffsetCounter = 0;
         for (size_t i = 0; i < m_Layout.NumBlocks(); ++i)
         {
-            PoolBlock Block = m_Layout[i];
+            PoolBlock const Block = m_Layout[i];
 
             size_t  IDTableSize = Block.NumElements * sizeof(uint8_t *);
 
-            uint8_t  *BlockStart   = m_Pool.get() + OffsetCounter;
-            uint8_t **IDTableStart = reinterpret_cast<uint8_t **>(BlockStart);
-            uint8_t  *MemoryStart  = BlockStart + IDTableSize;
+            uint8_t  * const BlockStart   = m_Pool.get() + OffsetCounter;
+            uint8_t ** const IDTableStart = reinterpret_cast<uint8_t **>(BlockStart);
+            uint8_t  * const MemoryStart  = BlockStart + IDTableSize;
 
             m_BlocksInfo[i] = { IDTableStart, MemoryStart, MemoryStart };
 
@@ -43,8 +43,8 @@ namespace Corvus
             return PoolIndex{ m_PoolID, BlockID, 0 };
         }
 
-        PoolBlock  Layout  = m_Layout[BlockID];
-        BlockInfo &Offsets = m_BlocksInfo[BlockID];
+        PoolBlock const Layout  = m_Layout[BlockID];
+        BlockInfo      &Offsets = m_BlocksInfo[BlockID];
 
         size_t BlockSize = Layout.ElementSize * Layout.NumElements;
 
@@ -77,8 +77,8 @@ namespace Corvus
             return nullptr;
         }
 
-        PoolBlock  Layout  = m_Layout[Index.m_BlockID];
-        BlockInfo &Offsets = m_BlocksInfo[Index.m_BlockID];
+        PoolBlock const Layout  = m_Layout[Index.m_BlockID];
+        BlockInfo      &Offsets = m_BlocksInfo[Index.m_BlockID];
 
         if (Index.m_ElementID > Layout.NumElements)
         {
@@ -90,7 +90,7 @@ namespace Corvus
 
     void Pool::Free(PoolIndex &Index)
     {
-        uint8_t *Memory = Get(Index);
+        uint8_t *const Memory = Get(Index);
         if (!Memory)
         {
             return;
@@ -108,7 +108,7 @@ namespace Corvus
             return;
         }
 
-        uint8_t *Replacement = Offsets.FreeBegin;
+        uint8_t const *const Replacement = Offsets.FreeBegin;
         for (size_t i = 0; i < Layout.NumElements; ++i)
         {
             if (Offsets.IDTable[i] == Replacement)

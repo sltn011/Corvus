@@ -134,7 +134,7 @@ namespace Corvus
         KeyPressEvent &KPEvent = CastEvent<KeyPressEvent &>(Event);
         if (KPEvent.Key == Key::F1)
         {
-            bool b = Application::GetInstance().GetWindow().IsFullScreen();
+            bool const b = Application::GetInstance().GetWindow().IsFullScreen();
             Application::GetInstance().GetWindow().SetFullScreen(!b);
         }
         Event.SetHandled();

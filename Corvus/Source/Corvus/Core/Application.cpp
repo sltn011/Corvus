@@ -50,8 +50,8 @@ namespace Corvus
     {
         TimePoint TimePointOld;
         while (!m_Window->ShouldClose()) {
-            TimePoint TimePointNew;
-            TimeDelta ElapsedTime = TimePointNew - TimePointOld;
+            TimePoint const TimePointNew;
+            TimeDelta const ElapsedTime = TimePointNew - TimePointOld;
             TimePointOld = TimePointNew;
 
             UpdateLayers(ElapsedTime);
