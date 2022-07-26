@@ -25,6 +25,8 @@
     #define CORVUS_CORE_ASSERT_FMT(...)
     #define CORVUS_NO_ENTRY(...)
     #define CORVUS_NO_ENTRY_FMT(...)
+    #define CORVUS_CORE_NO_ENTRY(...)
+    #define CORVUS_CORE_NO_ENTRY_FMT(...)
 #endif
 
 #endif //!CORVUS_SOURCE_CORVUS_CORE_ASSERT_H
