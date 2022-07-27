@@ -31,7 +31,7 @@ namespace Corvus
         {
             uint8_t **IDTable    = nullptr;
             uint8_t  *BlockBegin = nullptr;
-            uint8_t  *FreeBegin  = nullptr;
+            size_t    SlotsUsed  = 0;
         };
 
         size_t m_PoolID = 0;

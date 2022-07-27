@@ -30,7 +30,7 @@ namespace Corvus
             uint8_t ** const IDTableStart = reinterpret_cast<uint8_t **>(BlockStart);
             uint8_t  * const MemoryStart  = BlockStart + IDTableSize;
 
-            m_BlocksInfo[i] = { IDTableStart, MemoryStart, MemoryStart };
+            m_BlocksInfo[i] = { IDTableStart, MemoryStart, 0 };
 
             OffsetCounter += IDTableSize + (Block.ElementSize * Block.NumElements);
         }
@@ -46,9 +46,7 @@ namespace Corvus
         PoolBlock const Layout  = m_Layout[BlockID];
         BlockInfo      &Offsets = m_BlocksInfo[BlockID];
 
-        size_t BlockSize = Layout.ElementSize * Layout.NumElements;
-
-        if (Offsets.FreeBegin + Layout.ElementSize > Offsets.BlockBegin + BlockSize)
+        if (Offsets.SlotsUsed == Layout.NumElements)
         {
             CORVUS_CORE_WARN("Block {} in Pool {} is out of memory!", BlockID, m_PoolID);
             return PoolIndex{ m_PoolID, BlockID, 0 };
@@ -64,8 +62,8 @@ namespace Corvus
             }
         }
 
-        Offsets.IDTable[Index] = Offsets.FreeBegin;
-        Offsets.FreeBegin += Layout.ElementSize;
+        Offsets.IDTable[Index] = Offsets.BlockBegin + Index * Layout.ElementSize;
+        ++Offsets.SlotsUsed;
 
         return PoolIndex{ m_PoolID, BlockID, Index + 1 };
     }
@@ -101,12 +99,7 @@ namespace Corvus
 
         Offsets.IDTable[Index.m_ElementID - 1] = nullptr; // Free table slot
         Index.m_ElementID = 0; // Invalidate Index
-
-        Offsets.FreeBegin -= Layout.ElementSize;
-        if (Offsets.BlockBegin == Offsets.FreeBegin)
-        {
-            return;
-        }
+        --Offsets.SlotsUsed;
     }
 
 }

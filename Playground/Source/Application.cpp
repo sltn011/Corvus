@@ -68,7 +68,7 @@ namespace Corvus {
 
             CORVUS_ERROR("Start of memory pooling showcase!");
 
-            size_t const PoolID1 = AppPools::AddPool({ {2, 4} }); // Pool of 2 objects with size 4 bytes
+            size_t const PoolID1 = AppPools::AddPool({ {3, 4} }); // Pool of 2 objects with size 4 bytes
             size_t const PoolID2 = AppPools::AddPool({ {3, 10} }); // Pool of 3 objects with size 10 bytes
             CORVUS_TRACE("Created two pools with IDs {} and {}", PoolID1, PoolID2);
             CORVUS_TRACE("Pool {} for 2 objects with size 4 bytes", PoolID1);
