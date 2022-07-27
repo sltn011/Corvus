@@ -99,24 +99,13 @@ namespace Corvus
         PoolBlock  Layout  = m_Layout[Index.m_BlockID];
         BlockInfo &Offsets = m_BlocksInfo[Index.m_BlockID];
 
-        Offsets.IDTable[Index.m_ElementID - 1] = nullptr;
+        Offsets.IDTable[Index.m_ElementID - 1] = nullptr; // Free table slot
         Index.m_ElementID = 0; // Invalidate Index
 
         Offsets.FreeBegin -= Layout.ElementSize;
         if (Offsets.BlockBegin == Offsets.FreeBegin)
         {
             return;
-        }
-
-        uint8_t const *const Replacement = Offsets.FreeBegin;
-        for (size_t i = 0; i < Layout.NumElements; ++i)
-        {
-            if (Offsets.IDTable[i] == Replacement)
-            {
-                std::memcpy(Memory, Replacement, Layout.ElementSize);
-                Offsets.IDTable[i] = Memory;
-                break;
-            }
         }
     }
 
