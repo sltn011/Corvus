@@ -39,7 +39,7 @@ namespace Corvus
     {
         if (BlockID > m_BlocksInfo.size())
         {
-            return PoolIndex{ m_PoolID, BlockID, 0 };
+            return PoolIndex{ m_PoolID, BlockID, 0, nullptr };
         }
 
         PoolBlock const Layout  = m_Layout[BlockID];
@@ -48,7 +48,7 @@ namespace Corvus
         if (Offsets.SlotsUsed == Layout.NumElements)
         {
             CORVUS_CORE_WARN("Block {} in Pool {} is out of memory!", BlockID, m_PoolID);
-            return PoolIndex{ m_PoolID, BlockID, 0 };
+            return PoolIndex{ m_PoolID, BlockID, 0, nullptr };
         }
 
         size_t Index = 0;
@@ -64,7 +64,9 @@ namespace Corvus
         Offsets.IDTable[Index] = true;
         ++Offsets.SlotsUsed;
 
-        return PoolIndex{ m_PoolID, BlockID, Index + 1 };
+        uint8_t *Data = Offsets.BlockBegin + (Index * Layout.ElementSize);
+
+        return PoolIndex{ m_PoolID, BlockID, Index, Data };
     }
 
     uint8_t *Pool::Get(PoolIndex const &Index)
@@ -77,12 +79,12 @@ namespace Corvus
         PoolBlock const Layout  = m_Layout[Index.m_BlockID];
         BlockInfo      &Offsets = m_BlocksInfo[Index.m_BlockID];
 
-        if (Index.m_ElementID > Layout.NumElements)
+        if (Index.m_ElementID >= Layout.NumElements)
         {
             return nullptr;
         }
 
-        size_t DataOffset = (Index.m_ElementID - 1) * Layout.ElementSize;
+        size_t DataOffset = Index.m_ElementID * Layout.ElementSize;
         return Offsets.BlockBegin + DataOffset;
     }
 
@@ -97,8 +99,8 @@ namespace Corvus
         PoolBlock  Layout  = m_Layout[Index.m_BlockID];
         BlockInfo &Offsets = m_BlocksInfo[Index.m_BlockID];
 
-        Offsets.IDTable[Index.m_ElementID - 1] = false; // Free table slot
-        Index.m_ElementID = 0; // Invalidate Index
+        Offsets.IDTable[Index.m_ElementID] = false; // Free table slot
+        Index.m_Data = nullptr; // Invalidate Index
         --Offsets.SlotsUsed;
     }
 

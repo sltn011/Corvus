@@ -6,8 +6,8 @@
 namespace Corvus
 {
 
-    PoolIndex::PoolIndex(size_t PoolID, size_t BlockID, size_t ElementID)
-        : m_PoolID{ PoolID }, m_BlockID{ BlockID }, m_ElementID{ ElementID }
+    PoolIndex::PoolIndex(size_t PoolID, size_t BlockID, size_t ElementID, uint8_t *const Data)
+        : m_PoolID{ PoolID }, m_BlockID{ BlockID }, m_ElementID{ ElementID }, m_Data{ Data }
     {
     }
 
@@ -17,7 +17,8 @@ namespace Corvus
     }
 
     PoolIndex::PoolIndex(PoolIndex &&Rhs) noexcept
-        : m_PoolID{ Rhs.m_PoolID }, m_BlockID{ Rhs.m_BlockID }, m_ElementID{ std::exchange(Rhs.m_ElementID, 0) }
+        : m_PoolID{ Rhs.m_PoolID }, m_BlockID{ Rhs.m_BlockID }, m_ElementID{ Rhs.m_ElementID },
+        m_Data{std::exchange(Rhs.m_Data, nullptr)}
     {
     }
 
@@ -27,14 +28,15 @@ namespace Corvus
         {
             m_PoolID = Rhs.m_PoolID;
             m_BlockID = Rhs.m_BlockID;
-            m_ElementID = std::exchange(Rhs.m_ElementID, 0);
+            m_ElementID = Rhs.m_ElementID;
+            m_Data = std::exchange(Rhs.m_Data, nullptr);
         }
         return *this;
     }
 
     bool PoolIndex::IsValid() const
     {
-        return m_ElementID != 0;
+        return m_Data != nullptr;
     }
 
     void PoolIndex::Free()
@@ -51,8 +53,7 @@ namespace Corvus
 
     uint8_t *PoolIndex::GetRaw() const
     {
-        Pool *const Pool = AppPools::GetPool(m_PoolID);
-        return Pool ? Pool->Get(*this) : nullptr;
+        return m_Data;
     }
 
 }
