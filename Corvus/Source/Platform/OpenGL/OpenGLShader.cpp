@@ -74,7 +74,7 @@ namespace Corvus
     {
         if (this != &Rhs)
         {
-            m_ID = std::exchange(Rhs.m_ID, 0);
+            std::swap(m_ID, Rhs.m_ID);
             m_UniformLocationCache = std::move(Rhs.m_UniformLocationCache);
         }
         return *this;

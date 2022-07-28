@@ -44,7 +44,7 @@ namespace Corvus
 
         GLint GetUniformLocation(String const &Name);
 
-        GLuint m_ID;
+        GLuint m_ID = 0;
         std::unordered_map<String, GLint> m_UniformLocationCache;
 
     private:

@@ -24,7 +24,7 @@ namespace Corvus
     {
         if (this != &Rhs)
         {
-            m_EBO = std::exchange(Rhs.m_EBO, 0);
+            std::swap(m_EBO, Rhs.m_EBO);
             m_NumIndices = Rhs.m_NumIndices;
         }
         return *this;

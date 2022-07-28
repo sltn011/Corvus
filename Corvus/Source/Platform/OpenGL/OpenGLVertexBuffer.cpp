@@ -25,7 +25,7 @@ namespace Corvus
     {
         if (this != &Rhs)
         {
-            m_VBO = std::exchange(Rhs.m_VBO, 0);
+            std::swap(m_VBO, Rhs.m_VBO);
             m_NumVertices = Rhs.m_NumVertices;
             m_Layout = std::move(Rhs.m_Layout);
         }

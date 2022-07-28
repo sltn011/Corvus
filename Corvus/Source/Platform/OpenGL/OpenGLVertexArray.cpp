@@ -27,7 +27,7 @@ namespace Corvus
     {
         if (this != &Rhs)
         {
-            m_VAO = std::exchange(Rhs.m_VAO, 0);
+            std::swap(m_VAO, Rhs.m_VAO);
             m_IndexBuffer = std::move(Rhs.m_IndexBuffer);
             m_VertexBuffer = std::move(Rhs.m_VertexBuffer);
         }
