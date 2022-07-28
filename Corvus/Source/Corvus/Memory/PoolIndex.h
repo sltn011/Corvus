@@ -5,18 +5,15 @@
 
 namespace Corvus
 {
-
-    class AppPools;
     class Pool;
 
     class PoolIndex
     {
     protected:
 
-        friend class AppPools;
         friend class Pool;
 
-        PoolIndex(size_t PoolID, size_t BlockID, size_t ElementID, uint8_t *const Data);
+        PoolIndex(size_t PoolID, size_t BlockID, size_t TablePageID, uint8_t PageSlotID, uint8_t *const Data);
 
     public:
 
@@ -42,10 +39,13 @@ namespace Corvus
 
     protected:
 
-        size_t   m_PoolID    = 0;
-        size_t   m_BlockID   = 0;
-        size_t   m_ElementID = 0;
-        uint8_t *m_Data      = nullptr;
+        void Invalidate();
+
+        size_t   m_PoolID      = 0;
+        size_t   m_BlockID     = 0;
+        size_t   m_TablePageID = 0;
+        uint8_t  m_PageSlotID  = 0;
+        uint8_t *m_Data        = nullptr;
     };
 
 }

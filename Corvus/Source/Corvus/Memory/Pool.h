@@ -21,17 +21,20 @@ namespace Corvus
 
         PoolIndex Request(size_t BlockID);
 
-        uint8_t *Get(PoolIndex const &Index);
-
         void Free(PoolIndex &Index);
 
     protected:
 
+        bool IsSlotAvailable(size_t BlockID, size_t TablePageID, uint8_t PageSlotID);
+
+        uint8_t GetSlotBit(uint8_t PageSlotID);
+
         struct BlockInfo
         {
-            bool    *IDTable    = nullptr;
-            uint8_t *BlockBegin = nullptr;
-            size_t   SlotsUsed  = 0;
+            uint8_t *IDTable      = nullptr;
+            size_t   IDTablePages = 0;
+            uint8_t *BlockBegin   = nullptr;
+            size_t   SlotsUsed    = 0;
         };
 
         size_t m_PoolID = 0;

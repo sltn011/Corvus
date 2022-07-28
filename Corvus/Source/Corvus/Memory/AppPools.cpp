@@ -23,7 +23,7 @@ namespace Corvus
         Pool *const Pool = GetPool(PoolID);
         if (!Pool)
         {
-            return PoolIndex{ PoolID, BlockID, 0, nullptr };
+            return PoolIndex{};
         }
 
         return Pool->Request(BlockID);
