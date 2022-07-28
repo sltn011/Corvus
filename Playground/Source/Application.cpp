@@ -68,17 +68,16 @@ namespace Corvus {
 
             CORVUS_ERROR("Start of memory pooling showcase!");
 
-            size_t const PoolID1 = AppPools::AddPool({ {3, 4} }); // Pool of 2 objects with size 4 bytes
-            size_t const PoolID2 = AppPools::AddPool({ {3, 10} }); // Pool of 3 objects with size 10 bytes
-            CORVUS_TRACE("Created two pools with IDs {} and {}", PoolID1, PoolID2);
-            CORVUS_TRACE("Pool {} for 2 objects with size 4 bytes", PoolID1);
-            CORVUS_TRACE("Pool {} for 3 objects with size 10 bytes", PoolID2);
+            // Pool of 2 objects with size 4 bytes and 3 objects with size 10 bytes
+            size_t const PoolID1 = AppPools::AddPool({ {2, 4}, {3, 10} });
+            CORVUS_TRACE("Created pool with IDs {} and two blocks", PoolID1);
+            CORVUS_TRACE("Pool {} for 2 objects with size 4 bytes and 3 objects with size 10 bytes", PoolID1);
 
-            CORVUS_TRACE("3 blocks requested from Pool {} (has space for 2 only) and 1 from Pool {}", PoolID1, PoolID2);
+            CORVUS_TRACE("3 blocks requested from Pool {} first block (has space for 2 only) and 1 from second block", PoolID1);
             PI1 = AppPools::Request(PoolID1, 0);
             PI2 = AppPools::Request(PoolID1, 0);
             PI3 = AppPools::Request(PoolID1, 0);
-            PI4 = AppPools::Request(PoolID2, 0);
+            PI4 = AppPools::Request(PoolID1, 1);
 
             uint8_t *n1 = PI1.GetRaw();
             int     *n2 = PI2.Get<int>();
@@ -118,11 +117,11 @@ namespace Corvus {
             CORVUS_TRACE("After freeing memory in pool index 4:");
             CORVUS_TRACE("Pointers to pooled objects: {}, {}, {}; {}", (void *)n1, (void *)n2, (void *)n3, (void *)n4);
 
-            CORVUS_TRACE("Re-requesting 3 blocks from Pool {} and 1 from Pool {}", PoolID1, PoolID2);
+            CORVUS_TRACE("Re-requesting 3 blocks from Pool {} first block and one from second block", PoolID1);
             PI1 = AppPools::Request(PoolID1, 0);
             PI2 = AppPools::Request(PoolID1, 0);
             PI3 = AppPools::Request(PoolID1, 0);
-            PI4 = AppPools::Request(PoolID2, 0);
+            PI4 = AppPools::Request(PoolID1, 1);
             n1 = PI1.GetRaw();
             n2 = PI2.Get<int>();
             n3 = PI3.GetRaw();

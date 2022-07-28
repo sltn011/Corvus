@@ -29,9 +29,9 @@ namespace Corvus
 
         struct BlockInfo
         {
-            uint8_t **IDTable    = nullptr;
-            uint8_t  *BlockBegin = nullptr;
-            size_t    SlotsUsed  = 0;
+            bool    *IDTable    = nullptr;
+            uint8_t *BlockBegin = nullptr;
+            size_t   SlotsUsed  = 0;
         };
 
         size_t m_PoolID = 0;

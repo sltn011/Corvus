@@ -12,23 +12,22 @@ namespace Corvus
         {
             IDTablesTotalSize += Block.NumElements;
         }
-        IDTablesTotalSize *= sizeof(uint8_t *);
 
         size_t const PoolSize = m_Layout.PoolSize() + IDTablesTotalSize;
         m_Pool = MakeOwned<uint8_t[]>(PoolSize);
         m_BlocksInfo.resize(m_Layout.NumBlocks());
 
-        // Block: N uint8_t pointers(ID Table) + Preallocated memory for objects
+        // Block: N bools(ID Table) + Preallocated memory for objects
         size_t OffsetCounter = 0;
         for (size_t i = 0; i < m_Layout.NumBlocks(); ++i)
         {
             PoolBlock const Block = m_Layout[i];
 
-            size_t  IDTableSize = Block.NumElements * sizeof(uint8_t *);
+            size_t  IDTableSize = Block.NumElements;
 
-            uint8_t  * const BlockStart   = m_Pool.get() + OffsetCounter;
-            uint8_t ** const IDTableStart = reinterpret_cast<uint8_t **>(BlockStart);
-            uint8_t  * const MemoryStart  = BlockStart + IDTableSize;
+            uint8_t *const BlockStart   = m_Pool.get() + OffsetCounter;
+            bool    *const IDTableStart = reinterpret_cast<bool*>(BlockStart);
+            uint8_t *const MemoryStart  = BlockStart + IDTableSize;
 
             m_BlocksInfo[i] = { IDTableStart, MemoryStart, 0 };
 
@@ -62,7 +61,7 @@ namespace Corvus
             }
         }
 
-        Offsets.IDTable[Index] = Offsets.BlockBegin + Index * Layout.ElementSize;
+        Offsets.IDTable[Index] = true;
         ++Offsets.SlotsUsed;
 
         return PoolIndex{ m_PoolID, BlockID, Index + 1 };
@@ -83,7 +82,8 @@ namespace Corvus
             return nullptr;
         }
 
-        return Offsets.IDTable[Index.m_ElementID - 1];
+        size_t DataOffset = (Index.m_ElementID - 1) * Layout.ElementSize;
+        return Offsets.BlockBegin + DataOffset;
     }
 
     void Pool::Free(PoolIndex &Index)
@@ -97,7 +97,7 @@ namespace Corvus
         PoolBlock  Layout  = m_Layout[Index.m_BlockID];
         BlockInfo &Offsets = m_BlocksInfo[Index.m_BlockID];
 
-        Offsets.IDTable[Index.m_ElementID - 1] = nullptr; // Free table slot
+        Offsets.IDTable[Index.m_ElementID - 1] = false; // Free table slot
         Index.m_ElementID = 0; // Invalidate Index
         --Offsets.SlotsUsed;
     }
