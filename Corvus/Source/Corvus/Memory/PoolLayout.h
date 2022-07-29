@@ -8,10 +8,10 @@
 namespace Corvus
 {
 
-    struct PoolBlock
+    struct PoolDataBlockFmt
     {
-        size_t NumElements = 0;
-        size_t ElementSize = 0;
+        SizeT NumElements = 0;
+        SizeT ElementSize = 0;
     };
 
     class PoolLayout
@@ -19,23 +19,23 @@ namespace Corvus
     public:
 
         PoolLayout() = default;
-        PoolLayout(std::initializer_list<PoolBlock> Layout);
+        PoolLayout(std::initializer_list<PoolDataBlockFmt> Layout);
 
         void Clear();
-        void Add(PoolBlock Block);
+        void Add(PoolDataBlockFmt BlockInfo);
 
-        size_t PoolSize() const;
-        size_t NumBlocks() const;
+        SizeT PoolSize() const;
+        SizeT NumBlocks() const;
 
-        PoolBlock operator[](size_t Index) const;
+        PoolDataBlockFmt operator[](SizeT Index) const;
 
-        std::vector<PoolBlock>::const_iterator begin() const;
-        std::vector<PoolBlock>::const_iterator end() const;
+        std::vector<PoolDataBlockFmt>::const_iterator begin() const;
+        std::vector<PoolDataBlockFmt>::const_iterator end() const;
 
     protected:
 
-        std::vector<PoolBlock> m_Layout;
-        size_t m_PoolSize = 0;
+        std::vector<PoolDataBlockFmt> m_Layout;
+        SizeT m_PoolSize = 0;
 
     };
 

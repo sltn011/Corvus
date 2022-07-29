@@ -15,6 +15,8 @@ using UInt16 = std::uint16_t;
 using UInt32 = std::uint32_t;
 using UInt64 = std::uint64_t;
 
+using SizeT  = std::size_t;
+
 using Char   = char;
 using String = std::basic_string<Char>;
 using Name   = std::basic_string_view<Char>;

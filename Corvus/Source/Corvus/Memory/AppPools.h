@@ -10,11 +10,11 @@ namespace Corvus
     {
     public:
 
-        static size_t AddPool(PoolLayout Layout);
+        static SizeT AddPool(PoolLayout Layout);
 
-        static Pool *GetPool(size_t PoolID);
+        static Pool *GetPool(SizeT PoolID);
 
-        static PoolIndex Request(size_t PoolID, size_t BlockID);
+        static PoolIndex Request(SizeT PoolID, SizeT BlockID);
 
     protected:
 

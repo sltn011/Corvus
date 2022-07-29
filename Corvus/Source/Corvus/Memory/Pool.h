@@ -15,33 +15,33 @@ namespace Corvus
 
         friend class AppPools;
 
-        Pool(size_t PoolID, PoolLayout PoolLayout);
+        Pool(SizeT PoolID, PoolLayout PoolLayout);
 
     public:
 
-        PoolIndex Request(size_t BlockID);
+        PoolIndex Request(SizeT BlockID);
 
         void Free(PoolIndex &Index);
 
     protected:
 
-        bool IsSlotAvailable(size_t BlockID, size_t TablePageID, uint8_t PageSlotID);
+        bool IsSlotAvailable(SizeT BlockID, SizeT TablePageID, UInt8 PageSlotID);
 
-        uint8_t GetSlotBit(uint8_t PageSlotID);
+        UInt8 GetSlotBit(UInt8 PageSlotID);
 
         struct BlockInfo
         {
-            uint8_t *IDTable      = nullptr;
-            size_t   IDTablePages = 0;
-            uint8_t *BlockBegin   = nullptr;
-            size_t   SlotsUsed    = 0;
+            UInt8 *IDTable      = nullptr;
+            SizeT  IDTablePages = 0;
+            UInt8 *Data         = nullptr;
+            SizeT  SlotsUsed    = 0;
         };
 
-        size_t m_PoolID = 0;
+        SizeT m_PoolID = 0;
 
-        PoolLayout             m_Layout;
+        PoolLayout m_Layout;
 
-        Own<uint8_t[]>         m_Pool;
+        Own<UInt8[]>           m_Pool;
         std::vector<BlockInfo> m_BlocksInfo;
 
     };

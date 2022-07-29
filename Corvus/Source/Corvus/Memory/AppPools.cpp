@@ -6,19 +6,19 @@ namespace Corvus
 
     std::vector<Pool> AppPools::s_Pools;
 
-    size_t AppPools::AddPool(PoolLayout Layout)
+    SizeT AppPools::AddPool(PoolLayout Layout)
     {
-        size_t const PoolID = s_Pools.size();
+        SizeT const PoolID = s_Pools.size();
         s_Pools.emplace_back(Pool{ PoolID, std::move(Layout) });
         return PoolID;
     }
 
-    Pool *AppPools::GetPool(size_t PoolID)
+    Pool *AppPools::GetPool(SizeT PoolID)
     {
         return PoolID >= s_Pools.size() ? nullptr : &s_Pools[PoolID];
     }
 
-    PoolIndex AppPools::Request(size_t PoolID, size_t BlockID)
+    PoolIndex AppPools::Request(SizeT PoolID, SizeT BlockID)
     {
         Pool *const Pool = GetPool(PoolID);
         if (!Pool)

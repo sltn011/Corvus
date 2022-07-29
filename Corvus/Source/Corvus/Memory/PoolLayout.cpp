@@ -4,12 +4,12 @@
 namespace Corvus
 {
 
-    PoolLayout::PoolLayout(std::initializer_list<PoolBlock> Layout)
+    PoolLayout::PoolLayout(std::initializer_list<PoolDataBlockFmt> Layout)
         : m_Layout{ Layout }
     {
-        for (PoolBlock Block : m_Layout)
+        for (PoolDataBlockFmt BlockInfo : m_Layout)
         {
-            m_PoolSize += Block.ElementSize * Block.NumElements;
+            m_PoolSize += BlockInfo.ElementSize * BlockInfo.NumElements;
         }
     }
 
@@ -19,33 +19,33 @@ namespace Corvus
         m_PoolSize = 0;
     }
 
-    void PoolLayout::Add(PoolBlock Block)
+    void PoolLayout::Add(PoolDataBlockFmt BlockInfo)
     {
-        m_Layout.push_back(Block);
-        m_PoolSize += Block.ElementSize * Block.NumElements;
+        m_Layout.push_back(BlockInfo);
+        m_PoolSize += BlockInfo.ElementSize * BlockInfo.NumElements;
     }
 
-    size_t PoolLayout::PoolSize() const
+    SizeT PoolLayout::PoolSize() const
     {
         return m_PoolSize;
     }
 
-    size_t PoolLayout::NumBlocks() const
+    SizeT PoolLayout::NumBlocks() const
     {
         return m_Layout.size();
     }
 
-    PoolBlock PoolLayout::operator[](size_t Index) const
+    PoolDataBlockFmt PoolLayout::operator[](SizeT Index) const
     {
         return m_Layout[Index];
     }
 
-    std::vector<PoolBlock>::const_iterator PoolLayout::begin() const
+    std::vector<PoolDataBlockFmt>::const_iterator PoolLayout::begin() const
     {
         return m_Layout.begin();
     }
 
-    std::vector<PoolBlock>::const_iterator PoolLayout::end() const
+    std::vector<PoolDataBlockFmt>::const_iterator PoolLayout::end() const
     {
         return m_Layout.end();
     }

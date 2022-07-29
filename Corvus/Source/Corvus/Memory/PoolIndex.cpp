@@ -6,7 +6,7 @@
 namespace Corvus
 {
 
-    PoolIndex::PoolIndex(size_t PoolID, size_t BlockID, size_t TablePageID, uint8_t PageSlotID, uint8_t *const Data)
+    PoolIndex::PoolIndex(SizeT PoolID, SizeT BlockID, SizeT TablePageID, UInt8 PageSlotID, UInt8 *const Data)
         : m_PoolID{ PoolID }, m_BlockID{ BlockID }, 
           m_TablePageID{ TablePageID }, m_PageSlotID{ PageSlotID },
           m_Data{ Data }
@@ -57,7 +57,7 @@ namespace Corvus
         }
     }
 
-    uint8_t *PoolIndex::GetRaw() const
+    UInt8 *PoolIndex::GetRaw() const
     {
         return m_Data;
     }
