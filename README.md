@@ -1,5 +1,28 @@
 # Corvus
-Corvus 3D Game Engine for Windows
+## Corvus 3D Game Engine for Windows  
+  
+
+![Preview from 30-07-2022](https://github.com/sltn011/Corvus/blob/main/PreviewImages/30-07-2022.png)  
+  
+Corvus is a 3D Game Engine currenlty being developed for x64 Windows, designed to be a lightweight solution for making high performance games with high quality graphics.  
+Engine uses OpenGL as it's Rendering API for now, but is built to allow easy integration of other APIs and Platforms support in future.  
+
+Features:
+- Layers based architecture
+- Custom high perfomance system of memory pools for game objects creation
+- Single and Multicast delegates
+- Log and assert debug tools
+  
+Planned features:
+- ECS based on custom pools system
+- PBR, Bloom, Dynamic Shadows and Reflections and other high quality graphics related effects and systems
+- Custom Editor
+- Blueprints based materials system
+- Physics
+- Skeletal animations
+- Scripting
+- Networking
+- Support for other Rendering APIs and Platforms
   
 # Getting Started     
 ## 1. Download repository  
