@@ -1,5 +1,4 @@
-# Corvus
-## Corvus 3D Game Engine for Windows  
+# Corvus 3D Game Engine  
   
 
 ![Preview from 30-07-2022](https://github.com/sltn011/Corvus/blob/main/PreviewImages/30-07-2022.png)  
