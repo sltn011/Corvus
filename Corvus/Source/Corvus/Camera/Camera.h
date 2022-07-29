@@ -33,9 +33,9 @@ namespace Corvus
         Transform GetTransform() const;
         Rotation  GetRotation() const;
 
-        glm::vec3 GetForwardVector();
-        glm::vec3 GetUpVector() ;
-        glm::vec3 GetRightVector();
+        Vec3 GetForwardVector();
+        Vec3 GetUpVector() ;
+        Vec3 GetRightVector();
 
         void SetMoveSpeed(float CameraMoveSpeed);
         void SetTransform(Transform const &Transform);
@@ -44,9 +44,9 @@ namespace Corvus
         void SetViewportSize(float Width, float Height);
         void SetClipPlanes(float NearClip, float FarClip);
 
-        virtual glm::mat4 GetViewMatrix() = 0;
-        virtual glm::mat4 GetProjectionMatrix() = 0;
-        virtual glm::mat4 GetProjectionViewMatrix() = 0;
+        virtual Mat4 GetViewMatrix() = 0;
+        virtual Mat4 GetProjectionMatrix() = 0;
+        virtual Mat4 GetProjectionViewMatrix() = 0;
 
         virtual void RecalculateViewMatrix() = 0;
         virtual void RecalculateProjectionMatrix() = 0;
@@ -59,9 +59,9 @@ namespace Corvus
 
         Transform m_Transform;
 
-        glm::mat4 m_ViewMatrix           = glm::mat4(1.0f);
-        glm::mat4 m_ProjectionMatrix     = glm::mat4(1.0f);
-        glm::mat4 m_ProjectionViewMatrix = glm::mat4(1.0f);
+        Mat4 m_ViewMatrix           = Mat4(1.0f);
+        Mat4 m_ProjectionMatrix     = Mat4(1.0f);
+        Mat4 m_ProjectionViewMatrix = Mat4(1.0f);
 
         float m_Aspect   = 1.0f;
         float m_NearClip = 0.1f;

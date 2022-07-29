@@ -35,7 +35,7 @@ namespace Corvus
         s_GraphicsAPI->ViewportResize(Width, Height);
     }
 
-    void Renderer::SetClearColor(glm::vec4 ClearColor)
+    void Renderer::SetClearColor(Vec4 ClearColor)
     {
         s_GraphicsAPI->SetClearColor(ClearColor);
     }

@@ -2,8 +2,7 @@
 #define CORVUS_SOURCE_CORVUS_CORE_INPUT_H
 
 #include "Corvus/Core/KeyCodes.h"
-
-#include <glm/glm.hpp>
+#include "Corvus/Math/Vector.h"
 
 namespace Corvus
 {
@@ -30,10 +29,10 @@ namespace Corvus
         // CURSOR
 
         static void SetCursorEnabled(bool bEnabled);
-        static glm::vec2 GetCursorPos();
+        static Vec2 GetCursorPos();
         static float GetCursorX();
         static float GetCursorY();
-        static void SetCursorPos(glm::vec2 Pos);
+        static void SetCursorPos(Vec2 Pos);
     };
 
 }

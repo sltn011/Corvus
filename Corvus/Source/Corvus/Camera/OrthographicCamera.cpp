@@ -29,26 +29,26 @@ namespace Corvus
         RecalculateProjectionViewMatrix();
     }
 
-    glm::mat4 OrthographicCamera::GetViewMatrix()
+    Mat4 OrthographicCamera::GetViewMatrix()
     {
         return m_ViewMatrix;
     }
 
-    glm::mat4 OrthographicCamera::GetProjectionMatrix()
+    Mat4 OrthographicCamera::GetProjectionMatrix()
     {
         return m_ProjectionMatrix;
     }
 
-    glm::mat4 OrthographicCamera::GetProjectionViewMatrix()
+    Mat4 OrthographicCamera::GetProjectionViewMatrix()
     {
         return m_ProjectionViewMatrix;
     }
 
     void OrthographicCamera::RecalculateViewMatrix()
     {
-        glm::vec3 Position = m_Transform.GetPosition();
-        glm::vec3 ForwardVector = GetForwardVector();
-        glm::vec3 UpVector = GetUpVector();
+        Vec3 Position = m_Transform.GetPosition();
+        Vec3 ForwardVector = GetForwardVector();
+        Vec3 UpVector = GetUpVector();
 
         m_ViewMatrix = glm::lookAt(
             Position,

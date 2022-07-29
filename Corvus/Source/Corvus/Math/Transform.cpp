@@ -8,27 +8,27 @@ namespace Corvus
     {
     }
 
-    Transform::Transform(glm::vec3 const &Position)
+    Transform::Transform(Vec3 const &Position)
         : m_Position{ Position }, m_Scale{ Vector::OneVec }, m_Rotation{}
     {
     }
 
-    Transform::Transform(glm::vec3 const &Position, glm::vec3 const &Scale)
+    Transform::Transform(Vec3 const &Position, Vec3 const &Scale)
         : m_Position{ Position }, m_Scale{ Scale }, m_Rotation{}
     {
     }
 
-    Transform::Transform(glm::vec3 const &Position, Rotation const &Rotation)
+    Transform::Transform(Vec3 const &Position, Rotation const &Rotation)
         : m_Position{ Position }, m_Scale{ Vector::OneVec }, m_Rotation{ Rotation }
     {
     }
 
-    Transform::Transform(glm::vec3 const &Position, glm::vec3 const &Scale, Rotation const &Rotation)
+    Transform::Transform(Vec3 const &Position, Vec3 const &Scale, Rotation const &Rotation)
         : m_Position{ Position }, m_Scale{ Scale }, m_Rotation{ Rotation }
     {
     }
 
-    glm::mat4 Transform::GetTransformMatrix()
+    Mat4 Transform::GetTransformMatrix()
     {
         if (m_bIsDirty)
         {
@@ -38,38 +38,38 @@ namespace Corvus
         return m_TransformMatrix;
     }
 
-    glm::mat4 Transform::GetTranslationMatrix() const
+    Mat4 Transform::GetTranslationMatrix() const
     {
-        return glm::translate(glm::mat4(1.0f), m_Position);
+        return glm::translate(Mat4(1.0f), m_Position);
     }
 
-    glm::mat4 Transform::GetScaleMatrix() const
+    Mat4 Transform::GetScaleMatrix() const
     {
-        return glm::scale(glm::mat4(1.0f), m_Scale);
+        return glm::scale(Mat4(1.0f), m_Scale);
     }
 
-    glm::mat4 Transform::GetRotationMatrix()
+    Mat4 Transform::GetRotationMatrix()
     {
         return m_Rotation.GetRotationMatrix();
     }
 
-    glm::vec3 Transform::GetPosition() const
+    Vec3 Transform::GetPosition() const
     {
         return m_Position;
     }
 
-    void Transform::SetPosition(glm::vec3 const &Position)
+    void Transform::SetPosition(Vec3 const &Position)
     {
         m_Position = Position;
         m_bIsDirty = true;
     }
 
-    glm::vec3 Transform::GetScale() const
+    Vec3 Transform::GetScale() const
     {
         return m_Scale;
     }
 
-    void Transform::SetScale(glm::vec3 const &Scale)
+    void Transform::SetScale(Vec3 const &Scale)
     {
         m_Scale = Scale;
         m_bIsDirty = true;

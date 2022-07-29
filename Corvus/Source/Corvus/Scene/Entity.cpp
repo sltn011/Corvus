@@ -13,7 +13,7 @@ namespace Corvus
     {
     }
 
-    glm::mat4 Entity::GetSceneTransformMatrix()
+    Mat4 Entity::GetSceneTransformMatrix()
     {
         if (m_bIsDirty)
         {

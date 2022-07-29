@@ -16,7 +16,7 @@ namespace Corvus
 
         virtual void ViewportResize(UInt32 Width, UInt32 Height) override;
 
-        virtual void SetClearColor(glm::vec4 ClearColor) override;
+        virtual void SetClearColor(Vec4 ClearColor) override;
         virtual void Clear(bool bColorBuffer = true, bool bDepthBuffer = true, bool bStencilBuffer = true) override;
 
         virtual void EnableDepthTest();

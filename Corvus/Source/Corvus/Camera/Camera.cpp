@@ -63,19 +63,19 @@ namespace Corvus
         return m_Transform.GetRotation();
     }
 
-    glm::vec3 Camera::GetForwardVector()
+    Vec3 Camera::GetForwardVector()
     {
-        return glm::normalize(glm::vec3(glm::transpose(m_Transform.GetRotationMatrix())[0]));
+        return glm::normalize(Vec3(glm::transpose(m_Transform.GetRotationMatrix())[0]));
     }
 
-    glm::vec3 Camera::GetUpVector()
+    Vec3 Camera::GetUpVector()
     {
-        return glm::normalize(glm::vec3(glm::transpose(m_Transform.GetRotationMatrix())[1]));
+        return glm::normalize(Vec3(glm::transpose(m_Transform.GetRotationMatrix())[1]));
     }
 
-    glm::vec3 Camera::GetRightVector()
+    Vec3 Camera::GetRightVector()
     {
-        return glm::normalize(glm::vec3(glm::transpose(m_Transform.GetRotationMatrix())[2]));
+        return glm::normalize(Vec3(glm::transpose(m_Transform.GetRotationMatrix())[2]));
     }
 
     void Camera::SetTransform(Transform const &Transform)

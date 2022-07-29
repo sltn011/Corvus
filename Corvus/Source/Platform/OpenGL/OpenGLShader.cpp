@@ -114,31 +114,31 @@ namespace Corvus
         glUniform1f(Location, Value);
     }
 
-    void OpenGLShader::SetVec2(String const &Name, glm::vec2 const &Value)
+    void OpenGLShader::SetVec2(String const &Name, Vec2 const &Value)
     {
         GLint const Location = GetUniformLocation(Name);
         glUniform2fv(Location, 1, &(Value.x));
     }
 
-    void OpenGLShader::SetVec3(String const &Name, glm::vec3 const &Value)
+    void OpenGLShader::SetVec3(String const &Name, Vec3 const &Value)
     {
         GLint const Location = GetUniformLocation(Name);
         glUniform3fv(Location, 1, &(Value.x));
     }
 
-    void OpenGLShader::SetVec4(String const &Name, glm::vec4 const &Value)
+    void OpenGLShader::SetVec4(String const &Name, Vec4 const &Value)
     {
         GLint const Location = GetUniformLocation(Name);
         glUniform4fv(Location, 1, &(Value.x));
     }
 
-    void OpenGLShader::SetMat3(String const &Name, glm::mat3 const &Value)
+    void OpenGLShader::SetMat3(String const &Name, Mat3 const &Value)
     {
         GLint const Location = GetUniformLocation(Name);
         glUniformMatrix3fv(Location, 1, false, glm::value_ptr(Value));
     }
 
-    void OpenGLShader::SetMat4(String const &Name, glm::mat4 const &Value)
+    void OpenGLShader::SetMat4(String const &Name, Mat4 const &Value)
     {
         GLint const Location = GetUniformLocation(Name);
         glUniformMatrix4fv(Location, 1, false, glm::value_ptr(Value));

@@ -3,14 +3,18 @@
 
 #include <glm/glm.hpp>
 
+using Vec2 = glm::vec2;
+using Vec3 = glm::vec3;
+using Vec4 = glm::vec4;
+
 namespace Corvus::Vector
 {
-    static constexpr glm::vec3 Forward = glm::vec3{ 1.0f, 0.0f, 0.0f };
-    static constexpr glm::vec3 Up      = glm::vec3{ 0.0f, 1.0f, 0.0f };
-    static constexpr glm::vec3 Right   = glm::vec3{ 0.0f, 0.0f, 1.0f };
+    static constexpr Vec3 Forward = Vec3{ 1.0f, 0.0f, 0.0f };
+    static constexpr Vec3 Up      = Vec3{ 0.0f, 1.0f, 0.0f };
+    static constexpr Vec3 Right   = Vec3{ 0.0f, 0.0f, 1.0f };
 
-    static constexpr glm::vec3 ZeroVec = glm::vec3{ 0.0f, 0.0f, 0.0f };
-    static constexpr glm::vec3 OneVec  = glm::vec3{ 1.0f, 1.0f, 1.0f };
+    static constexpr Vec3 ZeroVec = Vec3{ 0.0f, 0.0f, 0.0f };
+    static constexpr Vec3 OneVec  = Vec3{ 1.0f, 1.0f, 1.0f };
 }
 
 #endif //!CORVUS_SOURCE_CORVUS_MATH_VECTOR_H

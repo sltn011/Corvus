@@ -12,7 +12,7 @@ namespace Corvus
         glViewport(0, 0, static_cast<GLsizei>(Width), static_cast<GLsizei>(Height));
     }
 
-    void OpenGLGraphicsAPI::SetClearColor(glm::vec4 ClearColor)
+    void OpenGLGraphicsAPI::SetClearColor(Vec4 ClearColor)
     {
         glClearColor(ClearColor.r, ClearColor.g, ClearColor.b, ClearColor.a);
     }

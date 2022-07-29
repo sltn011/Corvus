@@ -79,15 +79,15 @@ namespace Corvus {
             PI3 = AppPools::Request(PoolID1, 0);
             PI4 = AppPools::Request(PoolID1, 1);
 
-            uint8_t *n1 = PI1.GetRaw();
-            int     *n2 = PI2.Get<int>();
-            uint8_t *n3 = PI3.GetRaw();
-            uint8_t *n4 = PI4.GetRaw();
+            UInt8 *n1 = PI1.GetRaw();
+            Int32 *n2 = PI2.Get<Int32>();
+            UInt8 *n3 = PI3.GetRaw();
+            UInt8 *n4 = PI4.GetRaw();
             CORVUS_TRACE("Pointers to pooled objects: {}, {}, {}; {}", (void *)n1, (void *)n2, (void *)n3, (void *)n4);
 
             PI1.Free();
             n1 = PI1.GetRaw();
-            n2 = PI2.Get<int>();
+            n2 = PI2.Get<Int32>();
             n3 = PI3.GetRaw();
             n4 = PI4.GetRaw();
             CORVUS_TRACE("After freeing memory in pool index 1:");
@@ -95,7 +95,7 @@ namespace Corvus {
 
             PI2.Free();
             n1 = PI1.GetRaw();
-            n2 = PI2.Get<int>();
+            n2 = PI2.Get<Int32>();
             n3 = PI3.GetRaw();
             n4 = PI4.GetRaw();
             CORVUS_TRACE("After freeing memory in pool index 2:");
@@ -103,7 +103,7 @@ namespace Corvus {
 
             PI3.Free();
             n1 = PI1.GetRaw();
-            n2 = PI2.Get<int>();
+            n2 = PI2.Get<Int32>();
             n3 = PI3.GetRaw();
             n4 = PI4.GetRaw();
             CORVUS_TRACE("After freeing memory in pool index 3(invalid index):");
@@ -111,7 +111,7 @@ namespace Corvus {
 
             PI4.Free();
             n1 = PI1.GetRaw();
-            n2 = PI2.Get<int>();
+            n2 = PI2.Get<Int32>();
             n3 = PI3.GetRaw();
             n4 = PI4.GetRaw();
             CORVUS_TRACE("After freeing memory in pool index 4:");
@@ -123,7 +123,7 @@ namespace Corvus {
             PI3 = AppPools::Request(PoolID1, 0);
             PI4 = AppPools::Request(PoolID1, 1);
             n1 = PI1.GetRaw();
-            n2 = PI2.Get<int>();
+            n2 = PI2.Get<Int32>();
             n3 = PI3.GetRaw();
             n4 = PI4.GetRaw();
             CORVUS_TRACE("Pointers to pooled objects: {}, {}, {}; {}", (void *)n1, (void *)n2, (void *)n3, (void *)n4);
@@ -167,8 +167,8 @@ namespace Corvus {
 
             }
 
-            glm::vec2 const NewPos = Input::GetCursorPos();
-            glm::vec2 const Delta = NewPos - CursorPos;
+            Vec2 const NewPos = Input::GetCursorPos();
+            Vec2 const Delta = NewPos - CursorPos;
             CursorPos = NewPos;
             if (bCameraMode)
             {
@@ -223,7 +223,7 @@ namespace Corvus {
         Own<VertexArray> VAO;
 
         bool bCameraMode = false;
-        glm::vec2 CursorPos;
+        Vec2 CursorPos;
     };
 
     Application *CreateApplication()

@@ -20,12 +20,12 @@ namespace Corvus
     public:
 
         Rotation(RotationOrder Order = RotationOrder::YXZ);
-        Rotation(RotationOrder Order, glm::vec3 const &Angles);
+        Rotation(RotationOrder Order, Vec3 const &Angles);
 
-        glm::mat4 GetRotationMatrix();
-        glm::mat4 GetRollMatrix() const;
-        glm::mat4 GetYawMatrix() const;
-        glm::mat4 GetPitchMatrix() const;
+        Mat4 GetRotationMatrix();
+        Mat4 GetRollMatrix() const;
+        Mat4 GetYawMatrix() const;
+        Mat4 GetPitchMatrix() const;
 
         void AddRollAngle(float RollAngle);
         void AddYawAngle(float YawAngle);
@@ -46,10 +46,10 @@ namespace Corvus
 
         void RecalculateRotationMatrix();
 
-        glm::vec3     m_Angles; // Roll, Yaw, Pitch
+        Vec3     m_Angles; // Roll, Yaw, Pitch
         RotationOrder m_RotationOrder;
 
-        glm::mat4 m_RotationMatrix = glm::mat4(1.0f);
+        Mat4 m_RotationMatrix = Mat4(1.0f);
         bool m_bIsDirty = true;
 
     };

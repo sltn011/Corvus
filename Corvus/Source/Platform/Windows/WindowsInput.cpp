@@ -54,7 +54,7 @@ namespace Corvus
         glfwSetInputMode(Window, GLFW_CURSOR, bEnabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
     }
 
-    glm::vec2 Input::GetCursorPos()
+    Vec2 Input::GetCursorPos()
     {
         Application &App = Application::GetInstance();
         GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
@@ -62,7 +62,7 @@ namespace Corvus
         double XPos, YPos;
         glfwGetCursorPos(Window, &XPos, &YPos);
 
-        return glm::vec2{ static_cast<float>(XPos), static_cast<float>(YPos) };
+        return Vec2{ static_cast<float>(XPos), static_cast<float>(YPos) };
     }
 
     float Input::GetCursorX()
@@ -75,7 +75,7 @@ namespace Corvus
         return GetCursorPos().y;
     }
 
-    void Input::SetCursorPos(glm::vec2 Pos)
+    void Input::SetCursorPos(Vec2 Pos)
     {
         Application &App = Application::GetInstance();
         GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());

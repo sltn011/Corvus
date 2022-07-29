@@ -32,12 +32,12 @@ namespace Corvus
         virtual void SetUInt32(String const &Name, UInt32 Value) = 0;
         virtual void SetFloat(String const &Name, float Value) = 0;
 
-        virtual void SetVec2(String const &Name, glm::vec2 const &Value) = 0;
-        virtual void SetVec3(String const &Name, glm::vec3 const &Value) = 0;
-        virtual void SetVec4(String const &Name, glm::vec4 const &Value) = 0;
+        virtual void SetVec2(String const &Name, Vec2 const &Value) = 0;
+        virtual void SetVec3(String const &Name, Vec3 const &Value) = 0;
+        virtual void SetVec4(String const &Name, Vec4 const &Value) = 0;
 
-        virtual void SetMat3(String const &Name, glm::mat3 const &Value) = 0;
-        virtual void SetMat4(String const &Name, glm::mat4 const &Value) = 0;
+        virtual void SetMat3(String const &Name, Mat3 const &Value) = 0;
+        virtual void SetMat4(String const &Name, Mat4 const &Value) = 0;
 
     };
 

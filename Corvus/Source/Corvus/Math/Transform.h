@@ -12,21 +12,21 @@ namespace Corvus
     public:
 
         Transform();
-        Transform(glm::vec3 const &Position);
-        Transform(glm::vec3 const &Position, glm::vec3 const &Scale);
-        Transform(glm::vec3 const &Position, Rotation const &Rotation);
-        Transform(glm::vec3 const &Position, glm::vec3 const &Scale, Rotation const &Rotation);
+        Transform(Vec3 const &Position);
+        Transform(Vec3 const &Position, Vec3 const &Scale);
+        Transform(Vec3 const &Position, Rotation const &Rotation);
+        Transform(Vec3 const &Position, Vec3 const &Scale, Rotation const &Rotation);
 
-        glm::mat4 GetTransformMatrix();
-        glm::mat4 GetTranslationMatrix() const;
-        glm::mat4 GetScaleMatrix() const;
-        glm::mat4 GetRotationMatrix();
+        Mat4 GetTransformMatrix();
+        Mat4 GetTranslationMatrix() const;
+        Mat4 GetScaleMatrix() const;
+        Mat4 GetRotationMatrix();
 
-        glm::vec3 GetPosition() const;
-        void SetPosition(glm::vec3 const &Position);
+        Vec3 GetPosition() const;
+        void SetPosition(Vec3 const &Position);
 
-        glm::vec3 GetScale() const;
-        void SetScale(glm::vec3 const &Scale);
+        Vec3 GetScale() const;
+        void SetScale(Vec3 const &Scale);
 
         Rotation GetRotation() const;
         void SetRotation(Rotation const &Rotation);
@@ -35,12 +35,12 @@ namespace Corvus
 
         void RecalculateMatrix();
 
-        glm::mat4 m_TransformMatrix = glm::mat4(1.0f);
+        Mat4 m_TransformMatrix = Mat4(1.0f);
         bool      m_bIsDirty = true;
 
-        glm::vec3 m_Position;
+        Vec3 m_Position;
         Rotation  m_Rotation;
-        glm::vec3 m_Scale;
+        Vec3 m_Scale;
 
     };
 }

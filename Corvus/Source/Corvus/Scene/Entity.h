@@ -16,7 +16,7 @@ namespace Corvus
         Entity(Own<Shader> const &Shader, Own<VertexArray> const &VAO);
         Entity(Own<Shader> const &Shader, Own<VertexArray> const &VAO, Transform const &Transform);
 
-        glm::mat4 GetSceneTransformMatrix();
+        Mat4 GetSceneTransformMatrix();
 
         Transform GetTransform() const;
         void SetTransform(Transform const &Transform);
@@ -40,7 +40,7 @@ namespace Corvus
         Own<VertexArray> const &m_VAO;
 
         Transform m_Transform;
-        glm::mat4 m_SceneTransformMatrix = glm::mat4(1.0f);
+        Mat4 m_SceneTransformMatrix = Mat4(1.0f);
         bool      m_bIsDirty = true;
 
         std::vector<Entity *> m_Children;

@@ -22,11 +22,11 @@ namespace Corvus
         Transform CameraTransform = m_Owner->GetTransform();
         float const Seconds = ElapsedTime.Seconds();
 
-        glm::vec3 Position = CameraTransform.GetPosition();
+        Vec3 Position = CameraTransform.GetPosition();
 
-        glm::vec3 const ForwardVector = m_Owner->GetForwardVector();
-        glm::vec3 const UpVector      = m_Owner->GetUpVector();
-        glm::vec3 const RightVector   = m_Owner->GetRightVector();
+        Vec3 const ForwardVector = m_Owner->GetForwardVector();
+        Vec3 const UpVector      = m_Owner->GetUpVector();
+        Vec3 const RightVector   = m_Owner->GetRightVector();
 
         switch (Direction) {
         case Camera::MoveDirection::Forward:

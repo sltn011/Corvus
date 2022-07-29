@@ -31,26 +31,26 @@ namespace Corvus
         RecalculateProjectionViewMatrix();
     }
 
-    glm::mat4 PerspectiveCamera::GetViewMatrix()
+    Mat4 PerspectiveCamera::GetViewMatrix()
     {
         return m_ViewMatrix;
     }
 
-    glm::mat4 PerspectiveCamera::GetProjectionMatrix()
+    Mat4 PerspectiveCamera::GetProjectionMatrix()
     {
         return m_ProjectionMatrix;
     }
 
-    glm::mat4 PerspectiveCamera::GetProjectionViewMatrix()
+    Mat4 PerspectiveCamera::GetProjectionViewMatrix()
     {
         return m_ProjectionViewMatrix;
     }
 
     void PerspectiveCamera::RecalculateViewMatrix()
     {
-        glm::vec3 const Position = m_Transform.GetPosition();
-        glm::vec3 const ForwardVector = GetForwardVector();
-        glm::vec3 const UpVector = GetUpVector();
+        Vec3 const Position = m_Transform.GetPosition();
+        Vec3 const ForwardVector = GetForwardVector();
+        Vec3 const UpVector = GetUpVector();
         
         m_ViewMatrix = glm::lookAt(
             Position,

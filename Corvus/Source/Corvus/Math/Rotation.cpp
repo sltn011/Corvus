@@ -9,12 +9,12 @@ namespace Corvus
     {
     }
 
-    Rotation::Rotation(RotationOrder Order, glm::vec3 const &Angles)
+    Rotation::Rotation(RotationOrder Order, Vec3 const &Angles)
         : m_Angles{ Angles }, m_RotationOrder{ Order }
     {
     }
 
-    glm::mat4 Rotation::GetRotationMatrix()
+    Mat4 Rotation::GetRotationMatrix()
     {
         if (m_bIsDirty)
         {
@@ -24,19 +24,19 @@ namespace Corvus
         return m_RotationMatrix;
     }
 
-    glm::mat4 Rotation::GetRollMatrix() const
+    Mat4 Rotation::GetRollMatrix() const
     {
-        return glm::rotate(glm::mat4(1.0f), glm::radians(m_Angles.x), Vector::Forward);
+        return glm::rotate(Mat4(1.0f), glm::radians(m_Angles.x), Vector::Forward);
     }
 
-    glm::mat4 Rotation::GetYawMatrix() const
+    Mat4 Rotation::GetYawMatrix() const
     {
-        return glm::rotate(glm::mat4(1.0f), glm::radians(m_Angles.y), Vector::Up);
+        return glm::rotate(Mat4(1.0f), glm::radians(m_Angles.y), Vector::Up);
     }
 
-    glm::mat4 Rotation::GetPitchMatrix() const
+    Mat4 Rotation::GetPitchMatrix() const
     {
-        return glm::rotate(glm::mat4(1.0f), glm::radians(m_Angles.z), Vector::Right);
+        return glm::rotate(Mat4(1.0f), glm::radians(m_Angles.z), Vector::Right);
     }
 
     void Rotation::AddRollAngle(float RollAngle)
@@ -103,9 +103,9 @@ namespace Corvus
 
     void Rotation::RecalculateRotationMatrix()
     {
-        glm::mat4 const Roll  = GetRollMatrix();
-        glm::mat4 const Yaw   = GetYawMatrix();
-        glm::mat4 const Pitch = GetPitchMatrix();
+        Mat4 const Roll  = GetRollMatrix();
+        Mat4 const Yaw   = GetYawMatrix();
+        Mat4 const Pitch = GetPitchMatrix();
 
         switch (m_RotationOrder)
         {

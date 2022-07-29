@@ -16,9 +16,9 @@ namespace Corvus
 
         void SetOrthoSize(float OrthoSize);
 
-        virtual glm::mat4 GetViewMatrix() override;
-        virtual glm::mat4 GetProjectionMatrix() override;
-        virtual glm::mat4 GetProjectionViewMatrix() override;
+        virtual Mat4 GetViewMatrix() override;
+        virtual Mat4 GetProjectionMatrix() override;
+        virtual Mat4 GetProjectionViewMatrix() override;
 
         virtual void RecalculateViewMatrix() override;
         virtual void RecalculateProjectionMatrix() override;
