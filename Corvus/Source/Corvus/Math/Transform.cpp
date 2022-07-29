@@ -40,12 +40,12 @@ namespace Corvus
 
     Mat4 Transform::GetTranslationMatrix() const
     {
-        return glm::translate(Mat4(1.0f), m_Position);
+        return Matrix::Translate(Mat4(1.0f), m_Position);
     }
 
     Mat4 Transform::GetScaleMatrix() const
     {
-        return glm::scale(Mat4(1.0f), m_Scale);
+        return Matrix::Scale(Mat4(1.0f), m_Scale);
     }
 
     Mat4 Transform::GetRotationMatrix()

@@ -1,8 +1,6 @@
 #include "CorvusPCH.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
-#include <glm/gtc/type_ptr.hpp>
-
 namespace Corvus
 {
     OpenGLShader::OpenGLShader(String const &FilePath)
@@ -135,13 +133,13 @@ namespace Corvus
     void OpenGLShader::SetMat3(String const &Name, Mat3 const &Value)
     {
         GLint const Location = GetUniformLocation(Name);
-        glUniformMatrix3fv(Location, 1, false, glm::value_ptr(Value));
+        glUniformMatrix3fv(Location, 1, false, Matrix::ValuePtr(Value));
     }
 
     void OpenGLShader::SetMat4(String const &Name, Mat4 const &Value)
     {
         GLint const Location = GetUniformLocation(Name);
-        glUniformMatrix4fv(Location, 1, false, glm::value_ptr(Value));
+        glUniformMatrix4fv(Location, 1, false, Matrix::ValuePtr(Value));
     }
 
     GLuint OpenGLShader::CreateShader(GLenum ShaderType, String const &SourceCode) const

@@ -2,6 +2,7 @@
 #include "Corvus/Camera/Camera.h"
 
 #include "Corvus/Camera/Components/CameraMovementComponent.h"
+#include "Corvus/Math/Math.h"
 #include "Corvus/Time/TimeDelta.h"
 
 namespace Corvus
@@ -65,17 +66,17 @@ namespace Corvus
 
     Vec3 Camera::GetForwardVector()
     {
-        return glm::normalize(Vec3(glm::transpose(m_Transform.GetRotationMatrix())[0]));
+        return Vector::Normalize(Vec3(Matrix::Transpose(m_Transform.GetRotationMatrix())[0]));
     }
 
     Vec3 Camera::GetUpVector()
     {
-        return glm::normalize(Vec3(glm::transpose(m_Transform.GetRotationMatrix())[1]));
+        return Vector::Normalize(Vec3(Matrix::Transpose(m_Transform.GetRotationMatrix())[1]));
     }
 
     Vec3 Camera::GetRightVector()
     {
-        return glm::normalize(Vec3(glm::transpose(m_Transform.GetRotationMatrix())[2]));
+        return Vector::Normalize(Vec3(Matrix::Transpose(m_Transform.GetRotationMatrix())[2]));
     }
 
     void Camera::SetTransform(Transform const &Transform)

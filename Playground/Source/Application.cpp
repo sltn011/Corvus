@@ -179,7 +179,7 @@ namespace Corvus {
             {
                 Transform EntityTransform = SceneEntity.GetTransform();
                 Rotation Rotator = EntityTransform.GetRotation();
-                Rotator.AddYawAngle(-20.0f * ElapsedTime.Seconds());
+                Rotator.AddYawDegrees(-20.0f * ElapsedTime.Seconds());
                 EntityTransform.SetRotation(Rotator);
                 SceneEntity.SetTransform(EntityTransform);
 

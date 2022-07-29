@@ -29,8 +29,8 @@ namespace Corvus
 
         PoolDataBlockFmt operator[](SizeT Index) const;
 
-        std::vector<PoolDataBlockFmt>::const_iterator begin() const;
-        std::vector<PoolDataBlockFmt>::const_iterator end() const;
+        std::vector<PoolDataBlockFmt>::const_iterator begin() const { return m_Layout.begin(); }
+        std::vector<PoolDataBlockFmt>::const_iterator end() const { return m_Layout.end(); }
 
     protected:
 

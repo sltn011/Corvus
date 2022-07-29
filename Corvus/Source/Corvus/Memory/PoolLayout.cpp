@@ -40,14 +40,4 @@ namespace Corvus
         return m_Layout[Index];
     }
 
-    std::vector<PoolDataBlockFmt>::const_iterator PoolLayout::begin() const
-    {
-        return m_Layout.begin();
-    }
-
-    std::vector<PoolDataBlockFmt>::const_iterator PoolLayout::end() const
-    {
-        return m_Layout.end();
-    }
-
 }

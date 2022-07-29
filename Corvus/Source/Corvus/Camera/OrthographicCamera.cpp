@@ -50,7 +50,7 @@ namespace Corvus
         Vec3 ForwardVector = GetForwardVector();
         Vec3 UpVector = GetUpVector();
 
-        m_ViewMatrix = glm::lookAt(
+        m_ViewMatrix = Matrix::LookAt(
             Position,
             Position + ForwardVector,
             UpVector
@@ -66,7 +66,7 @@ namespace Corvus
         float const OrthBottom = -OrthSizeH * 0.5f;
         float const OrthLeft   = -OrthSizeW * 0.5f;
         float const OrthRight  = +OrthSizeW * 0.5f;
-        m_ProjectionMatrix = glm::ortho(OrthLeft, OrthRight, OrthBottom, OrthTop, m_NearClip, m_FarClip);
+        m_ProjectionMatrix = Matrix::Ortho(OrthLeft, OrthRight, OrthBottom, OrthTop, m_NearClip, m_FarClip);
     }
 
     void OrthographicCamera::RecalculateProjectionViewMatrix()

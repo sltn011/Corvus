@@ -23,10 +23,10 @@ namespace Corvus
     {
     }
 
-    void PerspectiveCamera::SetFoVAngle(float FoVAngle)
+    void PerspectiveCamera::SetFoVAngle(float FoVDegrees)
     {
-        CORVUS_CORE_ASSERT(FoVAngle > 0);
-        m_FoVAngleRadians = glm::radians(FoVAngle);
+        CORVUS_CORE_ASSERT(FoVDegrees > 0);
+        m_FoVAngleDegrees = FoVDegrees;
         RecalculateProjectionMatrix();
         RecalculateProjectionViewMatrix();
     }
@@ -51,17 +51,17 @@ namespace Corvus
         Vec3 const Position = m_Transform.GetPosition();
         Vec3 const ForwardVector = GetForwardVector();
         Vec3 const UpVector = GetUpVector();
-        
-        m_ViewMatrix = glm::lookAt(
+
+        m_ViewMatrix = Matrix::LookAt(
             Position,
             Position + ForwardVector,
             UpVector
         );
     }
-
+    
     void PerspectiveCamera::RecalculateProjectionMatrix()
     {
-        m_ProjectionMatrix = glm::perspective(m_FoVAngleRadians, m_Aspect, m_NearClip, m_FarClip);
+        m_ProjectionMatrix = Matrix::Perspective(m_FoVAngleDegrees, m_Aspect, m_NearClip, m_FarClip);
     }
 
     void PerspectiveCamera::RecalculateProjectionViewMatrix()

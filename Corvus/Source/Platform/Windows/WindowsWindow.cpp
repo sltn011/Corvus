@@ -152,18 +152,18 @@ namespace Corvus
                 GLFW_DONT_CARE
             );
 
-            glm::ivec2 MonitorTopLeft, MonitorBottomRight;
+            IVec2 MonitorTopLeft, MonitorBottomRight;
             glfwGetMonitorWorkarea(
                 glfwGetPrimaryMonitor(),
                 &MonitorTopLeft.x, &MonitorTopLeft.y,
                 &MonitorBottomRight.x, &MonitorBottomRight.y
             );
 
-            glm::ivec2 const MonitorCenter = (MonitorBottomRight - MonitorTopLeft) / 2;
+            IVec2 const MonitorCenter = (MonitorBottomRight - MonitorTopLeft) / 2;
 
-            glm::ivec2 WindowTopLeft;
-            WindowTopLeft.x = glm::max(0, MonitorCenter.x - m_WindowData.WindowWidth / 2);
-            WindowTopLeft.y = glm::max(0, MonitorCenter.y - m_WindowData.WindowHeight / 2);
+            IVec2 WindowTopLeft;
+            WindowTopLeft.x = Math::Max(0, MonitorCenter.x - m_WindowData.WindowWidth / 2);
+            WindowTopLeft.y = Math::Max(0, MonitorCenter.y - m_WindowData.WindowHeight / 2);
 
             glfwSetWindowPos(m_Window, WindowTopLeft.x, WindowTopLeft.y);
         }

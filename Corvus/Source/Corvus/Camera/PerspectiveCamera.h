@@ -14,7 +14,7 @@ namespace Corvus
         PerspectiveCamera(Transform const &Transform);
         virtual ~PerspectiveCamera();
 
-        void SetFoVAngle(float FoVAngle);
+        void SetFoVAngle(float FoVDegrees);
 
         virtual Mat4 GetViewMatrix() override;
         virtual Mat4 GetProjectionMatrix() override;
@@ -26,7 +26,7 @@ namespace Corvus
 
     protected:
 
-        float m_FoVAngleRadians = glm::radians(60.0f);
+        float m_FoVAngleDegrees = 60.0f;
 
     };
 

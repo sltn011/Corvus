@@ -16,6 +16,7 @@
 #include "Corvus/Events/MouseEvent.h"
 
 #include "Corvus/Math/Color.h"
+#include "Corvus/Math/Math.h"
 #include "Corvus/Math/Matrix.h"
 #include "Corvus/Math/Vector.h"
 

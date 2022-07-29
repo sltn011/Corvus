@@ -5,12 +5,12 @@ namespace Corvus
 {
 
     Rotation::Rotation(RotationOrder Order)
-        : m_Angles{ Vector::ZeroVec }, m_RotationOrder{ Order }
+        : m_Degrees{ Vector::ZeroVec }, m_RotationOrder{ Order }
     {
     }
 
-    Rotation::Rotation(RotationOrder Order, Vec3 const &Angles)
-        : m_Angles{ Angles }, m_RotationOrder{ Order }
+    Rotation::Rotation(RotationOrder Order, Vec3 const &Degrees)
+        : m_Degrees{ Degrees }, m_RotationOrder{ Order }
     {
     }
 
@@ -26,67 +26,67 @@ namespace Corvus
 
     Mat4 Rotation::GetRollMatrix() const
     {
-        return glm::rotate(Mat4(1.0f), glm::radians(m_Angles.x), Vector::Forward);
+        return Matrix::Rotate(Mat4(1.0f), m_Degrees.x, Vector::Forward);
     }
 
     Mat4 Rotation::GetYawMatrix() const
     {
-        return glm::rotate(Mat4(1.0f), glm::radians(m_Angles.y), Vector::Up);
+        return Matrix::Rotate(Mat4(1.0f), m_Degrees.y, Vector::Up);
     }
 
     Mat4 Rotation::GetPitchMatrix() const
     {
-        return glm::rotate(Mat4(1.0f), glm::radians(m_Angles.z), Vector::Right);
+        return Matrix::Rotate(Mat4(1.0f), m_Degrees.z, Vector::Right);
     }
 
-    void Rotation::AddRollAngle(float RollAngle)
+    void Rotation::AddRollDegrees(float RollDegree)
     {
-        m_Angles.x += RollAngle;
+        m_Degrees.x += RollDegree;
         m_bIsDirty = true;
     }
 
-    void Rotation::AddYawAngle(float YawAngle)
+    void Rotation::AddYawDegrees(float YawDegree)
     {
-        m_Angles.y += YawAngle;
+        m_Degrees.y += YawDegree;
         m_bIsDirty = true;
     }
 
-    void Rotation::AddPitchAngle(float PitchAngle)
+    void Rotation::AddPitchDegrees(float PitchDegree)
     {
-        m_Angles.z += PitchAngle;
+        m_Degrees.z += PitchDegree;
         m_bIsDirty = true;
     }
 
-    float Rotation::GetRollAngle() const
+    float Rotation::GetRollDegrees() const
     {
-        return m_Angles.x;
+        return m_Degrees.x;
     }
 
-    float Rotation::GetYawAngle() const
+    float Rotation::GetYawDegrees() const
     {
-        return m_Angles.y;
+        return m_Degrees.y;
     }
 
-    float Rotation::GetPitchAngle() const
+    float Rotation::GetPitchDegrees() const
     {
-        return m_Angles.z;
+        return m_Degrees.z;
     }
 
-    void Rotation::SetRollAngle(float RollAngle)
+    void Rotation::SetRollDegrees(float RollDegree)
     {
-        m_Angles.x = RollAngle;
+        m_Degrees.x = RollDegree;
         m_bIsDirty = true;
     }
 
-    void Rotation::SetYawAngle(float YawAngle)
+    void Rotation::SetYawDegrees(float YawDegree)
     {
-        m_Angles.y = YawAngle;
+        m_Degrees.y = YawDegree;
         m_bIsDirty = true;
     }
 
-    void Rotation::SetPitchAngle(float PitchAngle)
+    void Rotation::SetPitchDegrees(float PitchDegree)
     {
-        m_Angles.z = PitchAngle;
+        m_Degrees.z = PitchDegree;
         m_bIsDirty = true;
     }
 

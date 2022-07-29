@@ -75,14 +75,14 @@ namespace Corvus
         XOffset *= Sensitivity * Seconds;
         YOffset *= Sensitivity * Seconds;
 
-        CameraRotation.AddYawAngle(XOffset);
-        CameraRotation.AddPitchAngle(YOffset);
+        CameraRotation.AddYawDegrees(XOffset);
+        CameraRotation.AddPitchDegrees(YOffset);
 
-        if (CameraRotation.GetPitchAngle() > 89.0f) {
-            CameraRotation.SetPitchAngle(89.0f);
+        if (CameraRotation.GetPitchDegrees() > 89.0f) {
+            CameraRotation.SetPitchDegrees(89.0f);
         }
-        if (CameraRotation.GetPitchAngle() < -89.0f) {
-            CameraRotation.SetPitchAngle(-89.0f);
+        if (CameraRotation.GetPitchDegrees() < -89.0f) {
+            CameraRotation.SetPitchDegrees(-89.0f);
         }
 
         m_Owner->SetRotation(CameraRotation);
