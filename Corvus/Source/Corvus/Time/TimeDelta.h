@@ -16,9 +16,10 @@ namespace Corvus
 
         float Minutes() const;
 
-    protected:
+    private:
 
         float m_DeltaSeconds;
+
     };
 
 }

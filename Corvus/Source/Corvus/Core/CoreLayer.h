@@ -22,7 +22,7 @@ namespace Corvus
 
         virtual void Render() override;
 
-    protected:
+    private:
 
         void OnApplicationEvent(Event &Event);
         void OnKeyboardEvent(Event &Event);

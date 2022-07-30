@@ -37,7 +37,7 @@ namespace Corvus
 
         static Application &GetInstance() { return *s_ApplicationInstance; }
 
-    protected:
+    private:
 
         void InitWindow();
         void InitRenderer();
@@ -45,9 +45,8 @@ namespace Corvus
         Own<Window>   m_Window;
         LayersStack   m_LayersStack;
 
-    private:
-
         static Application *s_ApplicationInstance;
+
     };
 
 }

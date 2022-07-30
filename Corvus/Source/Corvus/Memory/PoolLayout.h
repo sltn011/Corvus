@@ -32,7 +32,7 @@ namespace Corvus
         std::vector<PoolDataBlockFmt>::const_iterator begin() const { return m_Layout.begin(); }
         std::vector<PoolDataBlockFmt>::const_iterator end() const { return m_Layout.end(); }
 
-    protected:
+    private:
 
         std::vector<PoolDataBlockFmt> m_Layout;
         SizeT m_PoolSize = 0;

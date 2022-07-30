@@ -38,10 +38,11 @@ namespace Corvus
         std::vector<Own<Layer>>::const_iterator begin() const { return m_Stack.begin(); }
         std::vector<Own<Layer>>::const_iterator end() const { return m_Stack.end(); }
 
-    protected:
+    private:
 
         // Front - Stack's bottom, Back - Stack's top
         std::vector<Own<Layer>> m_Stack;
+
     };
 
 }

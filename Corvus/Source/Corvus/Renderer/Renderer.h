@@ -30,7 +30,7 @@ namespace Corvus
 
         static void Submit(Own<VertexArray> &VAO, Own<Shader> &Shader);
 
-    protected:
+    private:
 
         static Own<GraphicsAPI> s_GraphicsAPI;
 

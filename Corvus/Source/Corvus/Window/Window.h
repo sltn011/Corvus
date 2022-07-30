@@ -73,6 +73,7 @@ namespace Corvus
 
         Own<RenderingContext> m_RenderingContext;
         GUIController m_GUIController;
+
     };
 
 }

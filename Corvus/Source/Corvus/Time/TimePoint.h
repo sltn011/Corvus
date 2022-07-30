@@ -16,9 +16,10 @@ namespace Corvus
 
         TimeDelta operator-(TimePoint const &Rhs) const;
 
-    protected:
+    private:
 
         std::chrono::high_resolution_clock::time_point m_Value;
+
     };
 
 }

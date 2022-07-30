@@ -41,7 +41,7 @@ namespace Corvus
 
         virtual void DrawIndexed(UInt32 NumIndices) = 0;
 
-    protected:
+    private:
 
         static constexpr API m_API = API::OpenGL;
 

@@ -9,7 +9,7 @@ namespace Corvus
 
     class PoolIndex
     {
-    protected:
+    private:
 
         friend class Pool;
 
@@ -37,7 +37,7 @@ namespace Corvus
             return reinterpret_cast<T *>(GetRaw());
         }
 
-    protected:
+    private:
 
         void Invalidate();
 

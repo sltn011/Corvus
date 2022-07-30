@@ -77,7 +77,7 @@ namespace Corvus
             return Invoke(std::forward<Args>(args)...);
         }
 
-    protected:
+    private:
 
         template<typename R, typename... Args>
         class BaseInvoker
@@ -182,6 +182,7 @@ namespace Corvus
     private:
 
         std::vector<Delegate<void(Args...)>> m_Bindings;
+
     };
 }
 

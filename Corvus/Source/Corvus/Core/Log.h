@@ -22,7 +22,7 @@ namespace Corvus
         static Ref<spdlog::logger> &GetEngineLogger() { return s_EngineLogger; }
         static Ref<spdlog::logger> &GetClientLogger() { return s_ClientLogger; }
 
-    protected:
+    private:
 
         static Ref<spdlog::logger> s_EngineLogger;
         static Ref<spdlog::logger> s_ClientLogger;

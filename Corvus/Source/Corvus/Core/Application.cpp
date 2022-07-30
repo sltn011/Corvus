@@ -8,6 +8,8 @@
 
 #include "Corvus/GUI/LayerGUI.h"
 
+#include "Corvus/Memory/AppPools.h"
+
 #include "Corvus/Renderer/Renderer.h"
 #include "Corvus/Renderer/VertexArray.h"
 #include "Corvus/Renderer/VertexBuffer.h"
@@ -39,6 +41,8 @@ namespace Corvus
 
     void Application::Init()
     {
+        AppPools::Init();
+
         InitWindow();
         InitRenderer();
 

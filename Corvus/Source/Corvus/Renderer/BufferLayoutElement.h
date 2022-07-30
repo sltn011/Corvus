@@ -29,7 +29,7 @@ namespace Corvus
         UInt8 GetNumComponents() const;
         bool ShouldNormalize() const;
 
-    protected:
+    private:
 
         BufferDataType m_Type;
         UInt8 m_Size;

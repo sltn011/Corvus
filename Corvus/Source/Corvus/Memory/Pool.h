@@ -11,7 +11,7 @@ namespace Corvus
 
     class Pool
     {
-    protected:
+    private:
 
         friend class AppPools;
 
@@ -23,7 +23,7 @@ namespace Corvus
 
         void Free(PoolIndex &Index);
 
-    protected:
+    private:
 
         bool IsSlotAvailable(SizeT BlockID, SizeT TablePageID, UInt8 PageSlotID);
 

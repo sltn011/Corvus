@@ -24,7 +24,7 @@ namespace Corvus
         virtual void RecalculateProjectionMatrix() override;
         virtual void RecalculateProjectionViewMatrix() override;
 
-    protected:
+    private:
 
         float m_FoVAngleDegrees = 60.0f;
 

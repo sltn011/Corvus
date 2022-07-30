@@ -43,15 +43,12 @@ namespace Corvus
         std::vector<BufferLayoutElement>::const_iterator begin() const { return m_Layout.begin(); }
         std::vector<BufferLayoutElement>::const_iterator end() const { return m_Layout.end(); }
 
-
-    protected:
+    private:
 
         std::vector<BufferLayoutElement> m_Layout;
 
         UInt32 m_Stride = 0;
         bool m_StrideDirty = true;
-
-    private:
 
         void RecalculateStride();
     };
