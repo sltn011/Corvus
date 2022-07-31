@@ -3,8 +3,13 @@
 
 #include "Corvus/Core/CoreTypes.h"
 
+#include "Corvus/Memory/Poolable.h"
+
 namespace Corvus
 {
+    // Forward declared
+    class AppPools;
+
     class PoolRegistry;
 }
 
@@ -12,24 +17,28 @@ namespace Corvus
 // -Add POOLABLE_CLASS_IMPL to source file with definitions of Poolable class
 // -Add AppPools::RegisterPoolableClass<T>(NumElements) call to AppPools::Init() with T
 //  being your PoolableClass and NumElements being max existing in pool objects of selected class
+//
+//  After that, create Poolable<T> objects using CreatePoolable(...) function from Corvus/Memory/Poolable.h
 
-#define POOLABLE_CLASS_BODY() private: static PoolRegistry s_PoolRegistry; friend class Corvus::AppPools;
+#define POOLABLE_CLASS_BODY() \
+    private:\
+        friend class Corvus::AppPools;\
+        template<typename T, typename ...Args>\
+        friend Poolable<T> CreatePoolable(Args &&...args);\
+        static PoolRegistry s_PoolRegistry;\
+
 #define POOLABLE_CLASS_IMPL(PoolableClass) PoolRegistry PoolableClass::s_PoolRegistry{};
 
 namespace Corvus
 {
 
-    class AppPools;
-
     class PoolRegistry
     {
-    private:
+    public:
 
-        friend class AppPools;
-
-        SizeT m_PoolID  = 0; // Invalid PoolID - real one is received from AppPools::Init
-        SizeT m_BlockID = 0;
-
+        SizeT m_TypeSize = 0; // Value 0 == Indicator of uninitialized Registry
+        SizeT m_PoolID   = 0;
+        SizeT m_BlockID  = 0;
     };
 
 }

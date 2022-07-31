@@ -1,6 +1,8 @@
 #include "CorvusPCH.h"
 #include "Corvus/Memory/AppPools.h"
 
+#include "Corvus/Memory/PoolRegistry.h"
+
 namespace Corvus
 {
 
@@ -20,7 +22,7 @@ namespace Corvus
     {
         SizeT PoolSize = Layout.PoolSize();
 
-        SizeT const PoolID = s_Pools.size() + 1; // PoolID == 0 is invalid
+        SizeT const PoolID = s_Pools.size();
         s_Pools.emplace_back(Pool{ PoolID, std::move(Layout) });
 
         CORVUS_CORE_TRACE("Pool of {} bytes created", PoolSize);
@@ -29,8 +31,7 @@ namespace Corvus
 
     Pool *AppPools::GetPool(SizeT PoolID)
     {
-        CORVUS_CORE_ASSERT_FMT(PoolID != 0, "Invalid PoolID!");
-        return (!PoolID && PoolID >= s_Pools.size()) ? nullptr : &s_Pools[PoolID - 1]; // Index = ID - 1
+        return PoolID >= s_Pools.size() ? nullptr : &s_Pools[PoolID];
     }
 
     PoolIndex AppPools::Request(SizeT PoolID, SizeT BlockID)
@@ -42,6 +43,11 @@ namespace Corvus
         }
 
         return Pool->Request(BlockID);
+    }
+
+    PoolIndex AppPools::Request(PoolRegistry const &Registry)
+    {
+        return Request(Registry.m_PoolID, Registry.m_BlockID);
     }
 
 }

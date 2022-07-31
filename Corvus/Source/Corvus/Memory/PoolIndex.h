@@ -31,12 +31,6 @@ namespace Corvus
 
         UInt8 *GetRaw() const;
 
-        template<typename T>
-        T *Get() const
-        {
-            return reinterpret_cast<T *>(GetRaw());
-        }
-
     private:
 
         void Invalidate();
