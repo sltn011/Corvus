@@ -110,27 +110,27 @@ namespace Corvus
         switch (m_RotationOrder)
         {
         case Corvus::RotationOrder::XYZ:
-            m_RotationMatrix = Pitch * Yaw * Roll;
+            m_RotationMatrix = Roll * Yaw * Pitch;
             break;
 
         case Corvus::RotationOrder::XZY:
-            m_RotationMatrix = Yaw * Pitch * Roll;
-            break;
-
-        case Corvus::RotationOrder::YXZ:
-            m_RotationMatrix = Pitch * Roll * Yaw;
-            break;
-
-        case Corvus::RotationOrder::YZX:
             m_RotationMatrix = Roll * Pitch * Yaw;
             break;
 
-        case Corvus::RotationOrder::ZXY:
+        case Corvus::RotationOrder::YXZ:
             m_RotationMatrix = Yaw * Roll * Pitch;
             break;
 
+        case Corvus::RotationOrder::YZX:
+            m_RotationMatrix = Yaw * Pitch * Roll;
+            break;
+
+        case Corvus::RotationOrder::ZXY:
+            m_RotationMatrix = Pitch * Roll * Yaw;
+            break;
+
         case Corvus::RotationOrder::ZYX:
-            m_RotationMatrix = Roll * Yaw * Pitch;
+            m_RotationMatrix = Pitch * Yaw * Roll;
             break;
 
         default:

@@ -34,6 +34,12 @@
 #include "Corvus/Renderer/VertexArray.h"
 #include "Corvus/Renderer/VertexBuffer.h"
 
+// Math
+#include "Corvus/Math/Math.h"
+#include "Corvus/Math/Matrix.h"
+#include "Corvus/Math/Quat.h"
+#include "Corvus/Math/Vector.h"
+
 // Time
 #include "Corvus/Time/TimeDelta.h"
 #include "Corvus/Time/TimePoint.h"
