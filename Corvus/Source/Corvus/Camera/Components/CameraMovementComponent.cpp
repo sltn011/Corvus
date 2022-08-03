@@ -72,6 +72,11 @@ namespace Corvus
         Rotation CameraRotation = m_Owner->GetRotation();
         float Seconds = ElapsedTime.Seconds();
 
+        // Negate values or rotation input will be inverted
+        // Positive offset -> Positive rotation angle -> CCW rotation in right hand coordinates system
+        XOffset = -XOffset;
+        YOffset = -YOffset;
+
         XOffset *= Sensitivity * Seconds;
         YOffset *= Sensitivity * Seconds;
 

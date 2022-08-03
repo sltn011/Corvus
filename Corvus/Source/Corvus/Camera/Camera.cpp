@@ -66,17 +66,17 @@ namespace Corvus
 
     Vec3 Camera::GetForwardVector()
     {
-        return Vector::Normalize(Vec3(Matrix::Transpose(m_Transform.GetRotationMatrix())[0]));
+        return Vector::Normalize(Vec3(m_Transform.GetRotationMatrix()[0]));
     }
 
     Vec3 Camera::GetUpVector()
     {
-        return Vector::Normalize(Vec3(Matrix::Transpose(m_Transform.GetRotationMatrix())[1]));
+        return Vector::Normalize(Vec3(m_Transform.GetRotationMatrix()[1]));
     }
 
     Vec3 Camera::GetRightVector()
     {
-        return Vector::Normalize(Vec3(Matrix::Transpose(m_Transform.GetRotationMatrix())[2]));
+        return Vector::Normalize(Vec3(m_Transform.GetRotationMatrix()[2]));
     }
 
     void Camera::SetTransform(Transform const &Transform)
