@@ -1,6 +1,7 @@
 #ifndef CORVUS_SOURCE_CORVUS_MATH_ROTATION_H
 #define CORVUS_SOURCE_CORVUS_MATH_ROTATION_H
 
+#include "Corvus/Math/Matrix.h"
 #include "Corvus/Math/Vector.h"
 
 namespace Corvus

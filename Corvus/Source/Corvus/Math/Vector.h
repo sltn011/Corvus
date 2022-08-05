@@ -15,6 +15,18 @@ namespace Corvus::Vector
 {
 
     template<typename VecT>
+    inline constexpr VecT Radians(VecT const &Degrees)
+    {
+        return glm::radians(Degrees);
+    }
+
+    template<typename VecT>
+    inline constexpr VecT Degrees(VecT const &Radians)
+    {
+        return glm::degrees(Radians);
+    }
+
+    template<typename VecT>
     inline VecT Length(VecT const &Vector)
     {
         return glm::length(Vector);
@@ -36,6 +48,24 @@ namespace Corvus::Vector
     inline VecT Cross(VecT const &Vector)
     {
         return glm::cross(Vector);
+    }
+
+    template<typename VecT>
+    inline VecT Cos(VecT const &Degrees)
+    {
+        return glm::cos(Vector::Radians(Degrees));
+    }
+
+    template<typename VecT>
+    inline VecT Sin(VecT const &Degrees)
+    {
+        return glm::sin(Vector::Radians(Degrees));
+    }
+
+    template<typename VecT>
+    inline VecT Tan(VecT const &Degrees)
+    {
+        return glm::tan(Vector::Radians(Degrees));
     }
 
     static constexpr Vec3 Forward = Vec3{ 1.0f, 0.0f, 0.0f };
