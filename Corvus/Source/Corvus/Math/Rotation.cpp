@@ -1,6 +1,8 @@
 #include "CorvusPCH.h"
 #include "Corvus/Math/Rotation.h"
 
+#include "Corvus/Math/Quat.h"
+
 namespace Corvus
 {
 
@@ -26,17 +28,17 @@ namespace Corvus
 
     Mat4 Rotation::GetRollMatrix() const
     {
-        return Matrix::Rotate(Mat4(1.0f), m_Degrees.x, Vector::Forward);
+        return Quaternion::ToMat4(Quaternion::AngleAxis(m_Degrees.x, Vector::Forward));
     }
 
     Mat4 Rotation::GetYawMatrix() const
     {
-        return Matrix::Rotate(Mat4(1.0f), m_Degrees.y, Vector::Up);
+        return Quaternion::ToMat4(Quaternion::AngleAxis(m_Degrees.y, Vector::Up));
     }
 
     Mat4 Rotation::GetPitchMatrix() const
     {
-        return Matrix::Rotate(Mat4(1.0f), m_Degrees.z, Vector::Right);
+        return Quaternion::ToMat4(Quaternion::AngleAxis(m_Degrees.z, Vector::Right));
     }
 
     void Rotation::AddRollDegrees(float RollDegree)
@@ -103,34 +105,38 @@ namespace Corvus
 
     void Rotation::RecalculateRotationMatrix()
     {
-        Mat4 const Roll  = GetRollMatrix();
-        Mat4 const Yaw   = GetYawMatrix();
-        Mat4 const Pitch = GetPitchMatrix();
+        Quat Q = Quaternion::Unit;
 
         switch (m_RotationOrder)
         {
         case Corvus::RotationOrder::XYZ:
-            m_RotationMatrix = Roll * Yaw * Pitch;
+            Q = Quaternion::FromEulerXYZ(m_Degrees);
+            m_RotationMatrix = Quaternion::ToMat4(Q);
             break;
 
         case Corvus::RotationOrder::XZY:
-            m_RotationMatrix = Roll * Pitch * Yaw;
+            Q = Quaternion::FromEulerXZY(m_Degrees);
+            m_RotationMatrix = Quaternion::ToMat4(Q);
             break;
 
         case Corvus::RotationOrder::YXZ:
-            m_RotationMatrix = Yaw * Roll * Pitch;
+            Q = Quaternion::FromEulerYXZ(m_Degrees);
+            m_RotationMatrix = Quaternion::ToMat4(Q);
             break;
 
         case Corvus::RotationOrder::YZX:
-            m_RotationMatrix = Yaw * Pitch * Roll;
+            Q = Quaternion::FromEulerYZX(m_Degrees);
+            m_RotationMatrix = Quaternion::ToMat4(Q);
             break;
 
         case Corvus::RotationOrder::ZXY:
-            m_RotationMatrix = Pitch * Roll * Yaw;
+            Q = Quaternion::FromEulerZXY(m_Degrees);
+            m_RotationMatrix = Quaternion::ToMat4(Q);
             break;
 
         case Corvus::RotationOrder::ZYX:
-            m_RotationMatrix = Pitch * Yaw * Roll;
+            Q = Quaternion::FromEulerZYX(m_Degrees);
+            m_RotationMatrix = Quaternion::ToMat4(Q);
             break;
 
         default:

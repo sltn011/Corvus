@@ -3,10 +3,6 @@
 
 namespace Corvus::Quaternion
 {
-    Mat4 ToMat4(Quat const &Q)
-    {
-        return glm::toMat4(Q);
-    }
 
     Quat FromEuler(Vec3 const &Degrees, RotationOrder Order)
     {
