@@ -33,6 +33,11 @@ namespace Corvus
         bool  bFound      = false;
         for (;TablePageID < m_PoolInfo.IDTablePages; ++TablePageID)
         {
+            if (m_PoolInfo.IDTable[TablePageID] == 255)
+            {
+                continue;
+            }
+
             for (PageSlotID = 0; PageSlotID < 8; ++PageSlotID)
             {
                 if (IsSlotAvailable(TablePageID, PageSlotID))
