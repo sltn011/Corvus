@@ -150,8 +150,6 @@ namespace Corvus {
 
     protected:
 
-        PoolIndex PI1, PI2, PI3, PI4;
-
         std::vector<Entity> Entities;
         PerspectiveCamera   Camera;
 

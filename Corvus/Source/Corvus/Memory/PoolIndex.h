@@ -13,7 +13,7 @@ namespace Corvus
 
         friend class Pool;
 
-        PoolIndex(SizeT PoolID, SizeT BlockID, SizeT TablePageID, UInt8 PageSlotID, UInt8 *const Data);
+        PoolIndex(SizeT PoolID, SizeT BlockID, SizeT SlotID, UInt8 *const Data);
 
     public:
 
@@ -35,11 +35,10 @@ namespace Corvus
 
         void Invalidate();
 
-        SizeT  m_PoolID      = 0;
-        SizeT  m_BlockID     = 0;
-        SizeT  m_TablePageID = 0;
-        UInt8  m_PageSlotID  = 0;
-        UInt8 *m_Data        = nullptr;
+        SizeT  m_PoolID  = 0;
+        SizeT  m_BlockID = 0;
+        SizeT  m_SlotID  = 0;
+        UInt8 *m_Data    = nullptr;
     };
 
 }

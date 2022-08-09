@@ -83,10 +83,10 @@ namespace Corvus
         Block.IDTable[TablePageID] |= GetSlotBit(PageSlotID);
         ++Block.SlotsUsed;
 
-        SizeT  Index = TablePageID * 8 + PageSlotID;
-        UInt8 *Data  = Block.Data + (Index * DataBlockFmt.ElementSize);
+        SizeT  SlotID = TablePageID * 8 + PageSlotID;
+        UInt8 *Data   = Block.Data + (SlotID * DataBlockFmt.ElementSize);
 
-        return PoolIndex{ m_PoolID, BlockID, TablePageID, PageSlotID, Data };
+        return PoolIndex{ m_PoolID, BlockID, SlotID, Data };
     }
 
     void Pool::Free(PoolIndex &Index)
@@ -98,7 +98,10 @@ namespace Corvus
 
         BlockInfo &Block = m_BlocksInfo[Index.m_BlockID];
 
-        Block.IDTable[Index.m_TablePageID] &= ~GetSlotBit(Index.m_PageSlotID); // Free table slot
+        SizeT TablePageID = Index.m_SlotID / 8;
+        UInt8 PageSlotID  = Index.m_SlotID % 8;
+
+        Block.IDTable[TablePageID] &= ~GetSlotBit(PageSlotID); // Free table slot
         --Block.SlotsUsed;
         Index.Invalidate();
     }
