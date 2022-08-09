@@ -38,7 +38,7 @@ namespace Corvus
 
         SizeT m_TypeSize = 0; // Value 0 == Indicator of uninitialized Registry
         SizeT m_PoolID   = 0;
-        SizeT m_BlockID  = 0;
+
     };
 
 }

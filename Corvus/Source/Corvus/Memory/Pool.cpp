@@ -4,70 +4,38 @@
 namespace Corvus
 {
 
-    Pool::Pool(SizeT PoolID, PoolLayout PoolLayout)
-        : m_PoolID{ PoolID }, m_Layout{ std::move(PoolLayout) }
+    Pool::Pool(SizeT PoolID, PoolDataFormat PoolDataFormat)
+        : m_PoolID{ PoolID }, m_DataFormat{ PoolDataFormat }
     {
-        m_BlocksInfo.resize(m_Layout.NumBlocks());
-
-        SizeT IDTablesTotalSize = 0;
-        for (SizeT i = 0; i < m_Layout.NumBlocks(); ++i)
-        {
-            PoolDataBlockFmt const DataBlockFmt = m_Layout[i];
-
-            SizeT IDTableEntries = DataBlockFmt.NumElements;
-            SizeT IDTablePages = IDTableEntries / 8 + (IDTableEntries % 8 ? 1 : 0);
-            IDTablesTotalSize += IDTablePages;
-
-            m_BlocksInfo[i].IDTablePages = IDTablePages;
-        }
-
-        SizeT const PoolSize = m_Layout.PoolSize() + IDTablesTotalSize;
+        SizeT IDTableEntries = m_DataFormat.NumElements;
+        SizeT IDTablePages   = IDTableEntries / 8 + (IDTableEntries % 8 ? 1 : 0);
+        SizeT const PoolSize = m_DataFormat.NumElements * m_DataFormat.ElementSize + IDTablePages;
         m_Pool = MakeOwned<UInt8[]>(PoolSize);
 
-        // Block: Bitfield ID Table + Preallocated memory for objects (Data Block)
-        SizeT BlockOffset = 0;
-        for (SizeT i = 0; i < m_Layout.NumBlocks(); ++i)
-        {
-            SizeT IDTableSize = m_BlocksInfo[i].IDTablePages;
-
-            UInt8 *const BlockBegin   = m_Pool.get() + BlockOffset;
-            UInt8 *const IDTableBegin = BlockBegin;
-            UInt8 *const DataBegin    = BlockBegin + IDTableSize;
-
-            BlockInfo &Block = m_BlocksInfo[i];
-            Block.IDTable   = IDTableBegin;
-            Block.Data      = DataBegin;
-            Block.SlotsUsed = 0;
-
-            PoolDataBlockFmt const DataBlockFmt = m_Layout[i];
-            BlockOffset += IDTableSize + (DataBlockFmt.ElementSize * DataBlockFmt.NumElements);
-        }
+        // Pool: Bitfield ID Table + Preallocated memory for objects (Data Block)
+        UInt8 *const PoolBegin = m_Pool.get();
+        m_PoolInfo.IDTable      = PoolBegin;
+        m_PoolInfo.IDTablePages = IDTablePages;
+        m_PoolInfo.Data         = PoolBegin + m_PoolInfo.IDTablePages;;
+        m_PoolInfo.SlotsUsed    = 0;
     }
 
-    PoolIndex Pool::Request(SizeT BlockID)
+    PoolIndex Pool::Request()
     {
-        if (BlockID > m_BlocksInfo.size())
+        if (m_PoolInfo.SlotsUsed == m_DataFormat.NumElements)
         {
-            return PoolIndex{};
-        }
-
-        PoolDataBlockFmt const DataBlockFmt = m_Layout[BlockID];
-        BlockInfo             &Block        = m_BlocksInfo[BlockID];
-
-        if (Block.SlotsUsed == DataBlockFmt.NumElements)
-        {
-            CORVUS_CORE_WARN("BlockInfo {} in Pool {} is out of memory!", BlockID, m_PoolID);
+            CORVUS_CORE_WARN("Pool {} is out of memory!", m_PoolID);
             return PoolIndex{};
         }
 
         SizeT TablePageID = 0;
         UInt8 PageSlotID  = 0;
         bool  bFound      = false;
-        for (;TablePageID < Block.IDTablePages; ++TablePageID)
+        for (;TablePageID < m_PoolInfo.IDTablePages; ++TablePageID)
         {
             for (PageSlotID = 0; PageSlotID < 8; ++PageSlotID)
             {
-                if (IsSlotAvailable(BlockID, TablePageID, PageSlotID))
+                if (IsSlotAvailable(TablePageID, PageSlotID))
                 {
                     bFound = true;
                     break;
@@ -80,13 +48,14 @@ namespace Corvus
             }
         }
 
-        Block.IDTable[TablePageID] |= GetSlotBit(PageSlotID);
-        ++Block.SlotsUsed;
+        m_PoolInfo.IDTable[TablePageID] |= GetSlotBit(PageSlotID); // Set slot as taken
+        m_PoolInfo.SlotsUsed += 1;
 
         SizeT  SlotID = TablePageID * 8 + PageSlotID;
-        UInt8 *Data   = Block.Data + (SlotID * DataBlockFmt.ElementSize);
+        SizeT  Offset = SlotID * m_DataFormat.ElementSize;
+        UInt8 *Data   = m_PoolInfo.Data + Offset;
 
-        return PoolIndex{ m_PoolID, BlockID, SlotID, Data };
+        return PoolIndex{ m_PoolID, SlotID, Data };
     }
 
     void Pool::Free(PoolIndex &Index)
@@ -96,21 +65,17 @@ namespace Corvus
             return;
         }
 
-        BlockInfo &Block = m_BlocksInfo[Index.m_BlockID];
-
         SizeT TablePageID = Index.m_SlotID / 8;
         UInt8 PageSlotID  = Index.m_SlotID % 8;
 
-        Block.IDTable[TablePageID] &= ~GetSlotBit(PageSlotID); // Free table slot
-        --Block.SlotsUsed;
+        m_PoolInfo.IDTable[TablePageID] &= ~GetSlotBit(PageSlotID); // Free table slot
+        m_PoolInfo.SlotsUsed -= 1;
         Index.Invalidate();
     }
 
-    bool Pool::IsSlotAvailable(SizeT BlockID, SizeT TablePageID, UInt8 PageSlotID)
+    bool Pool::IsSlotAvailable(SizeT TablePageID, UInt8 PageSlotID)
     {
-        BlockInfo const &Block = m_BlocksInfo[BlockID];
-
-        UInt8 TablePage = Block.IDTable[TablePageID];
+        UInt8 TablePage = m_PoolInfo.IDTable[TablePageID];
         UInt8 BitCheck  = GetSlotBit(PageSlotID);
 
         return !(TablePage & BitCheck);

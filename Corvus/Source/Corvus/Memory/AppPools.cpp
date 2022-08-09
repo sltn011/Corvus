@@ -18,14 +18,14 @@ namespace Corvus
         CORVUS_CORE_INFO("AppPools successfully initialized!");
     }
 
-    SizeT AppPools::AddPool(PoolLayout Layout)
+    SizeT AppPools::AddPool(PoolDataFormat DataFormat)
     {
-        SizeT PoolSize = Layout.PoolSize();
-
         SizeT const PoolID = s_Pools.size();
-        s_Pools.emplace_back(Pool{ PoolID, std::move(Layout) });
+        s_Pools.emplace_back(Pool{ PoolID, DataFormat });
 
+        SizeT PoolSize = DataFormat.NumElements * DataFormat.ElementSize;
         CORVUS_CORE_TRACE("Pool of {} bytes created", PoolSize);
+
         return PoolID;
     }
 
@@ -34,7 +34,7 @@ namespace Corvus
         return PoolID >= s_Pools.size() ? nullptr : &s_Pools[PoolID];
     }
 
-    PoolIndex AppPools::Request(SizeT PoolID, SizeT BlockID)
+    PoolIndex AppPools::Request(SizeT PoolID)
     {
         Pool *const Pool = GetPool(PoolID);
         if (!Pool)
@@ -42,12 +42,7 @@ namespace Corvus
             return PoolIndex{};
         }
 
-        return Pool->Request(BlockID);
-    }
-
-    PoolIndex AppPools::Request(PoolRegistry const &Registry)
-    {
-        return Request(Registry.m_PoolID, Registry.m_BlockID);
+        return Pool->Request();
     }
 
 }

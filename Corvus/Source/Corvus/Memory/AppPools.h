@@ -13,13 +13,11 @@ namespace Corvus
 
         static void Init();
 
-        static SizeT AddPool(PoolLayout Layout);
+        static SizeT AddPool(PoolDataFormat DataFormat);
 
         static Pool *GetPool(SizeT PoolID);
 
-        static PoolIndex Request(SizeT PoolID, SizeT BlockID);
-
-        static PoolIndex Request(PoolRegistry const &Registry);
+        static PoolIndex Request(SizeT PoolID);
 
     private:
 
@@ -29,7 +27,6 @@ namespace Corvus
             SizeT PoolIndex = AddPool({ {MaxElementsInPool, sizeof(PoolableClass)} });
             PoolableClass::s_PoolRegistry.m_TypeSize = sizeof(PoolableClass);
             PoolableClass::s_PoolRegistry.m_PoolID   = PoolIndex;
-            PoolableClass::s_PoolRegistry.m_BlockID  = 0;
         }
 
         static std::vector<Pool> s_Pools;

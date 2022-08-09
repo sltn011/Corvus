@@ -6,8 +6,8 @@
 namespace Corvus
 {
 
-    PoolIndex::PoolIndex(SizeT PoolID, SizeT BlockID, SizeT SlotID, UInt8 *const Data)
-        : m_PoolID{ PoolID }, m_BlockID{ BlockID }, m_SlotID{ SlotID }, m_Data{ Data }
+    PoolIndex::PoolIndex(SizeT PoolID, SizeT SlotID, UInt8 *const Data)
+        : m_PoolID{ PoolID }, m_SlotID{ SlotID }, m_Data{ Data }
     {
     }
 
@@ -17,7 +17,7 @@ namespace Corvus
     }
 
     PoolIndex::PoolIndex(PoolIndex &&Rhs) noexcept
-        : m_PoolID{ Rhs.m_PoolID }, m_BlockID{ Rhs.m_BlockID }, m_SlotID{ Rhs.m_SlotID },
+        : m_PoolID{ Rhs.m_PoolID }, m_SlotID{ Rhs.m_SlotID },
         m_Data{std::exchange(Rhs.m_Data, nullptr)}
     {
     }
@@ -27,7 +27,6 @@ namespace Corvus
         if (this != &Rhs)
         {
             std::swap(m_PoolID, Rhs.m_PoolID);
-            std::swap(m_BlockID, Rhs.m_BlockID);
             std::swap(m_SlotID, Rhs.m_SlotID);
             std::swap(m_Data, Rhs.m_Data);
 
@@ -62,7 +61,6 @@ namespace Corvus
     {
         // Making index invalid without calling Free
         m_PoolID  = 0;
-        m_BlockID = 0;
         m_SlotID  = 0;
         m_Data    = nullptr;
     }

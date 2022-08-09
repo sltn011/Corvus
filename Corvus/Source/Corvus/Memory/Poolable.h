@@ -19,7 +19,7 @@ namespace Corvus
         // RegisterPoolableClass<T> call to AppPools::Init
         CORVUS_CORE_ASSERT(sizeof(T) == T::s_PoolRegistry.m_TypeSize);
 
-        Poolable<T> Index(AppPools::Request(T::s_PoolRegistry));
+        Poolable<T> Index(AppPools::Request(T::s_PoolRegistry.m_PoolID));
         if (Index.IsValid())
         {
             new (Index.Get()) T{ std::forward<Args>(args)... };
