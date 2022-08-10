@@ -34,10 +34,10 @@ namespace Corvus
     private:
 
         void Invalidate();
-
-        SizeT  m_PoolID  = 0;
-        SizeT  m_SlotID  = 0;
-        UInt8 *m_Data    = nullptr;
+        
+        SizeT  m_PoolID    = 0;
+        SizeT  m_SlotID    = 0;
+        UInt8 *m_Data      = nullptr;
 
     };
 

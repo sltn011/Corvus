@@ -18,7 +18,7 @@ namespace Corvus
 
     PoolIndex::PoolIndex(PoolIndex &&Rhs) noexcept
         : m_PoolID{ Rhs.m_PoolID }, m_SlotID{ Rhs.m_SlotID },
-        m_Data{std::exchange(Rhs.m_Data, nullptr)}
+        m_Data{ std::exchange(Rhs.m_Data, nullptr) }
     {
     }
 
@@ -60,9 +60,9 @@ namespace Corvus
     void PoolIndex::Invalidate()
     {
         // Making index invalid without calling Free
-        m_PoolID  = 0;
-        m_SlotID  = 0;
-        m_Data    = nullptr;
+        m_PoolID    = 0;
+        m_SlotID    = 0;
+        m_Data      = nullptr;
     }
 
 }

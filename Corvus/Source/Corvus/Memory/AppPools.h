@@ -13,7 +13,7 @@ namespace Corvus
 
         static void Init();
 
-        static SizeT AddPool(PoolDataFormat DataFormat);
+        static SizeT CreatePool(PoolDataFormat DataFormat);
 
         static Pool *GetPool(SizeT PoolID);
 
@@ -24,7 +24,7 @@ namespace Corvus
         template<typename PoolableClass>
         static void RegisterPoolableClass(SizeT MaxElementsInPool)
         {
-            SizeT PoolIndex = AddPool({ {MaxElementsInPool, sizeof(PoolableClass)} });
+            SizeT PoolIndex = CreatePool({ {MaxElementsInPool, sizeof(PoolableClass)} });
             PoolableClass::s_PoolRegistry.m_TypeSize = sizeof(PoolableClass);
             PoolableClass::s_PoolRegistry.m_PoolID   = PoolIndex;
         }

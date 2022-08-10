@@ -19,6 +19,7 @@ namespace Corvus {
             : Layer{ "ApplicationLayer", true }
         {
             Renderer::EnableDepthTest();
+            Renderer::SetClearColor({ 0.6f, 0.8f, 1.0f, 1.0f });
 
             float const Vertices[] = {
                 +0.0f, -0.2f, -0.2f, 1.0f, 0.0f, 0.0f,
@@ -70,8 +71,6 @@ namespace Corvus {
         virtual void OnUpdate(TimeDelta ElapsedTime)
         {
             Renderer::BeginScene();
-
-            Renderer::SetClearColor({ 0.6f, 0.8f, 1.0f, 1.0f });
             Renderer::Clear();
 
             if (bCameraMode)

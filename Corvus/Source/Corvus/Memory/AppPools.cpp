@@ -18,13 +18,10 @@ namespace Corvus
         CORVUS_CORE_INFO("AppPools successfully initialized!");
     }
 
-    SizeT AppPools::AddPool(PoolDataFormat DataFormat)
+    SizeT AppPools::CreatePool(PoolDataFormat DataFormat)
     {
         SizeT const PoolID = s_Pools.size();
         s_Pools.emplace_back(Pool{ PoolID, DataFormat });
-
-        SizeT PoolSize = DataFormat.NumElements * DataFormat.ElementSize;
-        CORVUS_CORE_TRACE("Pool of {} bytes created", PoolSize);
 
         return PoolID;
     }

@@ -30,9 +30,16 @@ namespace Corvus
 
     private:
 
-        bool IsSlotAvailable(SizeT TablePageID, UInt8 PageSlotID);
+        bool IsSlotAvailable(SizeT TablePageID, UInt8 PageSlotID) const;
 
-        UInt8 GetSlotBit(UInt8 PageSlotID);
+        UInt8 GetSlotBit(UInt8 PageSlotID) const;
+
+        bool IsIndexFromCurrentPool(PoolIndex const &Index) const;
+
+        bool IsChildPoolDeletable() const;
+
+        void CreateChildPool(PoolDataFormat ChildPoolDataFormat);
+        void DeleteChildPool();
 
         struct PoolInfo
         {
@@ -42,11 +49,24 @@ namespace Corvus
             SizeT  SlotsUsed    = 0;
         };
 
+        struct SubPoolsChain
+        {
+            Own<Pool> m_Next       = nullptr;
+            Pool     *m_ParentPool = nullptr;
+        };
+
         SizeT          m_PoolID = 0;
         PoolDataFormat m_DataFormat;
         PoolInfo       m_PoolInfo;
         Own<UInt8[]>   m_Pool;
+        SubPoolsChain  m_Chain; 
 
+        // ChildPoolSize = CurrentPoolSize * s_ChildPoolSizeMult
+        static constexpr float s_ChildPoolSizeMult = 1.0f;
+
+        // if CurrentPoolUsed < CurrentPoolSize * s_FreePoolThreshold 
+        // then DeleteChildPool()
+        static constexpr float s_FreePoolThreshold = 0.5f;
     };
 
 }
