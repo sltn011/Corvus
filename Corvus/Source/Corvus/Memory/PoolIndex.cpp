@@ -2,6 +2,7 @@
 #include "Corvus/Memory/PoolIndex.h"
 
 #include "Corvus/Memory/AppPools.h"
+#include "Corvus/Memory/Pool.h"
 
 namespace Corvus
 {

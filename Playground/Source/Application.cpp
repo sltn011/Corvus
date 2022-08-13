@@ -1,5 +1,7 @@
 #include <Corvus.h>
 
+#include "Corvus/Memory/TestPoolable.h"
+
 namespace Corvus {
     
     class Playground : public Application
@@ -66,6 +68,24 @@ namespace Corvus {
             );
 
             Entities[0].AddChild(&Entities[1]);
+
+            //AppPools::GetPool(0);
+
+            Poolable<TestPoolable> PI1 = ConstructPoolable<TestPoolable>(5, 3.14f);
+            TestPoolable *Test1 = PI1.Get();
+
+            Poolable<TestPoolable> PI2 = CreatePoolable<TestPoolable>();
+            PI2.Construct(10, 1e15f);
+            TestPoolable *Test2 = PI2.Get();
+
+            Poolable<TestPoolable> PI3 = CreatePoolableArray<TestPoolable>(5);
+            PI3.ConstructAt(0, 11, -5.0f);
+            TestPoolable *Test3 = PI3.Get();
+
+            //Poolable<PoolIndex> PI4 = CreatePoolableArray<PoolIndex>(10);
+            //PoolIndex *Test4 = PI4.Get();
+
+            return;
         }
 
         virtual void OnUpdate(TimeDelta ElapsedTime)

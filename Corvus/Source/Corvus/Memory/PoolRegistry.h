@@ -23,8 +23,8 @@ namespace Corvus
 #define POOLABLE_CLASS_BODY() \
     private:\
         friend class Corvus::AppPools;\
-        template<typename T, typename ...Args>\
-        friend Poolable<T> CreatePoolable(Args &&...args);\
+        template<typename T>\
+        friend Poolable<T> CreatePoolableArray(SizeT NumElements);\
         static PoolRegistry s_PoolRegistry;\
 
 #define POOLABLE_CLASS_IMPL(PoolableClass) PoolRegistry PoolableClass::s_PoolRegistry{};
