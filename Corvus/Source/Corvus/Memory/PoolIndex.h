@@ -13,7 +13,7 @@ namespace Corvus
 
         friend class Pool;
 
-        PoolIndex(SizeT PoolID, SizeT SlotID, UInt8 *const Data);
+        PoolIndex(SizeT PoolID, SizeT SlotID, UInt8 *const Data, SizeT NumElements);
 
     public:
 
@@ -31,13 +31,16 @@ namespace Corvus
 
         UInt8 *GetRaw() const;
 
+        SizeT GetNumElements() const;
+
     private:
 
         void Invalidate();
         
-        SizeT  m_PoolID    = 0;
-        SizeT  m_SlotID    = 0;
-        UInt8 *m_Data      = nullptr;
+        SizeT  m_PoolID      = 0;
+        SizeT  m_SlotID      = 0;
+        UInt8 *m_Data        = nullptr;
+        SizeT  m_NumElements = 0;
 
     };
 

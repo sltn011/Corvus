@@ -17,14 +17,14 @@ namespace Corvus
 
         static Pool *GetPool(SizeT PoolID);
 
-        static PoolIndex Request(SizeT PoolID);
+        static PoolIndex Request(SizeT PoolID, SizeT NumElements);
 
     private:
 
         template<typename PoolableClass>
         static void RegisterPoolableClass(SizeT MaxElementsInPool)
         {
-            SizeT PoolIndex = CreatePool({ {MaxElementsInPool, sizeof(PoolableClass)} });
+            SizeT PoolIndex = CreatePool({MaxElementsInPool, sizeof(PoolableClass)});
             PoolableClass::s_PoolRegistry.m_TypeSize = sizeof(PoolableClass);
             PoolableClass::s_PoolRegistry.m_PoolID   = PoolIndex;
         }

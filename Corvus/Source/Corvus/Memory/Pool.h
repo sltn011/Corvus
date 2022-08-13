@@ -1,12 +1,13 @@
 #ifndef CORVUS_SOURCE_CORVUS_MEMORY_POOL_H
 #define CORVUS_SOURCE_CORVUS_MEMORY_POOL_H
 
-#include "Corvus/Memory/PoolIndex.h"
+#include "Corvus/Core/Base.h"
 
 namespace Corvus
 {
 
     class AppPools;
+    class PoolIndex;
 
     struct PoolDataFormat
     {
@@ -24,19 +25,29 @@ namespace Corvus
 
     public:
 
-        PoolIndex Request();
+        PoolIndex Request(SizeT RequestedNumElements);
 
         void Free(PoolIndex &Index);
 
     private:
 
+        SizeT CountBlockSize(
+            SizeT FirstTablePageID, UInt8 FirstPageSlotID, SizeT MaxSize, bool bIsBlockFree) const;
+
+        bool IsFreeBlockFound(SizeT FreeBlockSize, SizeT &OutFirstTablePageID, UInt8 &OutFirstPageSlotID) const;
+
         bool IsSlotAvailable(SizeT TablePageID, UInt8 PageSlotID) const;
 
         UInt8 GetSlotBit(UInt8 PageSlotID) const;
 
+        void SetBlockAsUsed(SizeT FirstTablePageID, UInt8 FirstPageSlotID, SizeT BlockSize);
+        void SetBlockAsFree(SizeT FirstTablePageID, UInt8 FirstPageSlotID, SizeT BlockSize);
+
         bool IsIndexFromCurrentPool(PoolIndex const &Index) const;
 
         bool IsChildPoolDeletable() const;
+
+        void OnNotEnoughMemory(SizeT RequestedAmount);
 
         void CreateChildPool(PoolDataFormat ChildPoolDataFormat);
         void DeleteChildPool();

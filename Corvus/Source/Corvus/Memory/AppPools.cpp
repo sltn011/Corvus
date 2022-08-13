@@ -1,6 +1,7 @@
 #include "CorvusPCH.h"
 #include "Corvus/Memory/AppPools.h"
 
+#include "Corvus/Memory/PoolIndex.h"
 #include "Corvus/Memory/PoolRegistry.h"
 
 namespace Corvus
@@ -31,7 +32,7 @@ namespace Corvus
         return PoolID >= s_Pools.size() ? nullptr : &s_Pools[PoolID];
     }
 
-    PoolIndex AppPools::Request(SizeT PoolID)
+    PoolIndex AppPools::Request(SizeT PoolID, SizeT NumElements)
     {
         Pool *const Pool = GetPool(PoolID);
         if (!Pool)
@@ -39,7 +40,7 @@ namespace Corvus
             return PoolIndex{};
         }
 
-        return Pool->Request();
+        return Pool->Request(NumElements);
     }
 
 }
