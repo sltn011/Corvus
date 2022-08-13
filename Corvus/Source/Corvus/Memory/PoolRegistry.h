@@ -3,16 +3,18 @@
 
 #include "Corvus/Core/CoreTypes.h"
 
-#include "Corvus/Memory/Poolable.h"
-
 namespace Corvus
 {
     // Forward declared
     class AppPools;
 
+    template<typename T>
+    class Poolable;
+
     class PoolRegistry;
 }
 
+// -Include Corvus/Memory/Poolable.h in header file of class you wish to create using Pools
 // -Add POOLABLE_CLASS_BODY to class, instances of which you want to create using Pools
 // -Add POOLABLE_CLASS_IMPL to source file with definitions of Poolable class
 // -Add AppPools::RegisterPoolableClass<T>(NumElements) call to AppPools::Init() with T
@@ -23,8 +25,8 @@ namespace Corvus
 #define POOLABLE_CLASS_BODY() \
     private:\
         friend class Corvus::AppPools;\
-        template<typename T, typename ...Args>\
-        friend Poolable<T> CreatePoolable(Args &&...args);\
+        template<typename T>\
+        friend Poolable<T> CreatePoolableArray(SizeT NumElements);\
         static PoolRegistry s_PoolRegistry;\
 
 #define POOLABLE_CLASS_IMPL(PoolableClass) PoolRegistry PoolableClass::s_PoolRegistry{};

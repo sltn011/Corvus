@@ -66,6 +66,7 @@ namespace Corvus {
             );
 
             Entities[0].AddChild(&Entities[1]);
+
         }
 
         virtual void OnUpdate(TimeDelta ElapsedTime)

@@ -3,12 +3,18 @@
 
 #include "Corvus/Core/CoreTypes.h"
 
+#include "Corvus/Memory/Poolable.h"
+
 namespace Corvus
 {
     class Pool;
 
     class PoolIndex
     {
+    private:
+
+        POOLABLE_CLASS_BODY();
+
     private:
 
         friend class Pool;

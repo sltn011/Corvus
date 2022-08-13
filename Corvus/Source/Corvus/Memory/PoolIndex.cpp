@@ -2,9 +2,12 @@
 #include "Corvus/Memory/PoolIndex.h"
 
 #include "Corvus/Memory/AppPools.h"
+#include "Corvus/Memory/Pool.h"
 
 namespace Corvus
 {
+
+    POOLABLE_CLASS_IMPL(PoolIndex);
 
     PoolIndex::PoolIndex(SizeT PoolID, SizeT SlotID, UInt8 *const Data, SizeT NumElements)
         : m_PoolID{ PoolID }, m_SlotID{ SlotID }, m_Data{ Data }, m_NumElements{ NumElements }

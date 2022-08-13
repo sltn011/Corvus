@@ -1,11 +1,14 @@
 #ifndef CORVUS_SOURCE_CORVUS_MEMORY_APPPOOLS_H
 #define CORVUS_SOURCE_CORVUS_MEMORY_APPPOOLS_H
 
-#include "Corvus/Memory/Pool.h"
+#include "Corvus/Core/Base.h"
 
 namespace Corvus
 {
-    class PoolRegistry;
+    class  Pool;
+    struct PoolDataFormat;
+    class  PoolIndex;
+    class  PoolRegistry;
 
     class AppPools
     {
