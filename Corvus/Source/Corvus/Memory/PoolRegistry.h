@@ -3,16 +3,18 @@
 
 #include "Corvus/Core/CoreTypes.h"
 
-#include "Corvus/Memory/Poolable.h"
-
 namespace Corvus
 {
     // Forward declared
     class AppPools;
 
+    template<typename T>
+    class Poolable;
+
     class PoolRegistry;
 }
 
+// -Include Corvus/Memory/Poolable.h in header file of class you wish to create using Pools
 // -Add POOLABLE_CLASS_BODY to class, instances of which you want to create using Pools
 // -Add POOLABLE_CLASS_IMPL to source file with definitions of Poolable class
 // -Add AppPools::RegisterPoolableClass<T>(NumElements) call to AppPools::Init() with T

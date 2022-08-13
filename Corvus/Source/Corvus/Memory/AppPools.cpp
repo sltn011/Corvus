@@ -5,8 +5,6 @@
 #include "Corvus/Memory/PoolIndex.h"
 #include "Corvus/Memory/PoolRegistry.h"
 
-#include "Corvus/Memory/TestPoolable.h"
-
 namespace Corvus
 {
 
@@ -18,8 +16,7 @@ namespace Corvus
 
         // Add RegisterPoolableClass<PoolableObject> calls
         // to create new pool and assign it to specified class
-        //RegisterPoolableClass<PoolIndex>(64);
-        RegisterPoolableClass<TestPoolable>(64);
+        RegisterPoolableClass<PoolIndex>(64);
 
         CORVUS_CORE_INFO("AppPools successfully initialized!");
     }

@@ -46,6 +46,7 @@
 
 // Memory
 #include "Corvus/Memory/AppPools.h"
+#include "Corvus/Memory/Poolable.h"
 
 // Entry Point
 #include "Corvus/Core/EntryPoint.h"
