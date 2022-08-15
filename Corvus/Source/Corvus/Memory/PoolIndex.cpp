@@ -66,6 +66,18 @@ namespace Corvus
         return m_NumElements;
     }
 
+    void PoolIndex::IncreaseSize(SizeT NewSize)
+    {
+        if (IsValid())
+        {
+            Pool *const Pool = AppPools::GetPool(m_PoolID);
+            if (Pool)
+            {
+                Pool->IncreaseIndexSize(*this, NewSize);
+            }
+        }
+    }
+
     void PoolIndex::Invalidate()
     {
         // Making index invalid without calling Free

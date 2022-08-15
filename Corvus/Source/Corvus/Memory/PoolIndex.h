@@ -39,6 +39,9 @@ namespace Corvus
 
         SizeT GetNumElements() const;
 
+        // Warning: Old pointers to pooled data can be invalidated
+        void IncreaseSize(SizeT NewSize);
+
     private:
 
         void Invalidate();

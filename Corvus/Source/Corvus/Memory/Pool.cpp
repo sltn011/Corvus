@@ -9,10 +9,10 @@ namespace Corvus
     Pool::Pool(SizeT PoolID, PoolDataFormat PoolDataFormat)
         : m_PoolID{ PoolID }, m_DataFormat{ PoolDataFormat }
     {
-        SizeT IDTableEntries = m_DataFormat.NumElements;
-        SizeT IDTablePages   = IDTableEntries / 8 + (IDTableEntries % 8 ? 1 : 0);
-        SizeT const PoolSize = m_DataFormat.NumElements * m_DataFormat.ElementSize + IDTablePages;
-        m_Pool = MakeOwned<UInt8[]>(PoolSize);
+        SizeT IDTableEntries      = m_DataFormat.NumElements;
+        SizeT IDTablePages        = IDTableEntries / 8 + (IDTableEntries % 8 ? 1 : 0);
+        SizeT const PoolSizeBytes = m_DataFormat.NumElements * m_DataFormat.ElementSize + IDTablePages;
+        m_Pool = MakeOwned<UInt8[]>(PoolSizeBytes);
 
         // Pool: Bitfield ID Table + Preallocated memory for objects (Data Block)
         UInt8 *const PoolBegin = m_Pool.get();
@@ -40,11 +40,11 @@ namespace Corvus
             return m_Chain.m_Next->Request(RequestedNumElements);
         }
 
-        SetBlockAsUsed(TablePageID, PageSlotID, RequestedNumElements);
+        SetSlotsAsUsed(TablePageID, PageSlotID, RequestedNumElements);
 
-        SizeT  SlotID = TablePageID * 8 + PageSlotID;
-        SizeT  Offset = SlotID * m_DataFormat.ElementSize;
-        UInt8 *Data   = m_PoolInfo.Data + Offset;
+        SizeT  SlotID      = TablePageID * 8 + PageSlotID;
+        SizeT  OffsetBytes = SlotID * m_DataFormat.ElementSize;
+        UInt8 *Data        = m_PoolInfo.Data + OffsetBytes;
 
         return PoolIndex{ m_PoolID, SlotID, Data, RequestedNumElements };
     }
@@ -71,7 +71,7 @@ namespace Corvus
         SizeT TablePageID = Index.m_SlotID / 8;
         UInt8 PageSlotID  = Index.m_SlotID % 8;
 
-        SetBlockAsFree(TablePageID, PageSlotID, Index.GetNumElements());
+        SetSlotsAsFree(TablePageID, PageSlotID, Index.GetNumElements());
         Index.Invalidate();
 
         while (IsChildPoolDeletable())
@@ -81,12 +81,32 @@ namespace Corvus
         }
     }
 
+    void Pool::IncreaseIndexSize(PoolIndex &Index, SizeT NewSize)
+    {
+        if (!Index.IsValid())
+        {
+            Index = Request(NewSize);
+            return;
+        }
+
+        SizeT CurrentSize = Index.GetNumElements();
+        if (CurrentSize >= NewSize)
+        {
+            CORVUS_CORE_WARN("NewSize passed to Pool::IncreaseIndexSize must be bigger than current!");
+            return;
+        }
+        else if (CurrentSize < NewSize)
+        {
+            AddSlotsToIndex(Index, NewSize);
+        }
+    }
+
     SizeT Pool::CountBlockSize(
-        SizeT FirstTablePageID, UInt8 FirstPageSlotID, SizeT MaxSize, bool bIsBlockFree) const
+        SizeT TablePageID, UInt8 PageSlotID, SizeT MaxSize, bool bIsBlockFree) const
     {
         SizeT Cnt = 0;
-        SizeT CurrentTablePageID = FirstTablePageID;
-        UInt8 CurrentPageSlotID = FirstPageSlotID;
+        SizeT CurrentTablePageID = TablePageID;
+        UInt8 CurrentPageSlotID = PageSlotID;
         SizeT CurrentID = CurrentTablePageID * 8 + CurrentPageSlotID;
 
         while (Cnt < MaxSize && CurrentID < m_DataFormat.NumElements)
@@ -106,7 +126,7 @@ namespace Corvus
         return Cnt;
     }
 
-    bool Pool::IsFreeBlockFound(SizeT FreeBlockSize, SizeT &OutFirstTablePageID, UInt8 &OutFirstPageSlotID) const
+    bool Pool::IsFreeBlockFound(SizeT FreeBlockSize, SizeT &OutTablePageID, UInt8 &OutPageSlotID) const
     {
         SizeT CurrentSlotID   = 0;
         SizeT TablePageID     = 0;
@@ -131,8 +151,8 @@ namespace Corvus
             bCountFreeSlots = !bCountFreeSlots;
         }
 
-        OutFirstTablePageID = TablePageID;
-        OutFirstPageSlotID  = PageSlotID;
+        OutTablePageID = TablePageID;
+        OutPageSlotID  = PageSlotID;
 
         return bFound;
     }
@@ -150,10 +170,8 @@ namespace Corvus
         return 0b10000000u >> PageSlotID;
     }
 
-    void Pool::SetBlockAsUsed(SizeT FirstTablePageID, UInt8 FirstPageSlotID, SizeT BlockSize)
+    void Pool::SetSlotsAsUsed(SizeT TablePageID, UInt8 PageSlotID, SizeT BlockSize)
     {
-        SizeT TablePageID = FirstTablePageID;
-        UInt8 PageSlotID = FirstPageSlotID;
         SizeT CurrentSlotID = TablePageID * 8 + PageSlotID;
 
         for (SizeT i = 0; i < BlockSize; ++i)
@@ -162,16 +180,14 @@ namespace Corvus
 
             CurrentSlotID++;
             TablePageID = CurrentSlotID / 8;
-            PageSlotID = CurrentSlotID % 8;
+            PageSlotID  = CurrentSlotID % 8;
         }
 
         m_PoolInfo.SlotsUsed += BlockSize;
     }
 
-    void Pool::SetBlockAsFree(SizeT FirstTablePageID, UInt8 FirstPageSlotID, SizeT BlockSize)
+    void Pool::SetSlotsAsFree(SizeT TablePageID, UInt8 PageSlotID, SizeT BlockSize)
     {
-        SizeT TablePageID = FirstTablePageID;
-        UInt8 PageSlotID  = FirstPageSlotID;
         SizeT CurrentSlotID = TablePageID * 8 + PageSlotID;
 
         for (SizeT i = 0; i < BlockSize; ++i)
@@ -237,6 +253,91 @@ namespace Corvus
         {
             NextPool->m_Chain.m_ParentPool = this;
         }
+    }
+
+    void Pool::AddSlotsToIndex(PoolIndex &Index, SizeT NewSize)
+    {
+        SizeT IndexBlockSize = Index.GetNumElements();
+
+        SizeT IndexSlotID = Index.m_SlotID;
+        SizeT SlotAfterID = IndexSlotID + IndexBlockSize;
+
+        SizeT TablePageAfterID = SlotAfterID / 8;
+        UInt8 PageSlotAfterID  = SlotAfterID % 8;
+        SizeT FreeSlotsAfter = CountBlockSize(
+            TablePageAfterID, PageSlotAfterID, m_DataFormat.NumElements, true);
+
+        if (IndexBlockSize + FreeSlotsAfter >= NewSize)
+        {
+            InplaceIndexResize(Index, NewSize);
+        }
+        else
+        {
+            MoveIndexResize(Index, NewSize, *this);
+        }
+    }
+
+    void Pool::InplaceIndexResize(PoolIndex &Index, SizeT NewSize)
+    {
+        SizeT CurrentSize = Index.GetNumElements();
+
+        SizeT IndexSlotID = Index.m_SlotID;
+        SizeT SlotAfterID = IndexSlotID + CurrentSize;
+
+        SizeT TablePageAfterID = SlotAfterID / 8;
+        UInt8 PageSlotAfterID  = SlotAfterID % 8;
+
+        SizeT SizeToAdd = NewSize - CurrentSize;
+        SetSlotsAsUsed(TablePageAfterID, PageSlotAfterID, SizeToAdd);
+
+        Index.m_NumElements = NewSize;
+    }
+
+    void Pool::MoveIndexResize(PoolIndex &Index, SizeT NewSize, Pool &OwningPool)
+    {
+        if (NewSize > m_DataFormat.NumElements - m_PoolInfo.SlotsUsed)
+        { // Not enough free slots
+            OnNotEnoughMemory(NewSize);
+            m_Chain.m_Next->MoveIndexResize(Index, NewSize, OwningPool);
+            return;
+        }
+
+        SizeT NewTablePageID;
+        UInt8 NewPageSlotID;
+        if (!IsFreeBlockFound(NewSize, NewTablePageID, NewPageSlotID))
+        { // No free space for NewSize block
+            OnNotEnoughMemory(NewSize);
+            m_Chain.m_Next->MoveIndexResize(Index, NewSize, OwningPool);
+            return;
+        }
+
+        MoveIndexToNewPlace(Index, NewSize, NewTablePageID, NewPageSlotID, OwningPool, *this);
+    }
+
+    void Pool::MoveIndexToNewPlace(
+        PoolIndex &Index, SizeT NewSize, SizeT NewTablePageID, UInt8 NewPageSlotID, Pool &OwningPool, Pool &NewPool)
+    {
+        SizeT NewSlotID          = NewTablePageID * 8 + NewPageSlotID;
+        SizeT NewDataOffsetBytes = NewSlotID * NewPool.m_DataFormat.ElementSize;
+
+        UInt8 *OldData = Index.m_Data;
+        UInt8 *NewData = NewPool.m_PoolInfo.Data + NewDataOffsetBytes;
+
+        SizeT OldDataSizeBytes = OwningPool.m_DataFormat.ElementSize * Index.GetNumElements();
+        for (SizeT i = 0; i < OldDataSizeBytes; ++i)
+        {
+            NewData[i] = OldData[i]; // Move Data
+        }
+
+        SizeT OldTablePageID = Index.m_SlotID / 8;
+        UInt8 OldPageSlotID  = Index.m_SlotID % 8;
+        OwningPool.SetSlotsAsFree(OldTablePageID, OldPageSlotID, Index.GetNumElements()); // Free old slots
+        NewPool.SetSlotsAsUsed(NewTablePageID, NewPageSlotID, NewSize); // Take new slots
+
+        // Update Index
+        Index.m_Data        = NewData;
+        Index.m_SlotID      = NewSlotID;
+        Index.m_NumElements = NewSize;
     }
 
 }

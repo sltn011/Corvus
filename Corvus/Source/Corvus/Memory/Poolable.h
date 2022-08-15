@@ -87,6 +87,12 @@ namespace Corvus
             return m_PoolIndex.GetNumElements();
         }
 
+        // Warning: Old pointers to pooled data can be invalidated
+        void IncreaseArraySize(SizeT NewSize)
+        {
+            m_PoolIndex.IncreaseSize(SizeT NewSize);
+        }
+
     private:
 
         PoolIndex m_PoolIndex;

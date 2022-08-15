@@ -29,19 +29,21 @@ namespace Corvus
 
         void Free(PoolIndex &Index);
 
+        void IncreaseIndexSize(PoolIndex &Index, SizeT NewSize);
+
     private:
 
         SizeT CountBlockSize(
-            SizeT FirstTablePageID, UInt8 FirstPageSlotID, SizeT MaxSize, bool bIsBlockFree) const;
+            SizeT TablePageID, UInt8 PageSlotID, SizeT MaxSize, bool bIsBlockFree) const;
 
-        bool IsFreeBlockFound(SizeT FreeBlockSize, SizeT &OutFirstTablePageID, UInt8 &OutFirstPageSlotID) const;
+        bool IsFreeBlockFound(SizeT FreeBlockSize, SizeT &OutTablePageID, UInt8 &OutPageSlotID) const;
 
         bool IsSlotAvailable(SizeT TablePageID, UInt8 PageSlotID) const;
 
         UInt8 GetSlotBit(UInt8 PageSlotID) const;
 
-        void SetBlockAsUsed(SizeT FirstTablePageID, UInt8 FirstPageSlotID, SizeT BlockSize);
-        void SetBlockAsFree(SizeT FirstTablePageID, UInt8 FirstPageSlotID, SizeT BlockSize);
+        void SetSlotsAsUsed(SizeT TablePageID, UInt8 PageSlotID, SizeT BlockSize);
+        void SetSlotsAsFree(SizeT TablePageID, UInt8 PageSlotID, SizeT BlockSize);
 
         bool IsIndexFromCurrentPool(PoolIndex const &Index) const;
 
@@ -51,6 +53,12 @@ namespace Corvus
 
         void CreateChildPool(PoolDataFormat ChildPoolDataFormat);
         void DeleteChildPool();
+
+        void AddSlotsToIndex(PoolIndex &Index, SizeT NewSize);
+        void InplaceIndexResize(PoolIndex &Index, SizeT NewSize);
+        void MoveIndexResize(PoolIndex &Index, SizeT NewSize, Pool &OwningPool);
+        void MoveIndexToNewPlace(
+            PoolIndex &Index, SizeT NewSize, SizeT NewTablePageID, UInt8 NewPageSlotID, Pool &OwningPool, Pool &NewPool);
 
         struct PoolInfo
         {
