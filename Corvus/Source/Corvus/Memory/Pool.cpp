@@ -9,6 +9,8 @@ namespace Corvus
     Pool::Pool(SizeT PoolID, PoolDataFormat PoolDataFormat)
         : m_PoolID{ PoolID }, m_DataFormat{ PoolDataFormat }
     {
+        CORVUS_CORE_ASSERT(PoolDataFormat.ElementSize != 0);
+
         SizeT IDTableEntries      = m_DataFormat.NumElements;
         SizeT IDTablePages        = IDTableEntries / 8 + (IDTableEntries % 8 ? 1 : 0);
         SizeT const PoolSizeBytes = m_DataFormat.NumElements * m_DataFormat.ElementSize + IDTablePages;

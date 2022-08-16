@@ -13,10 +13,6 @@ namespace Corvus
     {
     private:
 
-        POOLABLE_CLASS_BODY();
-
-    private:
-
         friend class Pool;
 
         PoolIndex(SizeT PoolID, SizeT SlotID, UInt8 *const Data, SizeT NumElements);

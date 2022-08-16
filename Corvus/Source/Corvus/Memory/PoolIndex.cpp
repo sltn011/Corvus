@@ -7,8 +7,6 @@
 namespace Corvus
 {
 
-    POOLABLE_CLASS_IMPL(PoolIndex);
-
     PoolIndex::PoolIndex(SizeT PoolID, SizeT SlotID, UInt8 *const Data, SizeT NumElements)
         : m_PoolID{ PoolID }, m_SlotID{ SlotID }, m_Data{ Data }, m_NumElements{ NumElements }
     {
@@ -48,11 +46,7 @@ namespace Corvus
     {
         if (IsValid())
         {
-            Pool *const Pool = AppPools::GetPool(m_PoolID);
-            if (Pool)
-            {
-                Pool->Free(*this);
-            }
+            AppPools::GetPool(m_PoolID).Free(*this);
         }
     }
 
@@ -70,11 +64,7 @@ namespace Corvus
     {
         if (IsValid())
         {
-            Pool *const Pool = AppPools::GetPool(m_PoolID);
-            if (Pool)
-            {
-                Pool->IncreaseIndexSize(*this, NewSize);
-            }
+            AppPools::GetPool(m_PoolID).IncreaseIndexSize(*this, NewSize);
         }
     }
 
