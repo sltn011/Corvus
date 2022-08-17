@@ -17,7 +17,7 @@ namespace Corvus
         // before running the application
         
         //CreatePool({ 128, 1 });
-        CreatePool({ 32,  4 });
+        //CreatePool({ 32,  4 });
         //CreatePool({ 32,  8 });
         //CreatePool({ 32, 16 });
         //CreatePool({ 32, 32 });

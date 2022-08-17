@@ -86,7 +86,17 @@ namespace Corvus
             else if (ElementSize <= 8)  return 8;
             else if (ElementSize <= 16) return 16;
             else if (ElementSize <= 32) return 32;
-            else return ElementSize + (32 - ElementSize % 32);
+            else
+            {
+                SizeT Remainder = ElementSize % 32;
+                if (Remainder)
+                {
+                    return ElementSize + (32 - Remainder);
+                }
+                else {
+                    return ElementSize;
+                }
+            }
         }
 
         PoolIndex m_PoolIndex;
