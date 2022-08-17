@@ -2,6 +2,7 @@
 #define CORVUS_SOURCE_CORVUS_CAMERA_CAMERA_H
 
 #include "Corvus/Math/Transform.h"
+#include "Corvus/Memory/Poolable.h"
 
 namespace Corvus
 {
@@ -54,7 +55,7 @@ namespace Corvus
 
     protected:
 
-        Own<CameraMovementComponent> m_MovementComponent;
+        Poolable<CameraMovementComponent> m_MovementComponent;
         bool m_IsPlayerControlled = false;
 
         Transform m_Transform;

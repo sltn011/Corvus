@@ -16,17 +16,40 @@ namespace Corvus
     template<typename T>
     class Poolable;
 
+    constexpr SizeT CalculatePoolID(SizeT ElementSize)
+    {
+        if (ElementSize == 1)  return 1;
+        else if (ElementSize == 2)  return 2;
+        else if (ElementSize <= 4)  return 4;
+        else if (ElementSize <= 8)  return 8;
+        else if (ElementSize <= 16) return 16;
+        else if (ElementSize <= 32) return 32;
+        else
+        {
+            SizeT Remainder = ElementSize % 32;
+            if (Remainder)
+            {
+                return ElementSize + (32 - Remainder);
+            }
+            else {
+                return ElementSize;
+            }
+        }
+    }
+
     // Use to create array of uninitialized Poolable objects
     template<typename T>
     Poolable<T> CreatePoolableArray(SizeT NumElements)
     {
+        static constexpr SizeT TypePoolID = CalculatePoolID(sizeof(T));
+
         if constexpr (std::is_base_of_v<BaseDataComponent, T>)
         {
-            return Poolable<T>(AppPools::RequestComponent(Poolable<T>::s_TypePoolID, NumElements));
+            return Poolable<T>(AppPools::RequestComponent(TypePoolID, NumElements));
         }
         else
         {
-            return Poolable<T>(AppPools::RequestGeneral(Poolable<T>::s_TypePoolID, NumElements));
+            return Poolable<T>(AppPools::RequestGeneral(TypePoolID, NumElements));
         }
     }
 
@@ -90,29 +113,7 @@ namespace Corvus
 
     private:
 
-        static constexpr SizeT CalculatePoolID(SizeT ElementSize)
-        {
-            if (ElementSize == 1)  return 1;
-            else if (ElementSize == 2)  return 2;
-            else if (ElementSize <= 4)  return 4;
-            else if (ElementSize <= 8)  return 8;
-            else if (ElementSize <= 16) return 16;
-            else if (ElementSize <= 32) return 32;
-            else
-            {
-                SizeT Remainder = ElementSize % 32;
-                if (Remainder)
-                {
-                    return ElementSize + (32 - Remainder);
-                }
-                else {
-                    return ElementSize;
-                }
-            }
-        }
-
         PoolIndex m_PoolIndex;
-        static constexpr SizeT s_TypePoolID = CalculatePoolID(sizeof(T));
 
     };
 
