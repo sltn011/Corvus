@@ -6,10 +6,10 @@
 namespace Corvus
 {
 
-    Pool::Pool(SizeT PoolID, PoolDataFormat PoolDataFormat)
-        : m_PoolID{ PoolID }, m_DataFormat{ PoolDataFormat }
+    Pool::Pool(PoolID ID, PoolDataFormat DataFormat)
+        : m_PoolID{ ID }, m_DataFormat{ DataFormat }
     {
-        CORVUS_CORE_ASSERT(PoolDataFormat.ElementSize != 0);
+        CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
         SizeT IDTableEntries      = m_DataFormat.NumElements;
         SizeT IDTablePages        = IDTableEntries / 8 + (IDTableEntries % 8 ? 1 : 0);
@@ -23,7 +23,9 @@ namespace Corvus
         m_PoolInfo.Data         = PoolBegin + m_PoolInfo.IDTablePages;;
         m_PoolInfo.SlotsUsed    = 0;
 
-        CORVUS_CORE_TRACE("Pool of {}*{} bytes created", m_DataFormat.NumElements, m_DataFormat.ElementSize);
+        CORVUS_CORE_TRACE("Pool ({}:{}) of {}*{} bytes created",
+            static_cast<UInt32>(m_PoolID.GetType()), m_PoolID.GetIDInGroup(),
+            m_DataFormat.NumElements, m_DataFormat.ElementSize);
     }
 
     PoolIndex Pool::Request(SizeT RequestedNumElements)
@@ -79,7 +81,8 @@ namespace Corvus
         while (IsChildPoolDeletable())
         {
             DeleteChildPool();
-            CORVUS_CORE_TRACE("Pool {} size reduced", m_PoolID);
+            CORVUS_CORE_TRACE("Pool ({}:{}) size reduced",
+                static_cast<UInt32>(m_PoolID.GetType()), m_PoolID.GetIDInGroup());
         }
     }
 
@@ -229,8 +232,9 @@ namespace Corvus
             ChildDataFormat.NumElements = Math::Max(ChildDataFormat.NumElements, RequestedAmount);
             CreateChildPool(ChildDataFormat);
 
-            CORVUS_CORE_TRACE("{}*{} bytes added to Pool {}",
-                ChildDataFormat.NumElements, ChildDataFormat.ElementSize, m_PoolID);
+            CORVUS_CORE_TRACE("{}*{} bytes added to Pool ({}:{})",
+                ChildDataFormat.NumElements, ChildDataFormat.ElementSize,
+                static_cast<UInt32>(m_PoolID.GetType()), m_PoolID.GetIDInGroup());
         }
     }
 

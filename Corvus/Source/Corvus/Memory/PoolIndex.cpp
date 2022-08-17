@@ -7,8 +7,8 @@
 namespace Corvus
 {
 
-    PoolIndex::PoolIndex(SizeT PoolID, SizeT SlotID, UInt8 *const Data, SizeT NumElements)
-        : m_PoolID{ PoolID }, m_SlotID{ SlotID }, m_Data{ Data }, m_NumElements{ NumElements }
+    PoolIndex::PoolIndex(PoolID ID, SizeT SlotID, UInt8 *const Data, SizeT NumElements)
+        : m_PoolID{ ID }, m_SlotID{ SlotID }, m_Data{ Data }, m_NumElements{ NumElements }
     {
     }
 
@@ -71,7 +71,7 @@ namespace Corvus
     void PoolIndex::Invalidate()
     {
         // Making index invalid without calling Free
-        m_PoolID      = 0;
+        m_PoolID      = PoolID{};
         m_SlotID      = 0;
         m_Data        = nullptr;
         m_NumElements = 0;

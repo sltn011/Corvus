@@ -3,6 +3,8 @@
 
 #include "Corvus/Core/Base.h"
 
+#include "Corvus/Memory/PoolID.h"
+
 namespace Corvus
 {
 
@@ -21,7 +23,7 @@ namespace Corvus
 
         friend class AppPools;
 
-        Pool(SizeT PoolID, PoolDataFormat PoolDataFormat);
+        Pool(PoolID ID, PoolDataFormat DataFormat);
 
     public:
 
@@ -74,7 +76,7 @@ namespace Corvus
             Pool     *m_ParentPool = nullptr;
         };
 
-        SizeT          m_PoolID = 0;
+        PoolID         m_PoolID;
         PoolDataFormat m_DataFormat;
         PoolInfo       m_PoolInfo;
         Own<UInt8[]>   m_Pool;

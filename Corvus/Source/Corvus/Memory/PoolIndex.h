@@ -3,6 +3,7 @@
 
 #include "Corvus/Core/CoreTypes.h"
 
+#include "Corvus/Memory/PoolID.h"
 #include "Corvus/Memory/Poolable.h"
 
 namespace Corvus
@@ -15,7 +16,7 @@ namespace Corvus
 
         friend class Pool;
 
-        PoolIndex(SizeT PoolID, SizeT SlotID, UInt8 *const Data, SizeT NumElements);
+        PoolIndex(PoolID ID, SizeT SlotID, UInt8 *const Data, SizeT NumElements);
 
     public:
 
@@ -42,7 +43,7 @@ namespace Corvus
 
         void Invalidate();
         
-        SizeT  m_PoolID      = 0;
+        PoolID m_PoolID;
         SizeT  m_SlotID      = 0;
         UInt8 *m_Data        = nullptr;
         SizeT  m_NumElements = 0;

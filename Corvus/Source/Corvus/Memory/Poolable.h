@@ -6,8 +6,13 @@
 #include "Corvus/Memory/AppPools.h"
 #include "Corvus/Memory/PoolIndex.h"
 
+#include <type_traits>
+
 namespace Corvus
 {
+
+    class BaseDataComponent;
+
     template<typename T>
     class Poolable;
 
@@ -15,7 +20,14 @@ namespace Corvus
     template<typename T>
     Poolable<T> CreatePoolableArray(SizeT NumElements)
     {
-        return Poolable<T>(AppPools::Request(Poolable<T>::s_TypePoolID, NumElements));;
+        if constexpr (std::is_base_of_v<BaseDataComponent, T>)
+        {
+            return Poolable<T>(AppPools::RequestComponent(Poolable<T>::s_TypePoolID, NumElements));
+        }
+        else
+        {
+            return Poolable<T>(AppPools::RequestGeneral(Poolable<T>::s_TypePoolID, NumElements));
+        }
     }
 
     // Use to create uninitialized Poolable objects
