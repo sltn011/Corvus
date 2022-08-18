@@ -55,13 +55,13 @@ namespace Corvus {
             Camera.SetClipPlanes(0.01f, 100.0f);
             Camera.SwitchPlayerControl(true, 1.0f);
 
-            Entities.emplace_back(
+            Entities.EmplaceBack(
                 TestShader,
                 VAO, 
                 Transform{ {1.0f, 0.0f, 0.0f}, Vector::OneVec, {RotationOrder::YXZ, {30.0f, 0.0f, 0.0f}} }
             );
 
-            Entities.emplace_back(
+            Entities.EmplaceBack(
                 TestShader,
                 VAO,
                 Transform{ {0.0f, 0.0f, 0.5f}, Vector::OneVec * 0.5f, {RotationOrder::YXZ, {0.0f, 0.0f, 45.0f}} }
@@ -113,8 +113,10 @@ namespace Corvus {
                 Camera.ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
             }
 
-            for (Entity &SceneEntity : Entities)
+            for (SizeT i = 0; i < Entities.GetSize(); ++i)
             {
+                Entity &SceneEntity = Entities[i];
+
                 Transform EntityTransform = SceneEntity.TransformComponent.Get()->GetTransform();
                 Rotation Rotator = EntityTransform.GetRotation();
                 Rotator.AddYawDegrees(-20.0f * ElapsedTime.Seconds());
@@ -152,7 +154,7 @@ namespace Corvus {
 
     protected:
 
-        std::vector<Entity> Entities;
+        Array<Entity> Entities;
         PerspectiveCamera   Camera;
 
         Own<Shader>      TestShader;
