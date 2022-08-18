@@ -108,7 +108,7 @@ namespace Corvus
         // Warning: Old pointers to pooled data can be invalidated
         void IncreaseArraySize(SizeT NewSize)
         {
-            m_PoolIndex.IncreaseSize(SizeT NewSize);
+            m_PoolIndex.IncreaseSize(NewSize);
         }
 
     private:
