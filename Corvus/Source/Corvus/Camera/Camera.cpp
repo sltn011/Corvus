@@ -24,9 +24,9 @@ namespace Corvus
     void Camera::SwitchPlayerControl(bool IsPlayerControlled, float CameraMoveSpeed)
     {
         m_IsPlayerControlled = IsPlayerControlled;
-        if (m_IsPlayerControlled && !m_MovementComponent.IsValid())
+        if (m_IsPlayerControlled && !m_MovementComponent)
         {
-            m_MovementComponent = ConstructPoolable<CameraMovementComponent>(this, CameraMoveSpeed);
+            m_MovementComponent = MakeOwned<CameraMovementComponent>(this, CameraMoveSpeed);
         }
     }
 
@@ -34,7 +34,7 @@ namespace Corvus
     {
         if (m_IsPlayerControlled)
         {
-            m_MovementComponent.Get()->ProcessMovementInput(Direction, ElapsedTime);
+            m_MovementComponent->ProcessMovementInput(Direction, ElapsedTime);
         }
     }
 
@@ -42,15 +42,15 @@ namespace Corvus
     {
         if (m_IsPlayerControlled)
         {
-            m_MovementComponent.Get()->ProcessRotationInput(XOffset, YOffset, Sensitivity, ElapsedTime);
+            m_MovementComponent->ProcessRotationInput(XOffset, YOffset, Sensitivity, ElapsedTime);
         }
     }
 
     void Camera::SetMoveSpeed(float CameraMoveSpeed)
     {
-        if (m_MovementComponent.IsValid())
+        if (m_MovementComponent)
         {
-            m_MovementComponent.Get()->SetMovementSpeed(CameraMoveSpeed);
+            m_MovementComponent->SetMovementSpeed(CameraMoveSpeed);
         }
     }
 

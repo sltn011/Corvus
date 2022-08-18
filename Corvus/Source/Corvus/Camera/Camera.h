@@ -2,7 +2,6 @@
 #define CORVUS_SOURCE_CORVUS_CAMERA_CAMERA_H
 
 #include "Corvus/Math/Transform.h"
-#include "Corvus/Memory/Poolable.h"
 
 namespace Corvus
 {
@@ -35,7 +34,7 @@ namespace Corvus
         Rotation  GetRotation() const;
 
         Vec3 GetForwardVector();
-        Vec3 GetUpVector() ;
+        Vec3 GetUpVector();
         Vec3 GetRightVector();
 
         void SetMoveSpeed(float CameraMoveSpeed);
@@ -55,18 +54,18 @@ namespace Corvus
 
     protected:
 
-        Poolable<CameraMovementComponent> m_MovementComponent;
+        Own<CameraMovementComponent> m_MovementComponent;
         bool m_IsPlayerControlled = false;
 
         Transform m_Transform;
 
-        Mat4 m_ViewMatrix           = Mat4(1.0f);
-        Mat4 m_ProjectionMatrix     = Mat4(1.0f);
+        Mat4 m_ViewMatrix = Mat4(1.0f);
+        Mat4 m_ProjectionMatrix = Mat4(1.0f);
         Mat4 m_ProjectionViewMatrix = Mat4(1.0f);
 
-        float m_Aspect   = 1.0f;
+        float m_Aspect = 1.0f;
         float m_NearClip = 0.1f;
-        float m_FarClip  = 100.0f;
+        float m_FarClip = 100.0f;
 
     };
 

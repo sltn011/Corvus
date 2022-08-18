@@ -3,14 +3,12 @@
 
 #include "Corvus/Camera/Camera.h"
 
-#include "Corvus/Components/BaseDataComponent.h"
-
 namespace Corvus
 {
 
     class TimeDelta;
 
-    class CameraMovementComponent : public BaseDataComponent
+    class CameraMovementComponent
     {
     public:
 
@@ -25,7 +23,7 @@ namespace Corvus
 
         Camera *m_Owner = nullptr;
         float m_MoveSpeed = 1.0f;
-        
+
     };
 
 }
