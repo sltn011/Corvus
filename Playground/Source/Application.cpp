@@ -1,5 +1,7 @@
 #include <Corvus.h>
 
+#include "Corvus/Components/BaseSceneComponent.h"
+
 namespace Corvus {
     
     class Playground : public Application
@@ -65,7 +67,7 @@ namespace Corvus {
                 Transform{ {0.0f, 0.0f, 0.5f}, Vector::OneVec * 0.5f, {RotationOrder::YXZ, {0.0f, 0.0f, 45.0f}} }
             );
 
-            Entities[0].AddChild(&Entities[1]);
+            Entities[0].TransformComponent.Get()->AddChild(Entities[1].TransformComponent.Get());
 
         }
 
@@ -113,14 +115,14 @@ namespace Corvus {
 
             for (Entity &SceneEntity : Entities)
             {
-                Transform EntityTransform = SceneEntity.GetTransform();
+                Transform EntityTransform = SceneEntity.TransformComponent.Get()->GetTransform();
                 Rotation Rotator = EntityTransform.GetRotation();
                 Rotator.AddYawDegrees(-20.0f * ElapsedTime.Seconds());
                 EntityTransform.SetRotation(Rotator);
-                SceneEntity.SetTransform(EntityTransform);
+                SceneEntity.TransformComponent.Get()->SetTransform(EntityTransform);
 
                 TestShader->Bind();
-                TestShader->SetMat4("u_Transform", SceneEntity.GetSceneTransformMatrix());
+                TestShader->SetMat4("u_Transform", SceneEntity.TransformComponent.Get()->GetTransformMatrix());
                 TestShader->SetMat4("u_ProjView", Camera.GetProjectionViewMatrix());
                 Renderer::Submit(VAO, TestShader);
             }

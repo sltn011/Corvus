@@ -4,6 +4,14 @@
 namespace Corvus
 {
 
+    BaseDataComponent::BaseDataComponent(Entity *Owner)
+        : m_Owner{ Owner }
+    {
+    }
 
+    Entity *BaseDataComponent::GetOwner()
+    {
+        return m_Owner;
+    }
 
 }

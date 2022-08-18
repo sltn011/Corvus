@@ -4,10 +4,21 @@
 namespace Corvus
 {
 
+    class Entity;
+
     // Base class for all Components that provide reusable behavior
     // that can be added to Entities
     class BaseDataComponent
     {
+    public:
+
+        BaseDataComponent(Entity *Owner);
+
+        Entity *GetOwner();
+
+    private:
+
+        Entity *m_Owner = nullptr;
 
     };
 

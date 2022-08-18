@@ -36,11 +36,11 @@ namespace Corvus
         void RecalculateMatrix();
 
         Mat4 m_TransformMatrix = Mat4(1.0f);
-        bool      m_bIsDirty = true;
+        bool m_bIsDirty        = true;
 
-        Vec3 m_Position;
+        Vec3      m_Position;
         Rotation  m_Rotation;
-        Vec3 m_Scale;
+        Vec3      m_Scale;
 
     };
 }

@@ -33,7 +33,7 @@ namespace Corvus
         static std::unordered_map<SizeT, Pool> s_GeneralPools;
         static std::unordered_map<SizeT, Pool> s_ComponentPools;
 
-        static constexpr SizeT s_DefaultPoolSize = 10;
+        static constexpr SizeT s_DefaultPoolSize = 16;
 
     };
 
