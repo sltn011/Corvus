@@ -90,9 +90,19 @@ namespace Corvus
         Poolable &operator=(Poolable const &) = delete;
         Poolable &operator=(Poolable &&) = default;
 
-        T *Get()
+        T *Get() const
         {
             return reinterpret_cast<T *>(m_PoolIndex.GetRaw());
+        }
+
+        T *operator->() const
+        {
+            return Get();
+        }
+
+        T &operator*() const
+        {
+            return *Get();
         }
 
         bool IsValid() const

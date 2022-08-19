@@ -67,7 +67,7 @@ namespace Corvus {
                 Transform{ {0.0f, 0.0f, 0.5f}, Vector::OneVec * 0.5f, {RotationOrder::YXZ, {0.0f, 0.0f, 45.0f}} }
             );
 
-            Entities[0].TransformComponent.Get()->AddChild(Entities[1].TransformComponent.Get());
+            Entities[0].TransformComponent->AddChild(Entities[1].TransformComponent.Get());
 
         }
 
@@ -117,14 +117,14 @@ namespace Corvus {
             {
                 Entity &SceneEntity = Entities[i];
 
-                Transform EntityTransform = SceneEntity.TransformComponent.Get()->GetTransform();
+                Transform EntityTransform = SceneEntity.TransformComponent->GetTransform();
                 Rotation Rotator = EntityTransform.GetRotation();
                 Rotator.AddYawDegrees(-20.0f * ElapsedTime.Seconds());
                 EntityTransform.SetRotation(Rotator);
                 SceneEntity.TransformComponent.Get()->SetTransform(EntityTransform);
 
                 TestShader->Bind();
-                TestShader->SetMat4("u_Transform", SceneEntity.TransformComponent.Get()->GetTransformMatrix());
+                TestShader->SetMat4("u_Transform", SceneEntity.TransformComponent->GetTransformMatrix());
                 TestShader->SetMat4("u_ProjView", Camera.GetProjectionViewMatrix());
                 Renderer::Submit(VAO, TestShader);
             }
