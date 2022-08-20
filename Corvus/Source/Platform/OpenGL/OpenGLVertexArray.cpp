@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Platform/OpenGL/OpenGLVertexArray.h"
 
 #include "Platform/OpenGL/OpenGLIndexBuffer.h"
@@ -16,10 +17,9 @@ namespace Corvus
         glDeleteVertexArrays(1, &m_VAO);
     }
 
-    OpenGLVertexArray::OpenGLVertexArray(OpenGLVertexArray &&Rhs) noexcept
-        : m_VAO{ std::exchange(Rhs.m_VAO, 0) }
+    OpenGLVertexArray::OpenGLVertexArray(OpenGLVertexArray &&Rhs) noexcept : m_VAO{std::exchange(Rhs.m_VAO, 0)}
     {
-        m_IndexBuffer = std::move(Rhs.m_IndexBuffer);
+        m_IndexBuffer  = std::move(Rhs.m_IndexBuffer);
         m_VertexBuffer = std::move(Rhs.m_VertexBuffer);
     }
 
@@ -28,7 +28,7 @@ namespace Corvus
         if (this != &Rhs)
         {
             std::swap(m_VAO, Rhs.m_VAO);
-            m_IndexBuffer = std::move(Rhs.m_IndexBuffer);
+            m_IndexBuffer  = std::move(Rhs.m_IndexBuffer);
             m_VertexBuffer = std::move(Rhs.m_VertexBuffer);
         }
         return *this;
@@ -71,16 +71,16 @@ namespace Corvus
         VertexBufferLayout &Layout = m_VertexBuffer->GetLayout();
 
         GLsizei const Stride = static_cast<GLsizei>(Layout.Stride());
-        GLuint  const VBO    = ((OpenGLVertexBuffer *)m_VertexBuffer.get())->GetID();
+        GLuint const  VBO    = ((OpenGLVertexBuffer *)m_VertexBuffer.get())->GetID();
         glVertexArrayVertexBuffer(m_VAO, 0, VBO, 0, Stride);
 
-        GLuint  Offset = 0;
+        GLuint Offset = 0;
         for (UInt32 i = 0; i < Layout.Size(); ++i)
         {
             BufferLayoutElement &Element = Layout[i];
 
-            GLint     const NumComponents    = static_cast<GLint>(Element.GetNumComponents());
-            GLenum    const Type             = OpenGLVertexBuffer::BufferLayoutTypeToGLType(Element.GetType());
+            GLint const     NumComponents    = static_cast<GLint>(Element.GetNumComponents());
+            GLenum const    Type             = OpenGLVertexBuffer::BufferLayoutTypeToGLType(Element.GetType());
             GLboolean const bShouldNormalize = Element.ShouldNormalize() ? GL_TRUE : GL_FALSE;
 
             glEnableVertexArrayAttrib(m_VAO, i);
@@ -100,4 +100,4 @@ namespace Corvus
             glDisableVertexArrayAttrib(m_VAO, static_cast<GLuint>(i));
         }
     }
-}
+} // namespace Corvus

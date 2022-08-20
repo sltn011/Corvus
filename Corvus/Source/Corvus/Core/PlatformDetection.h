@@ -5,7 +5,7 @@
 
 #ifdef _WIN32
     #ifdef _WIN64
-        /* Windows x64 */ 
+        /* Windows x64 */
         #define CORVUS_PLATFORM_WINDOWS
     #else
         /* Windows x86 */

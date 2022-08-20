@@ -4,15 +4,15 @@
 // For use by Corvus Engine applications
 
 // Core
-#include "Corvus/Core/Base.h"
 #include "Corvus/Core/Application.h"
-#include "Corvus/Core/CoreTypes.h"
-#include "Corvus/Core/KeyCodes.h"
-#include "Corvus/Core/Input.h"
-#include "Corvus/Core/Log.h"
 #include "Corvus/Core/Assert.h"
+#include "Corvus/Core/Base.h"
+#include "Corvus/Core/CoreTypes.h"
 #include "Corvus/Core/Delegate.h"
+#include "Corvus/Core/Input.h"
+#include "Corvus/Core/KeyCodes.h"
 #include "Corvus/Core/Layer.h"
+#include "Corvus/Core/Log.h"
 
 // Events
 #include "Corvus/Events/ApplicationEvent.h"
@@ -46,11 +46,10 @@
 
 // Memory
 #include "Corvus/Memory/AppPools.h"
-#include "Corvus/Memory/Poolable.h"
 #include "Corvus/Memory/Pool.h"
+#include "Corvus/Memory/Poolable.h"
 
 // Entry Point
 #include "Corvus/Core/EntryPoint.h"
 
 #endif // !CORVUS_SOURCE_CORVUS_H
-

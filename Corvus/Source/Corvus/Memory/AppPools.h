@@ -5,16 +5,15 @@
 
 namespace Corvus
 {
-    class  Pool;
+    class Pool;
     struct PoolDataFormat;
-    class  PoolID;
-    class  PoolIndex;
-    class  PoolRegistry;
+    class PoolID;
+    class PoolIndex;
+    class PoolRegistry;
 
     class AppPools
     {
     public:
-
         static void Init();
 
         static PoolID CreateGeneralPool(PoolDataFormat DataFormat);
@@ -29,14 +28,12 @@ namespace Corvus
         static PoolIndex RequestComponent(SizeT PoolIDInGroup, SizeT NumElements);
 
     private:
-
         static std::unordered_map<SizeT, Pool> s_GeneralPools;
         static std::unordered_map<SizeT, Pool> s_ComponentPools;
 
         static constexpr SizeT s_DefaultPoolSize = 16;
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_MEMORY_APPPOOLS_H

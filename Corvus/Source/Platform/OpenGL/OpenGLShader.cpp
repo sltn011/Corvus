@@ -1,19 +1,19 @@
 #include "CorvusPCH.h"
+
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Corvus
 {
-    OpenGLShader::OpenGLShader(String const &FilePath)
-        : m_ID{ 0 }
+    OpenGLShader::OpenGLShader(String const &FilePath) : m_ID{0}
     {
         CORVUS_CORE_TRACE("Creating OpenGL Shader {}", FilePath);
         TimePoint const ShaderCreationBegin;
 
         std::ifstream CodeFile(FilePath);
         CORVUS_CORE_ASSERT_FMT(CodeFile.is_open(), "Error opening OpenGL Shader file {1}", FilePath);
-        
+
         std::stringstream ShadersCode[static_cast<UInt8>(ShaderType::MAX)];
-        ShaderType Type = ShaderType::NONE;
+        ShaderType        Type = ShaderType::NONE;
 
         std::string CodeLine;
         while (std::getline(CodeFile, CodeLine))
@@ -38,10 +38,10 @@ namespace Corvus
             }
         }
 
-        String VertexCode = ShadersCode[static_cast<UInt8>(ShaderType::Vertex)].str();
+        String VertexCode   = ShadersCode[static_cast<UInt8>(ShaderType::Vertex)].str();
         String FragmentCode = ShadersCode[static_cast<UInt8>(ShaderType::Fragment)].str();
 
-        GLuint VertexShader = CreateShader(GL_VERTEX_SHADER, VertexCode);
+        GLuint VertexShader   = CreateShader(GL_VERTEX_SHADER, VertexCode);
         GLuint FragmentShader = CreateShader(GL_FRAGMENT_SHADER, FragmentCode);
 
         m_ID = glCreateProgram();
@@ -64,7 +64,7 @@ namespace Corvus
     }
 
     OpenGLShader::OpenGLShader(OpenGLShader &&Rhs) noexcept
-        : m_ID{ std::exchange(Rhs.m_ID, 0) }, m_UniformLocationCache{ std::move(Rhs.m_UniformLocationCache) }
+        : m_ID{std::exchange(Rhs.m_ID, 0)}, m_UniformLocationCache{std::move(Rhs.m_UniformLocationCache)}
     {
     }
 
@@ -164,7 +164,7 @@ namespace Corvus
         if (CompileStatus == GL_FALSE)
         {
             static constexpr GLsizei InfoLogSize = 255;
-            char InfoLog[InfoLogSize];
+            char                     InfoLog[InfoLogSize];
             glGetShaderInfoLog(Shader, InfoLogSize, nullptr, InfoLog);
             CORVUS_CORE_NO_ENTRY_FMT("Shader failed to compile! {1:s}", InfoLog);
         }
@@ -177,7 +177,7 @@ namespace Corvus
         if (LinkStatus == GL_FALSE)
         {
             static constexpr GLsizei InfoLogSize = 255;
-            char InfoLog[InfoLogSize];
+            char                     InfoLog[InfoLogSize];
             glGetProgramInfoLog(m_ID, InfoLogSize, nullptr, InfoLog);
             CORVUS_CORE_NO_ENTRY_FMT("Shader Programm failed to link! {1:s}", InfoLog);
         }
@@ -185,8 +185,8 @@ namespace Corvus
 
     GLint OpenGLShader::GetUniformLocation(String const &Name)
     {
-        GLint Location = -1;
-        auto const It = m_UniformLocationCache.find(Name);
+        GLint      Location = -1;
+        auto const It       = m_UniformLocationCache.find(Name);
         if (It == m_UniformLocationCache.end())
         {
             Location = glGetUniformLocation(m_ID, Name.c_str());
@@ -204,4 +204,4 @@ namespace Corvus
 
         return Location;
     }
-}
+} // namespace Corvus

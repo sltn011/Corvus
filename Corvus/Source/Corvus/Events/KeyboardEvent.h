@@ -1,8 +1,8 @@
 #ifndef CORVUS_SOURCE_CORVUS_EVENTS_KEYBOARDEVENT_H
 #define CORVUS_SOURCE_CORVUS_EVENTS_KEYBOARDEVENT_H
 
-#include "Corvus/Events/Event.h"
 #include "Corvus/Core/KeyCodes.h"
+#include "Corvus/Events/Event.h"
 
 namespace Corvus
 {
@@ -10,13 +10,11 @@ namespace Corvus
     class KeyPressEvent : public Event
     {
     public:
-
         CORVUS_EVENT_GENERATED_BODY(Event::ECategory::Input | Event::ECategory::Keyboard, Event::EType::KeyPress);
 
         KeyPressEvent(KeyCode KeyValue, bool bRepeatedValue, ModifierCode ModifierValue)
-            : Key{ KeyValue }, bRepeated{ bRepeatedValue }, Modifier{ ModifierValue }
+            : Key{KeyValue}, bRepeated{bRepeatedValue}, Modifier{ModifierValue}
         {
-
         }
 
         virtual String ToString() const override
@@ -26,22 +24,17 @@ namespace Corvus
             return ss.str();
         }
 
-        KeyCode Key;
-        bool bRepeated = false;
+        KeyCode      Key;
+        bool         bRepeated = false;
         ModifierCode Modifier;
     };
 
     class KeyReleaseEvent : public Event
     {
     public:
-
         CORVUS_EVENT_GENERATED_BODY(Event::ECategory::Input | Event::ECategory::Keyboard, Event::EType::KeyRelease);
 
-        KeyReleaseEvent(KeyCode KeyValue)
-            : Key{ KeyValue }
-        {
-
-        }
+        KeyReleaseEvent(KeyCode KeyValue) : Key{KeyValue} {}
 
         virtual String ToString() const override
         {
@@ -53,6 +46,6 @@ namespace Corvus
         KeyCode Key;
     };
 
-}
+} // namespace Corvus
 
-#endif //!CORVUS_SOURCE_CORVUS_EVENTS_KEYBOARDEVENT_H
+#endif //! CORVUS_SOURCE_CORVUS_EVENTS_KEYBOARDEVENT_H

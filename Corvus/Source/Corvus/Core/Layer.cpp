@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Core/Layer.h"
 
 #include "Corvus/Events/Event.h"
@@ -7,8 +8,7 @@
 namespace Corvus
 {
 
-    Layer::Layer(String LayerName, bool bEnabled)
-        : m_LayerName{LayerName}, m_bEnabled{bEnabled}
+    Layer::Layer(String LayerName, bool bEnabled) : m_LayerName{LayerName}, m_bEnabled{bEnabled}
     {
         CORVUS_CORE_TRACE("Layer \"{0}\" created and set to {1}", m_LayerName, m_bEnabled ? "enabled" : "disabled");
     }
@@ -46,4 +46,4 @@ namespace Corvus
     {
     }
 
-}
+} // namespace Corvus

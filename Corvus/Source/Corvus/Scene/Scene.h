@@ -6,9 +6,8 @@ namespace Corvus
 
     class Scene
     {
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_SCENE_ENTITY_H

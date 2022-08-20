@@ -11,7 +11,6 @@ namespace Corvus
     class OpenGLIndexBuffer : public IndexBuffer
     {
     public:
-
         OpenGLIndexBuffer(UInt32 const *Data, UInt32 NumIndices);
         ~OpenGLIndexBuffer();
 
@@ -28,11 +27,9 @@ namespace Corvus
         virtual void SetData(UInt32 const *Data, UInt32 NumIndices) override;
 
     protected:
-
         GLuint m_EBO = 0;
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_PLATFORM_OPENGL_OPENGLINDEXBUFFER_H

@@ -7,7 +7,6 @@ namespace Corvus
     class GUIController
     {
     public:
-
         GUIController();
         ~GUIController();
 
@@ -20,11 +19,9 @@ namespace Corvus
         void EndFrame();
 
     private:
-
         static GUIController *s_Instance;
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_GUI_GUICONTROLLER_H

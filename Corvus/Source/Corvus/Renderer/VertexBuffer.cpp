@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Renderer/VertexBuffer.h"
 
 #include "Platform/OpenGL/OpenGLVertexBuffer.h"
@@ -29,4 +30,4 @@ namespace Corvus
         return m_Layout;
     }
 
-}
+} // namespace Corvus

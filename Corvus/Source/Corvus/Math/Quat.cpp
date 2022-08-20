@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Math/Quat.h"
 
 namespace Corvus::Quaternion
@@ -28,7 +29,6 @@ namespace Corvus::Quaternion
 
         default:
             return Quat{1.0f, 0.0f, 0.0f, 0.0f};
-
         }
     }
 
@@ -104,4 +104,4 @@ namespace Corvus::Quaternion
         return R;
     }
 
-}
+} // namespace Corvus::Quaternion

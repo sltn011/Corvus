@@ -11,7 +11,6 @@ namespace Corvus
     class OpenGLGraphicsAPI : public GraphicsAPI
     {
     public:
-
         virtual void Init() override;
 
         virtual void ViewportResize(UInt32 Width, UInt32 Height) override;
@@ -23,9 +22,8 @@ namespace Corvus
         virtual void DisableDepthTest();
 
         virtual void DrawIndexed(UInt32 NumIndices) override;
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_PLATFORM_OPENGL_OPENGLINDEXBUFFER_H

@@ -9,7 +9,6 @@ namespace Corvus
     class PerspectiveCamera : public Camera
     {
     public:
-
         PerspectiveCamera();
         PerspectiveCamera(Transform const &Transform);
         virtual ~PerspectiveCamera();
@@ -25,11 +24,9 @@ namespace Corvus
         virtual void RecalculateProjectionViewMatrix() override;
 
     private:
-
         float m_FoVAngleDegrees = 60.0f;
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_CAMERA_PERSPECTIVECAMERA_H

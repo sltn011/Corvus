@@ -1,12 +1,12 @@
 #ifndef CORVUS_SOURCE_CORVUS_MATH_MATRIX_H
 #define CORVUS_SOURCE_CORVUS_MATH_MATRIX_H
 
+#include "Corvus/Math/Math.h"
+#include "Corvus/Math/Vector.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-#include "Corvus/Math/Math.h"
-#include "Corvus/Math/Vector.h"
 
 using Mat2 = glm::mat2;
 using Mat3 = glm::mat3;
@@ -57,6 +57,6 @@ namespace Corvus::Matrix
         return glm::value_ptr(Matrix);
     }
 
-}
+} // namespace Corvus::Matrix
 
-#endif //!CORVUS_SOURCE_CORVUS_MATH_MATRIX_H
+#endif //! CORVUS_SOURCE_CORVUS_MATH_MATRIX_H

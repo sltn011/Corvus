@@ -2,7 +2,6 @@
 #define CORVUS_SOURCE_CORVUS_MEMORY_POOL_H
 
 #include "Corvus/Core/Base.h"
-
 #include "Corvus/Memory/PoolID.h"
 
 namespace Corvus
@@ -20,13 +19,11 @@ namespace Corvus
     class Pool
     {
     private:
-
         friend class AppPools;
 
         Pool(PoolID ID, PoolDataFormat DataFormat);
 
     public:
-
         PoolIndex Request(SizeT RequestedNumElements);
 
         void Free(PoolIndex &Index);
@@ -34,9 +31,7 @@ namespace Corvus
         void IncreaseIndexSize(PoolIndex &Index, SizeT NewSize);
 
     private:
-
-        SizeT CountBlockSize(
-            SizeT TablePageID, UInt8 PageSlotID, SizeT MaxSize, bool bIsBlockFree) const;
+        SizeT CountBlockSize(SizeT TablePageID, UInt8 PageSlotID, SizeT MaxSize, bool bIsBlockFree) const;
 
         bool IsFreeBlockFound(SizeT FreeBlockSize, SizeT &OutTablePageID, UInt8 &OutPageSlotID) const;
 
@@ -60,7 +55,8 @@ namespace Corvus
         void InplaceIndexResize(PoolIndex &Index, SizeT NewSize);
         void MoveIndexResize(PoolIndex &Index, SizeT NewSize, Pool &OwningPool);
         void MoveIndexToNewPlace(
-            PoolIndex &Index, SizeT NewSize, SizeT NewTablePageID, UInt8 NewPageSlotID, Pool &OwningPool, Pool &NewPool);
+            PoolIndex &Index, SizeT NewSize, SizeT NewTablePageID, UInt8 NewPageSlotID, Pool &OwningPool, Pool &NewPool
+        );
 
         struct PoolInfo
         {
@@ -80,16 +76,16 @@ namespace Corvus
         PoolDataFormat m_DataFormat;
         PoolInfo       m_PoolInfo;
         Own<UInt8[]>   m_Pool;
-        SubPoolsChain  m_Chain; 
+        SubPoolsChain  m_Chain;
 
         // ChildPoolSize = CurrentPoolSize * s_ChildPoolSizeMult
         static constexpr float s_ChildPoolSizeMult = 1.0f;
 
-        // if CurrentPoolUsed < CurrentPoolSize * s_FreePoolThreshold 
+        // if CurrentPoolUsed < CurrentPoolSize * s_FreePoolThreshold
         // then DeleteChildPool()
         static constexpr float s_FreePoolThreshold = 0.5f;
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_MEMORY_POOL_H

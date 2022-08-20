@@ -11,7 +11,6 @@ namespace Corvus
     class Camera
     {
     public:
-
         enum class MoveDirection
         {
             Forward,
@@ -44,31 +43,29 @@ namespace Corvus
         void SetViewportSize(float Width, float Height);
         void SetClipPlanes(float NearClip, float FarClip);
 
-        virtual Mat4 GetViewMatrix() = 0;
-        virtual Mat4 GetProjectionMatrix() = 0;
+        virtual Mat4 GetViewMatrix()           = 0;
+        virtual Mat4 GetProjectionMatrix()     = 0;
         virtual Mat4 GetProjectionViewMatrix() = 0;
 
-        virtual void RecalculateViewMatrix() = 0;
-        virtual void RecalculateProjectionMatrix() = 0;
+        virtual void RecalculateViewMatrix()           = 0;
+        virtual void RecalculateProjectionMatrix()     = 0;
         virtual void RecalculateProjectionViewMatrix() = 0;
 
     protected:
-
         Own<CameraMovementComponent> m_MovementComponent;
-        bool m_IsPlayerControlled = false;
+        bool                         m_IsPlayerControlled = false;
 
         Transform m_Transform;
 
-        Mat4 m_ViewMatrix = Mat4(1.0f);
-        Mat4 m_ProjectionMatrix = Mat4(1.0f);
+        Mat4 m_ViewMatrix           = Mat4(1.0f);
+        Mat4 m_ProjectionMatrix     = Mat4(1.0f);
         Mat4 m_ProjectionViewMatrix = Mat4(1.0f);
 
-        float m_Aspect = 1.0f;
+        float m_Aspect   = 1.0f;
         float m_NearClip = 0.1f;
-        float m_FarClip = 100.0f;
-
+        float m_FarClip  = 100.0f;
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_CAMERA_SCENECAMERA_H

@@ -19,7 +19,6 @@ namespace Corvus
     class Rotation
     {
     public:
-
         Rotation(RotationOrder Order = RotationOrder::YXZ);
         Rotation(RotationOrder Order, Vec3 const &Degrees);
 
@@ -41,20 +40,18 @@ namespace Corvus
         void SetPitchDegrees(float PitchDegree);
 
         RotationOrder GetRotationOrder() const;
-        void SetRotationOrder(RotationOrder Order);
+        void          SetRotationOrder(RotationOrder Order);
 
     private:
-
         void RecalculateRotationMatrix();
 
         Vec3          m_Degrees; // Roll, Yaw, Pitch
         RotationOrder m_RotationOrder;
 
         Mat4 m_RotationMatrix = Mat4(1.0f);
-        bool m_bIsDirty = true;
-
+        bool m_bIsDirty       = true;
     };
 
-}
+} // namespace Corvus
 
-#endif //!CORVUS_SOURCE_CORVUS_MATH_ROTATION_H
+#endif //! CORVUS_SOURCE_CORVUS_MATH_ROTATION_H

@@ -1,11 +1,11 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Memory/PoolID.h"
 
 namespace Corvus
 {
 
-    PoolID::PoolID(PoolType Type, SizeT IDInGroup)
-        : m_Type{ Type }, m_IDInGroup{ IDInGroup }
+    PoolID::PoolID(PoolType Type, SizeT IDInGroup) : m_Type{Type}, m_IDInGroup{IDInGroup}
     {
     }
 
@@ -24,4 +24,4 @@ namespace Corvus
         return m_IDInGroup != 0;
     }
 
-}
+} // namespace Corvus

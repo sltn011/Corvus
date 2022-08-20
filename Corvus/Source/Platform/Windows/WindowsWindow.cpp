@@ -1,8 +1,10 @@
 #include "CorvusPCH.h"
+
+#include "Platform/Windows/WindowsWindow.h"
+
 #include "Corvus/Events/ApplicationEvent.h"
 #include "Corvus/Events/KeyboardEvent.h"
 #include "Corvus/Events/MouseEvent.h"
-#include "Platform/Windows/WindowsWindow.h"
 
 #include <GLFW/glfw3.h>
 
@@ -10,8 +12,7 @@ namespace Corvus
 {
     Int8 WindowsWindow::s_WindowsCount = 0;
 
-    WindowsWindow::WindowsWindow()
-        : m_Window{ nullptr }
+    WindowsWindow::WindowsWindow() : m_Window{nullptr}
     {
     }
 
@@ -22,7 +23,9 @@ namespace Corvus
 
     void WindowsWindow::Init(WindowData const &Settings)
     {
-        CORVUS_CORE_ASSERT_FMT(!m_bIsInitialized, "Can not re-initialize already created window \"{0}\"!", m_WindowData.WindowName);
+        CORVUS_CORE_ASSERT_FMT(
+            !m_bIsInitialized, "Can not re-initialize already created window \"{0}\"!", m_WindowData.WindowName
+        );
 
         if (s_WindowsCount == 0)
         {
@@ -59,7 +62,7 @@ namespace Corvus
         CORVUS_CORE_INFO("Window \"{0}\" created", m_WindowData.WindowName);
 
         SetupWindowEventsHandlers(); // Must be called before InitGUIRenderingContext
-        
+
         InitRenderingContext();
         InitGUIRenderingContext();
 
@@ -84,7 +87,7 @@ namespace Corvus
         m_GUIController.Destroy();
 
         glfwDestroyWindow(m_Window);
-        m_Window = nullptr;
+        m_Window         = nullptr;
         m_bIsInitialized = false;
         CORVUS_CORE_INFO("Window \"{0}\" destroyed", m_WindowData.WindowName);
 
@@ -139,24 +142,26 @@ namespace Corvus
             glfwSetWindowMonitor(
                 m_Window,
                 glfwGetPrimaryMonitor(),
-                0, 0, m_WindowData.WindowWidth, m_WindowData.WindowHeight,
+                0,
+                0,
+                m_WindowData.WindowWidth,
+                m_WindowData.WindowHeight,
                 GLFW_DONT_CARE
             );
         }
         else
         {
             glfwSetWindowMonitor(
-                m_Window,
-                nullptr,
-                0, 0, m_WindowData.WindowWidth, m_WindowData.WindowHeight,
-                GLFW_DONT_CARE
+                m_Window, nullptr, 0, 0, m_WindowData.WindowWidth, m_WindowData.WindowHeight, GLFW_DONT_CARE
             );
 
             IVec2 MonitorTopLeft, MonitorBottomRight;
             glfwGetMonitorWorkarea(
                 glfwGetPrimaryMonitor(),
-                &MonitorTopLeft.x, &MonitorTopLeft.y,
-                &MonitorBottomRight.x, &MonitorBottomRight.y
+                &MonitorTopLeft.x,
+                &MonitorTopLeft.y,
+                &MonitorBottomRight.x,
+                &MonitorBottomRight.y
             );
 
             IVec2 const MonitorCenter = (MonitorBottomRight - MonitorTopLeft) / 2;
@@ -198,85 +203,103 @@ namespace Corvus
 
     void WindowsWindow::SetupWindowEventsHandlers()
     {
-        glfwSetWindowSizeCallback(m_Window, [](GLFWwindow *Caller, int NewWidth, int NewHeight)
-        {
-            Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
-            WindowResizeEvent Event{ NewWidth, NewHeight };
-            Owner->OnEvent.Broadcast(Event);
-        });
-
-        glfwSetWindowCloseCallback(m_Window, [](GLFWwindow *Caller)
-        {
-            Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
-            WindowCloseEvent Event{};
-            Owner->OnEvent.Broadcast(Event);
-        });
-
-        glfwSetKeyCallback(m_Window, [](GLFWwindow *Caller, int RawKey, int RawScancode, int RawAction, int RawMods)
-        {
-            Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
-
-            KeyCode      const Key    = static_cast<KeyCode>(RawKey);
-            ActionCode   const Action = static_cast<ActionCode>(RawAction);
-            ModifierCode const Mods   = static_cast<ModifierCode>(RawMods);
-
-            if (Action == Action::Press)
+        glfwSetWindowSizeCallback(
+            m_Window,
+            [](GLFWwindow *Caller, int NewWidth, int NewHeight)
             {
-                KeyPressEvent Event{ Key, false, Mods };
+                Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+                WindowResizeEvent   Event{NewWidth, NewHeight};
                 Owner->OnEvent.Broadcast(Event);
-                return;
             }
-            else if (Action == Action::Repeat)
+        );
+
+        glfwSetWindowCloseCallback(
+            m_Window,
+            [](GLFWwindow *Caller)
             {
-                KeyPressEvent Event{ Key, true, Mods };
+                Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+                WindowCloseEvent    Event{};
                 Owner->OnEvent.Broadcast(Event);
-                return;
             }
-            else if (Action == Action::Release)
+        );
+
+        glfwSetKeyCallback(
+            m_Window,
+            [](GLFWwindow *Caller, int RawKey, int RawScancode, int RawAction, int RawMods)
             {
-                KeyReleaseEvent Event{ Key };
-                Owner->OnEvent.Broadcast(Event);
-                return;
+                Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+
+                KeyCode const      Key    = static_cast<KeyCode>(RawKey);
+                ActionCode const   Action = static_cast<ActionCode>(RawAction);
+                ModifierCode const Mods   = static_cast<ModifierCode>(RawMods);
+
+                if (Action == Action::Press)
+                {
+                    KeyPressEvent Event{Key, false, Mods};
+                    Owner->OnEvent.Broadcast(Event);
+                    return;
+                }
+                else if (Action == Action::Repeat)
+                {
+                    KeyPressEvent Event{Key, true, Mods};
+                    Owner->OnEvent.Broadcast(Event);
+                    return;
+                }
+                else if (Action == Action::Release)
+                {
+                    KeyReleaseEvent Event{Key};
+                    Owner->OnEvent.Broadcast(Event);
+                    return;
+                }
             }
-        });
+        );
 
-        glfwSetMouseButtonCallback(m_Window, [](GLFWwindow *Caller, int RawButton, int RawAction, int RawMods)
-        {
-            Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
-
-            MouseCode    const Button = static_cast<MouseCode>(RawButton);
-            ActionCode   const Action = static_cast<ActionCode>(RawAction);
-            ModifierCode const Mods   = static_cast<ModifierCode>(RawMods);
-
-            if (Action == Action::Press)
+        glfwSetMouseButtonCallback(
+            m_Window,
+            [](GLFWwindow *Caller, int RawButton, int RawAction, int RawMods)
             {
-                MouseButtonPressEvent Event{ Button, Mods };
-                Owner->OnEvent.Broadcast(Event);
-                return;
+                Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+
+                MouseCode const    Button = static_cast<MouseCode>(RawButton);
+                ActionCode const   Action = static_cast<ActionCode>(RawAction);
+                ModifierCode const Mods   = static_cast<ModifierCode>(RawMods);
+
+                if (Action == Action::Press)
+                {
+                    MouseButtonPressEvent Event{Button, Mods};
+                    Owner->OnEvent.Broadcast(Event);
+                    return;
+                }
+                else if (Action == Action::Release)
+                {
+                    MouseButtonReleaseEvent Event{Button};
+                    Owner->OnEvent.Broadcast(Event);
+                    return;
+                }
             }
-            else if (Action == Action::Release)
+        );
+
+        glfwSetCursorPosCallback(
+            m_Window,
+            [](GLFWwindow *Caller, double NewX, double NewY)
             {
-                MouseButtonReleaseEvent Event{ Button };
-                Owner->OnEvent.Broadcast(Event);
-                return;
+                Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+                CursorMoveEvent     Event{static_cast<float>(NewX), static_cast<float>(NewY)};
+                Owner->OnEvent(Event);
             }
-        });
+        );
 
-        glfwSetCursorPosCallback(m_Window, [](GLFWwindow *Caller, double NewX, double NewY)
-        {
-            Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
-            CursorMoveEvent Event{ static_cast<float>(NewX), static_cast<float>(NewY) };
-            Owner->OnEvent(Event);
-        });
-
-        glfwSetScrollCallback(m_Window, [](GLFWwindow *Caller, double OffsetX, double OffsetY)
-        {
-            Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
-            MouseScrollEvent Event{ static_cast<float>(OffsetX), static_cast<float>(OffsetY) };
-            Owner->OnEvent(Event);
-        });
+        glfwSetScrollCallback(
+            m_Window,
+            [](GLFWwindow *Caller, double OffsetX, double OffsetY)
+            {
+                Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
+                MouseScrollEvent    Event{static_cast<float>(OffsetX), static_cast<float>(OffsetY)};
+                Owner->OnEvent(Event);
+            }
+        );
 
         CORVUS_CORE_TRACE("Window \"{0}\" event handlers created", m_WindowData.WindowName);
     }
 
-}
+} // namespace Corvus

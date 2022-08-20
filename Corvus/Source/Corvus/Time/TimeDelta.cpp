@@ -1,11 +1,11 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Time/TimeDelta.h"
 
 namespace Corvus
 {
 
-    TimeDelta::TimeDelta(float Seconds)
-        : m_DeltaSeconds{ Seconds }
+    TimeDelta::TimeDelta(float Seconds) : m_DeltaSeconds{Seconds}
     {
     }
 
@@ -29,4 +29,4 @@ namespace Corvus
         return m_DeltaSeconds / 60.0f;
     }
 
-}
+} // namespace Corvus

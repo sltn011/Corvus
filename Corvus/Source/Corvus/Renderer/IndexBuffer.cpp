@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Renderer/IndexBuffer.h"
 
 #include "Platform/OpenGL/OpenGLIndexBuffer.h"
@@ -10,10 +11,10 @@ namespace Corvus
     {
         switch (GraphicsAPI::GetAPI())
         {
-        case GraphicsAPI::API::OpenGL: 
+        case GraphicsAPI::API::OpenGL:
             return MakeOwned<OpenGLIndexBuffer>(Data, NumIndices);
 
-        default: 
+        default:
             CORVUS_NO_ENTRY_FMT("Undefined Graphics API!");
         }
         return nullptr;
@@ -24,4 +25,4 @@ namespace Corvus
         return m_NumIndices;
     }
 
-}
+} // namespace Corvus

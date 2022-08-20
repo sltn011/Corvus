@@ -2,42 +2,30 @@
 
 #include "Corvus/Components/BaseSceneComponent.h"
 
-namespace Corvus {
-    
+namespace Corvus
+{
+
     class Playground : public Application
     {
     public:
-
         Playground() {}
         ~Playground() {}
-
     };
 
     class ApplicationLayer : public Layer
     {
     public:
-
-        ApplicationLayer()
-            : Layer{ "ApplicationLayer", true }
+        ApplicationLayer() : Layer{"ApplicationLayer", true}
         {
             Renderer::EnableDepthTest();
-            Renderer::SetClearColor({ 0.6f, 0.8f, 1.0f, 1.0f });
+            Renderer::SetClearColor({0.6f, 0.8f, 1.0f, 1.0f});
 
-            float const Vertices[] = {
-                +0.0f, -0.2f, -0.2f, 1.0f, 0.0f, 0.0f,
-                +0.0f, -0.2f, +0.2f, 0.0f, 1.0f, 0.0f,
-                +0.0f, +0.2f, +0.2f, 0.0f, 0.0f, 1.0f,
-                +0.0f, +0.2f, -0.2f, 1.0f, 1.0f, 0.0f
-            };
+            float const Vertices[] = {+0.0f, -0.2f, -0.2f, 1.0f, 0.0f, 0.0f, +0.0f, -0.2f, +0.2f, 0.0f, 1.0f, 0.0f,
+                                      +0.0f, +0.2f, +0.2f, 0.0f, 0.0f, 1.0f, +0.0f, +0.2f, -0.2f, 1.0f, 1.0f, 0.0f};
 
-            UInt32 const Indices[] = {
-                0, 1, 2, 0, 2, 3
-            };
+            UInt32 const Indices[] = {0, 1, 2, 0, 2, 3};
 
-            VertexBufferLayout const Layout = {
-                { BufferDataType::Vec3 },
-                { BufferDataType::Vec3 }
-            };
+            VertexBufferLayout const Layout = {{BufferDataType::Vec3}, {BufferDataType::Vec3}};
 
             Own<VertexBuffer> VBO = VertexBuffer::Create(Vertices, 4, Layout);
             Own<IndexBuffer>  EBO = IndexBuffer::Create(Indices, 6);
@@ -57,18 +45,17 @@ namespace Corvus {
 
             Entities.EmplaceBack(
                 TestShader,
-                VAO, 
-                Transform{ {1.0f, 0.0f, 0.0f}, Vector::OneVec, {RotationOrder::YXZ, {30.0f, 0.0f, 0.0f}} }
+                VAO,
+                Transform{{1.0f, 0.0f, 0.0f}, Vector::OneVec, {RotationOrder::YXZ, {30.0f, 0.0f, 0.0f}}}
             );
 
             Entities.EmplaceBack(
                 TestShader,
                 VAO,
-                Transform{ {0.0f, 0.0f, 0.5f}, Vector::OneVec * 0.5f, {RotationOrder::YXZ, {0.0f, 0.0f, 45.0f}} }
+                Transform{{0.0f, 0.0f, 0.5f}, Vector::OneVec * 0.5f, {RotationOrder::YXZ, {0.0f, 0.0f, 45.0f}}}
             );
 
             Entities[0].TransformComponent->AddChild(Entities[1].TransformComponent.Get());
-
         }
 
         virtual void OnUpdate(TimeDelta ElapsedTime)
@@ -102,12 +89,11 @@ namespace Corvus {
                 {
                     Camera.ProcessMovementInput(Camera::MoveDirection::Down, ElapsedTime);
                 }
-
             }
 
             Vec2 const NewPos = Input::GetCursorPos();
-            Vec2 const Delta = NewPos - CursorPos;
-            CursorPos = NewPos;
+            Vec2 const Delta  = NewPos - CursorPos;
+            CursorPos         = NewPos;
             if (bCameraMode)
             {
                 Camera.ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
@@ -118,7 +104,7 @@ namespace Corvus {
                 Entity &SceneEntity = Entities[i];
 
                 Transform EntityTransform = SceneEntity.TransformComponent->GetTransform();
-                Rotation Rotator = EntityTransform.GetRotation();
+                Rotation  Rotator         = EntityTransform.GetRotation();
                 Rotator.AddYawDegrees(-20.0f * ElapsedTime.Seconds());
                 EntityTransform.SetRotation(Rotator);
                 SceneEntity.TransformComponent.Get()->SetTransform(EntityTransform);
@@ -153,9 +139,8 @@ namespace Corvus {
         }
 
     protected:
-
-        Array<Entity> Entities;
-        PerspectiveCamera   Camera;
+        Array<Entity>     Entities;
+        PerspectiveCamera Camera;
 
         Own<Shader>      TestShader;
         Own<VertexArray> VAO;
@@ -173,7 +158,8 @@ namespace Corvus {
 
     bool DestroyApplication(Application *App)
     {
-        if (!App) {
+        if (!App)
+        {
             return false;
         }
 
@@ -181,4 +167,4 @@ namespace Corvus {
         return true;
     }
 
-}
+} // namespace Corvus

@@ -7,7 +7,6 @@ namespace Corvus
     class TimeDelta
     {
     public:
-
         TimeDelta(float Seconds);
 
         float Seconds() const;
@@ -17,11 +16,9 @@ namespace Corvus
         float Minutes() const;
 
     private:
-
         float m_DeltaSeconds;
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_TIME_TIMEDELTA_H

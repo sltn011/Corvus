@@ -5,7 +5,7 @@
 
 namespace Corvus
 {
-    
+
     using KeyCode      = UInt16;
     using MouseCode    = UInt8;
     using ModifierCode = UInt8;
@@ -17,54 +17,54 @@ namespace Corvus
         enum : KeyCode
         {
             /* Printable Keys */
-            Space         = 32,
-            Apostrophe    = 39,  /* ' */
-            Comma         = 44,  /* , */
-            Minus         = 45,  /* - */
-            Period        = 46,  /* . */
-            Slash         = 47,  /* / */
-            Num0          = 48,
-            Num1          = 49,
-            Num2          = 50,
-            Num3          = 51,
-            Num4          = 52,
-            Num5          = 53,
-            Num6          = 54,
-            Num7          = 55,
-            Num8          = 56,
-            Num9          = 57,
-            Semicolon     = 59,  /* ; */
-            Equal         = 61,  /* = */
-            A             = 65,
-            B             = 66,
-            C             = 67,
-            D             = 68,
-            E             = 69,
-            F             = 70,
-            G             = 71,
-            H             = 72,
-            I             = 73,
-            J             = 74,
-            K             = 75,
-            L             = 76,
-            M             = 77,
-            N             = 78,
-            O             = 79,
-            P             = 80,
-            Q             = 81,
-            R             = 82,
-            S             = 83,
-            T             = 84,
-            U             = 85,
-            V             = 86,
-            W             = 87,
-            X             = 88,
-            Y             = 89,
-            Z             = 90,
-            LeftBracket   = 91,  /* [ */
-            Backslash     = 92,  /* \ */
-            RightBracket  = 93,  /* ] */
-            GraveAccent   = 96,  /* ` */
+            Space        = 32,
+            Apostrophe   = 39, /* ' */
+            Comma        = 44, /* , */
+            Minus        = 45, /* - */
+            Period       = 46, /* . */
+            Slash        = 47, /* / */
+            Num0         = 48,
+            Num1         = 49,
+            Num2         = 50,
+            Num3         = 51,
+            Num4         = 52,
+            Num5         = 53,
+            Num6         = 54,
+            Num7         = 55,
+            Num8         = 56,
+            Num9         = 57,
+            Semicolon    = 59, /* ; */
+            Equal        = 61, /* = */
+            A            = 65,
+            B            = 66,
+            C            = 67,
+            D            = 68,
+            E            = 69,
+            F            = 70,
+            G            = 71,
+            H            = 72,
+            I            = 73,
+            J            = 74,
+            K            = 75,
+            L            = 76,
+            M            = 77,
+            N            = 78,
+            O            = 79,
+            P            = 80,
+            Q            = 81,
+            R            = 82,
+            S            = 83,
+            T            = 84,
+            U            = 85,
+            V            = 86,
+            W            = 87,
+            X            = 88,
+            Y            = 89,
+            Z            = 90,
+            LeftBracket  = 91, /* [ */
+            Backslash    = 92, /* \ */
+            RightBracket = 93, /* ] */
+            GraveAccent  = 96, /* ` */
 
             /* Function Keys */
             Escape         = 256,
@@ -138,7 +138,7 @@ namespace Corvus
             RightSuper     = 347,
             Menu           = 348
         };
-    }
+    } // namespace Key
 
     namespace Mouse
     {
@@ -158,7 +158,7 @@ namespace Corvus
             ButtonRight  = Button2,
             ButtonMiddle = Button3
         };
-    }
+    } // namespace Mouse
 
     namespace Modifier
     {
@@ -173,9 +173,10 @@ namespace Corvus
             CapsLock = BIT(4),
             NumLock  = BIT(5)
         };
-    }
+    } // namespace Modifier
 
-    namespace Action {
+    namespace Action
+    {
         // Taken from glfw3.h https://www.glfw.org/docs/3.3/group__input.html
         enum : ActionCode
         {
@@ -183,7 +184,7 @@ namespace Corvus
             Press   = 1,
             Repeat  = 2
         };
-    }
-}
+    } // namespace Action
+} // namespace Corvus
 
-#endif //!CORVUS_SOURCE_CORVUS_CORE_KEYCODES_H
+#endif //! CORVUS_SOURCE_CORVUS_CORE_KEYCODES_H

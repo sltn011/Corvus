@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Renderer/Renderer.h"
 
 #include "Corvus/Renderer/GraphicsAPI.h"
@@ -64,4 +65,4 @@ namespace Corvus
         s_GraphicsAPI->DrawIndexed(VAO->GetIndexBuffer()->GetNumIndices());
     }
 
-}
+} // namespace Corvus

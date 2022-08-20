@@ -1,15 +1,16 @@
 #include "CorvusPCH.h"
+
 #include "Platform/OpenGL/OpenGLContext.h"
 
 #include "Corvus/Window/Window.h"
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 namespace Corvus
 {
     OpenGLContext::OpenGLContext(Window &OwnerWindow)
-        : m_WindowHandle{ static_cast<GLFWwindow*>(OwnerWindow.GetRawWindow()) }
+        : m_WindowHandle{static_cast<GLFWwindow *>(OwnerWindow.GetRawWindow())}
     {
         CORVUS_ASSERT(m_WindowHandle);
     }
@@ -18,7 +19,8 @@ namespace Corvus
     {
         glfwMakeContextCurrent(m_WindowHandle);
 
-        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+        {
             CORVUS_NO_ENTRY_FMT("Failed to initialize rendering context!");
         }
         CORVUS_CORE_TRACE("GLAD initialized");
@@ -35,4 +37,4 @@ namespace Corvus
         glfwSwapBuffers(m_WindowHandle);
     }
 
-}
+} // namespace Corvus

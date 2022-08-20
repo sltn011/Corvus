@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Core/CoreLayer.h"
 
 #include "Corvus/Core/Application.h"
@@ -9,8 +10,7 @@
 namespace Corvus
 {
 
-    CoreLayer::CoreLayer()
-        : Layer{ "Corvus Core Layer", true }
+    CoreLayer::CoreLayer() : Layer{"Corvus Core Layer", true}
     {
     }
 
@@ -26,7 +26,6 @@ namespace Corvus
 
     void CoreLayer::OnUpdate(TimeDelta ElapsedTime)
     {
-
     }
 
     void CoreLayer::OnEvent(Event &Event)
@@ -53,19 +52,19 @@ namespace Corvus
     {
         switch (Event.GetEventType())
         {
-        case Event::EType::WindowResize: 
-            OnWindowResize(Event);  
+        case Event::EType::WindowResize:
+            OnWindowResize(Event);
             break;
 
-        case Event::EType::WindowClose: 
-            OnWindowClose(Event); 
+        case Event::EType::WindowClose:
+            OnWindowClose(Event);
             break;
 
-        case Event::EType::WindowChangeFocus: 
-            OnWindowChangeFocus(Event); 
+        case Event::EType::WindowChangeFocus:
+            OnWindowChangeFocus(Event);
             break;
 
-        default: 
+        default:
             break;
         }
     }
@@ -78,11 +77,11 @@ namespace Corvus
             OnKeyPressed(Event);
             break;
 
-        case Event::EType::KeyRelease: 
+        case Event::EType::KeyRelease:
             OnKeyReleased(Event);
             break;
 
-        default: 
+        default:
             break;
         }
     }
@@ -107,7 +106,7 @@ namespace Corvus
             OnMouseScroll(Event);
             break;
 
-        default: 
+        default:
             break;
         }
     }
@@ -160,4 +159,4 @@ namespace Corvus
     {
     }
 
-}
+} // namespace Corvus

@@ -14,24 +14,20 @@ namespace Corvus
     class Entity
     {
     public:
-
         Entity(Own<Shader> const &Shader, Own<VertexArray> const &VAO);
         Entity(Own<Shader> const &Shader, Own<VertexArray> const &VAO, Transform const &Transform);
 
-        Own<Shader> const &GetShader() const;
+        Own<Shader> const      &GetShader() const;
         Own<VertexArray> const &GetVertexArray() const;
 
     public:
-
         Poolable<BaseSceneComponent> TransformComponent;
 
     private:
-
-        Own<Shader>      const &m_Shader;
+        Own<Shader> const      &m_Shader;
         Own<VertexArray> const &m_VAO;
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_SCENE_ENTITY_H

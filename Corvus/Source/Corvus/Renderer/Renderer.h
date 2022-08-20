@@ -13,7 +13,6 @@ namespace Corvus
     class Renderer
     {
     public:
-
         static void Init();
         static void Destroy();
 
@@ -31,11 +30,9 @@ namespace Corvus
         static void Submit(Own<VertexArray> &VAO, Own<Shader> &Shader);
 
     private:
-
         static Own<GraphicsAPI> s_GraphicsAPI;
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_RENDERER_RENDERER_H

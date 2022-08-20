@@ -12,22 +12,20 @@ namespace Corvus
     class Layer
     {
     protected:
-
         Layer(String LayerName, bool bEnabled);
 
     public:
-
-        template<typename LayerType, typename ...Args>
+        template<typename LayerType, typename... Args>
         static [[nodiscard]] Own<Layer> Create(Args &&...args)
         {
             return MakeOwned<LayerType>(std::forward<Args>(args)...);
         }
 
-        virtual ~Layer() = default;
-        Layer(Layer const &) = delete;
+        virtual ~Layer()                = default;
+        Layer(Layer const &)            = delete;
         Layer &operator=(Layer const &) = delete;
-        Layer(Layer &&) = default;
-        Layer &operator=(Layer &&) = default;
+        Layer(Layer &&)                 = default;
+        Layer &operator=(Layer &&)      = default;
 
         void SetEnabled(bool bEnabled);
         bool IsEnabled() const;
@@ -41,12 +39,10 @@ namespace Corvus
         virtual void Render();
 
     protected:
-
         String m_LayerName;
-        bool m_bEnabled;
-
+        bool   m_bEnabled;
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_CORE_LAYER_H

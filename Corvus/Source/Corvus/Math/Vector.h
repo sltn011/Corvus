@@ -68,13 +68,13 @@ namespace Corvus::Vector
         return glm::tan(Vector::Radians(Degrees));
     }
 
-    static constexpr Vec3 Forward = Vec3{ 1.0f, 0.0f, 0.0f };
-    static constexpr Vec3 Up      = Vec3{ 0.0f, 1.0f, 0.0f };
-    static constexpr Vec3 Right   = Vec3{ 0.0f, 0.0f, 1.0f };
+    static constexpr Vec3 Forward = Vec3{1.0f, 0.0f, 0.0f};
+    static constexpr Vec3 Up      = Vec3{0.0f, 1.0f, 0.0f};
+    static constexpr Vec3 Right   = Vec3{0.0f, 0.0f, 1.0f};
 
-    static constexpr Vec3 ZeroVec = Vec3{ 0.0f, 0.0f, 0.0f };
-    static constexpr Vec3 OneVec  = Vec3{ 1.0f, 1.0f, 1.0f };
+    static constexpr Vec3 ZeroVec = Vec3{0.0f, 0.0f, 0.0f};
+    static constexpr Vec3 OneVec  = Vec3{1.0f, 1.0f, 1.0f};
 
-}
+} // namespace Corvus::Vector
 
-#endif //!CORVUS_SOURCE_CORVUS_MATH_VECTOR_H
+#endif //! CORVUS_SOURCE_CORVUS_MATH_VECTOR_H

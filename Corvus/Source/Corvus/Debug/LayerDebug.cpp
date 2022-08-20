@@ -1,12 +1,12 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Debug/LayerDebug.h"
 
 #include "Corvus/Time/TimeDelta.h"
 
 namespace Corvus
 {
-    LayerDebug::LayerDebug(String LayerName, bool bEnabled)
-        : Super { LayerName, bEnabled }
+    LayerDebug::LayerDebug(String LayerName, bool bEnabled) : Super{LayerName, bEnabled}
     {
     }
 
@@ -28,4 +28,4 @@ namespace Corvus
         CORVUS_CORE_TRACE("LayerDebug \"{0}\": {1}", m_LayerName, Event.ToString());
     }
 
-}
+} // namespace Corvus

@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Platform/OpenGL/OpenGLVertexBuffer.h"
 
 namespace Corvus
@@ -14,11 +15,10 @@ namespace Corvus
         glDeleteBuffers(1, &m_VBO);
     }
 
-    OpenGLVertexBuffer::OpenGLVertexBuffer(OpenGLVertexBuffer &&Rhs) noexcept
-        : m_VBO{ std::exchange(Rhs.m_VBO, 0) }
+    OpenGLVertexBuffer::OpenGLVertexBuffer(OpenGLVertexBuffer &&Rhs) noexcept : m_VBO{std::exchange(Rhs.m_VBO, 0)}
     {
         m_NumVertices = Rhs.m_NumVertices;
-        m_Layout = std::move(Rhs.m_Layout);
+        m_Layout      = std::move(Rhs.m_Layout);
     }
 
     OpenGLVertexBuffer &OpenGLVertexBuffer::operator=(OpenGLVertexBuffer &&Rhs) noexcept
@@ -27,7 +27,7 @@ namespace Corvus
         {
             std::swap(m_VBO, Rhs.m_VBO);
             m_NumVertices = Rhs.m_NumVertices;
-            m_Layout = std::move(Rhs.m_Layout);
+            m_Layout      = std::move(Rhs.m_Layout);
         }
         return *this;
     }
@@ -49,7 +49,7 @@ namespace Corvus
 
     void OpenGLVertexBuffer::SetData(void const *Data, UInt32 NumVertices)
     {
-        m_NumVertices = NumVertices;
+        m_NumVertices           = NumVertices;
         UInt32 const VertexSize = m_Layout.Stride();
         glNamedBufferData(m_VBO, static_cast<GLsizei>(VertexSize * m_NumVertices), Data, GL_STATIC_DRAW);
     }
@@ -64,18 +64,27 @@ namespace Corvus
     {
         switch (Type)
         {
-            case BufferDataType::Bool:  return GL_BYTE;
-            case BufferDataType::Int:   return GL_INT;
-            case BufferDataType::Float: return GL_FLOAT;
-            case BufferDataType::Vec2:  return GL_FLOAT;
-            case BufferDataType::Vec3:  return GL_FLOAT;
-            case BufferDataType::Vec4:  return GL_FLOAT;
-            case BufferDataType::Mat3:  return GL_FLOAT;
-            case BufferDataType::Mat4:  return GL_FLOAT;
+        case BufferDataType::Bool:
+            return GL_BYTE;
+        case BufferDataType::Int:
+            return GL_INT;
+        case BufferDataType::Float:
+            return GL_FLOAT;
+        case BufferDataType::Vec2:
+            return GL_FLOAT;
+        case BufferDataType::Vec3:
+            return GL_FLOAT;
+        case BufferDataType::Vec4:
+            return GL_FLOAT;
+        case BufferDataType::Mat3:
+            return GL_FLOAT;
+        case BufferDataType::Mat4:
+            return GL_FLOAT;
 
-            default: CORVUS_CORE_NO_ENTRY_FMT("Unknown BufferDataType used!");
+        default:
+            CORVUS_CORE_NO_ENTRY_FMT("Unknown BufferDataType used!");
         }
 
         return GL_FALSE;
     }
-}
+} // namespace Corvus

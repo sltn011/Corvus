@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Memory/PoolIndex.h"
 
 #include "Corvus/Memory/AppPools.h"
@@ -8,7 +9,7 @@ namespace Corvus
 {
 
     PoolIndex::PoolIndex(PoolID ID, SizeT SlotID, UInt8 *const Data, SizeT NumElements)
-        : m_PoolID{ ID }, m_SlotID{ SlotID }, m_Data{ Data }, m_NumElements{ NumElements }
+        : m_PoolID{ID}, m_SlotID{SlotID}, m_Data{Data}, m_NumElements{NumElements}
     {
     }
 
@@ -18,8 +19,10 @@ namespace Corvus
     }
 
     PoolIndex::PoolIndex(PoolIndex &&Rhs) noexcept
-        : m_PoolID{ Rhs.m_PoolID }, m_SlotID{ Rhs.m_SlotID },
-        m_Data{ std::exchange(Rhs.m_Data, nullptr) }, m_NumElements{ Rhs.m_NumElements }
+        : m_PoolID{Rhs.m_PoolID},
+          m_SlotID{Rhs.m_SlotID},
+          m_Data{std::exchange(Rhs.m_Data, nullptr)},
+          m_NumElements{Rhs.m_NumElements}
     {
     }
 
@@ -77,4 +80,4 @@ namespace Corvus
         m_NumElements = 0;
     }
 
-}
+} // namespace Corvus

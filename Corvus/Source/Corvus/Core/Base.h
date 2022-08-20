@@ -1,8 +1,8 @@
 #ifndef CORVUS_SOURCE_CORVUS_CORE_BASE_H
 #define CORVUS_SOURCE_CORVUS_CORE_BASE_H
 
-#include "Corvus/Core/PlatformDetection.h"
 #include "Corvus/Core/CoreTypes.h"
+#include "Corvus/Core/PlatformDetection.h"
 
 #include <memory>
 
@@ -24,7 +24,7 @@ namespace Corvus
     using Own = std::unique_ptr<T>;
 
     template<typename T, typename... Args>
-    [[nodiscard]] Own<T> MakeOwned(Args&&... args)
+    [[nodiscard]] Own<T> MakeOwned(Args &&...args)
     {
         return std::make_unique<T>(std::forward<Args>(args)...);
     }
@@ -33,12 +33,12 @@ namespace Corvus
     using Ref = std::shared_ptr<T>;
 
     template<typename T, typename... Args>
-    [[nodiscard]] Ref<T> MakeRef(Args&&... args)
+    [[nodiscard]] Ref<T> MakeRef(Args &&...args)
     {
         return std::make_shared<T>(std::forward<Args>(args)...);
     }
-}
+} // namespace Corvus
 
 #include "Corvus/Core/Assert.h"
 
-#endif //!CORVUS_SOURCE_CORVUS_CORE_BASE_H
+#endif //! CORVUS_SOURCE_CORVUS_CORE_BASE_H

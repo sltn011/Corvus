@@ -11,7 +11,6 @@ namespace Corvus
     class OpenGLShader : public Shader
     {
     public:
-
         OpenGLShader(String const &FilePath);
         ~OpenGLShader();
 
@@ -36,7 +35,6 @@ namespace Corvus
         virtual void SetMat4(String const &Name, Mat4 const &Value) override;
 
     protected:
-
         GLuint CreateShader(GLenum ShaderType, String const &SourceCode) const;
 
         void AssertShaderCompiledSuccessfully(GLuint Shader) const;
@@ -44,11 +42,10 @@ namespace Corvus
 
         GLint GetUniformLocation(String const &Name);
 
-        GLuint m_ID = 0;
+        GLuint                            m_ID = 0;
         std::unordered_map<String, GLint> m_UniformLocationCache;
 
     private:
-
         enum class ShaderType : Int8
         {
             NONE = -1,
@@ -56,9 +53,8 @@ namespace Corvus
             Fragment,
             MAX
         };
-        
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_PLATFORM_OPENGL_OPENGLSHADER_H

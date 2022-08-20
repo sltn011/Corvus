@@ -10,7 +10,6 @@ namespace Corvus
     class VertexBufferLayout
     {
     public:
-
         VertexBufferLayout() = default;
         VertexBufferLayout(std::initializer_list<BufferLayoutElement> InitList);
 
@@ -26,13 +25,13 @@ namespace Corvus
         void Clear();
         void RemoveAt(UInt32 Index);
 
-        std::vector<BufferLayoutElement>::iterator Begin() { return m_Layout.begin(); }
-        std::vector<BufferLayoutElement>::iterator End() { return m_Layout.end(); }
+        std::vector<BufferLayoutElement>::iterator         Begin() { return m_Layout.begin(); }
+        std::vector<BufferLayoutElement>::iterator         End() { return m_Layout.end(); }
         std::vector<BufferLayoutElement>::reverse_iterator RBegin() { return m_Layout.rbegin(); }
         std::vector<BufferLayoutElement>::reverse_iterator REnd() { return m_Layout.rend(); }
 
-        std::vector<BufferLayoutElement>::const_iterator Begin() const { return m_Layout.begin(); }
-        std::vector<BufferLayoutElement>::const_iterator End() const { return m_Layout.end(); }
+        std::vector<BufferLayoutElement>::const_iterator         Begin() const { return m_Layout.begin(); }
+        std::vector<BufferLayoutElement>::const_iterator         End() const { return m_Layout.end(); }
         std::vector<BufferLayoutElement>::const_reverse_iterator RBegin() const { return m_Layout.rbegin(); }
         std::vector<BufferLayoutElement>::const_reverse_iterator REnd() const { return m_Layout.rend(); }
 
@@ -44,15 +43,14 @@ namespace Corvus
         std::vector<BufferLayoutElement>::const_iterator end() const { return m_Layout.end(); }
 
     private:
-
         std::vector<BufferLayoutElement> m_Layout;
 
-        UInt32 m_Stride = 0;
-        bool m_StrideDirty = true;
+        UInt32 m_Stride      = 0;
+        bool   m_StrideDirty = true;
 
         void RecalculateStride();
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_RENDERER_VERTEXBUFFERLAYOUT_H

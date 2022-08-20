@@ -8,17 +8,16 @@ namespace Corvus
     class WindowsWindow : public Window
     {
     public:
-
         WindowsWindow();
         ~WindowsWindow();
-        WindowsWindow(WindowsWindow const &) = delete;
+        WindowsWindow(WindowsWindow const &)            = delete;
         WindowsWindow &operator=(WindowsWindow const &) = delete;
-        WindowsWindow(WindowsWindow &&) = default;
-        WindowsWindow &operator=(WindowsWindow &&) = default;
+        WindowsWindow(WindowsWindow &&)                 = default;
+        WindowsWindow &operator=(WindowsWindow &&)      = default;
 
         virtual void Init(WindowData const &Settings) override;
 
-        void Destroy(); 
+        void Destroy();
 
         virtual void OnUpdate() override;
 
@@ -33,7 +32,6 @@ namespace Corvus
         static void WindowErrorCallback(int ErrorCode, char const *Description);
 
     protected:
-
         virtual void InitRenderingContext() override;
         virtual void InitGUIRenderingContext() override;
 
@@ -42,9 +40,8 @@ namespace Corvus
         GLFWwindow *m_Window;
 
     private:
-
         static Int8 s_WindowsCount;
     };
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_PLATFORM_WINDOWS_WINDOWSWINDOW_H

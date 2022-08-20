@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Camera/Camera.h"
 
 #include "Corvus/Camera/Components/CameraMovementComponent.h"
@@ -104,9 +105,9 @@ namespace Corvus
     void Camera::SetClipPlanes(float NearClip, float FarClip)
     {
         m_NearClip = NearClip;
-        m_FarClip = FarClip;
+        m_FarClip  = FarClip;
         RecalculateProjectionMatrix();
         RecalculateProjectionViewMatrix();
     }
 
-}
+} // namespace Corvus

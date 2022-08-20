@@ -9,7 +9,6 @@ namespace Corvus
     class CoreLayer : public Layer
     {
     public:
-
         using Super = Layer;
 
         CoreLayer();
@@ -23,7 +22,6 @@ namespace Corvus
         virtual void Render() override;
 
     private:
-
         void OnApplicationEvent(Event &Event);
         void OnKeyboardEvent(Event &Event);
         void OnMouseEvent(Event &Event);
@@ -39,9 +37,8 @@ namespace Corvus
         void OnMouseButtonReleased(Event &Event);
         void OnMouseCursorMove(Event &Event);
         void OnMouseScroll(Event &Event);
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_CORE_CORELAYER_H

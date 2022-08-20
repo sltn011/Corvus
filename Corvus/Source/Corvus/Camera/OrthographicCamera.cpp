@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Camera/OrthographicCamera.h"
 
 namespace Corvus
@@ -10,8 +11,7 @@ namespace Corvus
         RecalculateProjectionViewMatrix();
     }
 
-    OrthographicCamera::OrthographicCamera(Transform const &Transform)
-        : Camera{ Transform }
+    OrthographicCamera::OrthographicCamera(Transform const &Transform) : Camera{Transform}
     {
         RecalculateViewMatrix();
         RecalculateProjectionMatrix();
@@ -46,15 +46,11 @@ namespace Corvus
 
     void OrthographicCamera::RecalculateViewMatrix()
     {
-        Vec3 Position = m_Transform.GetPosition();
+        Vec3 Position      = m_Transform.GetPosition();
         Vec3 ForwardVector = GetForwardVector();
-        Vec3 UpVector = GetUpVector();
+        Vec3 UpVector      = GetUpVector();
 
-        m_ViewMatrix = Matrix::LookAt(
-            Position,
-            Position + ForwardVector,
-            UpVector
-        );
+        m_ViewMatrix = Matrix::LookAt(Position, Position + ForwardVector, UpVector);
     }
 
     void OrthographicCamera::RecalculateProjectionMatrix()
@@ -66,11 +62,11 @@ namespace Corvus
         float const OrthBottom = -OrthSizeH * 0.5f;
         float const OrthLeft   = -OrthSizeW * 0.5f;
         float const OrthRight  = +OrthSizeW * 0.5f;
-        m_ProjectionMatrix = Matrix::Ortho(OrthLeft, OrthRight, OrthBottom, OrthTop, m_NearClip, m_FarClip);
+        m_ProjectionMatrix     = Matrix::Ortho(OrthLeft, OrthRight, OrthBottom, OrthTop, m_NearClip, m_FarClip);
     }
 
     void OrthographicCamera::RecalculateProjectionViewMatrix()
     {
         m_ProjectionViewMatrix = m_ProjectionMatrix * m_ViewMatrix;
     }
-}
+} // namespace Corvus

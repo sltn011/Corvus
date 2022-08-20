@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Renderer/Shader.h"
 
 #include "Platform/OpenGL/OpenGLShader.h"
@@ -9,12 +10,12 @@ namespace Corvus
     {
         switch (GraphicsAPI::GetAPI())
         {
-        case GraphicsAPI::API::OpenGL: 
+        case GraphicsAPI::API::OpenGL:
             return MakeOwned<OpenGLShader>(FilePath);
 
-        default: 
+        default:
             CORVUS_NO_ENTRY_FMT("Undefined Graphics API!");
         }
         return nullptr;
     }
-}
+} // namespace Corvus

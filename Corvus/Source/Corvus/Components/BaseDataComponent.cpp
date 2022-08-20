@@ -1,11 +1,11 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Components/BaseDataComponent.h"
 
 namespace Corvus
 {
 
-    BaseDataComponent::BaseDataComponent(Entity *Owner)
-        : m_Owner{ Owner }
+    BaseDataComponent::BaseDataComponent(Entity *Owner) : m_Owner{Owner}
     {
     }
 
@@ -14,4 +14,4 @@ namespace Corvus
         return m_Owner;
     }
 
-}
+} // namespace Corvus

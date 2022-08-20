@@ -11,17 +11,14 @@ namespace Corvus
     class BaseDataComponent
     {
     public:
-
         BaseDataComponent(Entity *Owner);
 
         Entity *GetOwner();
 
     private:
-
         Entity *m_Owner = nullptr;
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_COMPONENTS_BASEDATACOMPONENT_H

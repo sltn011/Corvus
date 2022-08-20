@@ -2,7 +2,6 @@
 #define CORVUS_SOURCE_CORVUS_COMPONENTS_BASESCENECOMPONENT_H
 
 #include "Corvus/Components/BaseDataComponent.h"
-
 #include "Corvus/Math/Transform.h"
 #include "Corvus/Memory/Array.h"
 
@@ -15,23 +14,21 @@ namespace Corvus
     class BaseSceneComponent : public BaseDataComponent
     {
     public:
-
         BaseSceneComponent(Entity *Owner, Transform const &ComponentTransform);
 
         Mat4 GetTransformMatrix();
 
         Transform GetTransform() const;
-        void SetTransform(Transform const &Transform);
+        void      SetTransform(Transform const &Transform);
 
         Array<BaseSceneComponent *> &GetChildren();
-        void AddChild(BaseSceneComponent *const Child);
+        void                         AddChild(BaseSceneComponent *const Child);
 
         BaseSceneComponent *GetParent() const;
-        void SetParent(BaseSceneComponent *const Parent);
-        void ResetParent();
+        void                SetParent(BaseSceneComponent *const Parent);
+        void                ResetParent();
 
     private:
-
         void RecalculateTransformMatrix();
 
         Transform m_Transform;
@@ -40,9 +37,8 @@ namespace Corvus
 
         Array<BaseSceneComponent *> m_Children;
         BaseSceneComponent         *m_Parent = nullptr;
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_COMPONENTS_BASESCENECOMPONENT_H

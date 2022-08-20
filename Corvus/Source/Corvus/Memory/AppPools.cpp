@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Memory/AppPools.h"
 
 #include "Corvus/Memory/Pool.h"
@@ -15,14 +16,14 @@ namespace Corvus
     {
         CORVUS_CORE_INFO("Start of AppPools initialization");
 
-        // Can be used to pre-allocate memory in pools 
+        // Can be used to pre-allocate memory in pools
         // before running the application
-        
-        //CreateGeneralPool({ 128, 1 });
-        //CreateGeneralPool({ 32,  4 });
-        //CreateGeneralPool({ 32,  8 });
-        //CreateGeneralPool({ 32, 16 });
-        //CreateGeneralPool({ 32, 32 });
+
+        // CreateGeneralPool({ 128, 1 });
+        // CreateGeneralPool({ 32,  4 });
+        // CreateGeneralPool({ 32,  8 });
+        // CreateGeneralPool({ 32, 16 });
+        // CreateGeneralPool({ 32, 32 });
 
         CORVUS_CORE_INFO("AppPools successfully initialized!");
     }
@@ -31,7 +32,7 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
-        PoolID ID = PoolID{ PoolType::General, DataFormat.ElementSize };
+        PoolID ID = PoolID{PoolType::General, DataFormat.ElementSize};
         if (s_GeneralPools.find(ID.GetIDInGroup()) == s_GeneralPools.end())
         {
             s_GeneralPools.emplace(ID.GetIDInGroup(), Pool{ID, DataFormat});
@@ -43,10 +44,10 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
-        PoolID ID = PoolID{ PoolType::Component, DataFormat.ElementSize };
+        PoolID ID = PoolID{PoolType::Component, DataFormat.ElementSize};
         if (s_ComponentPools.find(ID.GetIDInGroup()) == s_ComponentPools.end())
         {
-            s_ComponentPools.emplace(ID.GetIDInGroup(), Pool{ ID, DataFormat });
+            s_ComponentPools.emplace(ID.GetIDInGroup(), Pool{ID, DataFormat});
         }
         return ID;
     }
@@ -113,4 +114,4 @@ namespace Corvus
         return GetComponentPool(PoolIDInGroup).Request(NumElements);
     }
 
-}
+} // namespace Corvus

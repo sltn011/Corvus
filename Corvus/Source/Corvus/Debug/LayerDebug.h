@@ -11,16 +11,14 @@ namespace Corvus
     class LayerDebug : public Layer
     {
     public:
-
         using Super = Layer;
 
         LayerDebug(String LayerName, bool bEnabled);
 
         virtual void OnUpdate(TimeDelta ElapsedTime) override;
         virtual void OnEvent(Event &Event) override;
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_DEBUG_LAYERDEBUG_H

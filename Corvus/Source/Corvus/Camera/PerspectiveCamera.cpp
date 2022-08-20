@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Camera/PerspectiveCamera.h"
 
 namespace Corvus
@@ -11,8 +12,7 @@ namespace Corvus
         RecalculateProjectionViewMatrix();
     }
 
-    PerspectiveCamera::PerspectiveCamera(Transform const &Transform)
-        : Camera{ Transform }
+    PerspectiveCamera::PerspectiveCamera(Transform const &Transform) : Camera{Transform}
     {
         RecalculateViewMatrix();
         RecalculateProjectionMatrix();
@@ -48,17 +48,13 @@ namespace Corvus
 
     void PerspectiveCamera::RecalculateViewMatrix()
     {
-        Vec3 const Position = m_Transform.GetPosition();
+        Vec3 const Position      = m_Transform.GetPosition();
         Vec3 const ForwardVector = GetForwardVector();
-        Vec3 const UpVector = GetUpVector();
+        Vec3 const UpVector      = GetUpVector();
 
-        m_ViewMatrix = Matrix::LookAt(
-            Position,
-            Position + ForwardVector,
-            UpVector
-        );
+        m_ViewMatrix = Matrix::LookAt(Position, Position + ForwardVector, UpVector);
     }
-    
+
     void PerspectiveCamera::RecalculateProjectionMatrix()
     {
         m_ProjectionMatrix = Matrix::Perspective(m_FoVAngleDegrees, m_Aspect, m_NearClip, m_FarClip);
@@ -69,4 +65,4 @@ namespace Corvus
         m_ProjectionViewMatrix = m_ProjectionMatrix * m_ViewMatrix;
     }
 
-}
+} // namespace Corvus

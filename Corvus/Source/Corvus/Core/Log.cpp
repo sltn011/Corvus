@@ -1,12 +1,13 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Core/Log.h"
 
 #pragma warning(push, 0)
-#include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 #pragma warning(pop)
 
-namespace Corvus 
+namespace Corvus
 {
 
     Ref<spdlog::logger> Log::s_EngineLogger;
@@ -14,12 +15,10 @@ namespace Corvus
 
     Log::Log()
     {
-
     }
 
     Log::~Log()
     {
-
     }
 
     void Log::Init()
@@ -28,7 +27,8 @@ namespace Corvus
         LogSinks.push_back(MakeRef<spdlog::sinks::stdout_color_sink_mt>());
         LogSinks.push_back(MakeRef<spdlog::sinks::basic_file_sink_mt>("Corvus.log", true));
 
-        for (spdlog::sink_ptr &Sink : LogSinks) {
+        for (spdlog::sink_ptr &Sink : LogSinks)
+        {
             Sink->set_pattern("%^[%D %T][%l] %n: %v%$"); // COLOR([MM/DD/YY HH:MM:SS][loglevel] LogName: Message)
         }
 
@@ -45,4 +45,4 @@ namespace Corvus
         CORVUS_CORE_INFO("Log successfully initialized!");
     }
 
-}
+} // namespace Corvus

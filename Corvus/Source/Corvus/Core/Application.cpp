@@ -1,27 +1,21 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Core/Application.h"
 
 #include "Corvus/Camera/OrthographicCamera.h"
 #include "Corvus/Camera/PerspectiveCamera.h"
-
 #include "Corvus/Core/CoreLayer.h"
-
 #include "Corvus/GUI/LayerGUI.h"
-
 #include "Corvus/Memory/AppPools.h"
-
+#include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Renderer.h"
+#include "Corvus/Renderer/Shader.h"
 #include "Corvus/Renderer/VertexArray.h"
 #include "Corvus/Renderer/VertexBuffer.h"
-#include "Corvus/Renderer/IndexBuffer.h"
-#include "Corvus/Renderer/Shader.h"
-
 #include "Corvus/Time/TimeDelta.h"
 #include "Corvus/Time/TimePoint.h"
 
-
-
-namespace Corvus 
+namespace Corvus
 {
     Application *Application::s_ApplicationInstance = nullptr;
 
@@ -36,7 +30,6 @@ namespace Corvus
 
     Application::~Application()
     {
-
     }
 
     void Application::Init()
@@ -47,16 +40,17 @@ namespace Corvus
         InitRenderer();
 
         PushLayer(Layer::Create<CoreLayer>());
-        //PushLayer(Layer::Create<LayerGUI>("GUI", true));
+        // PushLayer(Layer::Create<LayerGUI>("GUI", true));
     }
 
     void Application::Run()
     {
         TimePoint TimePointOld;
-        while (!m_Window->ShouldClose()) {
+        while (!m_Window->ShouldClose())
+        {
             TimePoint const TimePointNew;
             TimeDelta const ElapsedTime = TimePointNew - TimePointOld;
-            TimePointOld = TimePointNew;
+            TimePointOld                = TimePointNew;
 
             UpdateLayers(ElapsedTime);
             RenderLayers();
@@ -105,10 +99,11 @@ namespace Corvus
 
     void Application::OnEventReceived(Event &Event)
     {
-        for (auto It = m_LayersStack.RBegin(); It != m_LayersStack.REnd(); ++It) 
+        for (auto It = m_LayersStack.RBegin(); It != m_LayersStack.REnd(); ++It)
         {
             (*It)->OnEvent(Event);
-            if (Event.WasHandled()) {
+            if (Event.WasHandled())
+            {
                 return;
             }
         }
@@ -122,9 +117,9 @@ namespace Corvus
     void Application::InitWindow()
     {
         WindowData WindowSettings;
-        WindowSettings.WindowWidth = 1600;
-        WindowSettings.WindowHeight = 900;
-        WindowSettings.WindowName = "TestWindow";
+        WindowSettings.WindowWidth   = 1600;
+        WindowSettings.WindowHeight  = 900;
+        WindowSettings.WindowName    = "TestWindow";
         WindowSettings.bVSyncEnabled = true;
 
         m_Window = Window::Create();
@@ -132,8 +127,12 @@ namespace Corvus
         m_Window->Init(WindowSettings);
         m_Window->OnEvent.BindObject(this, &Application::OnEventReceived);
 
-        CORVUS_CORE_INFO("Application Window \"{0}\" {1}x{2} initialized", 
-            m_Window->GetWindowName(), m_Window->GetWindowWidth(), m_Window->GetWindowHeight());
+        CORVUS_CORE_INFO(
+            "Application Window \"{0}\" {1}x{2} initialized",
+            m_Window->GetWindowName(),
+            m_Window->GetWindowWidth(),
+            m_Window->GetWindowHeight()
+        );
     }
 
     void Application::InitRenderer()
@@ -141,4 +140,4 @@ namespace Corvus
         Renderer::Init();
         CORVUS_CORE_INFO("Renderer initialized");
     }
-}
+} // namespace Corvus

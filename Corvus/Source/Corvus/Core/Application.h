@@ -5,28 +5,27 @@
 #include "Corvus/Core/LayersStack.h"
 #include "Corvus/Window/Window.h"
 
-namespace Corvus 
+namespace Corvus
 {
     class Application;
 
     // To be defined by Client
     Application *CreateApplication();
-    bool DestroyApplication(Application *App);
+    bool         DestroyApplication(Application *App);
     //=========================================
 
     class TimeDelta;
 
-    class Application 
+    class Application
     {
     public:
-
         Application();
         virtual ~Application();
 
         void Init();
         void Run();
 
-        void PushLayer(Own<Layer> &&NewLayer);
+        void                     PushLayer(Own<Layer> &&NewLayer);
         [[nodiscard]] Own<Layer> PopLayer();
 
         void UpdateLayers(TimeDelta ElapsedTime);
@@ -38,17 +37,15 @@ namespace Corvus
         static Application &GetInstance() { return *s_ApplicationInstance; }
 
     private:
-
         void InitWindow();
         void InitRenderer();
 
-        Own<Window>   m_Window;
-        LayersStack   m_LayersStack;
+        Own<Window> m_Window;
+        LayersStack m_LayersStack;
 
         static Application *s_ApplicationInstance;
-
     };
 
-}
+} // namespace Corvus
 
-#endif //!CORVUS_SOURCE_CORVUS_CORE_APPLICATION_H
+#endif //! CORVUS_SOURCE_CORVUS_CORE_APPLICATION_H

@@ -1,14 +1,14 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/GUI/GUIController.h"
 
 #include "Corvus/Core/Application.h"
 #include "Corvus/Core/Base.h"
 
-#include <imgui.h>
-#include <backends/imgui_impl_opengl3.h>
-#include <backends/imgui_impl_glfw.h>
-
 #include <GLFW/glfw3.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
+#include <imgui.h>
 
 namespace Corvus
 {
@@ -31,19 +31,19 @@ namespace Corvus
         ImGui::CreateContext();
 
         ImGuiIO &IO = ImGui::GetIO();
-        IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-        //IO.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-        IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
-        IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
-        //IO.ConfigViewportsNoAutoMerge = true;
-        //IO.ConfigViewportsNoTaskBarIcon = true;
+        IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+        // IO.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+        IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   // Enable Docking
+        IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
+        // IO.ConfigViewportsNoAutoMerge = true;
+        // IO.ConfigViewportsNoTaskBarIcon = true;
 
         // Setup Dear ImGui style
         ImGui::StyleColorsDark();
-        //ImGui::StyleColorsClassic();
+        // ImGui::StyleColorsClassic();
 
         Application &App = Application::GetInstance();
-        ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow*>(App.GetWindow().GetRawWindow()), true);
+        ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow()), true);
         ImGui_ImplOpenGL3_Init("#version 460");
 
         s_Instance = this;
@@ -74,7 +74,7 @@ namespace Corvus
 
     void GUIController::EndFrame()
     {
-        ImGuiIO &IO = ImGui::GetIO();
+        ImGuiIO     &IO  = ImGui::GetIO();
         Application &App = Application::GetInstance();
         IO.DisplaySize.x = static_cast<float>(App.GetWindow().GetWindowWidth());
         IO.DisplaySize.y = static_cast<float>(App.GetWindow().GetWindowHeight());
@@ -90,4 +90,4 @@ namespace Corvus
             glfwMakeContextCurrent(backup_current_context);
         }
     }
-}
+} // namespace Corvus

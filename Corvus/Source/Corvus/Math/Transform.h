@@ -10,7 +10,6 @@ namespace Corvus
     class Transform
     {
     public:
-
         Transform();
         Transform(Vec3 const &Position);
         Transform(Vec3 const &Position, Vec3 const &Scale);
@@ -29,20 +28,18 @@ namespace Corvus
         void SetScale(Vec3 const &Scale);
 
         Rotation GetRotation() const;
-        void SetRotation(Rotation const &Rotation);
+        void     SetRotation(Rotation const &Rotation);
 
     private:
-
         void RecalculateMatrix();
 
         Mat4 m_TransformMatrix = Mat4(1.0f);
         bool m_bIsDirty        = true;
 
-        Vec3      m_Position;
-        Rotation  m_Rotation;
-        Vec3      m_Scale;
-
+        Vec3     m_Position;
+        Rotation m_Rotation;
+        Vec3     m_Scale;
     };
-}
+} // namespace Corvus
 
-#endif //!CORVUS_SOURCE_CORVUS_MATH_TRANSFORM_H
+#endif //! CORVUS_SOURCE_CORVUS_MATH_TRANSFORM_H

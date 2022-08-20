@@ -83,6 +83,6 @@ namespace Corvus::Math
         return ATan2(X, Y);
     }
 
-}
+} // namespace Corvus::Math
 
-#endif //!CORVUS_SOURCE_CORVUS_MATH_MATH_H
+#endif //! CORVUS_SOURCE_CORVUS_MATH_MATH_H

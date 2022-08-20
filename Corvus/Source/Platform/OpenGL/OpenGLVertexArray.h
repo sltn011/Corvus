@@ -11,7 +11,6 @@ namespace Corvus
     class OpenGLVertexArray : public VertexArray
     {
     public:
-
         OpenGLVertexArray();
         ~OpenGLVertexArray();
 
@@ -27,14 +26,12 @@ namespace Corvus
         virtual void AddVertexBuffer(Own<VertexBuffer> &&VertexBuffer) override;
 
     protected:
-
         void EnableVertexAttributes();
         void DisableVertexAttributes();
 
         GLuint m_VAO = 0;
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_PLATFORM_OPENGL_OPENGLVERTEXARRAY_H

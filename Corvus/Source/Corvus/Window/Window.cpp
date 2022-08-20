@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Window/Window.h"
 
 #include "Platform/Windows/WindowsWindow.h"
@@ -34,4 +35,4 @@ namespace Corvus
     {
         return m_GUIController;
     }
-}
+} // namespace Corvus

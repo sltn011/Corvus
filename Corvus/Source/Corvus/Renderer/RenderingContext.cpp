@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Renderer/RenderingContext.h"
 
 #include "Platform/OpenGL/OpenGLContext.h"
@@ -9,12 +10,12 @@ namespace Corvus
     {
         switch (GraphicsAPI::GetAPI())
         {
-        case GraphicsAPI::API::OpenGL: 
+        case GraphicsAPI::API::OpenGL:
             return MakeOwned<OpenGLContext>(OwnerWindow);
 
-        default: 
+        default:
             CORVUS_NO_ENTRY_FMT("Undefined Graphics API!");
         }
         return nullptr;
     }
-}
+} // namespace Corvus

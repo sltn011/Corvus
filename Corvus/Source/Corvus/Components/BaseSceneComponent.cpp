@@ -1,11 +1,12 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Components/BaseSceneComponent.h"
 
 namespace Corvus
 {
 
     BaseSceneComponent::BaseSceneComponent(Entity *Owner, Transform const &ComponentTransform)
-        : BaseDataComponent{ Owner }, m_Transform{ ComponentTransform }
+        : BaseDataComponent{Owner}, m_Transform{ComponentTransform}
     {
     }
 
@@ -27,7 +28,7 @@ namespace Corvus
     void BaseSceneComponent::SetTransform(Transform const &Transform)
     {
         m_Transform = Transform;
-        m_bIsDirty = true;
+        m_bIsDirty  = true;
     }
 
     Array<BaseSceneComponent *> &BaseSceneComponent::GetChildren()
@@ -50,7 +51,7 @@ namespace Corvus
 
     void BaseSceneComponent::SetParent(BaseSceneComponent *const Parent)
     {
-        m_Parent = Parent;
+        m_Parent   = Parent;
         m_bIsDirty = true;
     }
 
@@ -77,4 +78,4 @@ namespace Corvus
         }
     }
 
-}
+} // namespace Corvus

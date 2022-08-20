@@ -9,7 +9,6 @@ namespace Corvus
     class OrthographicCamera : public Camera
     {
     public:
-
         OrthographicCamera();
         OrthographicCamera(Transform const &Transform);
         virtual ~OrthographicCamera();
@@ -25,11 +24,9 @@ namespace Corvus
         virtual void RecalculateProjectionViewMatrix() override;
 
     private:
-
         float m_OrthoSize = 2.0f;
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_CAMERA_ORTHOGRAPHICCAMERA_H

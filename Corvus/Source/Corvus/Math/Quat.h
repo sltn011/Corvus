@@ -1,10 +1,10 @@
 #ifndef CORVUS_SOURCE_CORVUS_MATH_QUAT_H
 #define CORVUS_SOURCE_CORVUS_MATH_QUAT_H
 
+#include "Corvus/Math/Rotation.h"
+
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
-
-#include "Corvus/Math/Rotation.h"
 
 using Quat = glm::quat;
 
@@ -34,8 +34,8 @@ namespace Corvus::Quaternion
     Quat FromEulerZXY(Vec3 const &Degrees);
     Quat FromEulerZYX(Vec3 const &Degrees);
 
-    static constexpr Quat Unit = Quat{ 1.0f, 0.0f, 0.0f, 0.0f };
+    static constexpr Quat Unit = Quat{1.0f, 0.0f, 0.0f, 0.0f};
 
-}
+} // namespace Corvus::Quaternion
 
-#endif //!CORVUS_SOURCE_CORVUS_MATH_QUAT_H
+#endif //! CORVUS_SOURCE_CORVUS_MATH_QUAT_H

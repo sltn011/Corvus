@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Platform/OpenGL/OpenGLIndexBuffer.h"
 
 namespace Corvus
@@ -14,8 +15,7 @@ namespace Corvus
         glDeleteBuffers(1, &m_EBO);
     }
 
-    OpenGLIndexBuffer::OpenGLIndexBuffer(OpenGLIndexBuffer &&Rhs) noexcept
-        : m_EBO{ std::exchange(Rhs.m_EBO, 0) }
+    OpenGLIndexBuffer::OpenGLIndexBuffer(OpenGLIndexBuffer &&Rhs) noexcept : m_EBO{std::exchange(Rhs.m_EBO, 0)}
     {
         m_NumIndices = Rhs.m_NumIndices;
     }
@@ -52,4 +52,4 @@ namespace Corvus
         m_NumIndices = NumIndices;
         glNamedBufferData(m_EBO, static_cast<GLsizei>(sizeof(GLuint) * NumIndices), Data, GL_STATIC_DRAW);
     }
-}
+} // namespace Corvus

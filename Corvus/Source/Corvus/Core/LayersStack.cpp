@@ -1,6 +1,8 @@
 #include "CorvusPCH.h"
-#include "Corvus/Core/Layer.h"
+
 #include "Corvus/Core/LayersStack.h"
+
+#include "Corvus/Core/Layer.h"
 
 namespace Corvus
 {
@@ -12,8 +14,10 @@ namespace Corvus
     LayersStack::~LayersStack()
     {
         // Front - Stack's bottom, Back - Stack's top
-        for (auto It = RBegin(); It != REnd(); ++It) {
-            if (*It) {
+        for (auto It = RBegin(); It != REnd(); ++It)
+        {
+            if (*It)
+            {
                 (*It)->OnPoped();
             }
         }
@@ -21,7 +25,8 @@ namespace Corvus
 
     void LayersStack::PushLayer(Own<Layer> NewLayer)
     {
-        if (!NewLayer) {
+        if (!NewLayer)
+        {
             CORVUS_CORE_ERROR("Null-layer passed into Layers stack!");
             return;
         }
@@ -41,4 +46,4 @@ namespace Corvus
         return PopedLayer;
     }
 
-}
+} // namespace Corvus

@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Platform/OpenGL/OpenGLGraphicsAPI.h"
 
 namespace Corvus
@@ -20,8 +21,7 @@ namespace Corvus
     void OpenGLGraphicsAPI::Clear(bool bColorBuffer, bool bDepthBuffer, bool bStencilBuffer)
     {
         glClear(
-            (bColorBuffer   ? GL_COLOR_BUFFER_BIT   : 0) |
-            (bDepthBuffer   ? GL_DEPTH_BUFFER_BIT   : 0) |
+            (bColorBuffer ? GL_COLOR_BUFFER_BIT : 0) | (bDepthBuffer ? GL_DEPTH_BUFFER_BIT : 0) |
             (bStencilBuffer ? GL_STENCIL_BUFFER_BIT : 0)
         );
     }
@@ -40,4 +40,4 @@ namespace Corvus
     {
         glDrawElements(GL_TRIANGLES, NumIndices, GL_UNSIGNED_INT, nullptr);
     }
-}
+} // namespace Corvus

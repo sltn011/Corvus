@@ -1,7 +1,7 @@
 #include "CorvusPCH.h"
-#include "Corvus/Core/Input.h"
 
 #include "Corvus/Core/Application.h"
+#include "Corvus/Core/Input.h"
 
 #include <GLFW/glfw3.h>
 
@@ -9,7 +9,7 @@ namespace Corvus
 {
     bool Input::IsKeyInState(KeyCode Key, ActionCode State)
     {
-        Application &App = Application::GetInstance();
+        Application &App    = Application::GetInstance();
         GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
         return glfwGetKey(Window, static_cast<int>(Key)) == State;
     }
@@ -31,7 +31,7 @@ namespace Corvus
 
     bool Input::IsButtonInState(MouseCode Button, ActionCode State)
     {
-        Application &App = Application::GetInstance();
+        Application &App    = Application::GetInstance();
         GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
         return glfwGetMouseButton(Window, static_cast<int>(Button)) == State;
     }
@@ -48,7 +48,7 @@ namespace Corvus
 
     void Input::SetCursorEnabled(bool bEnabled)
     {
-        Application &App = Application::GetInstance();
+        Application &App    = Application::GetInstance();
         GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
 
         glfwSetInputMode(Window, GLFW_CURSOR, bEnabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
@@ -56,13 +56,13 @@ namespace Corvus
 
     Vec2 Input::GetCursorPos()
     {
-        Application &App = Application::GetInstance();
+        Application &App    = Application::GetInstance();
         GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
 
         double XPos, YPos;
         glfwGetCursorPos(Window, &XPos, &YPos);
 
-        return Vec2{ static_cast<float>(XPos), static_cast<float>(YPos) };
+        return Vec2{static_cast<float>(XPos), static_cast<float>(YPos)};
     }
 
     float Input::GetCursorX()
@@ -77,9 +77,9 @@ namespace Corvus
 
     void Input::SetCursorPos(Vec2 Pos)
     {
-        Application &App = Application::GetInstance();
+        Application &App    = Application::GetInstance();
         GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
 
         glfwSetCursorPos(Window, Pos.x, Pos.y);
     }
-}
+} // namespace Corvus

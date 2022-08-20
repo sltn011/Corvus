@@ -11,7 +11,6 @@ namespace Corvus
     class LayerGUI : public Layer
     {
     public:
-
         using Super = Layer;
 
         LayerGUI(String LayerName, bool bEnabled);
@@ -19,11 +18,9 @@ namespace Corvus
         virtual void Render() override;
 
     private:
-
         static UInt8 s_NumImGUIInstances;
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_GUI_LAYERGUI_H

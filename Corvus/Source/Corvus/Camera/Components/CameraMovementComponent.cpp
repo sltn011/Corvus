@@ -1,4 +1,5 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Camera/Components/CameraMovementComponent.h"
 
 #include "Corvus/Time/TimeDelta.h"
@@ -7,7 +8,7 @@ namespace Corvus
 {
 
     CameraMovementComponent::CameraMovementComponent(Camera *Owner, float MovementSpeed)
-        : m_Owner{ Owner }, m_MoveSpeed{ MovementSpeed }
+        : m_Owner{Owner}, m_MoveSpeed{MovementSpeed}
     {
         CORVUS_CORE_ASSERT(m_Owner);
     }
@@ -17,10 +18,12 @@ namespace Corvus
         m_MoveSpeed = MovementSpeed;
     }
 
-    void CameraMovementComponent::ProcessMovementInput(Camera::MoveDirection const Direction, TimeDelta const ElapsedTime)
+    void CameraMovementComponent::ProcessMovementInput(
+        Camera::MoveDirection const Direction, TimeDelta const ElapsedTime
+    )
     {
-        Transform CameraTransform = m_Owner->GetTransform();
-        float const Seconds = ElapsedTime.Seconds();
+        Transform   CameraTransform = m_Owner->GetTransform();
+        float const Seconds         = ElapsedTime.Seconds();
 
         Vec3 Position = CameraTransform.GetPosition();
 
@@ -28,7 +31,8 @@ namespace Corvus
         Vec3 const UpVector      = m_Owner->GetUpVector();
         Vec3 const RightVector   = m_Owner->GetRightVector();
 
-        switch (Direction) {
+        switch (Direction)
+        {
         case Camera::MoveDirection::Forward:
             Position += ForwardVector * m_MoveSpeed * Seconds;
             break;
@@ -61,16 +65,19 @@ namespace Corvus
         m_Owner->SetTransform(CameraTransform);
     }
 
-    void CameraMovementComponent::ProcessRotationInput(float XOffset, float YOffset, float Sensitivity, TimeDelta const ElapsedTime)
+    void CameraMovementComponent::ProcessRotationInput(
+        float XOffset, float YOffset, float Sensitivity, TimeDelta const ElapsedTime
+    )
     {
         static bool firstTime = true;
-        if (firstTime) {
+        if (firstTime)
+        {
             firstTime = false;
             return;
         }
 
         Rotation CameraRotation = m_Owner->GetRotation();
-        float Seconds = ElapsedTime.Seconds();
+        float    Seconds        = ElapsedTime.Seconds();
 
         // Negate values or rotation input will be inverted
         // Positive offset -> Positive rotation angle -> CCW rotation in right hand coordinates system
@@ -83,14 +90,16 @@ namespace Corvus
         CameraRotation.AddYawDegrees(XOffset);
         CameraRotation.AddPitchDegrees(YOffset);
 
-        if (CameraRotation.GetPitchDegrees() > 89.0f) {
+        if (CameraRotation.GetPitchDegrees() > 89.0f)
+        {
             CameraRotation.SetPitchDegrees(89.0f);
         }
-        if (CameraRotation.GetPitchDegrees() < -89.0f) {
+        if (CameraRotation.GetPitchDegrees() < -89.0f)
+        {
             CameraRotation.SetPitchDegrees(-89.0f);
         }
 
         m_Owner->SetRotation(CameraRotation);
     }
 
-}
+} // namespace Corvus

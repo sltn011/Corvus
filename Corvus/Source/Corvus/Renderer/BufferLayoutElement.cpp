@@ -1,17 +1,22 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Renderer/BufferLayoutElement.h"
 
 namespace Corvus
 {
     BufferLayoutElement::BufferLayoutElement(BufferDataType Type)
-        : m_Type{ Type }, m_Size{ SizeofBufferDataType(Type) },
-          m_NumComponents{ NumComponentsInBufferDataType(Type) }, m_bShouldNormalize{ false }
+        : m_Type{Type},
+          m_Size{SizeofBufferDataType(Type)},
+          m_NumComponents{NumComponentsInBufferDataType(Type)},
+          m_bShouldNormalize{false}
     {
     }
 
     BufferLayoutElement::BufferLayoutElement(BufferDataType Type, bool bShouldNormalize)
-        : m_Type{ Type }, m_Size{ SizeofBufferDataType(Type) },
-          m_NumComponents{ NumComponentsInBufferDataType(Type) }, m_bShouldNormalize{ bShouldNormalize }
+        : m_Type{Type},
+          m_Size{SizeofBufferDataType(Type)},
+          m_NumComponents{NumComponentsInBufferDataType(Type)},
+          m_bShouldNormalize{bShouldNormalize}
     {
     }
 
@@ -39,16 +44,25 @@ namespace Corvus
     {
         switch (Type)
         {
-            case BufferDataType::Bool:  return 1;
-            case BufferDataType::Int:   return 1;
-            case BufferDataType::Float: return 1;
-            case BufferDataType::Vec2:  return 2;
-            case BufferDataType::Vec3:  return 3;
-            case BufferDataType::Vec4:  return 4;
-            case BufferDataType::Mat3:  return 3 * 3;
-            case BufferDataType::Mat4:  return 4 * 4;
+        case BufferDataType::Bool:
+            return 1;
+        case BufferDataType::Int:
+            return 1;
+        case BufferDataType::Float:
+            return 1;
+        case BufferDataType::Vec2:
+            return 2;
+        case BufferDataType::Vec3:
+            return 3;
+        case BufferDataType::Vec4:
+            return 4;
+        case BufferDataType::Mat3:
+            return 3 * 3;
+        case BufferDataType::Mat4:
+            return 4 * 4;
 
-            default: CORVUS_CORE_NO_ENTRY_FMT("Unknown BufferDataType used!");
+        default:
+            CORVUS_CORE_NO_ENTRY_FMT("Unknown BufferDataType used!");
         }
 
         return 0;
@@ -58,18 +72,27 @@ namespace Corvus
     {
         switch (Type)
         {
-            case BufferDataType::Bool:  return 1;
-            case BufferDataType::Int:   return 4;
-            case BufferDataType::Float: return 4;
-            case BufferDataType::Vec2:  return 4 * 2;
-            case BufferDataType::Vec3:  return 4 * 3;
-            case BufferDataType::Vec4:  return 4 * 4;
-            case BufferDataType::Mat3:  return 4 * 3 * 3;
-            case BufferDataType::Mat4:  return 4 * 4 * 4;
+        case BufferDataType::Bool:
+            return 1;
+        case BufferDataType::Int:
+            return 4;
+        case BufferDataType::Float:
+            return 4;
+        case BufferDataType::Vec2:
+            return 4 * 2;
+        case BufferDataType::Vec3:
+            return 4 * 3;
+        case BufferDataType::Vec4:
+            return 4 * 4;
+        case BufferDataType::Mat3:
+            return 4 * 3 * 3;
+        case BufferDataType::Mat4:
+            return 4 * 4 * 4;
 
-            default: CORVUS_CORE_NO_ENTRY_FMT("Unknown BufferDataType used!");
+        default:
+            CORVUS_CORE_NO_ENTRY_FMT("Unknown BufferDataType used!");
         }
 
         return 0;
     }
-}
+} // namespace Corvus

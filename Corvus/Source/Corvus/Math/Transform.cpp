@@ -1,30 +1,28 @@
 #include "CorvusPCH.h"
+
 #include "Corvus/Math/Transform.h"
 
 namespace Corvus
 {
-    Transform::Transform()
-        : m_Position{ Vector::ZeroVec }, m_Scale{ Vector::OneVec }, m_Rotation{}
+    Transform::Transform() : m_Position{Vector::ZeroVec}, m_Scale{Vector::OneVec}, m_Rotation{}
     {
     }
 
-    Transform::Transform(Vec3 const &Position)
-        : m_Position{ Position }, m_Scale{ Vector::OneVec }, m_Rotation{}
+    Transform::Transform(Vec3 const &Position) : m_Position{Position}, m_Scale{Vector::OneVec}, m_Rotation{}
     {
     }
 
-    Transform::Transform(Vec3 const &Position, Vec3 const &Scale)
-        : m_Position{ Position }, m_Scale{ Scale }, m_Rotation{}
+    Transform::Transform(Vec3 const &Position, Vec3 const &Scale) : m_Position{Position}, m_Scale{Scale}, m_Rotation{}
     {
     }
 
     Transform::Transform(Vec3 const &Position, Rotation const &Rotation)
-        : m_Position{ Position }, m_Scale{ Vector::OneVec }, m_Rotation{ Rotation }
+        : m_Position{Position}, m_Scale{Vector::OneVec}, m_Rotation{Rotation}
     {
     }
 
     Transform::Transform(Vec3 const &Position, Vec3 const &Scale, Rotation const &Rotation)
-        : m_Position{ Position }, m_Scale{ Scale }, m_Rotation{ Rotation }
+        : m_Position{Position}, m_Scale{Scale}, m_Rotation{Rotation}
     {
     }
 
@@ -71,7 +69,7 @@ namespace Corvus
 
     void Transform::SetScale(Vec3 const &Scale)
     {
-        m_Scale = Scale;
+        m_Scale    = Scale;
         m_bIsDirty = true;
     }
 
@@ -89,6 +87,6 @@ namespace Corvus
     void Transform::RecalculateMatrix()
     {
         m_TransformMatrix = GetTranslationMatrix() * GetRotationMatrix() * GetScaleMatrix();
-        m_bIsDirty = false;
+        m_bIsDirty        = false;
     }
-}
+} // namespace Corvus

@@ -12,10 +12,12 @@ namespace Corvus
 
     template<typename Signature>
     class MulticastDelegate;
-}
+} // namespace Corvus
 
-#define CORVUS_DECLARE_DELEGATE(DelegateName, ReturnType, ...) using DelegateName = Corvus::Delegate<ReturnType(__VA_ARGS__)>;
-#define CORVUS_DECLARE_MULTICAST_DELEGATE(DelegateName, ...) using DelegateName = Corvus::MulticastDelegate<void(__VA_ARGS__)>;
+#define CORVUS_DECLARE_DELEGATE(DelegateName, ReturnType, ...) \
+    using DelegateName = Corvus::Delegate<ReturnType(__VA_ARGS__)>;
+#define CORVUS_DECLARE_MULTICAST_DELEGATE(DelegateName, ...) \
+    using DelegateName = Corvus::MulticastDelegate<void(__VA_ARGS__)>;
 
 namespace Corvus
 {
@@ -23,22 +25,15 @@ namespace Corvus
     class Delegate<R(Args...)>
     {
     public:
-
-        Delegate() = default;
-        Delegate(Delegate const &) = delete;
-        Delegate(Delegate &&) = default;
+        Delegate()                            = default;
+        Delegate(Delegate const &)            = delete;
+        Delegate(Delegate &&)                 = default;
         Delegate &operator=(Delegate const &) = delete;
-        Delegate &operator=(Delegate &&) = default;
+        Delegate &operator=(Delegate &&)      = default;
 
-        bool HasBinding() const
-        {
-            return bool(m_Invoker);
-        }
+        bool HasBinding() const { return bool(m_Invoker); }
 
-        void ClearBinding()
-        {
-            m_Invoker.reset();
-        }
+        void ClearBinding() { m_Invoker.reset(); }
 
         template<typename T, typename F>
         void BindObject(T *Object, F Method)
@@ -72,18 +67,13 @@ namespace Corvus
             return m_Invoker->Invoke(std::forward<Args>(args)...);
         }
 
-        R operator()(Args... args) const
-        {
-            return Invoke(std::forward<Args>(args)...);
-        }
+        R operator()(Args... args) const { return Invoke(std::forward<Args>(args)...); }
 
     private:
-
         template<typename R, typename... Args>
         class BaseInvoker
         {
         public:
-
             virtual R Invoke(Args... args) const = 0;
         };
 
@@ -91,7 +81,6 @@ namespace Corvus
         struct ObjectInvoker : public BaseInvoker<R, Args...>
         {
         public:
-
             ObjectInvoker(T *Object, F Method)
             {
                 m_Object = Object;
@@ -105,7 +94,6 @@ namespace Corvus
             }
 
         private:
-
             T *m_Object;
             F  m_Method;
         };
@@ -114,11 +102,7 @@ namespace Corvus
         struct FunctionInvoker : public BaseInvoker<R, Args...>
         {
         public:
-
-            FunctionInvoker(F Function)
-            {
-                m_Function = Function;
-            }
+            FunctionInvoker(F Function) { m_Function = Function; }
 
             R Invoke(Args... args) const override
             {
@@ -127,7 +111,6 @@ namespace Corvus
             }
 
         private:
-
             F m_Function;
         };
 
@@ -138,17 +121,13 @@ namespace Corvus
     class MulticastDelegate<void(Args...)>
     {
     public:
-
-        MulticastDelegate() = default;
-        MulticastDelegate(MulticastDelegate const &) = delete;
-        MulticastDelegate(MulticastDelegate &&) = default;
+        MulticastDelegate()                                     = default;
+        MulticastDelegate(MulticastDelegate const &)            = delete;
+        MulticastDelegate(MulticastDelegate &&)                 = default;
         MulticastDelegate &operator=(MulticastDelegate const &) = delete;
-        MulticastDelegate &operator=(MulticastDelegate &&) = default;
+        MulticastDelegate &operator=(MulticastDelegate &&)      = default;
 
-        void ClearAllBinding()
-        {
-            m_Bindings.clear();
-        }
+        void ClearAllBinding() { m_Bindings.clear(); }
 
         template<typename T, typename F>
         void BindObject(T *Object, F Method)
@@ -174,16 +153,11 @@ namespace Corvus
             }
         }
 
-        void operator()(Args... args) const
-        {
-            Broadcast(std::forward<Args>(args)...);
-        }
+        void operator()(Args... args) const { Broadcast(std::forward<Args>(args)...); }
 
     private:
-
         std::vector<Delegate<void(Args...)>> m_Bindings;
-
     };
-}
+} // namespace Corvus
 
 #endif

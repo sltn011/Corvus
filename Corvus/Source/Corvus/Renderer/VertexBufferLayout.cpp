@@ -1,11 +1,12 @@
 #include "CorvusPCH.h"
-#include "Corvus/Renderer/VertexBuffer.h"
+
 #include "VertexBufferLayout.h"
+
+#include "Corvus/Renderer/VertexBuffer.h"
 
 namespace Corvus
 {
-    VertexBufferLayout::VertexBufferLayout(std::initializer_list<BufferLayoutElement> InitList)
-        : m_Layout{ InitList }
+    VertexBufferLayout::VertexBufferLayout(std::initializer_list<BufferLayoutElement> InitList) : m_Layout{InitList}
     {
     }
 
@@ -40,7 +41,7 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT(Index < Size());
         m_Layout[Index] = Element;
-        m_StrideDirty = true;
+        m_StrideDirty   = true;
     }
 
     void VertexBufferLayout::PushBack(BufferLayoutElement const &Element)
@@ -70,8 +71,8 @@ namespace Corvus
             NewStride += Element.GetSize();
         }
 
-        m_Stride = NewStride;
+        m_Stride      = NewStride;
         m_StrideDirty = false;
     }
 
-}
+} // namespace Corvus

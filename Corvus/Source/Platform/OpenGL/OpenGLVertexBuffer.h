@@ -7,11 +7,10 @@
 
 namespace Corvus
 {
-    
+
     class OpenGLVertexBuffer : public VertexBuffer
     {
     public:
-
         OpenGLVertexBuffer(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout);
         ~OpenGLVertexBuffer();
 
@@ -31,11 +30,9 @@ namespace Corvus
         static GLenum BufferLayoutTypeToGLType(BufferDataType Type);
 
     protected:
-
         GLuint m_VBO = 0;
-
     };
 
-}
+} // namespace Corvus
 
 #endif // !CORVUS_SOURCE_PLATFORM_OPENGL_OPENGLVERTEXBUFFER_H
