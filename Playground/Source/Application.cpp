@@ -20,8 +20,15 @@ namespace Corvus
             Renderer::EnableDepthTest();
             Renderer::SetClearColor({0.6f, 0.8f, 1.0f, 1.0f});
 
-            float const Vertices[] = {+0.0f, -0.2f, -0.2f, 1.0f, 0.0f, 0.0f, +0.0f, -0.2f, +0.2f, 0.0f, 1.0f, 0.0f,
-                                      +0.0f, +0.2f, +0.2f, 0.0f, 0.0f, 1.0f, +0.0f, +0.2f, -0.2f, 1.0f, 1.0f, 0.0f};
+            // clang-format off
+            float const Vertices[] = {
+                // Position             // Color
+                +0.0f, -0.2f, -0.2f,    1.0f, 0.0f, 0.0f,
+                +0.0f, -0.2f, +0.2f,    0.0f, 1.0f, 0.0f,
+                +0.0f, +0.2f, +0.2f,    0.0f, 0.0f, 1.0f,
+                +0.0f, +0.2f, -0.2f,    1.0f, 1.0f, 0.0f
+            };
+            // clang-format on
 
             UInt32 const Indices[] = {0, 1, 2, 0, 2, 3};
 
