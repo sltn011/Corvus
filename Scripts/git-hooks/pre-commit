@@ -1,0 +1,8 @@
+#!/bin/sh
+# This script must be placed in .git/hooks/ folder
+echo "Pre-commit code formatting running..."
+for file in $(git diff --staged --name-only | grep -i -E '\.(cpp|h)$'); do
+    echo ${file}
+    clang-format -i ${file}
+    git add ${file}
+done
