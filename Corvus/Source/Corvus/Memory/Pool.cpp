@@ -21,8 +21,7 @@ namespace Corvus
         m_PoolInfo.IDTable      = PoolBegin;
         m_PoolInfo.IDTablePages = IDTablePages;
         m_PoolInfo.Data         = PoolBegin + m_PoolInfo.IDTablePages;
-        ;
-        m_PoolInfo.SlotsUsed = 0;
+        m_PoolInfo.SlotsUsed    = 0;
 
         CORVUS_CORE_TRACE(
             "Pool ({}:{}) of {}*{} bytes created",
@@ -106,7 +105,7 @@ namespace Corvus
             CORVUS_CORE_WARN("NewSize passed to Pool::IncreaseIndexSize must be bigger than current!");
             return;
         }
-        else if (CurrentSize < NewSize)
+        else
         {
             AddSlotsToIndex(Index, NewSize);
         }
@@ -220,6 +219,27 @@ namespace Corvus
         return DataBegin <= Index.m_Data && Index.m_Data < DataEnd;
     }
 
+    Pool *Pool::FindOwningPool(PoolIndex const &Index)
+    {
+        Pool *CurrentPool = this;
+        while (CurrentPool->m_Chain.m_ParentPool) // Go to first pool in chain
+        {
+            CurrentPool = CurrentPool->m_Chain.m_ParentPool;
+        }
+
+        do
+        {
+            if (CurrentPool->IsIndexFromCurrentPool(Index))
+            {
+                return CurrentPool;
+            }
+
+            CurrentPool = CurrentPool->m_Chain.m_Next.get();
+        } while (CurrentPool);
+
+        return nullptr;
+    }
+
     bool Pool::IsChildPoolDeletable() const
     {
         return m_Chain.m_Next && m_Chain.m_Next->m_PoolInfo.SlotsUsed == 0 &&
@@ -286,7 +306,13 @@ namespace Corvus
         }
         else
         {
-            MoveIndexResize(Index, NewSize, *this);
+            Pool *OwningPool = FindOwningPool(Index);
+            if (!OwningPool)
+            {
+                CORVUS_CORE_ERROR("PoolIndex passed to not-owning Pool!");
+                return;
+            }
+            MoveIndexResize(Index, NewSize, *OwningPool);
         }
     }
 

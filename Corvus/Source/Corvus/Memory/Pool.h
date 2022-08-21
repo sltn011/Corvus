@@ -42,7 +42,8 @@ namespace Corvus
         void SetSlotsAsUsed(SizeT TablePageID, UInt8 PageSlotID, SizeT BlockSize);
         void SetSlotsAsFree(SizeT TablePageID, UInt8 PageSlotID, SizeT BlockSize);
 
-        bool IsIndexFromCurrentPool(PoolIndex const &Index) const;
+        bool  IsIndexFromCurrentPool(PoolIndex const &Index) const;
+        Pool *FindOwningPool(PoolIndex const &Index);
 
         bool IsChildPoolDeletable() const;
 
