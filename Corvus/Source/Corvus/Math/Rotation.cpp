@@ -15,14 +15,40 @@ namespace Corvus
     {
     }
 
-    Mat4 Rotation::GetRotationMatrix()
+    Mat4 Rotation::GetRotationMatrix() const
     {
-        if (m_bIsDirty)
-        {
-            RecalculateRotationMatrix();
-        }
+        Quat Q = Quaternion::Unit;
 
-        return m_RotationMatrix;
+        switch (m_RotationOrder)
+        {
+        case Corvus::RotationOrder::XYZ:
+            Q = Quaternion::FromEulerXYZ(m_Degrees);
+            return Quaternion::ToMat4(Q);
+
+        case Corvus::RotationOrder::XZY:
+            Q = Quaternion::FromEulerXZY(m_Degrees);
+            return Quaternion::ToMat4(Q);
+
+        case Corvus::RotationOrder::YXZ:
+            Q = Quaternion::FromEulerYXZ(m_Degrees);
+            return Quaternion::ToMat4(Q);
+
+        case Corvus::RotationOrder::YZX:
+            Q = Quaternion::FromEulerYZX(m_Degrees);
+            return Quaternion::ToMat4(Q);
+
+        case Corvus::RotationOrder::ZXY:
+            Q = Quaternion::FromEulerZXY(m_Degrees);
+            return Quaternion::ToMat4(Q);
+
+        case Corvus::RotationOrder::ZYX:
+            Q = Quaternion::FromEulerZYX(m_Degrees);
+            return Quaternion::ToMat4(Q);
+
+        default:
+            CORVUS_CORE_ERROR("Unexpected Rotation Order value!");
+            return Mat4(1.0f);
+        }
     }
 
     Mat4 Rotation::GetRollMatrix() const
@@ -43,19 +69,16 @@ namespace Corvus
     void Rotation::AddRollDegrees(float RollDegree)
     {
         m_Degrees.x += RollDegree;
-        m_bIsDirty = true;
     }
 
     void Rotation::AddYawDegrees(float YawDegree)
     {
         m_Degrees.y += YawDegree;
-        m_bIsDirty = true;
     }
 
     void Rotation::AddPitchDegrees(float PitchDegree)
     {
         m_Degrees.z += PitchDegree;
-        m_bIsDirty = true;
     }
 
     float Rotation::GetRollDegrees() const
@@ -76,19 +99,16 @@ namespace Corvus
     void Rotation::SetRollDegrees(float RollDegree)
     {
         m_Degrees.x = RollDegree;
-        m_bIsDirty  = true;
     }
 
     void Rotation::SetYawDegrees(float YawDegree)
     {
         m_Degrees.y = YawDegree;
-        m_bIsDirty  = true;
     }
 
     void Rotation::SetPitchDegrees(float PitchDegree)
     {
         m_Degrees.z = PitchDegree;
-        m_bIsDirty  = true;
     }
 
     RotationOrder Rotation::GetRotationOrder() const
@@ -99,51 +119,6 @@ namespace Corvus
     void Rotation::SetRotationOrder(RotationOrder Order)
     {
         m_RotationOrder = Order;
-        m_bIsDirty      = true;
-    }
-
-    void Rotation::RecalculateRotationMatrix()
-    {
-        Quat Q = Quaternion::Unit;
-
-        switch (m_RotationOrder)
-        {
-        case Corvus::RotationOrder::XYZ:
-            Q                = Quaternion::FromEulerXYZ(m_Degrees);
-            m_RotationMatrix = Quaternion::ToMat4(Q);
-            break;
-
-        case Corvus::RotationOrder::XZY:
-            Q                = Quaternion::FromEulerXZY(m_Degrees);
-            m_RotationMatrix = Quaternion::ToMat4(Q);
-            break;
-
-        case Corvus::RotationOrder::YXZ:
-            Q                = Quaternion::FromEulerYXZ(m_Degrees);
-            m_RotationMatrix = Quaternion::ToMat4(Q);
-            break;
-
-        case Corvus::RotationOrder::YZX:
-            Q                = Quaternion::FromEulerYZX(m_Degrees);
-            m_RotationMatrix = Quaternion::ToMat4(Q);
-            break;
-
-        case Corvus::RotationOrder::ZXY:
-            Q                = Quaternion::FromEulerZXY(m_Degrees);
-            m_RotationMatrix = Quaternion::ToMat4(Q);
-            break;
-
-        case Corvus::RotationOrder::ZYX:
-            Q                = Quaternion::FromEulerZYX(m_Degrees);
-            m_RotationMatrix = Quaternion::ToMat4(Q);
-            break;
-
-        default:
-            CORVUS_CORE_ERROR("Unexpected Rotation Order value!");
-            break;
-        }
-
-        m_bIsDirty = false;
     }
 
 } // namespace Corvus

@@ -22,14 +22,21 @@ namespace Corvus
         Camera::MoveDirection const Direction, TimeDelta const ElapsedTime
     )
     {
-        Transform   CameraTransform = m_Owner->GetTransform();
-        float const Seconds         = ElapsedTime.Seconds();
+        if (!m_Owner)
+        {
+            CORVUS_CORE_ERROR("No owner set for CameraMovementComponent!");
+            return;
+        }
 
-        Vec3 Position = CameraTransform.GetPosition();
+        float const Seconds = ElapsedTime.Seconds();
 
-        Vec3 const ForwardVector = m_Owner->GetForwardVector();
-        Vec3 const UpVector      = m_Owner->GetUpVector();
-        Vec3 const RightVector   = m_Owner->GetRightVector();
+        Mat3 const FURVectors    = m_Owner->GetFURVectors();
+        Vec3 const ForwardVector = FURVectors[0];
+        Vec3 const UpVector      = FURVectors[1];
+        Vec3 const RightVector   = FURVectors[2];
+
+        Transform CameraTransform = m_Owner->GetTransform();
+        Vec3      Position        = CameraTransform.GetPosition();
 
         switch (Direction)
         {

@@ -53,7 +53,14 @@ namespace Corvus
             return m_Data.Get()[Index];
         }
 
+        T &At(SizeT Index) const
+        {
+            CORVUS_CORE_ASSERT(Index < m_Size);
+            return m_Data.Get()[Index];
+        }
+
         T &operator[](SizeT Index) { return At(Index); }
+        T &operator[](SizeT Index) const { return At(Index); }
 
         SizeT GetSize() const { return m_Size; }
 

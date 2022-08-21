@@ -32,9 +32,10 @@ namespace Corvus
         Transform GetTransform() const;
         Rotation  GetRotation() const;
 
-        Vec3 GetForwardVector();
-        Vec3 GetUpVector();
-        Vec3 GetRightVector();
+        Vec3 GetForwardVector() const;
+        Vec3 GetUpVector() const;
+        Vec3 GetRightVector() const;
+        Mat3 GetFURVectors() const;
 
         void SetMoveSpeed(float CameraMoveSpeed);
         void SetTransform(Transform const &Transform);

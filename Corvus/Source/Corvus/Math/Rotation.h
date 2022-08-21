@@ -6,7 +6,7 @@
 
 namespace Corvus
 {
-    enum class RotationOrder
+    enum class RotationOrder : UInt8
     {
         XYZ,
         XZY,
@@ -22,7 +22,7 @@ namespace Corvus
         Rotation(RotationOrder Order = RotationOrder::YXZ);
         Rotation(RotationOrder Order, Vec3 const &Degrees);
 
-        Mat4 GetRotationMatrix();
+        Mat4 GetRotationMatrix() const;
         Mat4 GetRollMatrix() const;
         Mat4 GetYawMatrix() const;
         Mat4 GetPitchMatrix() const;
@@ -43,13 +43,8 @@ namespace Corvus
         void          SetRotationOrder(RotationOrder Order);
 
     private:
-        void RecalculateRotationMatrix();
-
         Vec3          m_Degrees; // Roll, Yaw, Pitch
         RotationOrder m_RotationOrder;
-
-        Mat4 m_RotationMatrix = Mat4(1.0f);
-        bool m_bIsDirty       = true;
     };
 
 } // namespace Corvus

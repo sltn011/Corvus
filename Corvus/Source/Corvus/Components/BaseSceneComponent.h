@@ -16,7 +16,7 @@ namespace Corvus
     public:
         BaseSceneComponent(Entity *Owner, Transform const &ComponentTransform);
 
-        Mat4 GetTransformMatrix();
+        Mat4 GetTransformMatrix() const;
 
         Transform GetTransform() const;
         void      SetTransform(Transform const &Transform);
@@ -29,11 +29,11 @@ namespace Corvus
         void                ResetParent();
 
     private:
-        void RecalculateTransformMatrix();
+        void RecalculateTransformMatrix() const;
 
-        Transform m_Transform;
-        Mat4      m_TransformMatrix = Mat4(1.0f);
-        bool      m_bIsDirty        = true;
+        Transform    m_Transform;
+        mutable Mat4 m_TransformMatrix = Mat4(1.0f);
+        mutable bool m_bIsDirty        = true;
 
         Array<BaseSceneComponent *> m_Children;
         BaseSceneComponent         *m_Parent = nullptr;

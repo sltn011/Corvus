@@ -10,7 +10,7 @@ namespace Corvus
     {
     }
 
-    Mat4 BaseSceneComponent::GetTransformMatrix()
+    Mat4 BaseSceneComponent::GetTransformMatrix() const
     {
         if (m_bIsDirty)
         {
@@ -60,7 +60,7 @@ namespace Corvus
         SetParent(nullptr);
     }
 
-    void BaseSceneComponent::RecalculateTransformMatrix()
+    void BaseSceneComponent::RecalculateTransformMatrix() const
     {
         if (m_Parent)
         {

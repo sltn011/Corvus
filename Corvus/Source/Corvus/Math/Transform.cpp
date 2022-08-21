@@ -26,14 +26,9 @@ namespace Corvus
     {
     }
 
-    Mat4 Transform::GetTransformMatrix()
+    Mat4 Transform::GetTransformMatrix() const
     {
-        if (m_bIsDirty)
-        {
-            RecalculateMatrix();
-        }
-
-        return m_TransformMatrix;
+        return GetTranslationMatrix() * GetRotationMatrix() * GetScaleMatrix();
     }
 
     Mat4 Transform::GetTranslationMatrix() const
@@ -46,7 +41,7 @@ namespace Corvus
         return Matrix::Scale(Mat4(1.0f), m_Scale);
     }
 
-    Mat4 Transform::GetRotationMatrix()
+    Mat4 Transform::GetRotationMatrix() const
     {
         return m_Rotation.GetRotationMatrix();
     }
@@ -59,7 +54,6 @@ namespace Corvus
     void Transform::SetPosition(Vec3 const &Position)
     {
         m_Position = Position;
-        m_bIsDirty = true;
     }
 
     Vec3 Transform::GetScale() const
@@ -69,8 +63,7 @@ namespace Corvus
 
     void Transform::SetScale(Vec3 const &Scale)
     {
-        m_Scale    = Scale;
-        m_bIsDirty = true;
+        m_Scale = Scale;
     }
 
     Rotation Transform::GetRotation() const
@@ -81,12 +74,6 @@ namespace Corvus
     void Transform::SetRotation(Rotation const &Rotation)
     {
         m_Rotation = Rotation;
-        m_bIsDirty = true;
     }
 
-    void Transform::RecalculateMatrix()
-    {
-        m_TransformMatrix = GetTranslationMatrix() * GetRotationMatrix() * GetScaleMatrix();
-        m_bIsDirty        = false;
-    }
 } // namespace Corvus

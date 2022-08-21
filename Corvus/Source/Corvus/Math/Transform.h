@@ -16,10 +16,10 @@ namespace Corvus
         Transform(Vec3 const &Position, Rotation const &Rotation);
         Transform(Vec3 const &Position, Vec3 const &Scale, Rotation const &Rotation);
 
-        Mat4 GetTransformMatrix();
+        Mat4 GetTransformMatrix() const;
         Mat4 GetTranslationMatrix() const;
         Mat4 GetScaleMatrix() const;
-        Mat4 GetRotationMatrix();
+        Mat4 GetRotationMatrix() const;
 
         Vec3 GetPosition() const;
         void SetPosition(Vec3 const &Position);
@@ -31,15 +31,11 @@ namespace Corvus
         void     SetRotation(Rotation const &Rotation);
 
     private:
-        void RecalculateMatrix();
-
-        Mat4 m_TransformMatrix = Mat4(1.0f);
-        bool m_bIsDirty        = true;
-
         Vec3     m_Position;
         Rotation m_Rotation;
         Vec3     m_Scale;
     };
+
 } // namespace Corvus
 
 #endif //! CORVUS_SOURCE_CORVUS_MATH_TRANSFORM_H
