@@ -28,11 +28,11 @@ namespace Corvus
         CORVUS_CORE_INFO("AppPools successfully initialized!");
     }
 
-    PoolID AppPools::CreateGeneralPool(PoolDataFormat DataFormat)
+    PoolID AppPools::CreateGeneralPool(PoolDataFormat const DataFormat)
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
-        PoolID ID = PoolID{PoolType::General, DataFormat.ElementSize};
+        PoolID const ID = PoolID{PoolType::General, DataFormat.ElementSize};
         if (s_GeneralPools.find(ID.GetIDInGroup()) == s_GeneralPools.end())
         {
             s_GeneralPools.emplace(ID.GetIDInGroup(), Pool{ID, DataFormat});
@@ -40,11 +40,11 @@ namespace Corvus
         return ID;
     }
 
-    PoolID AppPools::CreateComponentPool(PoolDataFormat DataFormat)
+    PoolID AppPools::CreateComponentPool(PoolDataFormat const DataFormat)
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
-        PoolID ID = PoolID{PoolType::Component, DataFormat.ElementSize};
+        PoolID const ID = PoolID{PoolType::Component, DataFormat.ElementSize};
         if (s_ComponentPools.find(ID.GetIDInGroup()) == s_ComponentPools.end())
         {
             s_ComponentPools.emplace(ID.GetIDInGroup(), Pool{ID, DataFormat});
@@ -52,7 +52,7 @@ namespace Corvus
         return ID;
     }
 
-    Pool &AppPools::GetPool(PoolID ID)
+    Pool &AppPools::GetPool(PoolID const ID)
     {
         switch (ID.GetType())
         {
@@ -67,7 +67,7 @@ namespace Corvus
         }
     }
 
-    Pool &AppPools::GetGeneralPool(SizeT PoolIDInGroup)
+    Pool &AppPools::GetGeneralPool(SizeT const PoolIDInGroup)
     {
         CORVUS_CORE_ASSERT(PoolIDInGroup != 0);
 
@@ -83,7 +83,7 @@ namespace Corvus
         return It->second;
     }
 
-    Pool &AppPools::GetComponentPool(SizeT PoolIDInGroup)
+    Pool &AppPools::GetComponentPool(SizeT const PoolIDInGroup)
     {
         CORVUS_CORE_ASSERT(PoolIDInGroup != 0);
 
@@ -99,17 +99,17 @@ namespace Corvus
         return It->second;
     }
 
-    PoolIndex AppPools::Request(PoolID TargetPoolID, SizeT NumElements)
+    PoolIndex AppPools::Request(PoolID const TargetPoolID, SizeT const NumElements)
     {
         return GetPool(TargetPoolID).Request(NumElements);
     }
 
-    PoolIndex AppPools::RequestGeneral(SizeT PoolIDInGroup, SizeT NumElements)
+    PoolIndex AppPools::RequestGeneral(SizeT const PoolIDInGroup, SizeT const NumElements)
     {
         return GetGeneralPool(PoolIDInGroup).Request(NumElements);
     }
 
-    PoolIndex AppPools::RequestComponent(SizeT PoolIDInGroup, SizeT NumElements)
+    PoolIndex AppPools::RequestComponent(SizeT const PoolIDInGroup, SizeT const NumElements)
     {
         return GetComponentPool(PoolIDInGroup).Request(NumElements);
     }

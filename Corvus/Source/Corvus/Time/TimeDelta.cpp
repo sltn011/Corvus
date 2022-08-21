@@ -5,7 +5,7 @@
 namespace Corvus
 {
 
-    TimeDelta::TimeDelta(float Seconds) : m_DeltaSeconds{Seconds}
+    TimeDelta::TimeDelta(float const Seconds) : m_DeltaSeconds{Seconds}
     {
     }
 

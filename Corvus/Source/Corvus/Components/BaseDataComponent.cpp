@@ -5,11 +5,11 @@
 namespace Corvus
 {
 
-    BaseDataComponent::BaseDataComponent(Entity *Owner) : m_Owner{Owner}
+    BaseDataComponent::BaseDataComponent(Entity *const Owner) : m_Owner{Owner}
     {
     }
 
-    Entity *BaseDataComponent::GetOwner()
+    Entity *BaseDataComponent::GetOwner() const
     {
         return m_Owner;
     }

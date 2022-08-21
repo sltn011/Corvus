@@ -5,7 +5,7 @@
 namespace Corvus::Quaternion
 {
 
-    Quat FromEuler(Vec3 const &Degrees, RotationOrder Order)
+    Quat FromEuler(Vec3 const &Degrees, RotationOrder const Order)
     {
         switch (Order)
         {

@@ -6,7 +6,8 @@
 
 namespace Corvus
 {
-    VertexBufferLayout::VertexBufferLayout(std::initializer_list<BufferLayoutElement> InitList) : m_Layout{InitList}
+    VertexBufferLayout::VertexBufferLayout(std::initializer_list<BufferLayoutElement> const InitList)
+        : m_Layout{InitList}
     {
     }
 
@@ -25,19 +26,19 @@ namespace Corvus
         return m_Stride;
     }
 
-    BufferLayoutElement &VertexBufferLayout::At(UInt32 Index)
+    BufferLayoutElement &VertexBufferLayout::At(UInt32 const Index)
     {
         CORVUS_CORE_ASSERT(Index < Size());
         m_StrideDirty = true; // In case buffer layout will be changed through element reference
         return m_Layout.at(Index);
     }
 
-    BufferLayoutElement &VertexBufferLayout::operator[](UInt32 Index)
+    BufferLayoutElement &VertexBufferLayout::operator[](UInt32 const Index)
     {
         return At(Index);
     }
 
-    void VertexBufferLayout::InsertAt(BufferLayoutElement const &Element, UInt32 Index)
+    void VertexBufferLayout::InsertAt(BufferLayoutElement const &Element, UInt32 const Index)
     {
         CORVUS_CORE_ASSERT(Index < Size());
         m_Layout[Index] = Element;
@@ -56,7 +57,7 @@ namespace Corvus
         m_StrideDirty = true;
     }
 
-    void VertexBufferLayout::RemoveAt(UInt32 Index)
+    void VertexBufferLayout::RemoveAt(UInt32 const Index)
     {
         CORVUS_CORE_ASSERT(Index < Size());
         m_Layout.erase(Begin() + Index);

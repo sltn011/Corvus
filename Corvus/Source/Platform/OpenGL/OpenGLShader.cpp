@@ -38,11 +38,11 @@ namespace Corvus
             }
         }
 
-        String VertexCode   = ShadersCode[static_cast<UInt8>(ShaderType::Vertex)].str();
-        String FragmentCode = ShadersCode[static_cast<UInt8>(ShaderType::Fragment)].str();
+        String const VertexCode   = ShadersCode[static_cast<UInt8>(ShaderType::Vertex)].str();
+        String const FragmentCode = ShadersCode[static_cast<UInt8>(ShaderType::Fragment)].str();
 
-        GLuint VertexShader   = CreateShader(GL_VERTEX_SHADER, VertexCode);
-        GLuint FragmentShader = CreateShader(GL_FRAGMENT_SHADER, FragmentCode);
+        GLuint const VertexShader   = CreateShader(GL_VERTEX_SHADER, VertexCode);
+        GLuint const FragmentShader = CreateShader(GL_FRAGMENT_SHADER, FragmentCode);
 
         m_ID = glCreateProgram();
         glAttachShader(m_ID, VertexShader);
@@ -88,25 +88,25 @@ namespace Corvus
         glUseProgram(0);
     }
 
-    void OpenGLShader::SetBool(String const &Name, bool Value)
+    void OpenGLShader::SetBool(String const &Name, bool const Value)
     {
         GLint const Location = GetUniformLocation(Name);
         glUniform1i(Location, static_cast<Int32>(Value));
     }
 
-    void OpenGLShader::SetInt32(String const &Name, Int32 Value)
+    void OpenGLShader::SetInt32(String const &Name, Int32 const Value)
     {
         GLint const Location = GetUniformLocation(Name);
         glUniform1i(Location, Value);
     }
 
-    void OpenGLShader::SetUInt32(String const &Name, UInt32 Value)
+    void OpenGLShader::SetUInt32(String const &Name, UInt32 const Value)
     {
         GLint const Location = GetUniformLocation(Name);
         glUniform1i(Location, Value);
     }
 
-    void OpenGLShader::SetFloat(String const &Name, float Value)
+    void OpenGLShader::SetFloat(String const &Name, float const Value)
     {
         GLint const Location = GetUniformLocation(Name);
         glUniform1f(Location, Value);
@@ -142,7 +142,7 @@ namespace Corvus
         glUniformMatrix4fv(Location, 1, false, Matrix::ValuePtr(Value));
     }
 
-    GLuint OpenGLShader::CreateShader(GLenum ShaderType, String const &SourceCode) const
+    GLuint OpenGLShader::CreateShader(GLenum const ShaderType, String const &SourceCode) const
     {
         GLuint const Shader = glCreateShader(ShaderType);
         CORVUS_CORE_ASSERT_FMT(Shader != 0, "Failed to create OpenGL Shader!");
@@ -157,7 +157,7 @@ namespace Corvus
         return Shader;
     }
 
-    void OpenGLShader::AssertShaderCompiledSuccessfully(GLuint Shader) const
+    void OpenGLShader::AssertShaderCompiledSuccessfully(GLuint const Shader) const
     {
         GLint CompileStatus;
         glGetShaderiv(Shader, GL_COMPILE_STATUS, &CompileStatus);

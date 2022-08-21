@@ -7,13 +7,13 @@
 namespace Corvus
 {
 
-    CameraMovementComponent::CameraMovementComponent(Camera *Owner, float MovementSpeed)
+    CameraMovementComponent::CameraMovementComponent(Camera *const Owner, float const MovementSpeed)
         : m_Owner{Owner}, m_MoveSpeed{MovementSpeed}
     {
         CORVUS_CORE_ASSERT(m_Owner);
     }
 
-    void CameraMovementComponent::SetMovementSpeed(float MovementSpeed)
+    void CameraMovementComponent::SetMovementSpeed(float const MovementSpeed)
     {
         m_MoveSpeed = MovementSpeed;
     }
@@ -73,7 +73,7 @@ namespace Corvus
     }
 
     void CameraMovementComponent::ProcessRotationInput(
-        float XOffset, float YOffset, float Sensitivity, TimeDelta const ElapsedTime
+        float XOffset, float YOffset, float const Sensitivity, TimeDelta const ElapsedTime
     )
     {
         static bool firstTime = true;

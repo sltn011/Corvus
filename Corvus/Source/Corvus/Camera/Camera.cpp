@@ -22,7 +22,7 @@ namespace Corvus
     {
     }
 
-    void Camera::SwitchPlayerControl(bool IsPlayerControlled, float CameraMoveSpeed)
+    void Camera::SwitchPlayerControl(bool const IsPlayerControlled, float const CameraMoveSpeed)
     {
         m_IsPlayerControlled = IsPlayerControlled;
         if (m_IsPlayerControlled && !m_MovementComponent)
@@ -31,7 +31,7 @@ namespace Corvus
         }
     }
 
-    void Camera::ProcessMovementInput(MoveDirection Direction, TimeDelta ElapsedTime)
+    void Camera::ProcessMovementInput(MoveDirection const Direction, TimeDelta const ElapsedTime)
     {
         if (m_IsPlayerControlled)
         {
@@ -39,7 +39,9 @@ namespace Corvus
         }
     }
 
-    void Camera::ProcessRotationInput(float XOffset, float YOffset, float Sensitivity, TimeDelta ElapsedTime)
+    void Camera::ProcessRotationInput(
+        float const XOffset, float const YOffset, float const Sensitivity, TimeDelta const ElapsedTime
+    )
     {
         if (m_IsPlayerControlled)
         {
@@ -47,7 +49,7 @@ namespace Corvus
         }
     }
 
-    void Camera::SetMoveSpeed(float CameraMoveSpeed)
+    void Camera::SetMoveSpeed(float const CameraMoveSpeed)
     {
         if (m_MovementComponent)
         {
@@ -103,7 +105,7 @@ namespace Corvus
         RecalculateProjectionViewMatrix();
     }
 
-    void Camera::SetViewportSize(float Width, float Height)
+    void Camera::SetViewportSize(float const Width, float const Height)
     {
         CORVUS_CORE_ASSERT(Width > 0 && Height > 0);
         m_Aspect = Width / Height;
@@ -111,7 +113,7 @@ namespace Corvus
         RecalculateProjectionViewMatrix();
     }
 
-    void Camera::SetClipPlanes(float NearClip, float FarClip)
+    void Camera::SetClipPlanes(float const NearClip, float const FarClip)
     {
         m_NearClip = NearClip;
         m_FarClip  = FarClip;

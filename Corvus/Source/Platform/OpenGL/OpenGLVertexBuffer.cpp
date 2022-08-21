@@ -4,7 +4,9 @@
 
 namespace Corvus
 {
-    OpenGLVertexBuffer::OpenGLVertexBuffer(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout)
+    OpenGLVertexBuffer::OpenGLVertexBuffer(
+        void const *const Data, UInt32 const NumVertices, VertexBufferLayout const &Layout
+    )
     {
         glCreateBuffers(1, &m_VBO);
         SetData(Data, NumVertices, Layout);
@@ -47,20 +49,20 @@ namespace Corvus
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     }
 
-    void OpenGLVertexBuffer::SetData(void const *Data, UInt32 NumVertices)
+    void OpenGLVertexBuffer::SetData(void const *Data, UInt32 const NumVertices)
     {
         m_NumVertices           = NumVertices;
         UInt32 const VertexSize = m_Layout.Stride();
         glNamedBufferData(m_VBO, static_cast<GLsizei>(VertexSize * m_NumVertices), Data, GL_STATIC_DRAW);
     }
 
-    void OpenGLVertexBuffer::SetData(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout)
+    void OpenGLVertexBuffer::SetData(void const *const Data, UInt32 const NumVertices, VertexBufferLayout const &Layout)
     {
         m_Layout = Layout;
         SetData(Data, NumVertices);
     }
 
-    GLenum OpenGLVertexBuffer::BufferLayoutTypeToGLType(BufferDataType Type)
+    GLenum OpenGLVertexBuffer::BufferLayoutTypeToGLType(BufferDataType const Type)
     {
         switch (Type)
         {

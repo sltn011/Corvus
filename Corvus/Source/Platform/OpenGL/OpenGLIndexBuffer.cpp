@@ -4,7 +4,7 @@
 
 namespace Corvus
 {
-    OpenGLIndexBuffer::OpenGLIndexBuffer(UInt32 const *Data, UInt32 NumIndices)
+    OpenGLIndexBuffer::OpenGLIndexBuffer(UInt32 const *const Data, UInt32 const NumIndices)
     {
         glCreateBuffers(1, &m_EBO);
         SetData(Data, NumIndices);
@@ -45,7 +45,7 @@ namespace Corvus
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    void OpenGLIndexBuffer::SetData(UInt32 const *Data, UInt32 NumIndices)
+    void OpenGLIndexBuffer::SetData(UInt32 const *Data, UInt32 const NumIndices)
     {
         Bind(); // GL_ELEMENT_ARRAY_BUFFER should stay binded inside vertex array
 

@@ -7,11 +7,11 @@
 namespace Corvus
 {
 
-    Rotation::Rotation(RotationOrder Order) : m_Degrees{Vector::ZeroVec}, m_RotationOrder{Order}
+    Rotation::Rotation(RotationOrder const Order) : m_Degrees{Vector::ZeroVec}, m_RotationOrder{Order}
     {
     }
 
-    Rotation::Rotation(RotationOrder Order, Vec3 const &Degrees) : m_Degrees{Degrees}, m_RotationOrder{Order}
+    Rotation::Rotation(RotationOrder const Order, Vec3 const &Degrees) : m_Degrees{Degrees}, m_RotationOrder{Order}
     {
     }
 
@@ -66,17 +66,17 @@ namespace Corvus
         return Quaternion::ToMat4(Quaternion::AngleAxis(m_Degrees.z, Vector::Right));
     }
 
-    void Rotation::AddRollDegrees(float RollDegree)
+    void Rotation::AddRollDegrees(float const RollDegree)
     {
         m_Degrees.x += RollDegree;
     }
 
-    void Rotation::AddYawDegrees(float YawDegree)
+    void Rotation::AddYawDegrees(float const YawDegree)
     {
         m_Degrees.y += YawDegree;
     }
 
-    void Rotation::AddPitchDegrees(float PitchDegree)
+    void Rotation::AddPitchDegrees(float const PitchDegree)
     {
         m_Degrees.z += PitchDegree;
     }
@@ -96,17 +96,17 @@ namespace Corvus
         return m_Degrees.z;
     }
 
-    void Rotation::SetRollDegrees(float RollDegree)
+    void Rotation::SetRollDegrees(float const RollDegree)
     {
         m_Degrees.x = RollDegree;
     }
 
-    void Rotation::SetYawDegrees(float YawDegree)
+    void Rotation::SetYawDegrees(float const YawDegree)
     {
         m_Degrees.y = YawDegree;
     }
 
-    void Rotation::SetPitchDegrees(float PitchDegree)
+    void Rotation::SetPitchDegrees(float const PitchDegree)
     {
         m_Degrees.z = PitchDegree;
     }
@@ -116,7 +116,7 @@ namespace Corvus
         return m_RotationOrder;
     }
 
-    void Rotation::SetRotationOrder(RotationOrder Order)
+    void Rotation::SetRotationOrder(RotationOrder const Order)
     {
         m_RotationOrder = Order;
     }

@@ -10,11 +10,11 @@
 extern Corvus::Application *Corvus::CreateApplication();
 extern bool                 Corvus::DestroyApplication(Corvus::Application *App);
 
-int main(int argc, char **argv)
+int main(int const argc, char **const argv)
 {
     Corvus::Log::Init();
 
-    Corvus::Application *App = Corvus::CreateApplication();
+    Corvus::Application *const App = Corvus::CreateApplication();
     if (!App)
     {
         CORVUS_CORE_NO_ENTRY_FMT("Application was not created properly!");

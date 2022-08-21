@@ -5,7 +5,7 @@
 namespace Corvus
 {
 
-    BaseSceneComponent::BaseSceneComponent(Entity *Owner, Transform const &ComponentTransform)
+    BaseSceneComponent::BaseSceneComponent(Entity *const Owner, Transform const &ComponentTransform)
         : BaseDataComponent{Owner}, m_Transform{ComponentTransform}
     {
     }

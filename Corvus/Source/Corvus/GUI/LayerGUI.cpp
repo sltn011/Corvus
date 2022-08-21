@@ -8,7 +8,7 @@ namespace Corvus
 {
     UInt8 LayerGUI::s_NumImGUIInstances = 0;
 
-    LayerGUI::LayerGUI(String LayerName, bool bEnabled) : Super{LayerName, bEnabled}
+    LayerGUI::LayerGUI(String LayerName, bool const bEnabled) : Super{std::move(LayerName), bEnabled}
     {
     }
 

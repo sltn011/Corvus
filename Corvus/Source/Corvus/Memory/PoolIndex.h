@@ -14,7 +14,7 @@ namespace Corvus
     private:
         friend class Pool;
 
-        PoolIndex(PoolID ID, SizeT SlotID, UInt8 *const Data, SizeT NumElements);
+        PoolIndex(PoolID ID, SizeT SlotID, UInt8 *Data, SizeT NumElements);
 
     public:
         PoolIndex() = default;

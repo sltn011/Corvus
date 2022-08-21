@@ -8,7 +8,7 @@
 namespace Corvus
 {
 
-    PoolIndex::PoolIndex(PoolID ID, SizeT SlotID, UInt8 *const Data, SizeT NumElements)
+    PoolIndex::PoolIndex(PoolID const ID, SizeT const SlotID, UInt8 *const Data, SizeT const NumElements)
         : m_PoolID{ID}, m_SlotID{SlotID}, m_Data{Data}, m_NumElements{NumElements}
     {
     }
@@ -63,7 +63,7 @@ namespace Corvus
         return m_NumElements;
     }
 
-    void PoolIndex::IncreaseSize(SizeT NewSize)
+    void PoolIndex::IncreaseSize(SizeT const NewSize)
     {
         if (IsValid())
         {

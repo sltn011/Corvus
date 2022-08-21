@@ -23,7 +23,7 @@ namespace Corvus
     {
     }
 
-    void PerspectiveCamera::SetFoVAngle(float FoVDegrees)
+    void PerspectiveCamera::SetFoVAngle(float const FoVDegrees)
     {
         CORVUS_CORE_ASSERT(FoVDegrees > 0);
         m_FoVAngleDegrees = FoVDegrees;

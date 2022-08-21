@@ -116,7 +116,7 @@ namespace Corvus
         glfwSetWindowShouldClose(m_Window, true);
     }
 
-    void WindowsWindow::SetVSyncEnabled(bool bValue)
+    void WindowsWindow::SetVSyncEnabled(bool const bValue)
     {
         if (!m_bIsInitialized)
         {
@@ -129,7 +129,7 @@ namespace Corvus
         CORVUS_CORE_TRACE("Window \"{0}\" VSync {1}", m_WindowData.WindowName, bValue ? "On" : "Off");
     }
 
-    void WindowsWindow::SetFullScreen(bool bValue)
+    void WindowsWindow::SetFullScreen(bool const bValue)
     {
         if (!m_bIsInitialized)
         {
@@ -155,7 +155,7 @@ namespace Corvus
                 m_Window, nullptr, 0, 0, m_WindowData.WindowWidth, m_WindowData.WindowHeight, GLFW_DONT_CARE
             );
 
-            IVec2 MonitorTopLeft, MonitorBottomRight;
+            IVec2 MonitorTopLeft{}, MonitorBottomRight{};
             glfwGetMonitorWorkarea(
                 glfwGetPrimaryMonitor(),
                 &MonitorTopLeft.x,
@@ -182,7 +182,7 @@ namespace Corvus
         return m_Window;
     }
 
-    void WindowsWindow::WindowErrorCallback(int ErrorCode, char const *Description)
+    void WindowsWindow::WindowErrorCallback(int const ErrorCode, char const *const Description)
     {
         CORVUS_CORE_ERROR("GLFW Error - Code: {0}, Description: {1:s}", ErrorCode, Description);
     }
@@ -205,7 +205,7 @@ namespace Corvus
     {
         glfwSetWindowSizeCallback(
             m_Window,
-            [](GLFWwindow *Caller, int NewWidth, int NewHeight)
+            [](GLFWwindow *const Caller, int const NewWidth, int const NewHeight)
             {
                 Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
                 WindowResizeEvent   Event{NewWidth, NewHeight};
@@ -215,7 +215,7 @@ namespace Corvus
 
         glfwSetWindowCloseCallback(
             m_Window,
-            [](GLFWwindow *Caller)
+            [](GLFWwindow *const Caller)
             {
                 Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
                 WindowCloseEvent    Event{};
@@ -225,7 +225,8 @@ namespace Corvus
 
         glfwSetKeyCallback(
             m_Window,
-            [](GLFWwindow *Caller, int RawKey, int RawScancode, int RawAction, int RawMods)
+            [](GLFWwindow *const Caller, int const RawKey, int const RawScancode, int const RawAction, int const RawMods
+            )
             {
                 Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
 
@@ -256,7 +257,7 @@ namespace Corvus
 
         glfwSetMouseButtonCallback(
             m_Window,
-            [](GLFWwindow *Caller, int RawButton, int RawAction, int RawMods)
+            [](GLFWwindow *const Caller, int const RawButton, int const RawAction, int const RawMods)
             {
                 Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
 
@@ -281,7 +282,7 @@ namespace Corvus
 
         glfwSetCursorPosCallback(
             m_Window,
-            [](GLFWwindow *Caller, double NewX, double NewY)
+            [](GLFWwindow *const Caller, double const NewX, double const NewY)
             {
                 Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
                 CursorMoveEvent     Event{static_cast<float>(NewX), static_cast<float>(NewY)};
@@ -291,7 +292,7 @@ namespace Corvus
 
         glfwSetScrollCallback(
             m_Window,
-            [](GLFWwindow *Caller, double OffsetX, double OffsetY)
+            [](GLFWwindow *const Caller, double const OffsetX, double const OffsetY)
             {
                 Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
                 MouseScrollEvent    Event{static_cast<float>(OffsetX), static_cast<float>(OffsetY)};

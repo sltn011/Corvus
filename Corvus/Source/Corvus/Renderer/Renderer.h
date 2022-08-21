@@ -21,7 +21,7 @@ namespace Corvus
 
         static void ViewportResize(UInt32 Width, UInt32 Height);
 
-        static void SetClearColor(Vec4 ClearColor);
+        static void SetClearColor(Vec4 const &ClearColor);
         static void Clear(bool bColorBuffer = true, bool bDepthBuffer = true, bool bStencilBuffer = true);
 
         static void EnableDepthTest();

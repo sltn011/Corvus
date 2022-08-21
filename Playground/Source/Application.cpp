@@ -65,7 +65,7 @@ namespace Corvus
             Entities[0].TransformComponent->AddChild(Entities[1].TransformComponent.Get());
         }
 
-        virtual void OnUpdate(TimeDelta ElapsedTime)
+        virtual void OnUpdate(TimeDelta const ElapsedTime)
         {
             Renderer::BeginScene();
             Renderer::Clear();
@@ -163,7 +163,7 @@ namespace Corvus
         return App;
     }
 
-    bool DestroyApplication(Application *App)
+    bool DestroyApplication(Application *const App)
     {
         if (!App)
         {

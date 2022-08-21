@@ -31,12 +31,12 @@ namespace Corvus
         Delegate &operator=(Delegate const &) = delete;
         Delegate &operator=(Delegate &&)      = default;
 
-        bool HasBinding() const { return bool(m_Invoker); }
+        bool HasBinding() const { return m_Invoker != nullptr; }
 
         void ClearBinding() { m_Invoker.reset(); }
 
         template<typename T, typename F>
-        void BindObject(T *Object, F Method)
+        void BindObject(T *const Object, F const Method)
         {
             if (!m_Invoker)
             {
@@ -45,7 +45,7 @@ namespace Corvus
         }
 
         template<typename F>
-        void BindFunction(F Function)
+        void BindFunction(F const Function)
         {
             if (!m_Invoker)
             {
@@ -53,7 +53,7 @@ namespace Corvus
             }
         }
 
-        void InvokeIfBound(Args... args) const
+        void InvokeIfBound(Args &&...args) const
         {
             if (m_Invoker)
             {
@@ -61,33 +61,33 @@ namespace Corvus
             }
         }
 
-        R Invoke(Args... args) const
+        R Invoke(Args &&...args) const
         {
             CORVUS_CORE_ASSERT_FMT(m_Invoker != nullptr, "Nothing bound to delegate!");
             return m_Invoker->Invoke(std::forward<Args>(args)...);
         }
 
-        R operator()(Args... args) const { return Invoke(std::forward<Args>(args)...); }
+        R operator()(Args &&...args) const { return Invoke(std::forward<Args>(args)...); }
 
     private:
         template<typename R, typename... Args>
         class BaseInvoker
         {
         public:
-            virtual R Invoke(Args... args) const = 0;
+            virtual R Invoke(Args &&...args) const = 0;
         };
 
         template<typename T, typename F, typename R, typename... Args>
         struct ObjectInvoker : public BaseInvoker<R, Args...>
         {
         public:
-            ObjectInvoker(T *Object, F Method)
+            ObjectInvoker(T *const Object, F const Method)
             {
                 m_Object = Object;
                 m_Method = Method;
             }
 
-            virtual R Invoke(Args... args) const override
+            virtual R Invoke(Args &&...args) const override
             {
                 CORVUS_CORE_ASSERT(m_Object != nullptr && m_Method != nullptr);
                 return (m_Object->*m_Method)(std::forward<Args>(args)...);
@@ -102,9 +102,9 @@ namespace Corvus
         struct FunctionInvoker : public BaseInvoker<R, Args...>
         {
         public:
-            FunctionInvoker(F Function) { m_Function = Function; }
+            FunctionInvoker(F const Function) { m_Function = Function; }
 
-            R Invoke(Args... args) const override
+            R Invoke(Args &&...args) const override
             {
                 CORVUS_CORE_ASSERT(m_Function != nullptr);
                 return (*m_Function)(std::forward<Args>(args)...);
@@ -130,7 +130,7 @@ namespace Corvus
         void ClearAllBinding() { m_Bindings.clear(); }
 
         template<typename T, typename F>
-        void BindObject(T *Object, F Method)
+        void BindObject(T *const Object, F const Method)
         {
             Delegate<void(Args...)> NewEntry;
             NewEntry.BindObject(Object, Method);
@@ -138,14 +138,14 @@ namespace Corvus
         }
 
         template<typename F>
-        void BindFunction(F Function)
+        void BindFunction(F const Function)
         {
             Delegate<void(Args...)> NewEntry;
             NewEntry.BindFunction(Function);
             m_Bindings.emplace_back(std::move(NewEntry));
         }
 
-        void Broadcast(Args... args) const
+        void Broadcast(Args &&...args) const
         {
             for (Delegate<void(Args...)> const &Binding : m_Bindings)
             {
@@ -153,7 +153,7 @@ namespace Corvus
             }
         }
 
-        void operator()(Args... args) const { Broadcast(std::forward<Args>(args)...); }
+        void operator()(Args &&...args) const { Broadcast(std::forward<Args>(args)...); }
 
     private:
         std::vector<Delegate<void(Args...)>> m_Bindings;

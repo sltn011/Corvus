@@ -31,17 +31,17 @@ namespace Corvus
     {
     }
 
-    void Renderer::ViewportResize(UInt32 Width, UInt32 Height)
+    void Renderer::ViewportResize(UInt32 const Width, UInt32 const Height)
     {
         s_GraphicsAPI->ViewportResize(Width, Height);
     }
 
-    void Renderer::SetClearColor(Vec4 ClearColor)
+    void Renderer::SetClearColor(Vec4 const &ClearColor)
     {
         s_GraphicsAPI->SetClearColor(ClearColor);
     }
 
-    void Renderer::Clear(bool bColorBuffer, bool bDepthBuffer, bool bStencilBuffer)
+    void Renderer::Clear(bool const bColorBuffer, bool const bDepthBuffer, bool const bStencilBuffer)
     {
         s_GraphicsAPI->Clear(bColorBuffer, bDepthBuffer, bStencilBuffer);
     }

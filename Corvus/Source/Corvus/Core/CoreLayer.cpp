@@ -24,7 +24,7 @@ namespace Corvus
         Super::OnPoped();
     }
 
-    void CoreLayer::OnUpdate(TimeDelta ElapsedTime)
+    void CoreLayer::OnUpdate(TimeDelta const ElapsedTime)
     {
     }
 

@@ -13,7 +13,7 @@ namespace Corvus
     public:
         BaseDataComponent(Entity *Owner);
 
-        Entity *GetOwner();
+        Entity *GetOwner() const;
 
     private:
         Entity *m_Owner = nullptr;

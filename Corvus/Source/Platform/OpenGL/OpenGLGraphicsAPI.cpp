@@ -8,17 +8,17 @@ namespace Corvus
     {
     }
 
-    void OpenGLGraphicsAPI::ViewportResize(UInt32 Width, UInt32 Height)
+    void OpenGLGraphicsAPI::ViewportResize(UInt32 const Width, UInt32 const Height)
     {
         glViewport(0, 0, static_cast<GLsizei>(Width), static_cast<GLsizei>(Height));
     }
 
-    void OpenGLGraphicsAPI::SetClearColor(Vec4 ClearColor)
+    void OpenGLGraphicsAPI::SetClearColor(Vec4 const &ClearColor)
     {
         glClearColor(ClearColor.r, ClearColor.g, ClearColor.b, ClearColor.a);
     }
 
-    void OpenGLGraphicsAPI::Clear(bool bColorBuffer, bool bDepthBuffer, bool bStencilBuffer)
+    void OpenGLGraphicsAPI::Clear(bool const bColorBuffer, bool const bDepthBuffer, bool const bStencilBuffer)
     {
         glClear(
             (bColorBuffer ? GL_COLOR_BUFFER_BIT : 0) | (bDepthBuffer ? GL_DEPTH_BUFFER_BIT : 0) |

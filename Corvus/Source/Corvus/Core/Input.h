@@ -28,7 +28,7 @@ namespace Corvus
         static Vec2  GetCursorPos();
         static float GetCursorX();
         static float GetCursorY();
-        static void  SetCursorPos(Vec2 Pos);
+        static void  SetCursorPos(Vec2 const &Pos);
     };
 
 } // namespace Corvus

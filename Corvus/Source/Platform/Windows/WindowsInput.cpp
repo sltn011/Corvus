@@ -7,57 +7,57 @@
 
 namespace Corvus
 {
-    bool Input::IsKeyInState(KeyCode Key, ActionCode State)
+    bool Input::IsKeyInState(KeyCode const Key, ActionCode const State)
     {
-        Application &App    = Application::GetInstance();
-        GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
+        Application      &App    = Application::GetInstance();
+        GLFWwindow *const Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
         return glfwGetKey(Window, static_cast<int>(Key)) == State;
     }
 
-    bool Input::IsKeyPressed(KeyCode Key)
+    bool Input::IsKeyPressed(KeyCode const Key)
     {
         return IsKeyInState(Key, Action::Press);
     }
 
-    bool Input::IsKeyReleased(KeyCode Key)
+    bool Input::IsKeyReleased(KeyCode const Key)
     {
         return IsKeyInState(Key, Action::Release);
     }
 
-    bool Input::IsKeyRepeated(KeyCode Key)
+    bool Input::IsKeyRepeated(KeyCode const Key)
     {
         return IsKeyInState(Key, Action::Repeat);
     }
 
-    bool Input::IsButtonInState(MouseCode Button, ActionCode State)
+    bool Input::IsButtonInState(MouseCode const Button, ActionCode const State)
     {
-        Application &App    = Application::GetInstance();
-        GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
+        Application      &App    = Application::GetInstance();
+        GLFWwindow *const Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
         return glfwGetMouseButton(Window, static_cast<int>(Button)) == State;
     }
 
-    bool Input::IsButtonPressed(MouseCode Button)
+    bool Input::IsButtonPressed(MouseCode const Button)
     {
         return IsButtonInState(Button, Action::Press);
     }
 
-    bool Input::IsButtonReleased(MouseCode Button)
+    bool Input::IsButtonReleased(MouseCode const Button)
     {
         return IsButtonInState(Button, Action::Release);
     }
 
-    void Input::SetCursorEnabled(bool bEnabled)
+    void Input::SetCursorEnabled(bool const bEnabled)
     {
-        Application &App    = Application::GetInstance();
-        GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
+        Application      &App    = Application::GetInstance();
+        GLFWwindow *const Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
 
         glfwSetInputMode(Window, GLFW_CURSOR, bEnabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
     }
 
     Vec2 Input::GetCursorPos()
     {
-        Application &App    = Application::GetInstance();
-        GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
+        Application      &App    = Application::GetInstance();
+        GLFWwindow *const Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
 
         double XPos, YPos;
         glfwGetCursorPos(Window, &XPos, &YPos);
@@ -75,10 +75,10 @@ namespace Corvus
         return GetCursorPos().y;
     }
 
-    void Input::SetCursorPos(Vec2 Pos)
+    void Input::SetCursorPos(Vec2 const &Pos)
     {
-        Application &App    = Application::GetInstance();
-        GLFWwindow  *Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
+        Application      &App    = Application::GetInstance();
+        GLFWwindow *const Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
 
         glfwSetCursorPos(Window, Pos.x, Pos.y);
     }

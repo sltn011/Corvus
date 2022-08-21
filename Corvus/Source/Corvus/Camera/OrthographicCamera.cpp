@@ -46,7 +46,7 @@ namespace Corvus
 
     void OrthographicCamera::RecalculateViewMatrix()
     {
-        Vec3 Position = m_Transform.GetPosition();
+        Vec3 const Position = m_Transform.GetPosition();
 
         Mat3 const FURVectors    = GetFURVectors();
         Vec3 const ForwardVector = FURVectors[0];

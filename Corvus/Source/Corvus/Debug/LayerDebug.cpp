@@ -6,11 +6,11 @@
 
 namespace Corvus
 {
-    LayerDebug::LayerDebug(String LayerName, bool bEnabled) : Super{LayerName, bEnabled}
+    LayerDebug::LayerDebug(String LayerName, bool const bEnabled) : Super{std::move(LayerName), bEnabled}
     {
     }
 
-    void LayerDebug::OnUpdate(TimeDelta ElapsedTime)
+    void LayerDebug::OnUpdate(TimeDelta const ElapsedTime)
     {
         if (!m_bEnabled)
         {
