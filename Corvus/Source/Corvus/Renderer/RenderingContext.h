@@ -13,7 +13,7 @@ namespace Corvus
         RenderingContext() = default;
 
     public:
-        static [[nodiscard]] Own<RenderingContext> Create(Window &OwnerWindow);
+        static [[nodiscard]] TOwn<RenderingContext> Create(Window &OwnerWindow);
 
         virtual ~RenderingContext()                           = default;
         RenderingContext(RenderingContext const &)            = delete;

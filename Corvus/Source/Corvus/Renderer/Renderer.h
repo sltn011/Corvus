@@ -27,10 +27,10 @@ namespace Corvus
         static void EnableDepthTest();
         static void DisableDepthTest();
 
-        static void Submit(Own<VertexArray> &VAO, Own<Shader> &Shader);
+        static void Submit(TOwn<VertexArray> &VAO, TOwn<Shader> &Shader);
 
     private:
-        static Own<GraphicsAPI> s_GraphicsAPI;
+        static TOwn<GraphicsAPI> s_GraphicsAPI;
     };
 
 } // namespace Corvus

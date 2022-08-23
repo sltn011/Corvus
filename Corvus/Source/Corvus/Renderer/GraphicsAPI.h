@@ -19,8 +19,8 @@ namespace Corvus
             OpenGL
         };
 
-        static [[nodiscard]] Own<GraphicsAPI> Create();
-        static EAPI                           GetAPI() { return m_API; }
+        static [[nodiscard]] TOwn<GraphicsAPI> Create();
+        static EAPI                            GetAPI() { return m_API; }
 
         virtual ~GraphicsAPI()                      = default;
         GraphicsAPI(GraphicsAPI const &)            = delete;

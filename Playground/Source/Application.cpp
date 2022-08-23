@@ -35,8 +35,8 @@ namespace Corvus
 
             VertexBufferLayout const Layout = {{EBufferDataType::Vec3}, {EBufferDataType::Vec3}};
 
-            Own<VertexBuffer> VBO = VertexBuffer::Create(Vertices, 4, Layout);
-            Own<IndexBuffer>  EBO = IndexBuffer::Create(Indices, 6);
+            TOwn<VertexBuffer> VBO = VertexBuffer::Create(Vertices, 4, Layout);
+            TOwn<IndexBuffer>  EBO = IndexBuffer::Create(Indices, 6);
 
             VAO = VertexArray::Create();
             VAO->AddVertexBuffer(std::move(VBO));
@@ -150,8 +150,8 @@ namespace Corvus
         TArray<Entity>    Entities;
         PerspectiveCamera Camera;
 
-        Own<Shader>      TestShader;
-        Own<VertexArray> VAO;
+        TOwn<Shader>      TestShader;
+        TOwn<VertexArray> VAO;
 
         bool bCameraMode = false;
         Vec2 CursorPos;

@@ -16,8 +16,8 @@ namespace Corvus
     class Entity
     {
     public:
-        Entity(Own<Shader> const &Shader, Own<VertexArray> const &VAO);
-        Entity(Own<Shader> const &Shader, Own<VertexArray> const &VAO, Transform const &Transform);
+        Entity(TOwn<Shader> const &Shader, TOwn<VertexArray> const &VAO);
+        Entity(TOwn<Shader> const &Shader, TOwn<VertexArray> const &VAO, Transform const &Transform);
 
     public:
         TPoolable<CTransformComponent>  TransformComponent;

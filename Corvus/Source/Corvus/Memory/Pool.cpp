@@ -281,8 +281,8 @@ namespace Corvus
             return;
         }
 
-        Own<Pool> &NextPool     = m_Chain.m_Next;
-        Own<Pool> &NextPoolNext = NextPool->m_Chain.m_Next;
+        TOwn<Pool> &NextPool     = m_Chain.m_Next;
+        TOwn<Pool> &NextPoolNext = NextPool->m_Chain.m_Next;
 
         NextPool = std::move(NextPoolNext);
         if (NextPool)

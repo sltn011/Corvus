@@ -18,12 +18,12 @@ namespace Corvus
 
         static void Init();
 
-        static Ref<spdlog::logger> &GetEngineLogger() { return s_EngineLogger; }
-        static Ref<spdlog::logger> &GetClientLogger() { return s_ClientLogger; }
+        static TRef<spdlog::logger> &GetEngineLogger() { return s_EngineLogger; }
+        static TRef<spdlog::logger> &GetClientLogger() { return s_ClientLogger; }
 
     private:
-        static Ref<spdlog::logger> s_EngineLogger;
-        static Ref<spdlog::logger> s_ClientLogger;
+        static TRef<spdlog::logger> s_EngineLogger;
+        static TRef<spdlog::logger> s_ClientLogger;
     };
 
 } // namespace Corvus

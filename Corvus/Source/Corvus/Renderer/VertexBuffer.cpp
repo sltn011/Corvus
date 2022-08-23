@@ -7,7 +7,7 @@
 namespace Corvus
 {
 
-    Own<VertexBuffer> VertexBuffer::Create(
+    TOwn<VertexBuffer> VertexBuffer::Create(
         void const *const Data, UInt32 const NumVertices, VertexBufferLayout const &Layout
     )
     {

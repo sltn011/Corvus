@@ -59,12 +59,12 @@ namespace Corvus
         }
     }
 
-    void Application::PushLayer(Own<Layer> &&NewLayer)
+    void Application::PushLayer(TOwn<Layer> &&NewLayer)
     {
         m_LayersStack.PushLayer(std::move(NewLayer));
     }
 
-    Own<Layer> Application::PopLayer()
+    TOwn<Layer> Application::PopLayer()
     {
         return m_LayersStack.PopLayer();
     }

@@ -10,8 +10,8 @@
 namespace Corvus
 {
 
-    Ref<spdlog::logger> Log::s_EngineLogger;
-    Ref<spdlog::logger> Log::s_ClientLogger;
+    TRef<spdlog::logger> Log::s_EngineLogger;
+    TRef<spdlog::logger> Log::s_ClientLogger;
 
     Log::Log()
     {

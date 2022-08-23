@@ -53,8 +53,8 @@ namespace Corvus
         virtual void RecalculateProjectionViewMatrix() = 0;
 
     protected:
-        Own<CameraMovementComponent> m_MovementComponent;
-        bool                         m_IsPlayerControlled = false;
+        TOwn<CameraMovementComponent> m_MovementComponent;
+        bool                          m_IsPlayerControlled = false;
 
         Transform m_Transform;
 

@@ -22,8 +22,8 @@ namespace Corvus
         virtual void Bind() override;
         virtual void Unbind() override;
 
-        virtual void AddIndexBuffer(Own<IndexBuffer> &&IndexBuffer) override;
-        virtual void AddVertexBuffer(Own<VertexBuffer> &&VertexBuffer) override;
+        virtual void AddIndexBuffer(TOwn<IndexBuffer> &&IndexBuffer) override;
+        virtual void AddVertexBuffer(TOwn<VertexBuffer> &&VertexBuffer) override;
 
     protected:
         void EnableVertexAttributes();

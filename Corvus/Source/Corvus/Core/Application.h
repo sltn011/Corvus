@@ -25,8 +25,8 @@ namespace Corvus
         void Init();
         void Run();
 
-        void                     PushLayer(Own<Layer> &&NewLayer);
-        [[nodiscard]] Own<Layer> PopLayer();
+        void                      PushLayer(TOwn<Layer> &&NewLayer);
+        [[nodiscard]] TOwn<Layer> PopLayer();
 
         void UpdateLayers(TimeDelta ElapsedTime);
         void RenderLayers();
@@ -40,8 +40,8 @@ namespace Corvus
         void InitWindow();
         void InitRenderer();
 
-        Own<Window> m_Window;
-        LayersStack m_LayersStack;
+        TOwn<Window> m_Window;
+        LayersStack  m_LayersStack;
 
         static Application *s_ApplicationInstance;
     };

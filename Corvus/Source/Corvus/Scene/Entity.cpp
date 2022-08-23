@@ -7,13 +7,13 @@
 
 namespace Corvus
 {
-    Entity::Entity(Own<Shader> const &Shader, Own<VertexArray> const &VAO)
+    Entity::Entity(TOwn<Shader> const &Shader, TOwn<VertexArray> const &VAO)
     {
         TransformComponent  = ConstructPoolable<CTransformComponent>(this, Transform{});
         StaticMeshComponent = ConstructPoolable<CStaticMeshComponent>(this, Shader, VAO);
     }
 
-    Entity::Entity(Own<Shader> const &Shader, Own<VertexArray> const &VAO, Transform const &Transform)
+    Entity::Entity(TOwn<Shader> const &Shader, TOwn<VertexArray> const &VAO, Transform const &Transform)
     {
         TransformComponent  = ConstructPoolable<CTransformComponent>(this, Transform);
         StaticMeshComponent = ConstructPoolable<CStaticMeshComponent>(this, Shader, VAO);

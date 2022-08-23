@@ -7,7 +7,7 @@
 namespace Corvus
 {
 
-    Own<IndexBuffer> IndexBuffer::Create(UInt32 const *const Data, UInt32 const NumIndices)
+    TOwn<IndexBuffer> IndexBuffer::Create(UInt32 const *const Data, UInt32 const NumIndices)
     {
         switch (GraphicsAPI::GetAPI())
         {

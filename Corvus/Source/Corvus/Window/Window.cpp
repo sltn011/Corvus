@@ -6,7 +6,7 @@
 
 namespace Corvus
 {
-    Own<Window> Window::Create()
+    TOwn<Window> Window::Create()
     {
         return MakeOwned<WindowsWindow>();
     }

@@ -14,7 +14,7 @@ namespace Corvus
         Shader() = default;
 
     public:
-        static [[nodiscard]] Own<Shader> CreateFromFile(String const &FilePath);
+        static [[nodiscard]] TOwn<Shader> CreateFromFile(String const &FilePath);
 
         virtual ~Shader()                 = default;
         Shader(Shader const &)            = delete;

@@ -6,7 +6,7 @@
 
 namespace Corvus
 {
-    Own<Shader> Shader::CreateFromFile(String const &FilePath)
+    TOwn<Shader> Shader::CreateFromFile(String const &FilePath)
     {
         switch (GraphicsAPI::GetAPI())
         {

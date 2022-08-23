@@ -9,7 +9,7 @@
 namespace Corvus
 {
 
-    Own<VertexArray> VertexArray::Create()
+    TOwn<VertexArray> VertexArray::Create()
     {
         switch (GraphicsAPI::GetAPI())
         {
@@ -22,12 +22,12 @@ namespace Corvus
         return nullptr;
     }
 
-    Own<IndexBuffer> &VertexArray::GetIndexBuffer()
+    TOwn<IndexBuffer> &VertexArray::GetIndexBuffer()
     {
         return m_IndexBuffer;
     }
 
-    Own<VertexBuffer> &VertexArray::GetVertexBuffer()
+    TOwn<VertexBuffer> &VertexArray::GetVertexBuffer()
     {
         return m_VertexBuffer;
     }

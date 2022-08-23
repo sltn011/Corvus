@@ -12,14 +12,14 @@ namespace Corvus
     class CStaticMeshComponent : public CBaseSceneComponent
     {
     public:
-        CStaticMeshComponent(Entity *Owner, Own<Shader> const &Shader, Own<VertexArray> const &VAO);
+        CStaticMeshComponent(Entity *Owner, TOwn<Shader> const &Shader, TOwn<VertexArray> const &VAO);
 
-        Own<Shader> const      &GetShader() const;
-        Own<VertexArray> const &GetVertexArray() const;
+        TOwn<Shader> const      &GetShader() const;
+        TOwn<VertexArray> const &GetVertexArray() const;
 
     private:
-        Own<Shader> const      &m_Shader;
-        Own<VertexArray> const &m_VAO;
+        TOwn<Shader> const      &m_Shader;
+        TOwn<VertexArray> const &m_VAO;
     };
 
 } // namespace Corvus

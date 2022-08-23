@@ -69,14 +69,14 @@ namespace Corvus
 
         struct SubPoolsChain
         {
-            Own<Pool> m_Next       = nullptr;
-            Pool     *m_ParentPool = nullptr;
+            TOwn<Pool> m_Next       = nullptr;
+            Pool      *m_ParentPool = nullptr;
         };
 
         PoolID         m_PoolID;
         PoolDataFormat m_DataFormat;
         PoolInfo       m_PoolInfo;
-        Own<UInt8[]>   m_Pool;
+        TOwn<UInt8[]>  m_Pool;
         SubPoolsChain  m_Chain;
 
         // ChildPoolSize = CurrentPoolSize * s_ChildPoolSizeMult

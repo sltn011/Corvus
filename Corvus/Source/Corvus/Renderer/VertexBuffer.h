@@ -13,7 +13,7 @@ namespace Corvus
         VertexBuffer() = default;
 
     public:
-        static [[nodiscard]] Own<VertexBuffer> Create(
+        static [[nodiscard]] TOwn<VertexBuffer> Create(
             void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout
         );
 

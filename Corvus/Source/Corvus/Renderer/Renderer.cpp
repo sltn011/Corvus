@@ -11,7 +11,7 @@
 namespace Corvus
 {
 
-    Own<GraphicsAPI> Renderer::s_GraphicsAPI = nullptr;
+    TOwn<GraphicsAPI> Renderer::s_GraphicsAPI = nullptr;
 
     void Renderer::Init()
     {
@@ -58,7 +58,7 @@ namespace Corvus
         CORVUS_CORE_TRACE("Depth test disabled");
     }
 
-    void Renderer::Submit(Own<VertexArray> &VAO, Own<Shader> &Shader)
+    void Renderer::Submit(TOwn<VertexArray> &VAO, TOwn<Shader> &Shader)
     {
         Shader->Bind();
         VAO->Bind();

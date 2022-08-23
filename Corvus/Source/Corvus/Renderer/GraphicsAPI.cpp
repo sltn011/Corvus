@@ -7,7 +7,7 @@
 namespace Corvus
 {
 
-    Own<GraphicsAPI> GraphicsAPI::Create()
+    TOwn<GraphicsAPI> GraphicsAPI::Create()
     {
         switch (m_API)
         {

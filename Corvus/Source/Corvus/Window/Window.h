@@ -30,7 +30,7 @@ namespace Corvus
         Window() = default;
 
     public:
-        static [[nodiscard]] Own<Window> Create();
+        static [[nodiscard]] TOwn<Window> Create();
 
         virtual ~Window()                 = default;
         Window(Window const &)            = delete;
@@ -68,8 +68,8 @@ namespace Corvus
         WindowData m_WindowData;
         bool       m_bIsInitialized = false;
 
-        Own<RenderingContext> m_RenderingContext;
-        GUIController         m_GUIController;
+        TOwn<RenderingContext> m_RenderingContext;
+        GUIController          m_GUIController;
     };
 
 } // namespace Corvus

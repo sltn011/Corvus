@@ -15,7 +15,7 @@ namespace Corvus
         VertexArray() = default;
 
     public:
-        static [[nodiscard]] Own<VertexArray> Create();
+        static [[nodiscard]] TOwn<VertexArray> Create();
 
         virtual ~VertexArray()                      = default;
         VertexArray(VertexArray const &)            = delete;
@@ -26,15 +26,15 @@ namespace Corvus
         virtual void Bind()   = 0;
         virtual void Unbind() = 0;
 
-        virtual void AddIndexBuffer(Own<IndexBuffer> &&IndexBuffer)    = 0;
-        virtual void AddVertexBuffer(Own<VertexBuffer> &&VertexBuffer) = 0;
+        virtual void AddIndexBuffer(TOwn<IndexBuffer> &&IndexBuffer)    = 0;
+        virtual void AddVertexBuffer(TOwn<VertexBuffer> &&VertexBuffer) = 0;
 
-        Own<IndexBuffer>  &GetIndexBuffer();
-        Own<VertexBuffer> &GetVertexBuffer();
+        TOwn<IndexBuffer>  &GetIndexBuffer();
+        TOwn<VertexBuffer> &GetVertexBuffer();
 
     protected:
-        Own<IndexBuffer>  m_IndexBuffer;
-        Own<VertexBuffer> m_VertexBuffer;
+        TOwn<IndexBuffer>  m_IndexBuffer;
+        TOwn<VertexBuffer> m_VertexBuffer;
     };
 
 } // namespace Corvus

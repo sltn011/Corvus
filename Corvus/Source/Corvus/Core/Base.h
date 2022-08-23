@@ -21,19 +21,19 @@
 namespace Corvus
 {
     template<typename T>
-    using Own = std::unique_ptr<T>;
+    using TOwn = std::unique_ptr<T>;
 
     template<typename T, typename... Args>
-    [[nodiscard]] Own<T> MakeOwned(Args &&...args)
+    [[nodiscard]] TOwn<T> MakeOwned(Args &&...args)
     {
         return std::make_unique<T>(std::forward<Args>(args)...);
     }
 
     template<typename T>
-    using Ref = std::shared_ptr<T>;
+    using TRef = std::shared_ptr<T>;
 
     template<typename T, typename... Args>
-    [[nodiscard]] Ref<T> MakeRef(Args &&...args)
+    [[nodiscard]] TRef<T> MakeRef(Args &&...args)
     {
         return std::make_shared<T>(std::forward<Args>(args)...);
     }

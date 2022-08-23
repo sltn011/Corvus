@@ -6,7 +6,7 @@
 
 namespace Corvus
 {
-    Own<RenderingContext> RenderingContext::Create(Window &OwnerWindow)
+    TOwn<RenderingContext> RenderingContext::Create(Window &OwnerWindow)
     {
         switch (GraphicsAPI::GetAPI())
         {
