@@ -11,22 +11,22 @@ namespace Corvus
     class Entity;
 
     // Component that has transformation in world and supports attachments
-    class BaseSceneComponent : public BaseDataComponent
+    class CBaseSceneComponent : public CBaseDataComponent
     {
     public:
-        BaseSceneComponent(Entity *Owner, Transform const &ComponentTransform);
+        CBaseSceneComponent(Entity *Owner, Transform const &ComponentTransform);
 
         Mat4 GetTransformMatrix() const;
 
         Transform GetTransform() const;
         void      SetTransform(Transform const &Transform);
 
-        Array<BaseSceneComponent *> &GetChildren();
-        void                         AddChild(BaseSceneComponent *const Child);
+        Array<CBaseSceneComponent *> &GetChildren();
+        void                          AddChild(CBaseSceneComponent *const Child);
 
-        BaseSceneComponent *GetParent() const;
-        void                SetParent(BaseSceneComponent *const Parent);
-        void                ResetParent();
+        CBaseSceneComponent *GetParent() const;
+        void                 SetParent(CBaseSceneComponent *const Parent);
+        void                 ResetParent();
 
     private:
         void RecalculateTransformMatrix() const;
@@ -35,8 +35,8 @@ namespace Corvus
         mutable Mat4 m_TransformMatrix = Mat4(1.0f);
         mutable bool m_bIsDirty        = true;
 
-        Array<BaseSceneComponent *> m_Children;
-        BaseSceneComponent         *m_Parent = nullptr;
+        Array<CBaseSceneComponent *> m_Children;
+        CBaseSceneComponent         *m_Parent = nullptr;
     };
 
 } // namespace Corvus

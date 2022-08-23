@@ -5,12 +5,12 @@
 namespace Corvus
 {
 
-    BaseSceneComponent::BaseSceneComponent(Entity *const Owner, Transform const &ComponentTransform)
-        : BaseDataComponent{Owner}, m_Transform{ComponentTransform}
+    CBaseSceneComponent::CBaseSceneComponent(Entity *const Owner, Transform const &ComponentTransform)
+        : CBaseDataComponent{Owner}, m_Transform{ComponentTransform}
     {
     }
 
-    Mat4 BaseSceneComponent::GetTransformMatrix() const
+    Mat4 CBaseSceneComponent::GetTransformMatrix() const
     {
         if (m_bIsDirty)
         {
@@ -20,23 +20,23 @@ namespace Corvus
         return m_TransformMatrix;
     }
 
-    Transform BaseSceneComponent::GetTransform() const
+    Transform CBaseSceneComponent::GetTransform() const
     {
         return m_Transform;
     }
 
-    void BaseSceneComponent::SetTransform(Transform const &Transform)
+    void CBaseSceneComponent::SetTransform(Transform const &Transform)
     {
         m_Transform = Transform;
         m_bIsDirty  = true;
     }
 
-    Array<BaseSceneComponent *> &BaseSceneComponent::GetChildren()
+    Array<CBaseSceneComponent *> &CBaseSceneComponent::GetChildren()
     {
         return m_Children;
     }
 
-    void BaseSceneComponent::AddChild(BaseSceneComponent *const Child)
+    void CBaseSceneComponent::AddChild(CBaseSceneComponent *const Child)
     {
         CORVUS_CORE_ASSERT(Child != nullptr);
 
@@ -44,23 +44,23 @@ namespace Corvus
         Child->SetParent(this);
     }
 
-    BaseSceneComponent *BaseSceneComponent::GetParent() const
+    CBaseSceneComponent *CBaseSceneComponent::GetParent() const
     {
         return m_Parent;
     }
 
-    void BaseSceneComponent::SetParent(BaseSceneComponent *const Parent)
+    void CBaseSceneComponent::SetParent(CBaseSceneComponent *const Parent)
     {
         m_Parent   = Parent;
         m_bIsDirty = true;
     }
 
-    void BaseSceneComponent::ResetParent()
+    void CBaseSceneComponent::ResetParent()
     {
         SetParent(nullptr);
     }
 
-    void BaseSceneComponent::RecalculateTransformMatrix() const
+    void CBaseSceneComponent::RecalculateTransformMatrix() const
     {
         if (m_Parent)
         {

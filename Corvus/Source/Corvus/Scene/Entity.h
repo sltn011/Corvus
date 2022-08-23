@@ -6,7 +6,9 @@
 namespace Corvus
 {
 
-    class BaseSceneComponent;
+    class CTransformComponent;
+    class CStaticMeshComponent;
+
     class Shader;
     class Transform;
     class VertexArray;
@@ -17,15 +19,9 @@ namespace Corvus
         Entity(Own<Shader> const &Shader, Own<VertexArray> const &VAO);
         Entity(Own<Shader> const &Shader, Own<VertexArray> const &VAO, Transform const &Transform);
 
-        Own<Shader> const      &GetShader() const;
-        Own<VertexArray> const &GetVertexArray() const;
-
     public:
-        Poolable<BaseSceneComponent> TransformComponent;
-
-    private:
-        Own<Shader> const      &m_Shader;
-        Own<VertexArray> const &m_VAO;
+        Poolable<CTransformComponent>  TransformComponent;
+        Poolable<CStaticMeshComponent> StaticMeshComponent;
     };
 
 } // namespace Corvus

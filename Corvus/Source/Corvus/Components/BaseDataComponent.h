@@ -8,10 +8,10 @@ namespace Corvus
 
     // Base class for all Components that provide reusable behavior
     // that can be added to Entities
-    class BaseDataComponent
+    class CBaseDataComponent
     {
     public:
-        BaseDataComponent(Entity *Owner);
+        CBaseDataComponent(Entity *Owner);
 
         Entity *GetOwner() const;
 
