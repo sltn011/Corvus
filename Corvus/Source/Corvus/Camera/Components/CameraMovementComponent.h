@@ -15,7 +15,7 @@ namespace Corvus
 
         void SetMovementSpeed(float MovementSpeed);
 
-        void ProcessMovementInput(Camera::MoveDirection Direction, TimeDelta ElapsedTime);
+        void ProcessMovementInput(Camera::EMoveDirection Direction, TimeDelta ElapsedTime);
         void ProcessRotationInput(float XOffset, float YOffset, float Sensitivity, TimeDelta ElapsedTime);
 
     private:

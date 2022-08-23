@@ -10,11 +10,11 @@ namespace Corvus
     {
         switch (GraphicsAPI::GetAPI())
         {
-        case GraphicsAPI::API::OpenGL:
+        case GraphicsAPI::EAPI::OpenGL:
             return MakeOwned<OpenGLContext>(OwnerWindow);
 
         default:
-            CORVUS_NO_ENTRY_FMT("Undefined Graphics API!");
+            CORVUS_NO_ENTRY_FMT("Undefined Graphics EAPI!");
         }
         return nullptr;
     }

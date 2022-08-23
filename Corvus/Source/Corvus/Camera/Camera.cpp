@@ -31,7 +31,7 @@ namespace Corvus
         }
     }
 
-    void Camera::ProcessMovementInput(MoveDirection const Direction, TimeDelta const ElapsedTime)
+    void Camera::ProcessMovementInput(EMoveDirection const Direction, TimeDelta const ElapsedTime)
     {
         if (m_IsPlayerControlled)
         {

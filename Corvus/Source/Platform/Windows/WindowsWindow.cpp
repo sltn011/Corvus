@@ -230,9 +230,9 @@ namespace Corvus
             {
                 Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
 
-                KeyCode const      Key    = static_cast<KeyCode>(RawKey);
-                ActionCode const   Action = static_cast<ActionCode>(RawAction);
-                ModifierCode const Mods   = static_cast<ModifierCode>(RawMods);
+                EKeyCode const      Key    = static_cast<EKeyCode>(RawKey);
+                EActionCode const   Action = static_cast<EActionCode>(RawAction);
+                EModifierCode const Mods   = static_cast<EModifierCode>(RawMods);
 
                 if (Action == Action::Press)
                 {
@@ -261,9 +261,9 @@ namespace Corvus
             {
                 Window const *const Owner = static_cast<Window *>(glfwGetWindowUserPointer(Caller));
 
-                MouseCode const    Button = static_cast<MouseCode>(RawButton);
-                ActionCode const   Action = static_cast<ActionCode>(RawAction);
-                ModifierCode const Mods   = static_cast<ModifierCode>(RawMods);
+                EMouseCode const    Button = static_cast<EMouseCode>(RawButton);
+                EActionCode const   Action = static_cast<EActionCode>(RawAction);
+                EModifierCode const Mods   = static_cast<EModifierCode>(RawMods);
 
                 if (Action == Action::Press)
                 {

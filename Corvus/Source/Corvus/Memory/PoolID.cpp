@@ -5,11 +5,11 @@
 namespace Corvus
 {
 
-    PoolID::PoolID(PoolType const Type, SizeT const IDInGroup) : m_Type{Type}, m_IDInGroup{IDInGroup}
+    PoolID::PoolID(EPoolType const Type, SizeT const IDInGroup) : m_Type{Type}, m_IDInGroup{IDInGroup}
     {
     }
 
-    PoolType PoolID::GetType() const
+    EPoolType PoolID::GetType() const
     {
         return m_Type;
     }

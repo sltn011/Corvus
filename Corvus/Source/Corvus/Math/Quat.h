@@ -26,7 +26,7 @@ namespace Corvus::Quaternion
         return glm::angleAxis(Math::Radians(Degrees), Axis);
     }
 
-    Quat FromEuler(Vec3 const &Degrees, RotationOrder Order = RotationOrder::YXZ);
+    Quat FromEuler(Vec3 const &Degrees, ERotationOrder Order = ERotationOrder::YXZ);
     Quat FromEulerXYZ(Vec3 const &Degrees);
     Quat FromEulerXZY(Vec3 const &Degrees);
     Quat FromEulerYXZ(Vec3 const &Degrees);

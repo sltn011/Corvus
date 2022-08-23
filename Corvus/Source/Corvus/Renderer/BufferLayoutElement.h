@@ -5,7 +5,7 @@
 
 namespace Corvus
 {
-    enum class BufferDataType
+    enum class EBufferDataType
     {
         Bool,
         Int,
@@ -20,23 +20,23 @@ namespace Corvus
     class BufferLayoutElement
     {
     public:
-        BufferLayoutElement(BufferDataType Type);
-        BufferLayoutElement(BufferDataType Type, bool bShouldNormalize);
+        BufferLayoutElement(EBufferDataType Type);
+        BufferLayoutElement(EBufferDataType Type, bool bShouldNormalize);
 
-        BufferDataType GetType() const;
-        UInt8          GetSize() const;
-        UInt8          GetNumComponents() const;
-        bool           ShouldNormalize() const;
+        EBufferDataType GetType() const;
+        UInt8           GetSize() const;
+        UInt8           GetNumComponents() const;
+        bool            ShouldNormalize() const;
 
     private:
-        BufferDataType m_Type;
-        UInt8          m_Size;
-        UInt8          m_NumComponents;
-        bool           m_bShouldNormalize;
+        EBufferDataType m_Type;
+        UInt8           m_Size;
+        UInt8           m_NumComponents;
+        bool            m_bShouldNormalize;
     };
 
-    static UInt8 NumComponentsInBufferDataType(BufferDataType Type);
-    static UInt8 SizeofBufferDataType(BufferDataType Type);
+    static UInt8 NumComponentsInBufferDataType(EBufferDataType Type);
+    static UInt8 SizeofBufferDataType(EBufferDataType Type);
 } // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_RENDERER_BUFFERLAYOUTELEMENT_H

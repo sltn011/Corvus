@@ -12,7 +12,7 @@ namespace Corvus
     public:
         CORVUS_EVENT_GENERATED_BODY(Event::ECategory::Input | Event::ECategory::Keyboard, Event::EType::KeyPress);
 
-        KeyPressEvent(KeyCode KeyValue, bool bRepeatedValue, ModifierCode ModifierValue)
+        KeyPressEvent(EKeyCode KeyValue, bool bRepeatedValue, EModifierCode ModifierValue)
             : Key{KeyValue}, bRepeated{bRepeatedValue}, Modifier{ModifierValue}
         {
         }
@@ -24,9 +24,9 @@ namespace Corvus
             return ss.str();
         }
 
-        KeyCode      Key;
-        bool         bRepeated = false;
-        ModifierCode Modifier;
+        EKeyCode      Key;
+        bool          bRepeated = false;
+        EModifierCode Modifier;
     };
 
     class KeyReleaseEvent : public Event
@@ -34,7 +34,7 @@ namespace Corvus
     public:
         CORVUS_EVENT_GENERATED_BODY(Event::ECategory::Input | Event::ECategory::Keyboard, Event::EType::KeyRelease);
 
-        KeyReleaseEvent(KeyCode KeyValue) : Key{KeyValue} {}
+        KeyReleaseEvent(EKeyCode KeyValue) : Key{KeyValue} {}
 
         virtual String ToString() const override
         {
@@ -43,7 +43,7 @@ namespace Corvus
             return ss.str();
         }
 
-        KeyCode Key;
+        EKeyCode Key;
     };
 
 } // namespace Corvus

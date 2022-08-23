@@ -11,7 +11,7 @@ namespace Corvus
     {
         switch (m_API)
         {
-        case GraphicsAPI::API::OpenGL:
+        case GraphicsAPI::EAPI::OpenGL:
             return MakeOwned<OpenGLGraphicsAPI>();
 
         default:

@@ -33,7 +33,7 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
-        PoolID const ID = PoolID{PoolType::General, DataFormat.ElementSize};
+        PoolID const ID = PoolID{EPoolType::General, DataFormat.ElementSize};
         if (s_GeneralPools.find(ID.GetIDInGroup()) == s_GeneralPools.end())
         {
             s_GeneralPools.emplace(ID.GetIDInGroup(), Pool{ID, DataFormat});
@@ -45,7 +45,7 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
-        PoolID const ID = PoolID{PoolType::Component, DataFormat.ElementSize};
+        PoolID const ID = PoolID{EPoolType::Component, DataFormat.ElementSize};
         if (s_ComponentPools.find(ID.GetIDInGroup()) == s_ComponentPools.end())
         {
             s_ComponentPools.emplace(ID.GetIDInGroup(), Pool{ID, DataFormat});
@@ -57,7 +57,7 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
-        PoolID const ID = PoolID{PoolType::Entity, DataFormat.ElementSize};
+        PoolID const ID = PoolID{EPoolType::Entity, DataFormat.ElementSize};
         if (s_EntityPools.find(ID.GetIDInGroup()) == s_EntityPools.end())
         {
             s_EntityPools.emplace(ID.GetIDInGroup(), Pool{ID, DataFormat});
@@ -69,13 +69,13 @@ namespace Corvus
     {
         switch (ID.GetType())
         {
-        case PoolType::General:
+        case EPoolType::General:
             return GetGeneralPool(ID.GetIDInGroup());
 
-        case PoolType::Component:
+        case EPoolType::Component:
             return GetComponentPool(ID.GetIDInGroup());
 
-        case PoolType::Entity:
+        case EPoolType::Entity:
             return GetEntityPool(ID.GetIDInGroup());
 
         default:

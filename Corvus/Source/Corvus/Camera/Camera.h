@@ -11,7 +11,7 @@ namespace Corvus
     class Camera
     {
     public:
-        enum class MoveDirection
+        enum class EMoveDirection
         {
             Forward,
             Backward,
@@ -26,7 +26,7 @@ namespace Corvus
         virtual ~Camera();
 
         void SwitchPlayerControl(bool IsPlayerControlled, float CameraMoveSpeed = 0.0f);
-        void ProcessMovementInput(MoveDirection Direction, TimeDelta ElapsedTime);
+        void ProcessMovementInput(EMoveDirection Direction, TimeDelta ElapsedTime);
         void ProcessRotationInput(float XOffset, float YOffset, float Sensitivity, TimeDelta ElapsedTime);
 
         Transform GetTransform() const;

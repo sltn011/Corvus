@@ -11,16 +11,16 @@ namespace Corvus
     {
         // KEYBOARD
 
-        static bool IsKeyInState(KeyCode Key, ActionCode State);
-        static bool IsKeyPressed(KeyCode Key);
-        static bool IsKeyReleased(KeyCode Key);
-        static bool IsKeyRepeated(KeyCode Key);
+        static bool IsKeyInState(EKeyCode Key, EActionCode State);
+        static bool IsKeyPressed(EKeyCode Key);
+        static bool IsKeyReleased(EKeyCode Key);
+        static bool IsKeyRepeated(EKeyCode Key);
 
         // MOUSE
 
-        static bool IsButtonInState(MouseCode Button, ActionCode State);
-        static bool IsButtonPressed(MouseCode Button);
-        static bool IsButtonReleased(MouseCode Button);
+        static bool IsButtonInState(EMouseCode Button, EActionCode State);
+        static bool IsButtonPressed(EMouseCode Button);
+        static bool IsButtonReleased(EMouseCode Button);
 
         // CURSOR
 

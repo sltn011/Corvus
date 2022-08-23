@@ -7,41 +7,41 @@
 
 namespace Corvus
 {
-    bool Input::IsKeyInState(KeyCode const Key, ActionCode const State)
+    bool Input::IsKeyInState(EKeyCode const Key, EActionCode const State)
     {
         Application      &App    = Application::GetInstance();
         GLFWwindow *const Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
         return glfwGetKey(Window, static_cast<int>(Key)) == State;
     }
 
-    bool Input::IsKeyPressed(KeyCode const Key)
+    bool Input::IsKeyPressed(EKeyCode const Key)
     {
         return IsKeyInState(Key, Action::Press);
     }
 
-    bool Input::IsKeyReleased(KeyCode const Key)
+    bool Input::IsKeyReleased(EKeyCode const Key)
     {
         return IsKeyInState(Key, Action::Release);
     }
 
-    bool Input::IsKeyRepeated(KeyCode const Key)
+    bool Input::IsKeyRepeated(EKeyCode const Key)
     {
         return IsKeyInState(Key, Action::Repeat);
     }
 
-    bool Input::IsButtonInState(MouseCode const Button, ActionCode const State)
+    bool Input::IsButtonInState(EMouseCode const Button, EActionCode const State)
     {
         Application      &App    = Application::GetInstance();
         GLFWwindow *const Window = static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow());
         return glfwGetMouseButton(Window, static_cast<int>(Button)) == State;
     }
 
-    bool Input::IsButtonPressed(MouseCode const Button)
+    bool Input::IsButtonPressed(EMouseCode const Button)
     {
         return IsButtonInState(Button, Action::Press);
     }
 
-    bool Input::IsButtonReleased(MouseCode const Button)
+    bool Input::IsButtonReleased(EMouseCode const Button)
     {
         return IsButtonInState(Button, Action::Release);
     }

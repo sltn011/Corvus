@@ -46,7 +46,7 @@ namespace Corvus
         std::unordered_map<String, GLint> m_UniformLocationCache;
 
     private:
-        enum class ShaderType : Int8
+        enum class EShaderType : Int8
         {
             NONE = -1,
             Vertex,

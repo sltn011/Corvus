@@ -7,11 +7,11 @@
 namespace Corvus
 {
 
-    Rotation::Rotation(RotationOrder const Order) : m_Degrees{Vector::ZeroVec}, m_RotationOrder{Order}
+    Rotation::Rotation(ERotationOrder const Order) : m_Degrees{Vector::ZeroVec}, m_RotationOrder{Order}
     {
     }
 
-    Rotation::Rotation(RotationOrder const Order, Vec3 const &Degrees) : m_Degrees{Degrees}, m_RotationOrder{Order}
+    Rotation::Rotation(ERotationOrder const Order, Vec3 const &Degrees) : m_Degrees{Degrees}, m_RotationOrder{Order}
     {
     }
 
@@ -21,27 +21,27 @@ namespace Corvus
 
         switch (m_RotationOrder)
         {
-        case Corvus::RotationOrder::XYZ:
+        case Corvus::ERotationOrder::XYZ:
             Q = Quaternion::FromEulerXYZ(m_Degrees);
             return Quaternion::ToMat4(Q);
 
-        case Corvus::RotationOrder::XZY:
+        case Corvus::ERotationOrder::XZY:
             Q = Quaternion::FromEulerXZY(m_Degrees);
             return Quaternion::ToMat4(Q);
 
-        case Corvus::RotationOrder::YXZ:
+        case Corvus::ERotationOrder::YXZ:
             Q = Quaternion::FromEulerYXZ(m_Degrees);
             return Quaternion::ToMat4(Q);
 
-        case Corvus::RotationOrder::YZX:
+        case Corvus::ERotationOrder::YZX:
             Q = Quaternion::FromEulerYZX(m_Degrees);
             return Quaternion::ToMat4(Q);
 
-        case Corvus::RotationOrder::ZXY:
+        case Corvus::ERotationOrder::ZXY:
             Q = Quaternion::FromEulerZXY(m_Degrees);
             return Quaternion::ToMat4(Q);
 
-        case Corvus::RotationOrder::ZYX:
+        case Corvus::ERotationOrder::ZYX:
             Q = Quaternion::FromEulerZYX(m_Degrees);
             return Quaternion::ToMat4(Q);
 
@@ -111,12 +111,12 @@ namespace Corvus
         m_Degrees.z = PitchDegree;
     }
 
-    RotationOrder Rotation::GetRotationOrder() const
+    ERotationOrder Rotation::GetRotationOrder() const
     {
         return m_RotationOrder;
     }
 
-    void Rotation::SetRotationOrder(RotationOrder const Order)
+    void Rotation::SetRotationOrder(ERotationOrder const Order)
     {
         m_RotationOrder = Order;
     }

@@ -6,15 +6,15 @@
 namespace Corvus
 {
 
-    using KeyCode      = UInt16;
-    using MouseCode    = UInt8;
-    using ModifierCode = UInt8;
-    using ActionCode   = UInt8;
+    using EKeyCode      = UInt16;
+    using EMouseCode    = UInt8;
+    using EModifierCode = UInt8;
+    using EActionCode   = UInt8;
 
     namespace Key
     {
         // Taken from glfw3.h https://www.glfw.org/docs/3.3/group__input.html
-        enum : KeyCode
+        enum : EKeyCode
         {
             /* Printable Keys */
             Space        = 32,
@@ -143,7 +143,7 @@ namespace Corvus
     namespace Mouse
     {
         // Taken from glfw3.h https://www.glfw.org/docs/3.3/group__input.html
-        enum : MouseCode
+        enum : EMouseCode
         {
             Button1      = 0,
             Button2      = 1,
@@ -163,7 +163,7 @@ namespace Corvus
     namespace Modifier
     {
         // Taken from glfw3.h https://www.glfw.org/docs/3.3/group__input.html
-        enum : ModifierCode
+        enum : EModifierCode
         {
             None     = 0,
             Shift    = BIT(0),
@@ -178,7 +178,7 @@ namespace Corvus
     namespace Action
     {
         // Taken from glfw3.h https://www.glfw.org/docs/3.3/group__input.html
-        enum : ActionCode
+        enum : EActionCode
         {
             Release = 0,
             Press   = 1,

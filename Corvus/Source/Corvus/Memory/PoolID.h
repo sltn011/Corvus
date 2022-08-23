@@ -6,7 +6,7 @@
 namespace Corvus
 {
 
-    enum class PoolType : UInt8
+    enum class EPoolType : UInt8
     {
         General,
         Component,
@@ -17,16 +17,16 @@ namespace Corvus
     {
     public:
         PoolID() = default;
-        PoolID(PoolType Type, SizeT IDInGroup);
+        PoolID(EPoolType Type, SizeT IDInGroup);
 
-        PoolType GetType() const;
-        SizeT    GetIDInGroup() const;
+        EPoolType GetType() const;
+        SizeT     GetIDInGroup() const;
 
         bool IsValid() const;
 
     private:
-        PoolType m_Type      = PoolType::General;
-        SizeT    m_IDInGroup = 0;
+        EPoolType m_Type      = EPoolType::General;
+        SizeT     m_IDInGroup = 0;
     };
 
 } // namespace Corvus

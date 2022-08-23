@@ -33,7 +33,7 @@ namespace Corvus
 
             UInt32 const Indices[] = {0, 1, 2, 0, 2, 3};
 
-            VertexBufferLayout const Layout = {{BufferDataType::Vec3}, {BufferDataType::Vec3}};
+            VertexBufferLayout const Layout = {{EBufferDataType::Vec3}, {EBufferDataType::Vec3}};
 
             Own<VertexBuffer> VBO = VertexBuffer::Create(Vertices, 4, Layout);
             Own<IndexBuffer>  EBO = IndexBuffer::Create(Indices, 6);
@@ -54,13 +54,13 @@ namespace Corvus
             Entities.EmplaceBack(
                 TestShader,
                 VAO,
-                Transform{{1.0f, 0.0f, 0.0f}, Vector::OneVec, {RotationOrder::YXZ, {30.0f, 0.0f, 0.0f}}}
+                Transform{{1.0f, 0.0f, 0.0f}, Vector::OneVec, {ERotationOrder::YXZ, {30.0f, 0.0f, 0.0f}}}
             );
 
             Entities.EmplaceBack(
                 TestShader,
                 VAO,
-                Transform{{0.0f, 0.0f, 0.5f}, Vector::OneVec * 0.5f, {RotationOrder::YXZ, {0.0f, 0.0f, 45.0f}}}
+                Transform{{0.0f, 0.0f, 0.5f}, Vector::OneVec * 0.5f, {ERotationOrder::YXZ, {0.0f, 0.0f, 45.0f}}}
             );
 
             Entities[0].TransformComponent->AddChild(Entities[1].TransformComponent.Get());
@@ -75,27 +75,27 @@ namespace Corvus
             {
                 if (Input::IsKeyPressed(Key::W))
                 {
-                    Camera.ProcessMovementInput(Camera::MoveDirection::Forward, ElapsedTime);
+                    Camera.ProcessMovementInput(Camera::EMoveDirection::Forward, ElapsedTime);
                 }
                 if (Input::IsKeyPressed(Key::A))
                 {
-                    Camera.ProcessMovementInput(Camera::MoveDirection::Left, ElapsedTime);
+                    Camera.ProcessMovementInput(Camera::EMoveDirection::Left, ElapsedTime);
                 }
                 if (Input::IsKeyPressed(Key::S))
                 {
-                    Camera.ProcessMovementInput(Camera::MoveDirection::Backward, ElapsedTime);
+                    Camera.ProcessMovementInput(Camera::EMoveDirection::Backward, ElapsedTime);
                 }
                 if (Input::IsKeyPressed(Key::D))
                 {
-                    Camera.ProcessMovementInput(Camera::MoveDirection::Right, ElapsedTime);
+                    Camera.ProcessMovementInput(Camera::EMoveDirection::Right, ElapsedTime);
                 }
                 if (Input::IsKeyPressed(Key::Space))
                 {
-                    Camera.ProcessMovementInput(Camera::MoveDirection::Up, ElapsedTime);
+                    Camera.ProcessMovementInput(Camera::EMoveDirection::Up, ElapsedTime);
                 }
                 if (Input::IsKeyPressed(Key::LeftShift))
                 {
-                    Camera.ProcessMovementInput(Camera::MoveDirection::Down, ElapsedTime);
+                    Camera.ProcessMovementInput(Camera::EMoveDirection::Down, ElapsedTime);
                 }
             }
 

@@ -12,8 +12,8 @@ namespace Corvus
         std::ifstream CodeFile(FilePath);
         CORVUS_CORE_ASSERT_FMT(CodeFile.is_open(), "Error opening OpenGL Shader file {1}", FilePath);
 
-        std::stringstream ShadersCode[static_cast<UInt8>(ShaderType::MAX)];
-        ShaderType        Type = ShaderType::NONE;
+        std::stringstream ShadersCode[static_cast<UInt8>(EShaderType::MAX)];
+        EShaderType       Type = EShaderType::NONE;
 
         std::string CodeLine;
         while (std::getline(CodeFile, CodeLine))
@@ -22,24 +22,24 @@ namespace Corvus
             {
                 if (CodeLine.find("vertex") != std::string::npos)
                 {
-                    Type = ShaderType::Vertex;
+                    Type = EShaderType::Vertex;
                 }
                 else if (CodeLine.find("fragment") != std::string::npos)
                 {
-                    Type = ShaderType::Fragment;
+                    Type = EShaderType::Fragment;
                 }
             }
             else
             {
-                if (Type != ShaderType::NONE)
+                if (Type != EShaderType::NONE)
                 {
                     ShadersCode[static_cast<UInt8>(Type)] << CodeLine << "\n";
                 }
             }
         }
 
-        String const VertexCode   = ShadersCode[static_cast<UInt8>(ShaderType::Vertex)].str();
-        String const FragmentCode = ShadersCode[static_cast<UInt8>(ShaderType::Fragment)].str();
+        String const VertexCode   = ShadersCode[static_cast<UInt8>(EShaderType::Vertex)].str();
+        String const FragmentCode = ShadersCode[static_cast<UInt8>(EShaderType::Fragment)].str();
 
         GLuint const VertexShader   = CreateShader(GL_VERTEX_SHADER, VertexCode);
         GLuint const FragmentShader = CreateShader(GL_FRAGMENT_SHADER, FragmentCode);

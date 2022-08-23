@@ -5,26 +5,26 @@
 namespace Corvus::Quaternion
 {
 
-    Quat FromEuler(Vec3 const &Degrees, RotationOrder const Order)
+    Quat FromEuler(Vec3 const &Degrees, ERotationOrder const Order)
     {
         switch (Order)
         {
-        case Corvus::RotationOrder::XYZ:
+        case Corvus::ERotationOrder::XYZ:
             return FromEulerXYZ(Degrees);
 
-        case Corvus::RotationOrder::XZY:
+        case Corvus::ERotationOrder::XZY:
             return FromEulerXZY(Degrees);
 
-        case Corvus::RotationOrder::YXZ:
+        case Corvus::ERotationOrder::YXZ:
             return FromEulerYXZ(Degrees);
 
-        case Corvus::RotationOrder::YZX:
+        case Corvus::ERotationOrder::YZX:
             return FromEulerYZX(Degrees);
 
-        case Corvus::RotationOrder::ZXY:
+        case Corvus::ERotationOrder::ZXY:
             return FromEulerZXY(Degrees);
 
-        case Corvus::RotationOrder::ZYX:
+        case Corvus::ERotationOrder::ZYX:
             return FromEulerZYX(Degrees);
 
         default:

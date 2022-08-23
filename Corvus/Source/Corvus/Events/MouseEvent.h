@@ -53,7 +53,7 @@ namespace Corvus
             Event::EType::MouseButtonPress
         );
 
-        MouseButtonPressEvent(MouseCode ButtonValue, ModifierCode ModifierValue)
+        MouseButtonPressEvent(EMouseCode ButtonValue, EModifierCode ModifierValue)
             : Button{ButtonValue}, Modifier{ModifierValue}
         {
         }
@@ -65,8 +65,8 @@ namespace Corvus
             return ss.str();
         }
 
-        MouseCode    Button;
-        ModifierCode Modifier;
+        EMouseCode    Button;
+        EModifierCode Modifier;
     };
 
     class MouseButtonReleaseEvent : public Event
@@ -77,7 +77,7 @@ namespace Corvus
             Event::EType::MouseButtonRelease
         );
 
-        MouseButtonReleaseEvent(MouseCode ButtonValue) : Button{ButtonValue} {}
+        MouseButtonReleaseEvent(EMouseCode ButtonValue) : Button{ButtonValue} {}
 
         virtual String ToString() const override
         {
@@ -86,7 +86,7 @@ namespace Corvus
             return ss.str();
         }
 
-        MouseCode Button;
+        EMouseCode Button;
     };
 
 } // namespace Corvus

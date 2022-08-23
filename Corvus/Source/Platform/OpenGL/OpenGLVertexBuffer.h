@@ -27,7 +27,7 @@ namespace Corvus
         virtual void SetData(void const *Data, UInt32 NumVertices) override;
         virtual void SetData(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout) override;
 
-        static GLenum BufferLayoutTypeToGLType(BufferDataType Type);
+        static GLenum BufferLayoutTypeToGLType(EBufferDataType Type);
 
     protected:
         GLuint m_VBO = 0;

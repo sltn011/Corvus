@@ -4,7 +4,7 @@
 
 namespace Corvus
 {
-    BufferLayoutElement::BufferLayoutElement(BufferDataType const Type)
+    BufferLayoutElement::BufferLayoutElement(EBufferDataType const Type)
         : m_Type{Type},
           m_Size{SizeofBufferDataType(Type)},
           m_NumComponents{NumComponentsInBufferDataType(Type)},
@@ -12,7 +12,7 @@ namespace Corvus
     {
     }
 
-    BufferLayoutElement::BufferLayoutElement(BufferDataType const Type, bool const bShouldNormalize)
+    BufferLayoutElement::BufferLayoutElement(EBufferDataType const Type, bool const bShouldNormalize)
         : m_Type{Type},
           m_Size{SizeofBufferDataType(Type)},
           m_NumComponents{NumComponentsInBufferDataType(Type)},
@@ -20,7 +20,7 @@ namespace Corvus
     {
     }
 
-    BufferDataType BufferLayoutElement::GetType() const
+    EBufferDataType BufferLayoutElement::GetType() const
     {
         return m_Type;
     }
@@ -40,57 +40,57 @@ namespace Corvus
         return m_bShouldNormalize;
     }
 
-    UInt8 NumComponentsInBufferDataType(BufferDataType const Type)
+    UInt8 NumComponentsInBufferDataType(EBufferDataType const Type)
     {
         switch (Type)
         {
-        case BufferDataType::Bool:
+        case EBufferDataType::Bool:
             return 1;
-        case BufferDataType::Int:
+        case EBufferDataType::Int:
             return 1;
-        case BufferDataType::Float:
+        case EBufferDataType::Float:
             return 1;
-        case BufferDataType::Vec2:
+        case EBufferDataType::Vec2:
             return 2;
-        case BufferDataType::Vec3:
+        case EBufferDataType::Vec3:
             return 3;
-        case BufferDataType::Vec4:
+        case EBufferDataType::Vec4:
             return 4;
-        case BufferDataType::Mat3:
+        case EBufferDataType::Mat3:
             return 3 * 3;
-        case BufferDataType::Mat4:
+        case EBufferDataType::Mat4:
             return 4 * 4;
 
         default:
-            CORVUS_CORE_NO_ENTRY_FMT("Unknown BufferDataType used!");
+            CORVUS_CORE_NO_ENTRY_FMT("Unknown EBufferDataType used!");
         }
 
         return 0;
     }
 
-    UInt8 SizeofBufferDataType(BufferDataType const Type)
+    UInt8 SizeofBufferDataType(EBufferDataType const Type)
     {
         switch (Type)
         {
-        case BufferDataType::Bool:
+        case EBufferDataType::Bool:
             return 1;
-        case BufferDataType::Int:
+        case EBufferDataType::Int:
             return 4;
-        case BufferDataType::Float:
+        case EBufferDataType::Float:
             return 4;
-        case BufferDataType::Vec2:
+        case EBufferDataType::Vec2:
             return 4 * 2;
-        case BufferDataType::Vec3:
+        case EBufferDataType::Vec3:
             return 4 * 3;
-        case BufferDataType::Vec4:
+        case EBufferDataType::Vec4:
             return 4 * 4;
-        case BufferDataType::Mat3:
+        case EBufferDataType::Mat3:
             return 4 * 3 * 3;
-        case BufferDataType::Mat4:
+        case EBufferDataType::Mat4:
             return 4 * 4 * 4;
 
         default:
-            CORVUS_CORE_NO_ENTRY_FMT("Unknown BufferDataType used!");
+            CORVUS_CORE_NO_ENTRY_FMT("Unknown EBufferDataType used!");
         }
 
         return 0;

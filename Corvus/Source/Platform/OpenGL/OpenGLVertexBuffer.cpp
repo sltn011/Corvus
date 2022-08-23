@@ -62,29 +62,29 @@ namespace Corvus
         SetData(Data, NumVertices);
     }
 
-    GLenum OpenGLVertexBuffer::BufferLayoutTypeToGLType(BufferDataType const Type)
+    GLenum OpenGLVertexBuffer::BufferLayoutTypeToGLType(EBufferDataType const Type)
     {
         switch (Type)
         {
-        case BufferDataType::Bool:
+        case EBufferDataType::Bool:
             return GL_BYTE;
-        case BufferDataType::Int:
+        case EBufferDataType::Int:
             return GL_INT;
-        case BufferDataType::Float:
+        case EBufferDataType::Float:
             return GL_FLOAT;
-        case BufferDataType::Vec2:
+        case EBufferDataType::Vec2:
             return GL_FLOAT;
-        case BufferDataType::Vec3:
+        case EBufferDataType::Vec3:
             return GL_FLOAT;
-        case BufferDataType::Vec4:
+        case EBufferDataType::Vec4:
             return GL_FLOAT;
-        case BufferDataType::Mat3:
+        case EBufferDataType::Mat3:
             return GL_FLOAT;
-        case BufferDataType::Mat4:
+        case EBufferDataType::Mat4:
             return GL_FLOAT;
 
         default:
-            CORVUS_CORE_NO_ENTRY_FMT("Unknown BufferDataType used!");
+            CORVUS_CORE_NO_ENTRY_FMT("Unknown EBufferDataType used!");
         }
 
         return GL_FALSE;

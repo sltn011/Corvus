@@ -14,13 +14,13 @@ namespace Corvus
         GraphicsAPI() = default;
 
     public:
-        enum class API : UInt8
+        enum class EAPI : UInt8
         {
             OpenGL
         };
 
         static [[nodiscard]] Own<GraphicsAPI> Create();
-        static API                            GetAPI() { return m_API; }
+        static EAPI                           GetAPI() { return m_API; }
 
         virtual ~GraphicsAPI()                      = default;
         GraphicsAPI(GraphicsAPI const &)            = delete;
@@ -41,7 +41,7 @@ namespace Corvus
         virtual void DrawIndexed(UInt32 NumIndices) = 0;
 
     private:
-        static constexpr API m_API = API::OpenGL;
+        static constexpr EAPI m_API = EAPI::OpenGL;
     };
 
 } // namespace Corvus

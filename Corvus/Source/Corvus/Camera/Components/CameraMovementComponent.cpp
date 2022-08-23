@@ -19,7 +19,7 @@ namespace Corvus
     }
 
     void CameraMovementComponent::ProcessMovementInput(
-        Camera::MoveDirection const Direction, TimeDelta const ElapsedTime
+        Camera::EMoveDirection const Direction, TimeDelta const ElapsedTime
     )
     {
         if (!m_Owner)
@@ -40,27 +40,27 @@ namespace Corvus
 
         switch (Direction)
         {
-        case Camera::MoveDirection::Forward:
+        case Camera::EMoveDirection::Forward:
             Position += ForwardVector * m_MoveSpeed * Seconds;
             break;
 
-        case Camera::MoveDirection::Backward:
+        case Camera::EMoveDirection::Backward:
             Position -= ForwardVector * m_MoveSpeed * Seconds;
             break;
 
-        case Camera::MoveDirection::Left:
+        case Camera::EMoveDirection::Left:
             Position -= RightVector * m_MoveSpeed * Seconds;
             break;
 
-        case Camera::MoveDirection::Right:
+        case Camera::EMoveDirection::Right:
             Position += RightVector * m_MoveSpeed * Seconds;
             break;
 
-        case Camera::MoveDirection::Up:
+        case Camera::EMoveDirection::Up:
             Position += UpVector * m_MoveSpeed * Seconds;
             break;
 
-        case Camera::MoveDirection::Down:
+        case Camera::EMoveDirection::Down:
             Position -= UpVector * m_MoveSpeed * Seconds;
             break;
 
