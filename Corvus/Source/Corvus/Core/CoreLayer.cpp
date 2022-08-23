@@ -30,15 +30,15 @@ namespace Corvus
 
     void CoreLayer::OnEvent(Event &Event)
     {
-        if (Event.IsInCategory(Event::ECategory::Application))
+        if (Event.IsInCategory(Event::EEventCategory::Application))
         {
             OnApplicationEvent(Event);
         }
-        if (Event.IsInCategory(Event::ECategory::Keyboard))
+        if (Event.IsInCategory(Event::EEventCategory::Keyboard))
         {
             OnKeyboardEvent(Event);
         }
-        if (Event.IsInCategory(Event::ECategory::Mouse))
+        if (Event.IsInCategory(Event::EEventCategory::Mouse))
         {
             OnMouseEvent(Event);
         }
@@ -52,15 +52,15 @@ namespace Corvus
     {
         switch (Event.GetEventType())
         {
-        case Event::EType::WindowResize:
+        case Event::EEventType::WindowResize:
             OnWindowResize(Event);
             break;
 
-        case Event::EType::WindowClose:
+        case Event::EEventType::WindowClose:
             OnWindowClose(Event);
             break;
 
-        case Event::EType::WindowChangeFocus:
+        case Event::EEventType::WindowChangeFocus:
             OnWindowChangeFocus(Event);
             break;
 
@@ -73,11 +73,11 @@ namespace Corvus
     {
         switch (Event.GetEventType())
         {
-        case Event::EType::KeyPress:
+        case Event::EEventType::KeyPress:
             OnKeyPressed(Event);
             break;
 
-        case Event::EType::KeyRelease:
+        case Event::EEventType::KeyRelease:
             OnKeyReleased(Event);
             break;
 
@@ -90,19 +90,19 @@ namespace Corvus
     {
         switch (Event.GetEventType())
         {
-        case Event::EType::MouseButtonPress:
+        case Event::EEventType::MouseButtonPress:
             OnMouseButtonPressed(Event);
             break;
 
-        case Event::EType::MouseButtonRelease:
+        case Event::EEventType::MouseButtonRelease:
             OnMouseButtonReleased(Event);
             break;
 
-        case Event::EType::MouseCursorMove:
+        case Event::EEventType::MouseCursorMove:
             OnMouseCursorMove(Event);
             break;
 
-        case Event::EType::MouseScroll:
+        case Event::EEventType::MouseScroll:
             OnMouseScroll(Event);
             break;
 

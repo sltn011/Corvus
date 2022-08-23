@@ -20,8 +20,8 @@ namespace Corvus
         Entity(Own<Shader> const &Shader, Own<VertexArray> const &VAO, Transform const &Transform);
 
     public:
-        Poolable<CTransformComponent>  TransformComponent;
-        Poolable<CStaticMeshComponent> StaticMeshComponent;
+        TPoolable<CTransformComponent>  TransformComponent;
+        TPoolable<CStaticMeshComponent> StaticMeshComponent;
     };
 
 } // namespace Corvus

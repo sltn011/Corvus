@@ -128,7 +128,7 @@ namespace Corvus
 
         virtual void OnEvent(Event &Event)
         {
-            if (Event.GetEventType() == Event::EType::KeyPress)
+            if (Event.GetEventType() == Event::EEventType::KeyPress)
             {
                 KeyPressEvent &KPEvent = CastEvent<KeyPressEvent>(Event);
                 if (KPEvent.Key == Key::C)
@@ -139,7 +139,7 @@ namespace Corvus
                     Event.SetHandled();
                 }
             }
-            else if (Event.GetEventType() == Event::EType::WindowResize)
+            else if (Event.GetEventType() == Event::EEventType::WindowResize)
             {
                 WindowResizeEvent &WREvent = CastEvent<WindowResizeEvent>(Event);
                 Camera.SetViewportSize(static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight));
@@ -147,7 +147,7 @@ namespace Corvus
         }
 
     protected:
-        Array<Entity>     Entities;
+        TArray<Entity>    Entities;
         PerspectiveCamera Camera;
 
         Own<Shader>      TestShader;

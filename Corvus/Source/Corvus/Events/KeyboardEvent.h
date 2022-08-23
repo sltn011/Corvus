@@ -10,7 +10,9 @@ namespace Corvus
     class KeyPressEvent : public Event
     {
     public:
-        CORVUS_EVENT_GENERATED_BODY(Event::ECategory::Input | Event::ECategory::Keyboard, Event::EType::KeyPress);
+        CORVUS_EVENT_GENERATED_BODY(
+            Event::EEventCategory::Input | Event::EEventCategory::Keyboard, Event::EEventType::KeyPress
+        );
 
         KeyPressEvent(EKeyCode KeyValue, bool bRepeatedValue, EModifierCode ModifierValue)
             : Key{KeyValue}, bRepeated{bRepeatedValue}, Modifier{ModifierValue}
@@ -32,7 +34,9 @@ namespace Corvus
     class KeyReleaseEvent : public Event
     {
     public:
-        CORVUS_EVENT_GENERATED_BODY(Event::ECategory::Input | Event::ECategory::Keyboard, Event::EType::KeyRelease);
+        CORVUS_EVENT_GENERATED_BODY(
+            Event::EEventCategory::Input | Event::EEventCategory::Keyboard, Event::EEventType::KeyRelease
+        );
 
         KeyReleaseEvent(EKeyCode KeyValue) : Key{KeyValue} {}
 

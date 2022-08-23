@@ -8,28 +8,28 @@
 namespace Corvus
 {
     template<typename Signature>
-    class Delegate;
+    class TDelegate;
 
     template<typename Signature>
-    class MulticastDelegate;
+    class TMulticastDelegate;
 } // namespace Corvus
 
 #define CORVUS_DECLARE_DELEGATE(DelegateName, ReturnType, ...) \
-    using DelegateName = Corvus::Delegate<ReturnType(__VA_ARGS__)>;
+    using DelegateName = Corvus::TDelegate<ReturnType(__VA_ARGS__)>;
 #define CORVUS_DECLARE_MULTICAST_DELEGATE(DelegateName, ...) \
-    using DelegateName = Corvus::MulticastDelegate<void(__VA_ARGS__)>;
+    using DelegateName = Corvus::TMulticastDelegate<void(__VA_ARGS__)>;
 
 namespace Corvus
 {
     template<typename R, typename... Args>
-    class Delegate<R(Args...)>
+    class TDelegate<R(Args...)>
     {
     public:
-        Delegate()                            = default;
-        Delegate(Delegate const &)            = delete;
-        Delegate(Delegate &&)                 = default;
-        Delegate &operator=(Delegate const &) = delete;
-        Delegate &operator=(Delegate &&)      = default;
+        TDelegate()                             = default;
+        TDelegate(TDelegate const &)            = delete;
+        TDelegate(TDelegate &&)                 = default;
+        TDelegate &operator=(TDelegate const &) = delete;
+        TDelegate &operator=(TDelegate &&)      = default;
 
         bool HasBinding() const { return m_Invoker != nullptr; }
 
@@ -40,7 +40,7 @@ namespace Corvus
         {
             if (!m_Invoker)
             {
-                m_Invoker = std::make_unique<ObjectInvoker<T, F, R, Args...>>(Object, Method);
+                m_Invoker = std::make_unique<TObjectInvoker<T, F, R, Args...>>(Object, Method);
             }
         }
 
@@ -49,7 +49,7 @@ namespace Corvus
         {
             if (!m_Invoker)
             {
-                m_Invoker = std::make_unique<FunctionInvoker<F, R, Args...>>(Function);
+                m_Invoker = std::make_unique<TFunctionInvoker<F, R, Args...>>(Function);
             }
         }
 
@@ -71,17 +71,17 @@ namespace Corvus
 
     private:
         template<typename R, typename... Args>
-        class BaseInvoker
+        class TBaseInvoker
         {
         public:
             virtual R Invoke(Args &&...args) const = 0;
         };
 
         template<typename T, typename F, typename R, typename... Args>
-        struct ObjectInvoker : public BaseInvoker<R, Args...>
+        struct TObjectInvoker : public TBaseInvoker<R, Args...>
         {
         public:
-            ObjectInvoker(T *const Object, F const Method)
+            TObjectInvoker(T *const Object, F const Method)
             {
                 m_Object = Object;
                 m_Method = Method;
@@ -99,10 +99,10 @@ namespace Corvus
         };
 
         template<typename F, typename R, typename... Args>
-        struct FunctionInvoker : public BaseInvoker<R, Args...>
+        struct TFunctionInvoker : public TBaseInvoker<R, Args...>
         {
         public:
-            FunctionInvoker(F const Function) { m_Function = Function; }
+            TFunctionInvoker(F const Function) { m_Function = Function; }
 
             R Invoke(Args &&...args) const override
             {
@@ -114,25 +114,25 @@ namespace Corvus
             F m_Function;
         };
 
-        std::unique_ptr<BaseInvoker<R, Args...>> m_Invoker;
+        std::unique_ptr<TBaseInvoker<R, Args...>> m_Invoker;
     };
 
     template<typename... Args>
-    class MulticastDelegate<void(Args...)>
+    class TMulticastDelegate<void(Args...)>
     {
     public:
-        MulticastDelegate()                                     = default;
-        MulticastDelegate(MulticastDelegate const &)            = delete;
-        MulticastDelegate(MulticastDelegate &&)                 = default;
-        MulticastDelegate &operator=(MulticastDelegate const &) = delete;
-        MulticastDelegate &operator=(MulticastDelegate &&)      = default;
+        TMulticastDelegate()                                      = default;
+        TMulticastDelegate(TMulticastDelegate const &)            = delete;
+        TMulticastDelegate(TMulticastDelegate &&)                 = default;
+        TMulticastDelegate &operator=(TMulticastDelegate const &) = delete;
+        TMulticastDelegate &operator=(TMulticastDelegate &&)      = default;
 
         void ClearAllBinding() { m_Bindings.clear(); }
 
         template<typename T, typename F>
         void BindObject(T *const Object, F const Method)
         {
-            Delegate<void(Args...)> NewEntry;
+            TDelegate<void(Args...)> NewEntry;
             NewEntry.BindObject(Object, Method);
             m_Bindings.emplace_back(std::move(NewEntry));
         }
@@ -140,14 +140,14 @@ namespace Corvus
         template<typename F>
         void BindFunction(F const Function)
         {
-            Delegate<void(Args...)> NewEntry;
+            TDelegate<void(Args...)> NewEntry;
             NewEntry.BindFunction(Function);
             m_Bindings.emplace_back(std::move(NewEntry));
         }
 
         void Broadcast(Args &&...args) const
         {
-            for (Delegate<void(Args...)> const &Binding : m_Bindings)
+            for (TDelegate<void(Args...)> const &Binding : m_Bindings)
             {
                 Binding.Invoke(std::forward<Args>(args)...);
             }
@@ -156,7 +156,7 @@ namespace Corvus
         void operator()(Args &&...args) const { Broadcast(std::forward<Args>(args)...); }
 
     private:
-        std::vector<Delegate<void(Args...)>> m_Bindings;
+        std::vector<TDelegate<void(Args...)>> m_Bindings;
     };
 } // namespace Corvus
 

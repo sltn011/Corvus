@@ -11,13 +11,13 @@ namespace Corvus
     class WindowCloseEvent : public Event
     {
     public:
-        CORVUS_EVENT_GENERATED_BODY(Event::ECategory::Application, Event::EType::WindowClose);
+        CORVUS_EVENT_GENERATED_BODY(Event::EEventCategory::Application, Event::EEventType::WindowClose);
     };
 
     class WindowResizeEvent : public Event
     {
     public:
-        CORVUS_EVENT_GENERATED_BODY(Event::ECategory::Application, Event::EType::WindowResize);
+        CORVUS_EVENT_GENERATED_BODY(Event::EEventCategory::Application, Event::EEventType::WindowResize);
 
         WindowResizeEvent(Int32 NewWidthValue, Int32 NewHeightValue)
             : NewWidth{NewWidthValue}, NewHeight{NewHeightValue}
@@ -38,7 +38,7 @@ namespace Corvus
     class WindowChangeFocusEvent : public Event
     {
     public:
-        CORVUS_EVENT_GENERATED_BODY(Event::ECategory::Application, Event::EType::WindowChangeFocus);
+        CORVUS_EVENT_GENERATED_BODY(Event::EEventCategory::Application, Event::EEventType::WindowChangeFocus);
 
         WindowChangeFocusEvent(bool bSetFocusValue) : bSetFocus{bSetFocusValue} {}
 

@@ -14,7 +14,7 @@ namespace Corvus
     class Entity;
 
     template<typename T>
-    class Poolable;
+    class TPoolable;
 
     constexpr SizeT CalculatePoolID(SizeT ElementSize)
     {
@@ -44,57 +44,57 @@ namespace Corvus
         }
     }
 
-    // Use to create array of uninitialized Poolable objects
+    // Use to create array of uninitialized TPoolable objects
     template<typename T>
-    Poolable<T> CreatePoolableArray(SizeT NumElements)
+    TPoolable<T> CreatePoolableArray(SizeT NumElements)
     {
         static constexpr SizeT TypePoolID = CalculatePoolID(sizeof(T));
 
         if constexpr (std::is_base_of_v<BaseDataComponent, T>)
         {
-            return Poolable<T>{AppPools::RequestComponent(TypePoolID, NumElements)};
+            return TPoolable<T>{AppPools::RequestComponent(TypePoolID, NumElements)};
         }
         else if (std::is_base_of_v<Entity, T>)
         {
-            return Poolable<T>{AppPools::RequestEntity(TypePoolID, NumElements)};
+            return TPoolable<T>{AppPools::RequestEntity(TypePoolID, NumElements)};
         }
         else
         {
-            return Poolable<T>{AppPools::RequestGeneral(TypePoolID, NumElements)};
+            return TPoolable<T>{AppPools::RequestGeneral(TypePoolID, NumElements)};
         }
     }
 
-    // Use to create uninitialized Poolable objects
+    // Use to create uninitialized TPoolable objects
     template<typename T>
-    Poolable<T> CreatePoolable()
+    TPoolable<T> CreatePoolable()
     {
         return CreatePoolableArray<T>(1);
     }
 
-    // Use to create single Poolable objects and initialize it
+    // Use to create single TPoolable objects and initialize it
     template<typename T, typename... Args>
-    Poolable<T> ConstructPoolable(Args &&...args)
+    TPoolable<T> ConstructPoolable(Args &&...args)
     {
-        Poolable<T> Object = CreatePoolable<T>();
+        TPoolable<T> Object = CreatePoolable<T>();
         new (Object.Get()) T{std::forward<Args>(args)...};
         return Object;
     }
 
     template<typename T>
-    class Poolable
+    class TPoolable
     {
     private:
         template<typename T>
-        friend Poolable<T> CreatePoolableArray(SizeT NumElements);
+        friend TPoolable<T> CreatePoolableArray(SizeT NumElements);
 
     public:
-        Poolable() = default;
-        Poolable(PoolIndex &&Index) : m_PoolIndex{std::move(Index)} {}
+        TPoolable() = default;
+        TPoolable(PoolIndex &&Index) : m_PoolIndex{std::move(Index)} {}
 
-        Poolable(Poolable const &)            = delete;
-        Poolable(Poolable &&)                 = default;
-        Poolable &operator=(Poolable const &) = delete;
-        Poolable &operator=(Poolable &&)      = default;
+        TPoolable(TPoolable const &)            = delete;
+        TPoolable(TPoolable &&)                 = default;
+        TPoolable &operator=(TPoolable const &) = delete;
+        TPoolable &operator=(TPoolable &&)      = default;
 
         T *Get() const { return reinterpret_cast<T *>(m_PoolIndex.GetRaw()); }
 

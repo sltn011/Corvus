@@ -12,7 +12,9 @@ namespace Corvus
     class CursorMoveEvent : public Event
     {
     public:
-        CORVUS_EVENT_GENERATED_BODY(Event::ECategory::Input | Event::ECategory::Mouse, Event::EType::MouseCursorMove);
+        CORVUS_EVENT_GENERATED_BODY(
+            Event::EEventCategory::Input | Event::EEventCategory::Mouse, Event::EEventType::MouseCursorMove
+        );
 
         CursorMoveEvent(float NewXValue, float NewYValue) : NewX{NewXValue}, NewY{NewYValue} {}
 
@@ -30,7 +32,9 @@ namespace Corvus
     class MouseScrollEvent : public Event
     {
     public:
-        CORVUS_EVENT_GENERATED_BODY(Event::ECategory::Input | Event::ECategory::Mouse, Event::EType::MouseScroll);
+        CORVUS_EVENT_GENERATED_BODY(
+            Event::EEventCategory::Input | Event::EEventCategory::Mouse, Event::EEventType::MouseScroll
+        );
 
         MouseScrollEvent(float OffsetXValue, float OffsetYValue) : OffsetX{OffsetXValue}, OffsetY{OffsetYValue} {}
 
@@ -49,8 +53,8 @@ namespace Corvus
     {
     public:
         CORVUS_EVENT_GENERATED_BODY(
-            Event::ECategory::Input | Event::ECategory::Mouse | Event::ECategory::MouseButton,
-            Event::EType::MouseButtonPress
+            Event::EEventCategory::Input | Event::EEventCategory::Mouse | Event::EEventCategory::MouseButton,
+            Event::EEventType::MouseButtonPress
         );
 
         MouseButtonPressEvent(EMouseCode ButtonValue, EModifierCode ModifierValue)
@@ -73,8 +77,8 @@ namespace Corvus
     {
     public:
         CORVUS_EVENT_GENERATED_BODY(
-            Event::ECategory::Input | Event::ECategory::Mouse | Event::ECategory::MouseButton,
-            Event::EType::MouseButtonRelease
+            Event::EEventCategory::Input | Event::EEventCategory::Mouse | Event::EEventCategory::MouseButton,
+            Event::EEventType::MouseButtonRelease
         );
 
         MouseButtonReleaseEvent(EMouseCode ButtonValue) : Button{ButtonValue} {}

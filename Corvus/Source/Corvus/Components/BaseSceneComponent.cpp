@@ -31,7 +31,7 @@ namespace Corvus
         m_bIsDirty  = true;
     }
 
-    Array<CBaseSceneComponent *> &CBaseSceneComponent::GetChildren()
+    TArray<CBaseSceneComponent *> &CBaseSceneComponent::GetChildren()
     {
         return m_Children;
     }

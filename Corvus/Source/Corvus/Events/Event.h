@@ -11,7 +11,7 @@ namespace Corvus
     {                                                       \
         return Category;                                    \
     }                                                       \
-    virtual Event::EType GetEventType() const override      \
+    virtual Event::EEventType GetEventType() const override \
     {                                                       \
         return Type;                                        \
     }                                                       \
@@ -31,7 +31,7 @@ namespace Corvus
     class Event
     {
     public:
-        enum ECategory : UInt8
+        enum EEventCategory : UInt8
         {
             NoneCategory = 0,
             Input        = BIT(0),
@@ -41,7 +41,7 @@ namespace Corvus
             MouseButton  = BIT(4)
         };
 
-        enum class EType : UInt8
+        enum class EEventType : UInt8
         {
             NoneType = 0,
             WindowClose,
@@ -58,15 +58,15 @@ namespace Corvus
         virtual ~Event() = default;
 
         // Defined by child classes using CORVUS_EVENT_GENERATED_BODY macro
-        virtual UInt8        GetCategoryFlags() const   = 0;
-        virtual Event::EType GetEventType() const       = 0;
-        virtual Char const  *GetEventTypeString() const = 0;
+        virtual UInt8             GetCategoryFlags() const   = 0;
+        virtual Event::EEventType GetEventType() const       = 0;
+        virtual Char const       *GetEventTypeString() const = 0;
 
         [[nodiscard]] bool WasHandled() const { return m_bWasHandled; }
 
         void SetHandled() { m_bWasHandled = true; }
 
-        bool IsInCategory(Event::ECategory Category) { return GetCategoryFlags() & Category; }
+        bool IsInCategory(Event::EEventCategory Category) { return GetCategoryFlags() & Category; }
 
         virtual String ToString() const { return GetEventTypeString(); }
 

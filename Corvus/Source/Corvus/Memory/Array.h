@@ -7,10 +7,10 @@ namespace Corvus
 {
 
     template<typename T>
-    class Array
+    class TArray
     {
     public:
-        Array(SizeT Capacity = 0) : m_Capacity{Capacity}
+        TArray(SizeT Capacity = 0) : m_Capacity{Capacity}
         {
             if (Capacity != 0)
             {
@@ -81,9 +81,9 @@ namespace Corvus
             m_Data.IncreaseArraySize(m_Capacity);
         }
 
-        Poolable<T> m_Data;
-        SizeT       m_Size     = 0;
-        SizeT       m_Capacity = 0;
+        TPoolable<T> m_Data;
+        SizeT        m_Size     = 0;
+        SizeT        m_Capacity = 0;
 
         static constexpr float s_CapacityGrowthCoeff = 2.0f;
     };

@@ -21,8 +21,8 @@ namespace Corvus
         Transform GetTransform() const;
         void      SetTransform(Transform const &Transform);
 
-        Array<CBaseSceneComponent *> &GetChildren();
-        void                          AddChild(CBaseSceneComponent *const Child);
+        TArray<CBaseSceneComponent *> &GetChildren();
+        void                           AddChild(CBaseSceneComponent *const Child);
 
         CBaseSceneComponent *GetParent() const;
         void                 SetParent(CBaseSceneComponent *const Parent);
@@ -35,8 +35,8 @@ namespace Corvus
         mutable Mat4 m_TransformMatrix = Mat4(1.0f);
         mutable bool m_bIsDirty        = true;
 
-        Array<CBaseSceneComponent *> m_Children;
-        CBaseSceneComponent         *m_Parent = nullptr;
+        TArray<CBaseSceneComponent *> m_Children;
+        CBaseSceneComponent          *m_Parent = nullptr;
     };
 
 } // namespace Corvus
