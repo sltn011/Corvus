@@ -11,6 +11,7 @@ namespace Corvus
 
     std::unordered_map<SizeT, Pool> AppPools::s_GeneralPools;
     std::unordered_map<SizeT, Pool> AppPools::s_ComponentPools;
+    std::unordered_map<SizeT, Pool> AppPools::s_EntityPools;
 
     void AppPools::Init()
     {
@@ -52,6 +53,18 @@ namespace Corvus
         return ID;
     }
 
+    PoolID AppPools::CreateEntityPool(PoolDataFormat DataFormat)
+    {
+        CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
+
+        PoolID const ID = PoolID{PoolType::Entity, DataFormat.ElementSize};
+        if (s_EntityPools.find(ID.GetIDInGroup()) == s_EntityPools.end())
+        {
+            s_EntityPools.emplace(ID.GetIDInGroup(), Pool{ID, DataFormat});
+        }
+        return ID;
+    }
+
     Pool &AppPools::GetPool(PoolID const ID)
     {
         switch (ID.GetType())
@@ -61,6 +74,9 @@ namespace Corvus
 
         case PoolType::Component:
             return GetComponentPool(ID.GetIDInGroup());
+
+        case PoolType::Entity:
+            return GetEntityPool(ID.GetIDInGroup());
 
         default:
             CORVUS_CORE_NO_ENTRY_FMT("Invalid Pool Type!");
@@ -99,6 +115,22 @@ namespace Corvus
         return It->second;
     }
 
+    Pool &AppPools::GetEntityPool(SizeT PoolIDInGroup)
+    {
+        CORVUS_CORE_ASSERT(PoolIDInGroup != 0);
+
+        auto It = s_EntityPools.find(PoolIDInGroup);
+        if (It == s_EntityPools.end())
+        {
+            PoolDataFormat DataFormat;
+            DataFormat.ElementSize = PoolIDInGroup;
+            DataFormat.NumElements = s_DefaultPoolSize;
+            CreateEntityPool(DataFormat);
+            It = s_EntityPools.find(PoolIDInGroup);
+        }
+        return It->second;
+    }
+
     PoolIndex AppPools::Request(PoolID const TargetPoolID, SizeT const NumElements)
     {
         return GetPool(TargetPoolID).Request(NumElements);
@@ -112,6 +144,11 @@ namespace Corvus
     PoolIndex AppPools::RequestComponent(SizeT const PoolIDInGroup, SizeT const NumElements)
     {
         return GetComponentPool(PoolIDInGroup).Request(NumElements);
+    }
+
+    PoolIndex AppPools::RequestEntity(SizeT PoolIDInGroup, SizeT NumElements)
+    {
+        return GetEntityPool(PoolIDInGroup).Request(NumElements);
     }
 
 } // namespace Corvus

@@ -11,6 +11,7 @@ namespace Corvus
 {
 
     class BaseDataComponent;
+    class Entity;
 
     template<typename T>
     class Poolable;
@@ -51,11 +52,15 @@ namespace Corvus
 
         if constexpr (std::is_base_of_v<BaseDataComponent, T>)
         {
-            return Poolable<T>(AppPools::RequestComponent(TypePoolID, NumElements));
+            return Poolable<T>{AppPools::RequestComponent(TypePoolID, NumElements)};
+        }
+        else if (std::is_base_of_v<Entity, T>)
+        {
+            return Poolable<T>{AppPools::RequestEntity(TypePoolID, NumElements)};
         }
         else
         {
-            return Poolable<T>(AppPools::RequestGeneral(TypePoolID, NumElements));
+            return Poolable<T>{AppPools::RequestGeneral(TypePoolID, NumElements)};
         }
     }
 

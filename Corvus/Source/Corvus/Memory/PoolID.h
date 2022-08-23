@@ -9,7 +9,8 @@ namespace Corvus
     enum class PoolType : UInt8
     {
         General,
-        Component
+        Component,
+        Entity
     };
 
     class PoolID
