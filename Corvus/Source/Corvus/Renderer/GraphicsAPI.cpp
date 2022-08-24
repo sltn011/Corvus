@@ -7,15 +7,15 @@
 namespace Corvus
 {
 
-    TOwn<GraphicsAPI> GraphicsAPI::Create()
+    TOwn<CGraphicsAPI> CGraphicsAPI::Create()
     {
         switch (m_API)
         {
-        case GraphicsAPI::EAPI::OpenGL:
-            return MakeOwned<OpenGLGraphicsAPI>();
+        case CGraphicsAPI::EAPI::OpenGL:
+            return MakeOwned<POpenGLGraphicsAPI>();
 
         default:
-            CORVUS_NO_ENTRY_FMT("Undefined Graphics GraphicsAPI!");
+            CORVUS_NO_ENTRY_FMT("Undefined Graphics CGraphicsAPI!");
         }
         return nullptr;
     }

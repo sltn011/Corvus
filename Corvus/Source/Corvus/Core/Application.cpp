@@ -6,7 +6,7 @@
 #include "Corvus/Camera/PerspectiveCamera.h"
 #include "Corvus/Core/CoreLayer.h"
 #include "Corvus/GUI/LayerGUI.h"
-#include "Corvus/Memory/AppPools.h"
+#include "Corvus/Memory/ApplicationPools.h"
 #include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Renderer.h"
 #include "Corvus/Renderer/Shader.h"
@@ -17,9 +17,9 @@
 
 namespace Corvus
 {
-    Application *Application::s_ApplicationInstance = nullptr;
+    СApplication *СApplication::s_ApplicationInstance = nullptr;
 
-    Application::Application()
+    СApplication::СApplication()
     {
         CORVUS_CORE_ASSERT_FMT(!s_ApplicationInstance, "Only one instance of application is allowed!");
 
@@ -28,29 +28,29 @@ namespace Corvus
         Init();
     }
 
-    Application::~Application()
+    СApplication::~СApplication()
     {
     }
 
-    void Application::Init()
+    void СApplication::Init()
     {
-        AppPools::Init();
+        CApplicationPools::Init();
 
         InitWindow();
         InitRenderer();
 
-        PushLayer(Layer::Create<CoreLayer>());
-        // PushLayer(Layer::Create<LayerGUI>("GUI", true));
+        PushLayer(СLayer::Create<СCoreLayer>());
+        // PushLayer(Layer::Create<СLayerGUI>("GUI", true));
     }
 
-    void Application::Run()
+    void СApplication::Run()
     {
-        TimePoint TimePointOld;
+        FTimePoint TimePointOld;
         while (!m_Window->ShouldClose())
         {
-            TimePoint const TimePointNew;
-            TimeDelta const ElapsedTime = TimePointNew - TimePointOld;
-            TimePointOld                = TimePointNew;
+            FTimePoint const TimePointNew;
+            FTimeDelta const ElapsedTime = TimePointNew - TimePointOld;
+            TimePointOld                 = TimePointNew;
 
             UpdateLayers(ElapsedTime);
             RenderLayers();
@@ -59,17 +59,17 @@ namespace Corvus
         }
     }
 
-    void Application::PushLayer(TOwn<Layer> &&NewLayer)
+    void СApplication::PushLayer(TOwn<СLayer> &&NewLayer)
     {
         m_LayersStack.PushLayer(std::move(NewLayer));
     }
 
-    TOwn<Layer> Application::PopLayer()
+    TOwn<СLayer> СApplication::PopLayer()
     {
         return m_LayersStack.PopLayer();
     }
 
-    void Application::UpdateLayers(TimeDelta ElapsedTime)
+    void СApplication::UpdateLayers(FTimeDelta ElapsedTime)
     {
         for (auto It = m_LayersStack.Begin(); It != m_LayersStack.End(); ++It)
         {
@@ -77,7 +77,7 @@ namespace Corvus
         }
     }
 
-    void Application::RenderLayers()
+    void СApplication::RenderLayers()
     {
         if (!m_Window->GetGUIController().IsInitialized())
         {
@@ -97,7 +97,7 @@ namespace Corvus
         m_Window->GetGUIController().EndFrame();
     }
 
-    void Application::OnEventReceived(Event &Event)
+    void СApplication::OnEventReceived(СEvent &Event)
     {
         for (auto It = m_LayersStack.RBegin(); It != m_LayersStack.REnd(); ++It)
         {
@@ -109,23 +109,23 @@ namespace Corvus
         }
     }
 
-    Window &Application::GetWindow()
+    CWindow &СApplication::GetWindow()
     {
         return *m_Window;
     }
 
-    void Application::InitWindow()
+    void СApplication::InitWindow()
     {
-        WindowData WindowSettings;
+        CWindowData WindowSettings;
         WindowSettings.WindowWidth   = 1600;
         WindowSettings.WindowHeight  = 900;
         WindowSettings.WindowName    = "TestWindow";
         WindowSettings.bVSyncEnabled = true;
 
-        m_Window = Window::Create();
+        m_Window = CWindow::Create();
         CORVUS_CORE_ASSERT(m_Window);
         m_Window->Init(WindowSettings);
-        m_Window->OnEvent.BindObject(this, &Application::OnEventReceived);
+        m_Window->OnEvent.BindObject(this, &СApplication::OnEventReceived);
 
         CORVUS_CORE_INFO(
             "Application Window \"{0}\" {1}x{2} initialized",
@@ -135,9 +135,9 @@ namespace Corvus
         );
     }
 
-    void Application::InitRenderer()
+    void СApplication::InitRenderer()
     {
-        Renderer::Init();
+        CRenderer::Init();
         CORVUS_CORE_INFO("Renderer initialized");
     }
 } // namespace Corvus

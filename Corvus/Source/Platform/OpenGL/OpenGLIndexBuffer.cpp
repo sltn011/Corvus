@@ -4,23 +4,23 @@
 
 namespace Corvus
 {
-    OpenGLIndexBuffer::OpenGLIndexBuffer(UInt32 const *const Data, UInt32 const NumIndices)
+    POpenGLIndexBuffer::POpenGLIndexBuffer(UInt32 const *const Data, UInt32 const NumIndices)
     {
         glCreateBuffers(1, &m_EBO);
         SetData(Data, NumIndices);
     }
 
-    OpenGLIndexBuffer::~OpenGLIndexBuffer()
+    POpenGLIndexBuffer::~POpenGLIndexBuffer()
     {
         glDeleteBuffers(1, &m_EBO);
     }
 
-    OpenGLIndexBuffer::OpenGLIndexBuffer(OpenGLIndexBuffer &&Rhs) noexcept : m_EBO{std::exchange(Rhs.m_EBO, 0)}
+    POpenGLIndexBuffer::POpenGLIndexBuffer(POpenGLIndexBuffer &&Rhs) noexcept : m_EBO{std::exchange(Rhs.m_EBO, 0)}
     {
         m_NumIndices = Rhs.m_NumIndices;
     }
 
-    OpenGLIndexBuffer &OpenGLIndexBuffer::operator=(OpenGLIndexBuffer &&Rhs) noexcept
+    POpenGLIndexBuffer &POpenGLIndexBuffer::operator=(POpenGLIndexBuffer &&Rhs) noexcept
     {
         if (this != &Rhs)
         {
@@ -30,22 +30,22 @@ namespace Corvus
         return *this;
     }
 
-    GLuint OpenGLIndexBuffer::GetID() const
+    GLuint POpenGLIndexBuffer::GetID() const
     {
         return m_EBO;
     }
 
-    void OpenGLIndexBuffer::Bind()
+    void POpenGLIndexBuffer::Bind()
     {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     }
 
-    void OpenGLIndexBuffer::Unbind()
+    void POpenGLIndexBuffer::Unbind()
     {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    void OpenGLIndexBuffer::SetData(UInt32 const *Data, UInt32 const NumIndices)
+    void POpenGLIndexBuffer::SetData(UInt32 const *Data, UInt32 const NumIndices)
     {
         Bind(); // GL_ELEMENT_ARRAY_BUFFER should stay binded inside vertex array
 

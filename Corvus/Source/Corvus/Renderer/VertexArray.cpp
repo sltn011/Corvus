@@ -9,12 +9,12 @@
 namespace Corvus
 {
 
-    TOwn<VertexArray> VertexArray::Create()
+    TOwn<CVertexArray> CVertexArray::Create()
     {
-        switch (GraphicsAPI::GetAPI())
+        switch (CGraphicsAPI::GetAPI())
         {
-        case GraphicsAPI::EAPI::OpenGL:
-            return MakeOwned<OpenGLVertexArray>();
+        case CGraphicsAPI::EAPI::OpenGL:
+            return MakeOwned<POpenGLVertexArray>();
 
         default:
             CORVUS_NO_ENTRY_FMT("Undefined Graphics EAPI!");
@@ -22,12 +22,12 @@ namespace Corvus
         return nullptr;
     }
 
-    TOwn<IndexBuffer> &VertexArray::GetIndexBuffer()
+    TOwn<CIndexBuffer> &CVertexArray::GetIndexBuffer()
     {
         return m_IndexBuffer;
     }
 
-    TOwn<VertexBuffer> &VertexArray::GetVertexBuffer()
+    TOwn<CVertexBuffer> &CVertexArray::GetVertexBuffer()
     {
         return m_VertexBuffer;
     }

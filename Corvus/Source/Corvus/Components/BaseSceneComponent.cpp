@@ -5,12 +5,12 @@
 namespace Corvus
 {
 
-    CBaseSceneComponent::CBaseSceneComponent(Entity *const Owner, Transform const &ComponentTransform)
+    CBaseSceneComponent::CBaseSceneComponent(CEntity *const Owner, FTransform const &ComponentTransform)
         : CBaseDataComponent{Owner}, m_Transform{ComponentTransform}
     {
     }
 
-    Mat4 CBaseSceneComponent::GetTransformMatrix() const
+    FMatrix4 CBaseSceneComponent::GetTransformMatrix() const
     {
         if (m_bIsDirty)
         {
@@ -20,12 +20,12 @@ namespace Corvus
         return m_TransformMatrix;
     }
 
-    Transform CBaseSceneComponent::GetTransform() const
+    FTransform CBaseSceneComponent::GetTransform() const
     {
         return m_Transform;
     }
 
-    void CBaseSceneComponent::SetTransform(Transform const &Transform)
+    void CBaseSceneComponent::SetTransform(FTransform const &Transform)
     {
         m_Transform = Transform;
         m_bIsDirty  = true;

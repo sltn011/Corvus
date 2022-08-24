@@ -4,7 +4,7 @@
 
 namespace Corvus
 {
-    BufferLayoutElement::BufferLayoutElement(EBufferDataType const Type)
+    CBufferLayoutElement::CBufferLayoutElement(EBufferDataType const Type)
         : m_Type{Type},
           m_Size{SizeofBufferDataType(Type)},
           m_NumComponents{NumComponentsInBufferDataType(Type)},
@@ -12,7 +12,7 @@ namespace Corvus
     {
     }
 
-    BufferLayoutElement::BufferLayoutElement(EBufferDataType const Type, bool const bShouldNormalize)
+    CBufferLayoutElement::CBufferLayoutElement(EBufferDataType const Type, bool const bShouldNormalize)
         : m_Type{Type},
           m_Size{SizeofBufferDataType(Type)},
           m_NumComponents{NumComponentsInBufferDataType(Type)},
@@ -20,22 +20,22 @@ namespace Corvus
     {
     }
 
-    EBufferDataType BufferLayoutElement::GetType() const
+    EBufferDataType CBufferLayoutElement::GetType() const
     {
         return m_Type;
     }
 
-    UInt8 BufferLayoutElement::GetSize() const
+    UInt8 CBufferLayoutElement::GetSize() const
     {
         return m_Size;
     }
 
-    UInt8 BufferLayoutElement::GetNumComponents() const
+    UInt8 CBufferLayoutElement::GetNumComponents() const
     {
         return m_NumComponents;
     }
 
-    bool BufferLayoutElement::ShouldNormalize() const
+    bool CBufferLayoutElement::ShouldNormalize() const
     {
         return m_bShouldNormalize;
     }

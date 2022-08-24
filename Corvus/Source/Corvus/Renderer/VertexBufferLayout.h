@@ -7,43 +7,43 @@
 namespace Corvus
 {
 
-    class VertexBufferLayout
+    class CVertexBufferLayout
     {
     public:
-        VertexBufferLayout() = default;
-        VertexBufferLayout(std::initializer_list<BufferLayoutElement> InitList);
+        CVertexBufferLayout() = default;
+        CVertexBufferLayout(std::initializer_list<CBufferLayoutElement> InitList);
 
         UInt32 Size() const;
         UInt32 Stride();
 
-        BufferLayoutElement &At(UInt32 Index);
-        BufferLayoutElement &operator[](UInt32 Index);
+        CBufferLayoutElement &At(UInt32 Index);
+        CBufferLayoutElement &operator[](UInt32 Index);
 
-        void InsertAt(BufferLayoutElement const &Element, UInt32 Index);
-        void PushBack(BufferLayoutElement const &Element);
+        void InsertAt(CBufferLayoutElement const &Element, UInt32 Index);
+        void PushBack(CBufferLayoutElement const &Element);
 
         void Clear();
         void RemoveAt(UInt32 Index);
 
-        std::vector<BufferLayoutElement>::iterator         Begin() { return m_Layout.begin(); }
-        std::vector<BufferLayoutElement>::iterator         End() { return m_Layout.end(); }
-        std::vector<BufferLayoutElement>::reverse_iterator RBegin() { return m_Layout.rbegin(); }
-        std::vector<BufferLayoutElement>::reverse_iterator REnd() { return m_Layout.rend(); }
+        std::vector<CBufferLayoutElement>::iterator         Begin() { return m_Layout.begin(); }
+        std::vector<CBufferLayoutElement>::iterator         End() { return m_Layout.end(); }
+        std::vector<CBufferLayoutElement>::reverse_iterator RBegin() { return m_Layout.rbegin(); }
+        std::vector<CBufferLayoutElement>::reverse_iterator REnd() { return m_Layout.rend(); }
 
-        std::vector<BufferLayoutElement>::const_iterator         Begin() const { return m_Layout.begin(); }
-        std::vector<BufferLayoutElement>::const_iterator         End() const { return m_Layout.end(); }
-        std::vector<BufferLayoutElement>::const_reverse_iterator RBegin() const { return m_Layout.rbegin(); }
-        std::vector<BufferLayoutElement>::const_reverse_iterator REnd() const { return m_Layout.rend(); }
+        std::vector<CBufferLayoutElement>::const_iterator         Begin() const { return m_Layout.begin(); }
+        std::vector<CBufferLayoutElement>::const_iterator         End() const { return m_Layout.end(); }
+        std::vector<CBufferLayoutElement>::const_reverse_iterator RBegin() const { return m_Layout.rbegin(); }
+        std::vector<CBufferLayoutElement>::const_reverse_iterator REnd() const { return m_Layout.rend(); }
 
         // For for-each loops
-        std::vector<BufferLayoutElement>::iterator begin() { return m_Layout.begin(); }
-        std::vector<BufferLayoutElement>::iterator end() { return m_Layout.end(); }
+        std::vector<CBufferLayoutElement>::iterator begin() { return m_Layout.begin(); }
+        std::vector<CBufferLayoutElement>::iterator end() { return m_Layout.end(); }
 
-        std::vector<BufferLayoutElement>::const_iterator begin() const { return m_Layout.begin(); }
-        std::vector<BufferLayoutElement>::const_iterator end() const { return m_Layout.end(); }
+        std::vector<CBufferLayoutElement>::const_iterator begin() const { return m_Layout.begin(); }
+        std::vector<CBufferLayoutElement>::const_iterator end() const { return m_Layout.end(); }
 
     private:
-        std::vector<BufferLayoutElement> m_Layout;
+        std::vector<CBufferLayoutElement> m_Layout;
 
         UInt32 m_Stride      = 0;
         bool   m_StrideDirty = true;

@@ -17,11 +17,11 @@ namespace Corvus
         Mat4
     };
 
-    class BufferLayoutElement
+    class CBufferLayoutElement
     {
     public:
-        BufferLayoutElement(EBufferDataType Type);
-        BufferLayoutElement(EBufferDataType Type, bool bShouldNormalize);
+        CBufferLayoutElement(EBufferDataType Type);
+        CBufferLayoutElement(EBufferDataType Type, bool bShouldNormalize);
 
         EBufferDataType GetType() const;
         UInt8           GetSize() const;

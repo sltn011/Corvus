@@ -6,12 +6,12 @@
 
 namespace Corvus
 {
-    TOwn<Shader> Shader::CreateFromFile(String const &FilePath)
+    TOwn<CShader> CShader::CreateFromFile(CString const &FilePath)
     {
-        switch (GraphicsAPI::GetAPI())
+        switch (CGraphicsAPI::GetAPI())
         {
-        case GraphicsAPI::EAPI::OpenGL:
-            return MakeOwned<OpenGLShader>(FilePath);
+        case CGraphicsAPI::EAPI::OpenGL:
+            return MakeOwned<POpenGLShader>(FilePath);
 
         default:
             CORVUS_NO_ENTRY_FMT("Undefined Graphics EAPI!");

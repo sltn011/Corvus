@@ -4,10 +4,10 @@
 
 namespace Corvus
 {
-    OpenGLShader::OpenGLShader(String const &FilePath) : m_ID{0}
+    POpenGLShader::POpenGLShader(CString const &FilePath) : m_ID{0}
     {
         CORVUS_CORE_TRACE("Creating OpenGL Shader {}", FilePath);
-        TimePoint const ShaderCreationBegin;
+        FTimePoint const ShaderCreationBegin;
 
         std::ifstream CodeFile(FilePath);
         CORVUS_CORE_ASSERT_FMT(CodeFile.is_open(), "Error opening OpenGL Shader file {1}", FilePath);
@@ -38,8 +38,8 @@ namespace Corvus
             }
         }
 
-        String const VertexCode   = ShadersCode[static_cast<UInt8>(EShaderType::Vertex)].str();
-        String const FragmentCode = ShadersCode[static_cast<UInt8>(EShaderType::Fragment)].str();
+        CString const VertexCode   = ShadersCode[static_cast<UInt8>(EShaderType::Vertex)].str();
+        CString const FragmentCode = ShadersCode[static_cast<UInt8>(EShaderType::Fragment)].str();
 
         GLuint const VertexShader   = CreateShader(GL_VERTEX_SHADER, VertexCode);
         GLuint const FragmentShader = CreateShader(GL_FRAGMENT_SHADER, FragmentCode);
@@ -53,22 +53,22 @@ namespace Corvus
         glDeleteShader(VertexShader);
         glDeleteShader(FragmentShader);
 
-        TimePoint const ShaderCreationEnd;
-        TimeDelta const ShaderCreationTime = ShaderCreationEnd - ShaderCreationBegin;
+        FTimePoint const ShaderCreationEnd;
+        FTimeDelta const ShaderCreationTime = ShaderCreationEnd - ShaderCreationBegin;
         CORVUS_CORE_TRACE("Created OpenGL Shader {0}, took {1}ms", FilePath, ShaderCreationTime.MilliSeconds());
     }
 
-    OpenGLShader::~OpenGLShader()
+    POpenGLShader::~POpenGLShader()
     {
         glDeleteProgram(m_ID);
     }
 
-    OpenGLShader::OpenGLShader(OpenGLShader &&Rhs) noexcept
+    POpenGLShader::POpenGLShader(POpenGLShader &&Rhs) noexcept
         : m_ID{std::exchange(Rhs.m_ID, 0)}, m_UniformLocationCache{std::move(Rhs.m_UniformLocationCache)}
     {
     }
 
-    OpenGLShader &OpenGLShader::operator=(OpenGLShader &&Rhs) noexcept
+    POpenGLShader &POpenGLShader::operator=(POpenGLShader &&Rhs) noexcept
     {
         if (this != &Rhs)
         {
@@ -78,99 +78,99 @@ namespace Corvus
         return *this;
     }
 
-    void OpenGLShader::Bind()
+    void POpenGLShader::Bind()
     {
         glUseProgram(m_ID);
     }
 
-    void OpenGLShader::Unbind()
+    void POpenGLShader::Unbind()
     {
         glUseProgram(0);
     }
 
-    void OpenGLShader::SetBool(String const &Name, bool const Value)
+    void POpenGLShader::SetBool(CString const &Name, bool const Value)
     {
         GLint const Location = GetUniformLocation(Name);
         glUniform1i(Location, static_cast<Int32>(Value));
     }
 
-    void OpenGLShader::SetInt32(String const &Name, Int32 const Value)
+    void POpenGLShader::SetInt32(CString const &Name, Int32 const Value)
     {
         GLint const Location = GetUniformLocation(Name);
         glUniform1i(Location, Value);
     }
 
-    void OpenGLShader::SetUInt32(String const &Name, UInt32 const Value)
+    void POpenGLShader::SetUInt32(CString const &Name, UInt32 const Value)
     {
         GLint const Location = GetUniformLocation(Name);
         glUniform1i(Location, Value);
     }
 
-    void OpenGLShader::SetFloat(String const &Name, float const Value)
+    void POpenGLShader::SetFloat(CString const &Name, float const Value)
     {
         GLint const Location = GetUniformLocation(Name);
         glUniform1f(Location, Value);
     }
 
-    void OpenGLShader::SetVec2(String const &Name, Vec2 const &Value)
+    void POpenGLShader::SetVec2(CString const &Name, FVector2 const &Value)
     {
         GLint const Location = GetUniformLocation(Name);
         glUniform2fv(Location, 1, &(Value.x));
     }
 
-    void OpenGLShader::SetVec3(String const &Name, Vec3 const &Value)
+    void POpenGLShader::SetVec3(CString const &Name, FVector3 const &Value)
     {
         GLint const Location = GetUniformLocation(Name);
         glUniform3fv(Location, 1, &(Value.x));
     }
 
-    void OpenGLShader::SetVec4(String const &Name, Vec4 const &Value)
+    void POpenGLShader::SetVec4(CString const &Name, FVector4 const &Value)
     {
         GLint const Location = GetUniformLocation(Name);
         glUniform4fv(Location, 1, &(Value.x));
     }
 
-    void OpenGLShader::SetMat3(String const &Name, Mat3 const &Value)
+    void POpenGLShader::SetMat3(CString const &Name, FMatrix3 const &Value)
     {
         GLint const Location = GetUniformLocation(Name);
-        glUniformMatrix3fv(Location, 1, false, Matrix::ValuePtr(Value));
+        glUniformMatrix3fv(Location, 1, false, FMatrix::ValuePtr(Value));
     }
 
-    void OpenGLShader::SetMat4(String const &Name, Mat4 const &Value)
+    void POpenGLShader::SetMat4(CString const &Name, FMatrix4 const &Value)
     {
         GLint const Location = GetUniformLocation(Name);
-        glUniformMatrix4fv(Location, 1, false, Matrix::ValuePtr(Value));
+        glUniformMatrix4fv(Location, 1, false, FMatrix::ValuePtr(Value));
     }
 
-    GLuint OpenGLShader::CreateShader(GLenum const ShaderType, String const &SourceCode) const
+    GLuint POpenGLShader::CreateShader(GLenum const ShaderType, CString const &SourceCode) const
     {
-        GLuint const Shader = glCreateShader(ShaderType);
-        CORVUS_CORE_ASSERT_FMT(Shader != 0, "Failed to create OpenGL Shader!");
+        GLuint const CShader = glCreateShader(ShaderType);
+        CORVUS_CORE_ASSERT_FMT(CShader != 0, "Failed to create OpenGL CShader!");
 
         char const *const SourceCodeString = SourceCode.c_str();
-        glShaderSource(Shader, 1, &SourceCodeString, nullptr);
+        glShaderSource(CShader, 1, &SourceCodeString, nullptr);
 
-        glCompileShader(Shader);
+        glCompileShader(CShader);
 
-        AssertShaderCompiledSuccessfully(Shader);
+        AssertShaderCompiledSuccessfully(CShader);
 
-        return Shader;
+        return CShader;
     }
 
-    void OpenGLShader::AssertShaderCompiledSuccessfully(GLuint const Shader) const
+    void POpenGLShader::AssertShaderCompiledSuccessfully(GLuint const CShader) const
     {
         GLint CompileStatus;
-        glGetShaderiv(Shader, GL_COMPILE_STATUS, &CompileStatus);
+        glGetShaderiv(CShader, GL_COMPILE_STATUS, &CompileStatus);
         if (CompileStatus == GL_FALSE)
         {
             static constexpr GLsizei InfoLogSize = 255;
             char                     InfoLog[InfoLogSize];
-            glGetShaderInfoLog(Shader, InfoLogSize, nullptr, InfoLog);
-            CORVUS_CORE_NO_ENTRY_FMT("Shader failed to compile! {1:s}", InfoLog);
+            glGetShaderInfoLog(CShader, InfoLogSize, nullptr, InfoLog);
+            CORVUS_CORE_NO_ENTRY_FMT("CShader failed to compile! {1:s}", InfoLog);
         }
     }
 
-    void OpenGLShader::AssertProgramLinkedSuccessfully() const
+    void POpenGLShader::AssertProgramLinkedSuccessfully() const
     {
         GLint LinkStatus;
         glGetProgramiv(m_ID, GL_LINK_STATUS, &LinkStatus);
@@ -179,11 +179,11 @@ namespace Corvus
             static constexpr GLsizei InfoLogSize = 255;
             char                     InfoLog[InfoLogSize];
             glGetProgramInfoLog(m_ID, InfoLogSize, nullptr, InfoLog);
-            CORVUS_CORE_NO_ENTRY_FMT("Shader Programm failed to link! {1:s}", InfoLog);
+            CORVUS_CORE_NO_ENTRY_FMT("CShader Programm failed to link! {1:s}", InfoLog);
         }
     }
 
-    GLint OpenGLShader::GetUniformLocation(String const &Name)
+    GLint POpenGLShader::GetUniformLocation(CString const &Name)
     {
         GLint      Location = -1;
         auto const It       = m_UniformLocationCache.find(Name);
@@ -199,7 +199,7 @@ namespace Corvus
 
         if (Location == -1)
         {
-            CORVUS_CORE_WARN("Invalid OpenGL Shader uniform location for {0} in Programm {1}", Name, m_ID);
+            CORVUS_CORE_WARN("Invalid OpenGL CShader uniform location for {0} in Programm {1}", Name, m_ID);
         }
 
         return Location;

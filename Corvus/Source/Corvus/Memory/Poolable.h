@@ -2,7 +2,7 @@
 #define CORVUS_SOURCE_CORVUS_MEMORY_POOLABLE_H
 
 #include "Corvus/Core/Assert.h"
-#include "Corvus/Memory/AppPools.h"
+#include "Corvus/Memory/ApplicationPools.h"
 #include "Corvus/Memory/PoolIndex.h"
 
 #include <type_traits>
@@ -10,8 +10,8 @@
 namespace Corvus
 {
 
-    class BaseDataComponent;
-    class Entity;
+    class CBaseDataComponent;
+    class CEntity;
 
     template<typename T>
     class TPoolable;
@@ -50,17 +50,17 @@ namespace Corvus
     {
         static constexpr SizeT TypePoolID = CalculatePoolID(sizeof(T));
 
-        if constexpr (std::is_base_of_v<BaseDataComponent, T>)
+        if constexpr (std::is_base_of_v<CBaseDataComponent, T>)
         {
-            return TPoolable<T>{AppPools::RequestComponent(TypePoolID, NumElements)};
+            return TPoolable<T>{CApplicationPools::RequestComponent(TypePoolID, NumElements)};
         }
-        else if (std::is_base_of_v<Entity, T>)
+        else if (std::is_base_of_v<CEntity, T>)
         {
-            return TPoolable<T>{AppPools::RequestEntity(TypePoolID, NumElements)};
+            return TPoolable<T>{CApplicationPools::RequestEntity(TypePoolID, NumElements)};
         }
         else
         {
-            return TPoolable<T>{AppPools::RequestGeneral(TypePoolID, NumElements)};
+            return TPoolable<T>{CApplicationPools::RequestGeneral(TypePoolID, NumElements)};
         }
     }
 
@@ -89,7 +89,7 @@ namespace Corvus
 
     public:
         TPoolable() = default;
-        TPoolable(PoolIndex &&Index) : m_PoolIndex{std::move(Index)} {}
+        TPoolable(CPoolIndex &&Index) : m_PoolIndex{std::move(Index)} {}
 
         TPoolable(TPoolable const &)            = delete;
         TPoolable(TPoolable &&)                 = default;
@@ -110,7 +110,7 @@ namespace Corvus
         void IncreaseArraySize(SizeT NewSize) { m_PoolIndex.IncreaseSize(NewSize); }
 
     private:
-        PoolIndex m_PoolIndex;
+        CPoolIndex m_PoolIndex;
     };
 
 } // namespace Corvus

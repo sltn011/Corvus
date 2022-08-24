@@ -6,12 +6,12 @@
 
 namespace Corvus
 {
-    TOwn<Window> Window::Create()
+    TOwn<CWindow> CWindow::Create()
     {
-        return MakeOwned<WindowsWindow>();
+        return MakeOwned<PWindowsWindow>();
     }
 
-    bool Window::IsVSyncEnabled() const
+    bool CWindow::IsVSyncEnabled() const
     {
         if (!m_bIsInitialized)
         {
@@ -21,7 +21,7 @@ namespace Corvus
         return m_WindowData.bVSyncEnabled;
     }
 
-    bool Window::IsFullScreen() const
+    bool CWindow::IsFullScreen() const
     {
         if (!m_bIsInitialized)
         {
@@ -31,7 +31,7 @@ namespace Corvus
         return m_WindowData.bFullScreen;
     }
 
-    GUIController &Window::GetGUIController()
+    СGUIController &CWindow::GetGUIController()
     {
         return m_GUIController;
     }

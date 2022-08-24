@@ -16,16 +16,16 @@ namespace Corvus
         ZYX
     };
 
-    class Rotation
+    class FRotation
     {
     public:
-        Rotation(ERotationOrder Order = ERotationOrder::YXZ);
-        Rotation(ERotationOrder Order, Vec3 const &Degrees);
+        FRotation(ERotationOrder Order = ERotationOrder::YXZ);
+        FRotation(ERotationOrder Order, FVector3 const &Degrees);
 
-        Mat4 GetRotationMatrix() const;
-        Mat4 GetRollMatrix() const;
-        Mat4 GetYawMatrix() const;
-        Mat4 GetPitchMatrix() const;
+        FMatrix4 GetRotationMatrix() const;
+        FMatrix4 GetRollMatrix() const;
+        FMatrix4 GetYawMatrix() const;
+        FMatrix4 GetPitchMatrix() const;
 
         void AddRollDegrees(float RollDegree);
         void AddYawDegrees(float YawDegree);
@@ -43,7 +43,7 @@ namespace Corvus
         void           SetRotationOrder(ERotationOrder Order);
 
     private:
-        Vec3           m_Degrees; // Roll, Yaw, Pitch
+        FVector3       m_Degrees; // Roll, Yaw, Pitch
         ERotationOrder m_RotationOrder;
     };
 

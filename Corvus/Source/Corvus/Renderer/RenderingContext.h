@@ -5,21 +5,21 @@
 
 namespace Corvus
 {
-    class Window;
+    class CWindow;
 
-    class RenderingContext
+    class CRenderingContext
     {
     protected:
-        RenderingContext() = default;
+        CRenderingContext() = default;
 
     public:
-        static [[nodiscard]] TOwn<RenderingContext> Create(Window &OwnerWindow);
+        static [[nodiscard]] TOwn<CRenderingContext> Create(CWindow &OwnerWindow);
 
-        virtual ~RenderingContext()                           = default;
-        RenderingContext(RenderingContext const &)            = delete;
-        RenderingContext &operator=(RenderingContext const &) = delete;
-        RenderingContext(RenderingContext &&)                 = default;
-        RenderingContext &operator=(RenderingContext &&)      = default;
+        virtual ~CRenderingContext()                            = default;
+        CRenderingContext(CRenderingContext const &)            = delete;
+        CRenderingContext &operator=(CRenderingContext const &) = delete;
+        CRenderingContext(CRenderingContext &&)                 = default;
+        CRenderingContext &operator=(CRenderingContext &&)      = default;
 
         virtual void Init()        = 0;
         virtual void SwapBuffers() = 0;

@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 
-namespace Corvus::Math
+namespace Corvus::FMath
 {
     template<typename T>
     inline constexpr T Min(T V1, T V2)
@@ -83,6 +83,6 @@ namespace Corvus::Math
         return ATan2(X, Y);
     }
 
-} // namespace Corvus::Math
+} // namespace Corvus::FMath
 
 #endif //! CORVUS_SOURCE_CORVUS_MATH_MATH_H

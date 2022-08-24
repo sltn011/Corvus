@@ -7,23 +7,23 @@
 
 namespace Corvus
 {
-    class Pool;
+    class CPool;
 
-    class PoolIndex
+    class CPoolIndex
     {
     private:
-        friend class Pool;
+        friend class CPool;
 
-        PoolIndex(PoolID ID, SizeT SlotID, UInt8 *Data, SizeT NumElements);
+        CPoolIndex(CPoolID ID, SizeT SlotID, UInt8 *Data, SizeT NumElements);
 
     public:
-        PoolIndex() = default;
-        ~PoolIndex();
+        CPoolIndex() = default;
+        ~CPoolIndex();
 
-        PoolIndex(PoolIndex const &) = delete;
-        PoolIndex(PoolIndex &&Rhs) noexcept;
-        PoolIndex &operator=(PoolIndex const &) = delete;
-        PoolIndex &operator=(PoolIndex &&Rhs) noexcept;
+        CPoolIndex(CPoolIndex const &) = delete;
+        CPoolIndex(CPoolIndex &&Rhs) noexcept;
+        CPoolIndex &operator=(CPoolIndex const &) = delete;
+        CPoolIndex &operator=(CPoolIndex &&Rhs) noexcept;
 
         bool IsValid() const;
 
@@ -39,10 +39,10 @@ namespace Corvus
     private:
         void Invalidate();
 
-        PoolID m_PoolID;
-        SizeT  m_SlotID      = 0;
-        UInt8 *m_Data        = nullptr;
-        SizeT  m_NumElements = 0;
+        CPoolID m_PoolID;
+        SizeT   m_SlotID      = 0;
+        UInt8  *m_Data        = nullptr;
+        SizeT   m_NumElements = 0;
     };
 
 } // namespace Corvus

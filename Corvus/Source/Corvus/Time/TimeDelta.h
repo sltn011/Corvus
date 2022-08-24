@@ -4,10 +4,10 @@
 namespace Corvus
 {
 
-    class TimeDelta
+    class FTimeDelta
     {
     public:
-        TimeDelta(float Seconds);
+        FTimeDelta(float Seconds);
 
         float Seconds() const;
         float MilliSeconds() const;

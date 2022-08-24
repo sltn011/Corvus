@@ -7,34 +7,34 @@
 namespace Corvus
 {
 
-    class VertexBuffer
+    class CVertexBuffer
     {
     protected:
-        VertexBuffer() = default;
+        CVertexBuffer() = default;
 
     public:
-        static [[nodiscard]] TOwn<VertexBuffer> Create(
-            void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout
+        static [[nodiscard]] TOwn<CVertexBuffer> Create(
+            void const *Data, UInt32 NumVertices, CVertexBufferLayout const &Layout
         );
 
-        virtual ~VertexBuffer()                       = default;
-        VertexBuffer(VertexBuffer const &)            = delete;
-        VertexBuffer &operator=(VertexBuffer const &) = delete;
-        VertexBuffer(VertexBuffer &&)                 = default;
-        VertexBuffer &operator=(VertexBuffer &&)      = default;
+        virtual ~CVertexBuffer()                        = default;
+        CVertexBuffer(CVertexBuffer const &)            = delete;
+        CVertexBuffer &operator=(CVertexBuffer const &) = delete;
+        CVertexBuffer(CVertexBuffer &&)                 = default;
+        CVertexBuffer &operator=(CVertexBuffer &&)      = default;
 
         virtual void Bind()   = 0;
         virtual void Unbind() = 0;
 
-        virtual void SetData(void const *Data, UInt32 NumVertices)                                   = 0;
-        virtual void SetData(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout) = 0;
+        virtual void SetData(void const *Data, UInt32 NumVertices)                                    = 0;
+        virtual void SetData(void const *Data, UInt32 NumVertices, CVertexBufferLayout const &Layout) = 0;
 
-        UInt32              GetNumVertices() const;
-        VertexBufferLayout &GetLayout();
+        UInt32               GetNumVertices() const;
+        CVertexBufferLayout &GetLayout();
 
     protected:
-        UInt32             m_NumVertices = 0;
-        VertexBufferLayout m_Layout;
+        UInt32              m_NumVertices = 0;
+        CVertexBufferLayout m_Layout;
     };
 
 } // namespace Corvus

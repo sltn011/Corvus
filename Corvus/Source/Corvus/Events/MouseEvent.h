@@ -9,16 +9,16 @@
 namespace Corvus
 {
 
-    class CursorMoveEvent : public Event
+    class СCursorMoveEvent : public СEvent
     {
     public:
         CORVUS_EVENT_GENERATED_BODY(
-            Event::EEventCategory::Input | Event::EEventCategory::Mouse, Event::EEventType::MouseCursorMove
+            СEvent::EEventCategory::Input | СEvent::EEventCategory::Mouse, СEvent::EEventType::MouseCursorMove
         );
 
-        CursorMoveEvent(float NewXValue, float NewYValue) : NewX{NewXValue}, NewY{NewYValue} {}
+        СCursorMoveEvent(float NewXValue, float NewYValue) : NewX{NewXValue}, NewY{NewYValue} {}
 
-        virtual String ToString() const override
+        virtual CString ToString() const override
         {
             std::stringstream ss;
             ss << GetEventTypeString() << " New Position: " << NewX << ", " << NewY;
@@ -29,16 +29,16 @@ namespace Corvus
         float NewY;
     };
 
-    class MouseScrollEvent : public Event
+    class СMouseScrollEvent : public СEvent
     {
     public:
         CORVUS_EVENT_GENERATED_BODY(
-            Event::EEventCategory::Input | Event::EEventCategory::Mouse, Event::EEventType::MouseScroll
+            СEvent::EEventCategory::Input | СEvent::EEventCategory::Mouse, СEvent::EEventType::MouseScroll
         );
 
-        MouseScrollEvent(float OffsetXValue, float OffsetYValue) : OffsetX{OffsetXValue}, OffsetY{OffsetYValue} {}
+        СMouseScrollEvent(float OffsetXValue, float OffsetYValue) : OffsetX{OffsetXValue}, OffsetY{OffsetYValue} {}
 
-        virtual String ToString() const override
+        virtual CString ToString() const override
         {
             std::stringstream ss;
             ss << GetEventTypeString() << " Offset: " << OffsetX << ", " << OffsetY;
@@ -49,20 +49,20 @@ namespace Corvus
         float OffsetY;
     };
 
-    class MouseButtonPressEvent : public Event
+    class СMouseButtonPressEvent : public СEvent
     {
     public:
         CORVUS_EVENT_GENERATED_BODY(
-            Event::EEventCategory::Input | Event::EEventCategory::Mouse | Event::EEventCategory::MouseButton,
-            Event::EEventType::MouseButtonPress
+            СEvent::EEventCategory::Input | СEvent::EEventCategory::Mouse | СEvent::EEventCategory::MouseButton,
+            СEvent::EEventType::MouseButtonPress
         );
 
-        MouseButtonPressEvent(EMouseCode ButtonValue, EModifierCode ModifierValue)
+        СMouseButtonPressEvent(EMouseCode ButtonValue, EModifierCode ModifierValue)
             : Button{ButtonValue}, Modifier{ModifierValue}
         {
         }
 
-        virtual String ToString() const override
+        virtual CString ToString() const override
         {
             std::stringstream ss;
             ss << GetEventTypeString() << " Button:" << Button;
@@ -73,17 +73,17 @@ namespace Corvus
         EModifierCode Modifier;
     };
 
-    class MouseButtonReleaseEvent : public Event
+    class СMouseButtonReleaseEvent : public СEvent
     {
     public:
         CORVUS_EVENT_GENERATED_BODY(
-            Event::EEventCategory::Input | Event::EEventCategory::Mouse | Event::EEventCategory::MouseButton,
-            Event::EEventType::MouseButtonRelease
+            СEvent::EEventCategory::Input | СEvent::EEventCategory::Mouse | СEvent::EEventCategory::MouseButton,
+            СEvent::EEventType::MouseButtonRelease
         );
 
-        MouseButtonReleaseEvent(EMouseCode ButtonValue) : Button{ButtonValue} {}
+        СMouseButtonReleaseEvent(EMouseCode ButtonValue) : Button{ButtonValue} {}
 
-        virtual String ToString() const override
+        virtual CString ToString() const override
         {
             std::stringstream ss;
             ss << GetEventTypeString() << " Button:" << Button;

@@ -7,7 +7,7 @@
 namespace Corvus
 {
 
-    struct Input
+    struct СInput
     {
         // KEYBOARD
 
@@ -24,11 +24,11 @@ namespace Corvus
 
         // CURSOR
 
-        static void  SetCursorEnabled(bool bEnabled);
-        static Vec2  GetCursorPos();
-        static float GetCursorX();
-        static float GetCursorY();
-        static void  SetCursorPos(Vec2 const &Pos);
+        static void     SetCursorEnabled(bool bEnabled);
+        static FVector2 GetCursorPos();
+        static float    GetCursorX();
+        static float    GetCursorY();
+        static void     SetCursorPos(FVector2 const &Pos);
     };
 
 } // namespace Corvus

@@ -7,28 +7,28 @@
 namespace Corvus
 {
 
-    class AppPools;
-    class PoolIndex;
+    class CApplicationPools;
+    class CPoolIndex;
 
-    struct PoolDataFormat
+    struct CPoolDataFormat
     {
         SizeT NumElements = 0;
         SizeT ElementSize = 0;
     };
 
-    class Pool
+    class CPool
     {
     private:
-        friend class AppPools;
+        friend class CApplicationPools;
 
-        Pool(PoolID ID, PoolDataFormat DataFormat);
+        CPool(CPoolID ID, CPoolDataFormat DataFormat);
 
     public:
-        PoolIndex Request(SizeT RequestedNumElements);
+        CPoolIndex Request(SizeT RequestedNumElements);
 
-        void Free(PoolIndex &Index);
+        void Free(CPoolIndex &Index);
 
-        void IncreaseIndexSize(PoolIndex &Index, SizeT NewSize);
+        void IncreaseIndexSize(CPoolIndex &Index, SizeT NewSize);
 
     private:
         SizeT CountBlockSize(SizeT TablePageID, UInt8 PageSlotID, SizeT MaxSize, bool bIsBlockFree) const;
@@ -42,24 +42,29 @@ namespace Corvus
         void SetSlotsAsUsed(SizeT TablePageID, UInt8 PageSlotID, SizeT BlockSize);
         void SetSlotsAsFree(SizeT TablePageID, UInt8 PageSlotID, SizeT BlockSize);
 
-        bool  IsIndexFromCurrentPool(PoolIndex const &Index) const;
-        Pool *FindOwningPool(PoolIndex const &Index);
+        bool   IsIndexFromCurrentPool(CPoolIndex const &Index) const;
+        CPool *FindOwningPool(CPoolIndex const &Index);
 
         bool IsChildPoolDeletable() const;
 
         void OnNotEnoughMemory(SizeT RequestedAmount);
 
-        void CreateChildPool(PoolDataFormat ChildPoolDataFormat);
+        void CreateChildPool(CPoolDataFormat ChildPoolDataFormat);
         void DeleteChildPool();
 
-        void AddSlotsToIndex(PoolIndex &Index, SizeT NewSize);
-        void InplaceIndexResize(PoolIndex &Index, SizeT NewSize);
-        void MoveIndexResize(PoolIndex &Index, SizeT NewSize, Pool &OwningPool);
+        void AddSlotsToIndex(CPoolIndex &Index, SizeT NewSize);
+        void InplaceIndexResize(CPoolIndex &Index, SizeT NewSize);
+        void MoveIndexResize(CPoolIndex &Index, SizeT NewSize, CPool &OwningPool);
         void MoveIndexToNewPlace(
-            PoolIndex &Index, SizeT NewSize, SizeT NewTablePageID, UInt8 NewPageSlotID, Pool &OwningPool, Pool &NewPool
+            CPoolIndex &Index,
+            SizeT       NewSize,
+            SizeT       NewTablePageID,
+            UInt8       NewPageSlotID,
+            CPool      &OwningPool,
+            CPool      &NewPool
         );
 
-        struct PoolInfo
+        struct CPoolInfo
         {
             UInt8 *IDTable      = nullptr;
             SizeT  IDTablePages = 0;
@@ -67,17 +72,17 @@ namespace Corvus
             SizeT  SlotsUsed    = 0;
         };
 
-        struct SubPoolsChain
+        struct CSubPoolsChain
         {
-            TOwn<Pool> m_Next       = nullptr;
-            Pool      *m_ParentPool = nullptr;
+            TOwn<CPool> m_Next       = nullptr;
+            CPool      *m_ParentPool = nullptr;
         };
 
-        PoolID         m_PoolID;
-        PoolDataFormat m_DataFormat;
-        PoolInfo       m_PoolInfo;
-        TOwn<UInt8[]>  m_Pool;
-        SubPoolsChain  m_Chain;
+        CPoolID         m_PoolID;
+        CPoolDataFormat m_DataFormat;
+        CPoolInfo       m_PoolInfo;
+        TOwn<UInt8[]>   m_Pool;
+        CSubPoolsChain  m_Chain;
 
         // ChildPoolSize = CurrentPoolSize * s_ChildPoolSizeMult
         static constexpr float s_ChildPoolSizeMult = 1.0f;

@@ -8,22 +8,22 @@
 namespace Corvus
 {
 
-    class OpenGLVertexArray : public VertexArray
+    class POpenGLVertexArray : public CVertexArray
     {
     public:
-        OpenGLVertexArray();
-        ~OpenGLVertexArray();
+        POpenGLVertexArray();
+        ~POpenGLVertexArray();
 
-        OpenGLVertexArray(OpenGLVertexArray const &) = delete;
-        OpenGLVertexArray(OpenGLVertexArray &&Rhs) noexcept;
-        OpenGLVertexArray &operator=(OpenGLVertexArray const &) = delete;
-        OpenGLVertexArray &operator=(OpenGLVertexArray &&Rhs) noexcept;
+        POpenGLVertexArray(POpenGLVertexArray const &) = delete;
+        POpenGLVertexArray(POpenGLVertexArray &&Rhs) noexcept;
+        POpenGLVertexArray &operator=(POpenGLVertexArray const &) = delete;
+        POpenGLVertexArray &operator=(POpenGLVertexArray &&Rhs) noexcept;
 
         virtual void Bind() override;
         virtual void Unbind() override;
 
-        virtual void AddIndexBuffer(TOwn<IndexBuffer> &&IndexBuffer) override;
-        virtual void AddVertexBuffer(TOwn<VertexBuffer> &&VertexBuffer) override;
+        virtual void AddIndexBuffer(TOwn<CIndexBuffer> &&CIndexBuffer) override;
+        virtual void AddVertexBuffer(TOwn<CVertexBuffer> &&CVertexBuffer) override;
 
     protected:
         void EnableVertexAttributes();

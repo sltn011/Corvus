@@ -7,60 +7,60 @@
 namespace Corvus
 {
 
-    CameraMovementComponent::CameraMovementComponent(Camera *const Owner, float const MovementSpeed)
+    CCameraMovementComponent::CCameraMovementComponent(CCamera *const Owner, float const MovementSpeed)
         : m_Owner{Owner}, m_MoveSpeed{MovementSpeed}
     {
         CORVUS_CORE_ASSERT(m_Owner);
     }
 
-    void CameraMovementComponent::SetMovementSpeed(float const MovementSpeed)
+    void CCameraMovementComponent::SetMovementSpeed(float const MovementSpeed)
     {
         m_MoveSpeed = MovementSpeed;
     }
 
-    void CameraMovementComponent::ProcessMovementInput(
-        Camera::EMoveDirection const Direction, TimeDelta const ElapsedTime
+    void CCameraMovementComponent::ProcessMovementInput(
+        CCamera::EMoveDirection const Direction, FTimeDelta const ElapsedTime
     )
     {
         if (!m_Owner)
         {
-            CORVUS_CORE_ERROR("No owner set for CameraMovementComponent!");
+            CORVUS_CORE_ERROR("No owner set for CCameraMovementComponent!");
             return;
         }
 
         float const Seconds = ElapsedTime.Seconds();
 
-        Mat3 const FURVectors    = m_Owner->GetFURVectors();
-        Vec3 const ForwardVector = FURVectors[0];
-        Vec3 const UpVector      = FURVectors[1];
-        Vec3 const RightVector   = FURVectors[2];
+        FMatrix3 const FURVectors    = m_Owner->GetFURVectors();
+        FVector3 const ForwardVector = FURVectors[0];
+        FVector3 const UpVector      = FURVectors[1];
+        FVector3 const RightVector   = FURVectors[2];
 
-        Transform CameraTransform = m_Owner->GetTransform();
-        Vec3      Position        = CameraTransform.GetPosition();
+        FTransform CameraTransform = m_Owner->GetTransform();
+        FVector3   Position        = CameraTransform.GetPosition();
 
         switch (Direction)
         {
-        case Camera::EMoveDirection::Forward:
+        case CCamera::EMoveDirection::Forward:
             Position += ForwardVector * m_MoveSpeed * Seconds;
             break;
 
-        case Camera::EMoveDirection::Backward:
+        case CCamera::EMoveDirection::Backward:
             Position -= ForwardVector * m_MoveSpeed * Seconds;
             break;
 
-        case Camera::EMoveDirection::Left:
+        case CCamera::EMoveDirection::Left:
             Position -= RightVector * m_MoveSpeed * Seconds;
             break;
 
-        case Camera::EMoveDirection::Right:
+        case CCamera::EMoveDirection::Right:
             Position += RightVector * m_MoveSpeed * Seconds;
             break;
 
-        case Camera::EMoveDirection::Up:
+        case CCamera::EMoveDirection::Up:
             Position += UpVector * m_MoveSpeed * Seconds;
             break;
 
-        case Camera::EMoveDirection::Down:
+        case CCamera::EMoveDirection::Down:
             Position -= UpVector * m_MoveSpeed * Seconds;
             break;
 
@@ -72,8 +72,8 @@ namespace Corvus
         m_Owner->SetTransform(CameraTransform);
     }
 
-    void CameraMovementComponent::ProcessRotationInput(
-        float XOffset, float YOffset, float const Sensitivity, TimeDelta const ElapsedTime
+    void CCameraMovementComponent::ProcessRotationInput(
+        float XOffset, float YOffset, float const Sensitivity, FTimeDelta const ElapsedTime
     )
     {
         static bool firstTime = true;
@@ -83,8 +83,8 @@ namespace Corvus
             return;
         }
 
-        Rotation CameraRotation = m_Owner->GetRotation();
-        float    Seconds        = ElapsedTime.Seconds();
+        FRotation CameraRotation = m_Owner->GetRotation();
+        float     Seconds        = ElapsedTime.Seconds();
 
         // Negate values or rotation input will be inverted
         // Positive offset -> Positive rotation angle -> CCW rotation in right hand coordinates system

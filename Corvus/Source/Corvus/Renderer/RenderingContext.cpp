@@ -6,12 +6,12 @@
 
 namespace Corvus
 {
-    TOwn<RenderingContext> RenderingContext::Create(Window &OwnerWindow)
+    TOwn<CRenderingContext> CRenderingContext::Create(CWindow &OwnerWindow)
     {
-        switch (GraphicsAPI::GetAPI())
+        switch (CGraphicsAPI::GetAPI())
         {
-        case GraphicsAPI::EAPI::OpenGL:
-            return MakeOwned<OpenGLContext>(OwnerWindow);
+        case CGraphicsAPI::EAPI::OpenGL:
+            return MakeOwned<POpenGLContext>(OwnerWindow);
 
         default:
             CORVUS_NO_ENTRY_FMT("Undefined Graphics EAPI!");

@@ -8,16 +8,16 @@
 namespace Corvus
 {
 
-    class OpenGLVertexBuffer : public VertexBuffer
+    class POpenGLVertexBuffer : public CVertexBuffer
     {
     public:
-        OpenGLVertexBuffer(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout);
-        ~OpenGLVertexBuffer();
+        POpenGLVertexBuffer(void const *Data, UInt32 NumVertices, CVertexBufferLayout const &Layout);
+        ~POpenGLVertexBuffer();
 
-        OpenGLVertexBuffer(OpenGLVertexBuffer const &) = delete;
-        OpenGLVertexBuffer(OpenGLVertexBuffer &&Rhs) noexcept;
-        OpenGLVertexBuffer &operator=(OpenGLVertexBuffer const &) = delete;
-        OpenGLVertexBuffer &operator=(OpenGLVertexBuffer &&Rhs) noexcept;
+        POpenGLVertexBuffer(POpenGLVertexBuffer const &) = delete;
+        POpenGLVertexBuffer(POpenGLVertexBuffer &&Rhs) noexcept;
+        POpenGLVertexBuffer &operator=(POpenGLVertexBuffer const &) = delete;
+        POpenGLVertexBuffer &operator=(POpenGLVertexBuffer &&Rhs) noexcept;
 
         GLuint GetID() const;
 
@@ -25,7 +25,7 @@ namespace Corvus
         virtual void Unbind() override;
 
         virtual void SetData(void const *Data, UInt32 NumVertices) override;
-        virtual void SetData(void const *Data, UInt32 NumVertices, VertexBufferLayout const &Layout) override;
+        virtual void SetData(void const *Data, UInt32 NumVertices, CVertexBufferLayout const &Layout) override;
 
         static GLenum BufferLayoutTypeToGLType(EBufferDataType Type);
 

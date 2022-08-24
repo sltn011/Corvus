@@ -4,7 +4,7 @@
 
 namespace Corvus
 {
-    CTransformComponent::CTransformComponent(Entity *Owner, Transform const &ComponentTransform)
+    CTransformComponent::CTransformComponent(CEntity *Owner, FTransform const &ComponentTransform)
         : CBaseSceneComponent{Owner, ComponentTransform}
     {
     }

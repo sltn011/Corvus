@@ -6,18 +6,18 @@
 namespace Corvus
 {
 
-    class PerspectiveCamera : public Camera
+    class CPerspectiveCamera : public CCamera
     {
     public:
-        PerspectiveCamera();
-        PerspectiveCamera(Transform const &Transform);
-        virtual ~PerspectiveCamera();
+        CPerspectiveCamera();
+        CPerspectiveCamera(FTransform const &Transform);
+        virtual ~CPerspectiveCamera();
 
         void SetFoVAngle(float FoVDegrees);
 
-        virtual Mat4 GetViewMatrix() override;
-        virtual Mat4 GetProjectionMatrix() override;
-        virtual Mat4 GetProjectionViewMatrix() override;
+        virtual FMatrix4 GetViewMatrix() override;
+        virtual FMatrix4 GetProjectionMatrix() override;
+        virtual FMatrix4 GetProjectionViewMatrix() override;
 
         virtual void RecalculateViewMatrix() override;
         virtual void RecalculateProjectionMatrix() override;

@@ -13,11 +13,11 @@ namespace Corvus
         Entity
     };
 
-    class PoolID
+    class CPoolID
     {
     public:
-        PoolID() = default;
-        PoolID(EPoolType Type, SizeT IDInGroup);
+        CPoolID() = default;
+        CPoolID(EPoolType Type, SizeT IDInGroup);
 
         EPoolType GetType() const;
         SizeT     GetIDInGroup() const;

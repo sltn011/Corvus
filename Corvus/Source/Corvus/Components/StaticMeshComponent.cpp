@@ -4,17 +4,19 @@
 
 namespace Corvus
 {
-    CStaticMeshComponent::CStaticMeshComponent(Entity *Owner, TOwn<Shader> const &Shader, TOwn<VertexArray> const &VAO)
-        : CBaseSceneComponent{Owner, Transform{}}, m_Shader{Shader}, m_VAO{VAO}
+    CStaticMeshComponent::CStaticMeshComponent(
+        CEntity *Owner, TOwn<CShader> const &CShader, TOwn<CVertexArray> const &VAO
+    )
+        : CBaseSceneComponent{Owner, FTransform{}}, m_Shader{CShader}, m_VAO{VAO}
     {
     }
 
-    TOwn<Shader> const &CStaticMeshComponent::GetShader() const
+    TOwn<CShader> const &CStaticMeshComponent::GetShader() const
     {
         return m_Shader;
     }
 
-    TOwn<VertexArray> const &CStaticMeshComponent::GetVertexArray() const
+    TOwn<CVertexArray> const &CStaticMeshComponent::GetVertexArray() const
     {
         return m_VAO;
     }

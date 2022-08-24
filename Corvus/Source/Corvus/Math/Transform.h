@@ -7,33 +7,33 @@
 
 namespace Corvus
 {
-    class Transform
+    class FTransform
     {
     public:
-        Transform();
-        Transform(Vec3 const &Position);
-        Transform(Vec3 const &Position, Vec3 const &Scale);
-        Transform(Vec3 const &Position, Rotation const &Rotation);
-        Transform(Vec3 const &Position, Vec3 const &Scale, Rotation const &Rotation);
+        FTransform();
+        FTransform(FVector3 const &Position);
+        FTransform(FVector3 const &Position, FVector3 const &Scale);
+        FTransform(FVector3 const &Position, FRotation const &Rotation);
+        FTransform(FVector3 const &Position, FVector3 const &Scale, FRotation const &Rotation);
 
-        Mat4 GetTransformMatrix() const;
-        Mat4 GetTranslationMatrix() const;
-        Mat4 GetScaleMatrix() const;
-        Mat4 GetRotationMatrix() const;
+        FMatrix4 GetTransformMatrix() const;
+        FMatrix4 GetTranslationMatrix() const;
+        FMatrix4 GetScaleMatrix() const;
+        FMatrix4 GetRotationMatrix() const;
 
-        Vec3 GetPosition() const;
-        void SetPosition(Vec3 const &Position);
+        FVector3 GetPosition() const;
+        void     SetPosition(FVector3 const &Position);
 
-        Vec3 GetScale() const;
-        void SetScale(Vec3 const &Scale);
+        FVector3 GetScale() const;
+        void     SetScale(FVector3 const &Scale);
 
-        Rotation GetRotation() const;
-        void     SetRotation(Rotation const &Rotation);
+        FRotation GetRotation() const;
+        void      SetRotation(FRotation const &Rotation);
 
     private:
-        Vec3     m_Position;
-        Rotation m_Rotation;
-        Vec3     m_Scale;
+        FVector3  m_Position;
+        FRotation m_Rotation;
+        FVector3  m_Scale;
     };
 
 } // namespace Corvus

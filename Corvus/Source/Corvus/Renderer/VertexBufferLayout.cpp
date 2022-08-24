@@ -6,17 +6,17 @@
 
 namespace Corvus
 {
-    VertexBufferLayout::VertexBufferLayout(std::initializer_list<BufferLayoutElement> const InitList)
+    CVertexBufferLayout::CVertexBufferLayout(std::initializer_list<CBufferLayoutElement> const InitList)
         : m_Layout{InitList}
     {
     }
 
-    UInt32 VertexBufferLayout::Size() const
+    UInt32 CVertexBufferLayout::Size() const
     {
         return static_cast<UInt32>(m_Layout.size());
     }
 
-    UInt32 VertexBufferLayout::Stride()
+    UInt32 CVertexBufferLayout::Stride()
     {
         if (m_StrideDirty)
         {
@@ -26,48 +26,48 @@ namespace Corvus
         return m_Stride;
     }
 
-    BufferLayoutElement &VertexBufferLayout::At(UInt32 const Index)
+    CBufferLayoutElement &CVertexBufferLayout::At(UInt32 const Index)
     {
         CORVUS_CORE_ASSERT(Index < Size());
         m_StrideDirty = true; // In case buffer layout will be changed through element reference
         return m_Layout.at(Index);
     }
 
-    BufferLayoutElement &VertexBufferLayout::operator[](UInt32 const Index)
+    CBufferLayoutElement &CVertexBufferLayout::operator[](UInt32 const Index)
     {
         return At(Index);
     }
 
-    void VertexBufferLayout::InsertAt(BufferLayoutElement const &Element, UInt32 const Index)
+    void CVertexBufferLayout::InsertAt(CBufferLayoutElement const &Element, UInt32 const Index)
     {
         CORVUS_CORE_ASSERT(Index < Size());
         m_Layout[Index] = Element;
         m_StrideDirty   = true;
     }
 
-    void VertexBufferLayout::PushBack(BufferLayoutElement const &Element)
+    void CVertexBufferLayout::PushBack(CBufferLayoutElement const &Element)
     {
         m_Layout.push_back(Element);
         m_StrideDirty = true;
     }
 
-    void VertexBufferLayout::Clear()
+    void CVertexBufferLayout::Clear()
     {
         m_Layout.clear();
         m_StrideDirty = true;
     }
 
-    void VertexBufferLayout::RemoveAt(UInt32 const Index)
+    void CVertexBufferLayout::RemoveAt(UInt32 const Index)
     {
         CORVUS_CORE_ASSERT(Index < Size());
         m_Layout.erase(Begin() + Index);
         m_StrideDirty = true;
     }
 
-    void VertexBufferLayout::RecalculateStride()
+    void CVertexBufferLayout::RecalculateStride()
     {
         UInt32 NewStride = 0;
-        for (BufferLayoutElement const &Element : m_Layout)
+        for (CBufferLayoutElement const &Element : m_Layout)
         {
             NewStride += Element.GetSize();
         }

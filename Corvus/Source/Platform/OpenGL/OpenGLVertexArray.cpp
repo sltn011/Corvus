@@ -7,23 +7,23 @@
 
 namespace Corvus
 {
-    OpenGLVertexArray::OpenGLVertexArray()
+    POpenGLVertexArray::POpenGLVertexArray()
     {
         glCreateVertexArrays(1, &m_VAO);
     }
 
-    OpenGLVertexArray::~OpenGLVertexArray()
+    POpenGLVertexArray::~POpenGLVertexArray()
     {
         glDeleteVertexArrays(1, &m_VAO);
     }
 
-    OpenGLVertexArray::OpenGLVertexArray(OpenGLVertexArray &&Rhs) noexcept : m_VAO{std::exchange(Rhs.m_VAO, 0)}
+    POpenGLVertexArray::POpenGLVertexArray(POpenGLVertexArray &&Rhs) noexcept : m_VAO{std::exchange(Rhs.m_VAO, 0)}
     {
         m_IndexBuffer  = std::move(Rhs.m_IndexBuffer);
         m_VertexBuffer = std::move(Rhs.m_VertexBuffer);
     }
 
-    OpenGLVertexArray &OpenGLVertexArray::operator=(OpenGLVertexArray &&Rhs) noexcept
+    POpenGLVertexArray &POpenGLVertexArray::operator=(POpenGLVertexArray &&Rhs) noexcept
     {
         if (this != &Rhs)
         {
@@ -34,53 +34,53 @@ namespace Corvus
         return *this;
     }
 
-    void OpenGLVertexArray::Bind()
+    void POpenGLVertexArray::Bind()
     {
         glBindVertexArray(m_VAO);
     }
 
-    void OpenGLVertexArray::Unbind()
+    void POpenGLVertexArray::Unbind()
     {
         glBindVertexArray(0);
     }
 
-    void OpenGLVertexArray::AddIndexBuffer(TOwn<IndexBuffer> &&IndexBuffer)
+    void POpenGLVertexArray::AddIndexBuffer(TOwn<CIndexBuffer> &&CIndexBuffer)
     {
-        CORVUS_CORE_ASSERT(IndexBuffer);
+        CORVUS_CORE_ASSERT(CIndexBuffer);
 
-        m_IndexBuffer = std::move(IndexBuffer);
+        m_IndexBuffer = std::move(CIndexBuffer);
 
-        GLuint const EBO = ((OpenGLIndexBuffer *)m_IndexBuffer.get())->GetID();
+        GLuint const EBO = ((POpenGLIndexBuffer *)m_IndexBuffer.get())->GetID();
         glVertexArrayElementBuffer(m_VAO, EBO);
     }
 
-    void OpenGLVertexArray::AddVertexBuffer(TOwn<VertexBuffer> &&VertexBuffer)
+    void POpenGLVertexArray::AddVertexBuffer(TOwn<CVertexBuffer> &&CVertexBuffer)
     {
-        CORVUS_CORE_ASSERT(VertexBuffer);
+        CORVUS_CORE_ASSERT(CVertexBuffer);
 
-        m_VertexBuffer = std::move(VertexBuffer);
+        m_VertexBuffer = std::move(CVertexBuffer);
 
         DisableVertexAttributes();
         EnableVertexAttributes();
     }
 
-    void OpenGLVertexArray::EnableVertexAttributes()
+    void POpenGLVertexArray::EnableVertexAttributes()
     {
         CORVUS_CORE_ASSERT(m_VertexBuffer);
 
-        VertexBufferLayout &Layout = m_VertexBuffer->GetLayout();
+        CVertexBufferLayout &Layout = m_VertexBuffer->GetLayout();
 
         GLsizei const Stride = static_cast<GLsizei>(Layout.Stride());
-        GLuint const  VBO    = ((OpenGLVertexBuffer *)m_VertexBuffer.get())->GetID();
+        GLuint const  VBO    = ((POpenGLVertexBuffer *)m_VertexBuffer.get())->GetID();
         glVertexArrayVertexBuffer(m_VAO, 0, VBO, 0, Stride);
 
         GLuint Offset = 0;
         for (UInt32 i = 0; i < Layout.Size(); ++i)
         {
-            BufferLayoutElement &Element = Layout[i];
+            CBufferLayoutElement &Element = Layout[i];
 
             GLint const     NumComponents    = static_cast<GLint>(Element.GetNumComponents());
-            GLenum const    Type             = OpenGLVertexBuffer::BufferLayoutTypeToGLType(Element.GetType());
+            GLenum const    Type             = POpenGLVertexBuffer::BufferLayoutTypeToGLType(Element.GetType());
             GLboolean const bShouldNormalize = Element.ShouldNormalize() ? GL_TRUE : GL_FALSE;
 
             glEnableVertexArrayAttrib(m_VAO, i);
@@ -91,7 +91,7 @@ namespace Corvus
         }
     }
 
-    void OpenGLVertexArray::DisableVertexAttributes()
+    void POpenGLVertexArray::DisableVertexAttributes()
     {
         CORVUS_CORE_ASSERT(m_VertexBuffer);
 

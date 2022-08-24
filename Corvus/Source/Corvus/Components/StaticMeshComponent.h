@@ -6,20 +6,20 @@
 namespace Corvus
 {
 
-    class Shader;
-    class VertexArray;
+    class CShader;
+    class CVertexArray;
 
     class CStaticMeshComponent : public CBaseSceneComponent
     {
     public:
-        CStaticMeshComponent(Entity *Owner, TOwn<Shader> const &Shader, TOwn<VertexArray> const &VAO);
+        CStaticMeshComponent(CEntity *Owner, TOwn<CShader> const &CShader, TOwn<CVertexArray> const &VAO);
 
-        TOwn<Shader> const      &GetShader() const;
-        TOwn<VertexArray> const &GetVertexArray() const;
+        TOwn<CShader> const      &GetShader() const;
+        TOwn<CVertexArray> const &GetVertexArray() const;
 
     private:
-        TOwn<Shader> const      &m_Shader;
-        TOwn<VertexArray> const &m_VAO;
+        TOwn<CShader> const      &m_Shader;
+        TOwn<CVertexArray> const &m_VAO;
     };
 
 } // namespace Corvus

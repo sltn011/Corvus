@@ -10,11 +10,11 @@
 namespace Corvus
 {
 
-    class Log
+    class СLog
     {
     public:
-        Log();
-        ~Log();
+        СLog();
+        ~СLog();
 
         static void Init();
 
@@ -29,17 +29,17 @@ namespace Corvus
 } // namespace Corvus
 
 #ifdef CORVUS_ENABLE_LOG
-    #define CORVUS_CORE_TRACE(...)    ::Corvus::Log::GetEngineLogger()->trace(__VA_ARGS__)
-    #define CORVUS_CORE_INFO(...)     ::Corvus::Log::GetEngineLogger()->info(__VA_ARGS__)
-    #define CORVUS_CORE_WARN(...)     ::Corvus::Log::GetEngineLogger()->warn(__VA_ARGS__)
-    #define CORVUS_CORE_ERROR(...)    ::Corvus::Log::GetEngineLogger()->error(__VA_ARGS__)
-    #define CORVUS_CORE_CRITICAL(...) ::Corvus::Log::GetEngineLogger()->critical(__VA_ARGS__)
+    #define CORVUS_CORE_TRACE(...)    ::Corvus::СLog::GetEngineLogger()->trace(__VA_ARGS__)
+    #define CORVUS_CORE_INFO(...)     ::Corvus::СLog::GetEngineLogger()->info(__VA_ARGS__)
+    #define CORVUS_CORE_WARN(...)     ::Corvus::СLog::GetEngineLogger()->warn(__VA_ARGS__)
+    #define CORVUS_CORE_ERROR(...)    ::Corvus::СLog::GetEngineLogger()->error(__VA_ARGS__)
+    #define CORVUS_CORE_CRITICAL(...) ::Corvus::СLog::GetEngineLogger()->critical(__VA_ARGS__)
 
-    #define CORVUS_TRACE(...)    ::Corvus::Log::GetClientLogger()->trace(__VA_ARGS__)
-    #define CORVUS_INFO(...)     ::Corvus::Log::GetClientLogger()->info(__VA_ARGS__)
-    #define CORVUS_WARN(...)     ::Corvus::Log::GetClientLogger()->warn(__VA_ARGS__)
-    #define CORVUS_ERROR(...)    ::Corvus::Log::GetClientLogger()->error(__VA_ARGS__)
-    #define CORVUS_CRITICAL(...) ::Corvus::Log::GetClientLogger()->critical(__VA_ARGS__)
+    #define CORVUS_TRACE(...)    ::Corvus::СLog::GetClientLogger()->trace(__VA_ARGS__)
+    #define CORVUS_INFO(...)     ::Corvus::СLog::GetClientLogger()->info(__VA_ARGS__)
+    #define CORVUS_WARN(...)     ::Corvus::СLog::GetClientLogger()->warn(__VA_ARGS__)
+    #define CORVUS_ERROR(...)    ::Corvus::СLog::GetClientLogger()->error(__VA_ARGS__)
+    #define CORVUS_CRITICAL(...) ::Corvus::СLog::GetClientLogger()->critical(__VA_ARGS__)
 #else
     #define CORVUS_CORE_TRACE(...)
     #define CORVUS_CORE_INFO(...)

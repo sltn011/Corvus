@@ -9,7 +9,7 @@ namespace Corvus
     class CTransformComponent : public CBaseSceneComponent
     {
     public:
-        CTransformComponent(Entity *Owner, Transform const &ComponentTransform);
+        CTransformComponent(CEntity *Owner, FTransform const &ComponentTransform);
     };
 
 } // namespace Corvus

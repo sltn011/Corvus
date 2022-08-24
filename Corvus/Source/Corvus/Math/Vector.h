@@ -3,78 +3,78 @@
 
 #include <glm/glm.hpp>
 
-using IVec2 = glm::ivec2;
-using IVec3 = glm::ivec3;
-using IVec4 = glm::ivec4;
+using FIntVector2 = glm::ivec2;
+using FIntVector3 = glm::ivec3;
+using FIntVector4 = glm::ivec4;
 
-using Vec2 = glm::vec2;
-using Vec3 = glm::vec3;
-using Vec4 = glm::vec4;
+using FVector2 = glm::vec2;
+using FVector3 = glm::vec3;
+using FVector4 = glm::vec4;
 
-namespace Corvus::Vector
+namespace Corvus::FVector
 {
 
-    template<typename VecT>
-    inline constexpr VecT Radians(VecT const &Degrees)
+    template<typename TVector>
+    inline constexpr TVector Radians(TVector const &Degrees)
     {
         return glm::radians(Degrees);
     }
 
-    template<typename VecT>
-    inline constexpr VecT Degrees(VecT const &Radians)
+    template<typename TVector>
+    inline constexpr TVector Degrees(TVector const &Radians)
     {
         return glm::degrees(Radians);
     }
 
-    template<typename VecT>
-    inline VecT Length(VecT const &Vector)
+    template<typename TVector>
+    inline TVector Length(TVector const &Vector)
     {
         return glm::length(Vector);
     }
 
-    template<typename VecT>
-    inline VecT Normalize(VecT const &Vector)
+    template<typename TVector>
+    inline TVector Normalize(TVector const &Vector)
     {
         return glm::normalize(Vector);
     }
 
-    template<typename VecT>
-    inline float Dot(VecT const &Vector)
+    template<typename TVector>
+    inline float Dot(TVector const &Vector)
     {
         return glm::dot(Vector);
     }
 
-    template<typename VecT>
-    inline VecT Cross(VecT const &Vector)
+    template<typename TVector>
+    inline TVector Cross(TVector const &Vector)
     {
         return glm::cross(Vector);
     }
 
-    template<typename VecT>
-    inline VecT Cos(VecT const &Degrees)
+    template<typename TVector>
+    inline TVector Cos(TVector const &Degrees)
     {
-        return glm::cos(Vector::Radians(Degrees));
+        return glm::cos(FVector::Radians(Degrees));
     }
 
-    template<typename VecT>
-    inline VecT Sin(VecT const &Degrees)
+    template<typename TVector>
+    inline TVector Sin(TVector const &Degrees)
     {
-        return glm::sin(Vector::Radians(Degrees));
+        return glm::sin(FVector::Radians(Degrees));
     }
 
-    template<typename VecT>
-    inline VecT Tan(VecT const &Degrees)
+    template<typename TVector>
+    inline TVector Tan(TVector const &Degrees)
     {
-        return glm::tan(Vector::Radians(Degrees));
+        return glm::tan(FVector::Radians(Degrees));
     }
 
-    static constexpr Vec3 Forward = Vec3{1.0f, 0.0f, 0.0f};
-    static constexpr Vec3 Up      = Vec3{0.0f, 1.0f, 0.0f};
-    static constexpr Vec3 Right   = Vec3{0.0f, 0.0f, 1.0f};
+    static constexpr FVector3 Forward = FVector3{1.0f, 0.0f, 0.0f};
+    static constexpr FVector3 Up      = FVector3{0.0f, 1.0f, 0.0f};
+    static constexpr FVector3 Right   = FVector3{0.0f, 0.0f, 1.0f};
 
-    static constexpr Vec3 ZeroVec = Vec3{0.0f, 0.0f, 0.0f};
-    static constexpr Vec3 OneVec  = Vec3{1.0f, 1.0f, 1.0f};
+    static constexpr FVector3 ZeroVec = FVector3{0.0f, 0.0f, 0.0f};
+    static constexpr FVector3 OneVec  = FVector3{1.0f, 1.0f, 1.0f};
 
-} // namespace Corvus::Vector
+} // namespace Corvus::FVector
 
 #endif //! CORVUS_SOURCE_CORVUS_MATH_VECTOR_H

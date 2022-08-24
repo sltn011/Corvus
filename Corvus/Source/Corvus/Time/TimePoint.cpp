@@ -7,13 +7,13 @@
 namespace Corvus
 {
 
-    TimePoint::TimePoint() : m_Value{std::chrono::high_resolution_clock::now()}
+    FTimePoint::FTimePoint() : m_Value{std::chrono::high_resolution_clock::now()}
     {
     }
 
-    TimeDelta TimePoint::operator-(TimePoint const &Rhs) const
+    FTimeDelta FTimePoint::operator-(FTimePoint const &Rhs) const
     {
-        return TimeDelta{std::chrono::duration_cast<std::chrono::duration<float>>(m_Value - Rhs.m_Value).count()};
+        return FTimeDelta{std::chrono::duration_cast<std::chrono::duration<float>>(m_Value - Rhs.m_Value).count()};
     }
 
 } // namespace Corvus

@@ -2,10 +2,10 @@
 
 #include "Corvus/Math/Quat.h"
 
-namespace Corvus::Quaternion
+namespace Corvus::FQuaternion
 {
 
-    Quat FromEuler(Vec3 const &Degrees, ERotationOrder const Order)
+    FQuat FromEuler(FVector3 const &Degrees, ERotationOrder const Order)
     {
         switch (Order)
         {
@@ -28,15 +28,15 @@ namespace Corvus::Quaternion
             return FromEulerZYX(Degrees);
 
         default:
-            return Quat{1.0f, 0.0f, 0.0f, 0.0f};
+            return FQuat{1.0f, 0.0f, 0.0f, 0.0f};
         }
     }
 
-    Quat FromEulerXYZ(Vec3 const &Degrees)
+    FQuat FromEulerXYZ(FVector3 const &Degrees)
     {
-        Vec3 C = Vector::Cos(Degrees / 2.0f);
-        Vec3 S = Vector::Sin(Degrees / 2.0f);
-        Quat R{};
+        FVector3 C = FVector::Cos(Degrees / 2.0f);
+        FVector3 S = FVector::Sin(Degrees / 2.0f);
+        FQuat    R{};
         R.w = C.x * C.y * C.z - S.x * S.y * S.z;
         R.x = C.x * S.y * S.z + S.x * C.y * C.z;
         R.y = C.x * S.y * C.z - S.x * C.y * S.z;
@@ -44,11 +44,11 @@ namespace Corvus::Quaternion
         return R;
     }
 
-    Quat FromEulerXZY(Vec3 const &Degrees)
+    FQuat FromEulerXZY(FVector3 const &Degrees)
     {
-        Vec3 C = Vector::Cos(Degrees / 2.0f);
-        Vec3 S = Vector::Sin(Degrees / 2.0f);
-        Quat R{};
+        FVector3 C = FVector::Cos(Degrees / 2.0f);
+        FVector3 S = FVector::Sin(Degrees / 2.0f);
+        FQuat    R{};
         R.w = C.x * C.z * C.y + S.x * S.z * S.y;
         R.x = S.x * C.z * C.y - C.x * S.z * S.y;
         R.y = C.x * C.z * S.y - S.x * S.z * C.y;
@@ -56,11 +56,11 @@ namespace Corvus::Quaternion
         return R;
     }
 
-    Quat FromEulerYXZ(Vec3 const &Degrees)
+    FQuat FromEulerYXZ(FVector3 const &Degrees)
     {
-        Vec3 C = Vector::Cos(Degrees / 2.0f);
-        Vec3 S = Vector::Sin(Degrees / 2.0f);
-        Quat R{};
+        FVector3 C = FVector::Cos(Degrees / 2.0f);
+        FVector3 S = FVector::Sin(Degrees / 2.0f);
+        FQuat    R{};
         R.w = C.y * C.x * C.z + S.y * S.x * S.z;
         R.x = C.y * S.x * C.z + S.y * C.x * S.z;
         R.y = S.y * C.x * C.z - C.y * S.x * S.z;
@@ -68,11 +68,11 @@ namespace Corvus::Quaternion
         return R;
     }
 
-    Quat FromEulerYZX(Vec3 const &Degrees)
+    FQuat FromEulerYZX(FVector3 const &Degrees)
     {
-        Vec3 C = Vector::Cos(Degrees / 2.0f);
-        Vec3 S = Vector::Sin(Degrees / 2.0f);
-        Quat R{};
+        FVector3 C = FVector::Cos(Degrees / 2.0f);
+        FVector3 S = FVector::Sin(Degrees / 2.0f);
+        FQuat    R{};
         R.w = C.y * C.z * C.x - S.y * S.z * S.x;
         R.x = C.y * C.z * S.x + S.y * S.z * C.x;
         R.y = S.y * C.z * C.x + C.y * S.z * S.x;
@@ -80,11 +80,11 @@ namespace Corvus::Quaternion
         return R;
     }
 
-    Quat FromEulerZXY(Vec3 const &Degrees)
+    FQuat FromEulerZXY(FVector3 const &Degrees)
     {
-        Vec3 C = Vector::Cos(Degrees / 2.0f);
-        Vec3 S = Vector::Sin(Degrees / 2.0f);
-        Quat R{};
+        FVector3 C = FVector::Cos(Degrees / 2.0f);
+        FVector3 S = FVector::Sin(Degrees / 2.0f);
+        FQuat    R{};
         R.w = C.z * C.x * C.y - S.z * S.x * S.y;
         R.x = C.z * S.x * C.y - S.z * C.x * S.y;
         R.y = S.z * S.x * C.y + C.z * C.x * S.y;
@@ -92,11 +92,11 @@ namespace Corvus::Quaternion
         return R;
     }
 
-    Quat FromEulerZYX(Vec3 const &Degrees)
+    FQuat FromEulerZYX(FVector3 const &Degrees)
     {
-        Vec3 C = Vector::Cos(Degrees / 2.0f);
-        Vec3 S = Vector::Sin(Degrees / 2.0f);
-        Quat R{};
+        FVector3 C = FVector::Cos(Degrees / 2.0f);
+        FVector3 S = FVector::Sin(Degrees / 2.0f);
+        FQuat    R{};
         R.w = C.z * C.y * C.x + S.z * S.y * S.x;
         R.x = C.z * C.y * S.x - S.z * S.y * C.x;
         R.y = C.z * S.y * C.x + S.z * C.y * S.x;
@@ -104,4 +104,4 @@ namespace Corvus::Quaternion
         return R;
     }
 
-} // namespace Corvus::Quaternion
+} // namespace Corvus::FQuaternion

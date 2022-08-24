@@ -8,16 +8,16 @@
 namespace Corvus
 {
 
-    class OpenGLIndexBuffer : public IndexBuffer
+    class POpenGLIndexBuffer : public CIndexBuffer
     {
     public:
-        OpenGLIndexBuffer(UInt32 const *Data, UInt32 NumIndices);
-        ~OpenGLIndexBuffer();
+        POpenGLIndexBuffer(UInt32 const *Data, UInt32 NumIndices);
+        ~POpenGLIndexBuffer();
 
-        OpenGLIndexBuffer(OpenGLIndexBuffer const &) = delete;
-        OpenGLIndexBuffer(OpenGLIndexBuffer &&Rhs) noexcept;
-        OpenGLIndexBuffer &operator=(OpenGLIndexBuffer const &) = delete;
-        OpenGLIndexBuffer &operator=(OpenGLIndexBuffer &&Rhs) noexcept;
+        POpenGLIndexBuffer(POpenGLIndexBuffer const &) = delete;
+        POpenGLIndexBuffer(POpenGLIndexBuffer &&Rhs) noexcept;
+        POpenGLIndexBuffer &operator=(POpenGLIndexBuffer const &) = delete;
+        POpenGLIndexBuffer &operator=(POpenGLIndexBuffer &&Rhs) noexcept;
 
         GLuint GetID() const;
 

@@ -3,17 +3,15 @@
 
 #include "Corvus/Core/Layer.h"
 
-struct GLFWwindow;
-
 namespace Corvus
 {
 
-    class LayerGUI : public Layer
+    class СLayerGUI : public СLayer
     {
     public:
-        using Super = Layer;
+        using Super = СLayer;
 
-        LayerGUI(String LayerName, bool bEnabled);
+        СLayerGUI(CString LayerName, bool bEnabled);
 
         virtual void Render() override;
 

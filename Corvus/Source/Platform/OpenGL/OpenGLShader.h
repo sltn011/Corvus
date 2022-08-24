@@ -8,42 +8,42 @@
 namespace Corvus
 {
 
-    class OpenGLShader : public Shader
+    class POpenGLShader : public CShader
     {
     public:
-        OpenGLShader(String const &FilePath);
-        ~OpenGLShader();
+        POpenGLShader(CString const &FilePath);
+        ~POpenGLShader();
 
-        OpenGLShader(OpenGLShader const &) = delete;
-        OpenGLShader(OpenGLShader &&Rhs) noexcept;
-        OpenGLShader &operator=(OpenGLShader const &) = delete;
-        OpenGLShader &operator=(OpenGLShader &&Rhs) noexcept;
+        POpenGLShader(POpenGLShader const &) = delete;
+        POpenGLShader(POpenGLShader &&Rhs) noexcept;
+        POpenGLShader &operator=(POpenGLShader const &) = delete;
+        POpenGLShader &operator=(POpenGLShader &&Rhs) noexcept;
 
         virtual void Bind() override;
         virtual void Unbind() override;
 
-        virtual void SetBool(String const &Name, bool Value) override;
-        virtual void SetInt32(String const &Name, Int32 Value) override;
-        virtual void SetUInt32(String const &Name, UInt32 Value) override;
-        virtual void SetFloat(String const &Name, float Value) override;
+        virtual void SetBool(CString const &Name, bool Value) override;
+        virtual void SetInt32(CString const &Name, Int32 Value) override;
+        virtual void SetUInt32(CString const &Name, UInt32 Value) override;
+        virtual void SetFloat(CString const &Name, float Value) override;
 
-        virtual void SetVec2(String const &Name, Vec2 const &Value) override;
-        virtual void SetVec3(String const &Name, Vec3 const &Value) override;
-        virtual void SetVec4(String const &Name, Vec4 const &Value) override;
+        virtual void SetVec2(CString const &Name, FVector2 const &Value) override;
+        virtual void SetVec3(CString const &Name, FVector3 const &Value) override;
+        virtual void SetVec4(CString const &Name, FVector4 const &Value) override;
 
-        virtual void SetMat3(String const &Name, Mat3 const &Value) override;
-        virtual void SetMat4(String const &Name, Mat4 const &Value) override;
+        virtual void SetMat3(CString const &Name, FMatrix3 const &Value) override;
+        virtual void SetMat4(CString const &Name, FMatrix4 const &Value) override;
 
     protected:
-        GLuint CreateShader(GLenum ShaderType, String const &SourceCode) const;
+        GLuint CreateShader(GLenum ShaderType, CString const &SourceCode) const;
 
-        void AssertShaderCompiledSuccessfully(GLuint Shader) const;
+        void AssertShaderCompiledSuccessfully(GLuint CShader) const;
         void AssertProgramLinkedSuccessfully() const;
 
-        GLint GetUniformLocation(String const &Name);
+        GLint GetUniformLocation(CString const &Name);
 
-        GLuint                            m_ID = 0;
-        std::unordered_map<String, GLint> m_UniformLocationCache;
+        GLuint                             m_ID = 0;
+        std::unordered_map<CString, GLint> m_UniformLocationCache;
 
     private:
         enum class EShaderType : Int8

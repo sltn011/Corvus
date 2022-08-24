@@ -12,42 +12,42 @@ struct GLFWwindow;
 namespace Corvus
 {
 
-    CORVUS_DECLARE_MULTICAST_DELEGATE(OnEventDelegate, Event &);
+    CORVUS_DECLARE_MULTICAST_DELEGATE(COnEventDelegate, СEvent &);
 
-    struct WindowData
+    struct CWindowData
     {
-        String WindowName;
-        Int32  WindowWidth  = 0;
-        Int32  WindowHeight = 0;
+        CString WindowName;
+        Int32   WindowWidth  = 0;
+        Int32   WindowHeight = 0;
 
         bool bVSyncEnabled = false;
         bool bFullScreen   = false;
     };
 
-    class Window
+    class CWindow
     {
     protected:
-        Window() = default;
+        CWindow() = default;
 
     public:
-        static [[nodiscard]] TOwn<Window> Create();
+        static [[nodiscard]] TOwn<CWindow> Create();
 
-        virtual ~Window()                 = default;
-        Window(Window const &)            = delete;
-        Window &operator=(Window const &) = delete;
-        Window(Window &&)                 = default;
-        Window &operator=(Window &&)      = default;
+        virtual ~CWindow()                  = default;
+        CWindow(CWindow const &)            = delete;
+        CWindow &operator=(CWindow const &) = delete;
+        CWindow(CWindow &&)                 = default;
+        CWindow &operator=(CWindow &&)      = default;
 
-        virtual void Init(WindowData const &Settings) = 0;
-        virtual void InitRenderingContext()           = 0;
-        virtual void InitGUIRenderingContext()        = 0;
+        virtual void Init(CWindowData const &Settings) = 0;
+        virtual void InitRenderingContext()            = 0;
+        virtual void InitGUIRenderingContext()         = 0;
 
         virtual void OnUpdate() = 0;
 
-        bool   IsInitialized() const { return m_bIsInitialized; }
-        UInt32 GetWindowWidth() const { return m_WindowData.WindowWidth; }
-        UInt32 GetWindowHeight() const { return m_WindowData.WindowHeight; }
-        String GetWindowName() const { return m_WindowData.WindowName; }
+        bool    IsInitialized() const { return m_bIsInitialized; }
+        UInt32  GetWindowWidth() const { return m_WindowData.WindowWidth; }
+        UInt32  GetWindowHeight() const { return m_WindowData.WindowHeight; }
+        CString GetWindowName() const { return m_WindowData.WindowName; }
 
         virtual bool ShouldClose() const = 0;
         virtual void SetShouldClose()    = 0;
@@ -60,16 +60,16 @@ namespace Corvus
 
         virtual void *GetRawWindow() = 0;
 
-        GUIController &GetGUIController();
+        СGUIController &GetGUIController();
 
-        OnEventDelegate OnEvent;
+        COnEventDelegate OnEvent;
 
     protected:
-        WindowData m_WindowData;
-        bool       m_bIsInitialized = false;
+        CWindowData m_WindowData;
+        bool        m_bIsInitialized = false;
 
-        TOwn<RenderingContext> m_RenderingContext;
-        GUIController          m_GUIController;
+        TOwn<CRenderingContext> m_RenderingContext;
+        СGUIController          m_GUIController;
     };
 
 } // namespace Corvus

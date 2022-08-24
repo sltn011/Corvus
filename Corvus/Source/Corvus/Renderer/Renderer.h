@@ -6,11 +6,11 @@
 namespace Corvus
 {
 
-    class GraphicsAPI;
-    class Shader;
-    class VertexArray;
+    class CGraphicsAPI;
+    class CShader;
+    class CVertexArray;
 
-    class Renderer
+    class CRenderer
     {
     public:
         static void Init();
@@ -21,16 +21,16 @@ namespace Corvus
 
         static void ViewportResize(UInt32 Width, UInt32 Height);
 
-        static void SetClearColor(Vec4 const &ClearColor);
+        static void SetClearColor(FVector4 const &ClearColor);
         static void Clear(bool bColorBuffer = true, bool bDepthBuffer = true, bool bStencilBuffer = true);
 
         static void EnableDepthTest();
         static void DisableDepthTest();
 
-        static void Submit(TOwn<VertexArray> &VAO, TOwn<Shader> &Shader);
+        static void Submit(TOwn<CVertexArray> &VAO, TOwn<CShader> &CShader);
 
     private:
-        static TOwn<GraphicsAPI> s_GraphicsAPI;
+        static TOwn<CGraphicsAPI> s_GraphicsAPI;
     };
 
 } // namespace Corvus

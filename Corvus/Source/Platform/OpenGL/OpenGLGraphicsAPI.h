@@ -8,14 +8,14 @@
 namespace Corvus
 {
 
-    class OpenGLGraphicsAPI : public GraphicsAPI
+    class POpenGLGraphicsAPI : public CGraphicsAPI
     {
     public:
         virtual void Init() override;
 
         virtual void ViewportResize(UInt32 Width, UInt32 Height) override;
 
-        virtual void SetClearColor(Vec4 const &ClearColor) override;
+        virtual void SetClearColor(FVector4 const &ClearColor) override;
         virtual void Clear(bool bColorBuffer = true, bool bDepthBuffer = true, bool bStencilBuffer = true) override;
 
         virtual void EnableDepthTest();

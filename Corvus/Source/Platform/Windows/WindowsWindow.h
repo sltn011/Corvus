@@ -5,17 +5,17 @@
 
 namespace Corvus
 {
-    class WindowsWindow : public Window
+    class PWindowsWindow : public CWindow
     {
     public:
-        WindowsWindow();
-        ~WindowsWindow();
-        WindowsWindow(WindowsWindow const &)            = delete;
-        WindowsWindow &operator=(WindowsWindow const &) = delete;
-        WindowsWindow(WindowsWindow &&)                 = default;
-        WindowsWindow &operator=(WindowsWindow &&)      = default;
+        PWindowsWindow();
+        ~PWindowsWindow();
+        PWindowsWindow(PWindowsWindow const &)            = delete;
+        PWindowsWindow &operator=(PWindowsWindow const &) = delete;
+        PWindowsWindow(PWindowsWindow &&)                 = default;
+        PWindowsWindow &operator=(PWindowsWindow &&)      = default;
 
-        virtual void Init(WindowData const &Settings) override;
+        virtual void Init(CWindowData const &Settings) override;
 
         void Destroy();
 

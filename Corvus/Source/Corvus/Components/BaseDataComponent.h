@@ -4,19 +4,19 @@
 namespace Corvus
 {
 
-    class Entity;
+    class CEntity;
 
     // Base class for all Components that provide reusable behavior
     // that can be added to Entities
     class CBaseDataComponent
     {
     public:
-        CBaseDataComponent(Entity *Owner);
+        CBaseDataComponent(CEntity *Owner);
 
-        Entity *GetOwner() const;
+        CEntity *GetOwner() const;
 
     private:
-        Entity *m_Owner = nullptr;
+        CEntity *m_Owner = nullptr;
     };
 
 } // namespace Corvus

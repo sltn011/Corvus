@@ -9,29 +9,29 @@
 namespace Corvus
 {
 
-    Camera::Camera()
+    CCamera::CCamera()
     {
     }
 
-    Camera::Camera(Transform const &Transform)
+    CCamera::CCamera(FTransform const &Transform)
     {
         m_Transform = Transform;
     }
 
-    Camera::~Camera()
+    CCamera::~CCamera()
     {
     }
 
-    void Camera::SwitchPlayerControl(bool const IsPlayerControlled, float const CameraMoveSpeed)
+    void CCamera::SwitchPlayerControl(bool const IsPlayerControlled, float const CameraMoveSpeed)
     {
         m_IsPlayerControlled = IsPlayerControlled;
         if (m_IsPlayerControlled && !m_MovementComponent)
         {
-            m_MovementComponent = MakeOwned<CameraMovementComponent>(this, CameraMoveSpeed);
+            m_MovementComponent = MakeOwned<CCameraMovementComponent>(this, CameraMoveSpeed);
         }
     }
 
-    void Camera::ProcessMovementInput(EMoveDirection const Direction, TimeDelta const ElapsedTime)
+    void CCamera::ProcessMovementInput(EMoveDirection const Direction, FTimeDelta const ElapsedTime)
     {
         if (m_IsPlayerControlled)
         {
@@ -39,8 +39,8 @@ namespace Corvus
         }
     }
 
-    void Camera::ProcessRotationInput(
-        float const XOffset, float const YOffset, float const Sensitivity, TimeDelta const ElapsedTime
+    void CCamera::ProcessRotationInput(
+        float const XOffset, float const YOffset, float const Sensitivity, FTimeDelta const ElapsedTime
     )
     {
         if (m_IsPlayerControlled)
@@ -49,7 +49,7 @@ namespace Corvus
         }
     }
 
-    void Camera::SetMoveSpeed(float const CameraMoveSpeed)
+    void CCamera::SetMoveSpeed(float const CameraMoveSpeed)
     {
         if (m_MovementComponent)
         {
@@ -57,55 +57,55 @@ namespace Corvus
         }
     }
 
-    Transform Camera::GetTransform() const
+    FTransform CCamera::GetTransform() const
     {
         return m_Transform;
     }
 
-    Rotation Camera::GetRotation() const
+    FRotation CCamera::GetRotation() const
     {
         return m_Transform.GetRotation();
     }
 
-    Vec3 Camera::GetForwardVector() const
+    FVector3 CCamera::GetForwardVector() const
     {
-        return Vector::Normalize(Vec3(m_Transform.GetRotationMatrix()[0]));
+        return FVector::Normalize(FVector3(m_Transform.GetRotationMatrix()[0]));
     }
 
-    Vec3 Camera::GetUpVector() const
+    FVector3 CCamera::GetUpVector() const
     {
-        return Vector::Normalize(Vec3(m_Transform.GetRotationMatrix()[1]));
+        return FVector::Normalize(FVector3(m_Transform.GetRotationMatrix()[1]));
     }
 
-    Vec3 Camera::GetRightVector() const
+    FVector3 CCamera::GetRightVector() const
     {
-        return Vector::Normalize(Vec3(m_Transform.GetRotationMatrix()[2]));
+        return FVector::Normalize(FVector3(m_Transform.GetRotationMatrix()[2]));
     }
 
-    Mat3 Camera::GetFURVectors() const
+    FMatrix3 CCamera::GetFURVectors() const
     {
-        Mat3 FURVectors = Mat3(m_Transform.GetRotationMatrix());
-        Vector::Normalize(FURVectors[0]);
-        Vector::Normalize(FURVectors[1]);
-        Vector::Normalize(FURVectors[2]);
+        FMatrix3 FURVectors = FMatrix3(m_Transform.GetRotationMatrix());
+        FVector::Normalize(FURVectors[0]);
+        FVector::Normalize(FURVectors[1]);
+        FVector::Normalize(FURVectors[2]);
         return FURVectors;
     }
 
-    void Camera::SetTransform(Transform const &Transform)
+    void CCamera::SetTransform(FTransform const &Transform)
     {
         m_Transform = Transform;
         RecalculateViewMatrix();
         RecalculateProjectionViewMatrix();
     }
 
-    void Camera::SetRotation(Rotation const &Rotation)
+    void CCamera::SetRotation(FRotation const &Rotation)
     {
         m_Transform.SetRotation(Rotation);
         RecalculateViewMatrix();
         RecalculateProjectionViewMatrix();
     }
 
-    void Camera::SetViewportSize(float const Width, float const Height)
+    void CCamera::SetViewportSize(float const Width, float const Height)
     {
         CORVUS_CORE_ASSERT(Width > 0 && Height > 0);
         m_Aspect = Width / Height;
@@ -113,7 +113,7 @@ namespace Corvus
         RecalculateProjectionViewMatrix();
     }
 
-    void Camera::SetClipPlanes(float const NearClip, float const FarClip)
+    void CCamera::SetClipPlanes(float const NearClip, float const FarClip)
     {
         m_NearClip = NearClip;
         m_FarClip  = FarClip;

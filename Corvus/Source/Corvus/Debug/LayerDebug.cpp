@@ -6,11 +6,11 @@
 
 namespace Corvus
 {
-    LayerDebug::LayerDebug(String LayerName, bool const bEnabled) : Super{std::move(LayerName), bEnabled}
+    СLayerDebug::СLayerDebug(CString LayerName, bool const bEnabled) : Super{std::move(LayerName), bEnabled}
     {
     }
 
-    void LayerDebug::OnUpdate(TimeDelta const ElapsedTime)
+    void СLayerDebug::OnUpdate(FTimeDelta const ElapsedTime)
     {
         if (!m_bEnabled)
         {
@@ -18,14 +18,14 @@ namespace Corvus
         }
     }
 
-    void LayerDebug::OnEvent(Event &Event)
+    void СLayerDebug::OnEvent(СEvent &Event)
     {
         if (!m_bEnabled)
         {
             return;
         }
 
-        CORVUS_CORE_TRACE("LayerDebug \"{0}\": {1}", m_LayerName, Event.ToString());
+        CORVUS_CORE_TRACE("СLayerDebug \"{0}\": {1}", m_LayerName, Event.ToString());
     }
 
 } // namespace Corvus

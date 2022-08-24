@@ -4,7 +4,7 @@
 namespace Corvus
 {
 
-    class Scene
+    class CScene
     {
     };
 

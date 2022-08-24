@@ -6,29 +6,29 @@
 namespace Corvus
 {
 
-#define CORVUS_EVENT_GENERATED_BODY(Category, Type)         \
-    virtual UInt8 GetCategoryFlags() const override         \
-    {                                                       \
-        return Category;                                    \
-    }                                                       \
-    virtual Event::EEventType GetEventType() const override \
-    {                                                       \
-        return Type;                                        \
-    }                                                       \
-    virtual Char const *GetEventTypeString() const override \
-    {                                                       \
-        return #Type;                                       \
+#define CORVUS_EVENT_GENERATED_BODY(Category, Type)          \
+    virtual UInt8 GetCategoryFlags() const override          \
+    {                                                        \
+        return Category;                                     \
+    }                                                        \
+    virtual СEvent::EEventType GetEventType() const override \
+    {                                                        \
+        return Type;                                         \
+    }                                                        \
+    virtual Char const *GetEventTypeString() const override  \
+    {                                                        \
+        return #Type;                                        \
     }
 
-    class Event;
+    class СEvent;
 
     template<typename OtherEvent>
-    OtherEvent &CastEvent(Event &BaseEvent)
+    OtherEvent &CastEvent(СEvent &BaseEvent)
     {
         return static_cast<OtherEvent &>(BaseEvent);
     }
 
-    class Event
+    class СEvent
     {
     public:
         enum EEventCategory : UInt8
@@ -55,20 +55,20 @@ namespace Corvus
             MouseButtonRelease
         };
 
-        virtual ~Event() = default;
+        virtual ~СEvent() = default;
 
         // Defined by child classes using CORVUS_EVENT_GENERATED_BODY macro
-        virtual UInt8             GetCategoryFlags() const   = 0;
-        virtual Event::EEventType GetEventType() const       = 0;
-        virtual Char const       *GetEventTypeString() const = 0;
+        virtual UInt8              GetCategoryFlags() const   = 0;
+        virtual СEvent::EEventType GetEventType() const       = 0;
+        virtual Char const        *GetEventTypeString() const = 0;
 
         [[nodiscard]] bool WasHandled() const { return m_bWasHandled; }
 
         void SetHandled() { m_bWasHandled = true; }
 
-        bool IsInCategory(Event::EEventCategory Category) { return GetCategoryFlags() & Category; }
+        bool IsInCategory(СEvent::EEventCategory Category) { return GetCategoryFlags() & Category; }
 
-        virtual String ToString() const { return GetEventTypeString(); }
+        virtual CString ToString() const { return GetEventTypeString(); }
 
     protected:
         bool m_bWasHandled = false;

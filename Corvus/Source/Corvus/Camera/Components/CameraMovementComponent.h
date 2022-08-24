@@ -6,21 +6,21 @@
 namespace Corvus
 {
 
-    class TimeDelta;
+    class FTimeDelta;
 
-    class CameraMovementComponent
+    class CCameraMovementComponent
     {
     public:
-        CameraMovementComponent(Camera *Owner, float MovementSpeed);
+        CCameraMovementComponent(CCamera *Owner, float MovementSpeed);
 
         void SetMovementSpeed(float MovementSpeed);
 
-        void ProcessMovementInput(Camera::EMoveDirection Direction, TimeDelta ElapsedTime);
-        void ProcessRotationInput(float XOffset, float YOffset, float Sensitivity, TimeDelta ElapsedTime);
+        void ProcessMovementInput(CCamera::EMoveDirection Direction, FTimeDelta ElapsedTime);
+        void ProcessRotationInput(float XOffset, float YOffset, float Sensitivity, FTimeDelta ElapsedTime);
 
     private:
-        Camera *m_Owner     = nullptr;
-        float   m_MoveSpeed = 1.0f;
+        CCamera *m_Owner     = nullptr;
+        float    m_MoveSpeed = 1.0f;
     };
 
 } // namespace Corvus

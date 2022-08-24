@@ -7,7 +7,7 @@
 namespace Corvus
 {
 
-    Pool::Pool(PoolID const ID, PoolDataFormat const DataFormat) : m_PoolID{ID}, m_DataFormat{DataFormat}
+    CPool::CPool(CPoolID const ID, CPoolDataFormat const DataFormat) : m_PoolID{ID}, m_DataFormat{DataFormat}
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
@@ -16,7 +16,7 @@ namespace Corvus
         SizeT const PoolSizeBytes  = m_DataFormat.NumElements * m_DataFormat.ElementSize + IDTablePages;
         m_Pool                     = MakeOwned<UInt8[]>(PoolSizeBytes);
 
-        // Pool: Bitfield ID Table + Preallocated memory for objects (Data Block)
+        // CPool: Bitfield ID Table + Preallocated memory for objects (Data Block)
         UInt8 *const PoolBegin  = m_Pool.get();
         m_PoolInfo.IDTable      = PoolBegin;
         m_PoolInfo.IDTablePages = IDTablePages;
@@ -32,7 +32,7 @@ namespace Corvus
         );
     }
 
-    PoolIndex Pool::Request(SizeT const RequestedNumElements)
+    CPoolIndex CPool::Request(SizeT const RequestedNumElements)
     {
         if (m_PoolInfo.SlotsUsed + RequestedNumElements > m_DataFormat.NumElements)
         {
@@ -54,10 +54,10 @@ namespace Corvus
         SizeT const  OffsetBytes = SlotID * m_DataFormat.ElementSize;
         UInt8 *const Data        = m_PoolInfo.Data + OffsetBytes;
 
-        return PoolIndex{m_PoolID, SlotID, Data, RequestedNumElements};
+        return CPoolIndex{m_PoolID, SlotID, Data, RequestedNumElements};
     }
 
-    void Pool::Free(PoolIndex &Index)
+    void CPool::Free(CPoolIndex &Index)
     {
         if (!Index.IsValid())
         {
@@ -91,7 +91,7 @@ namespace Corvus
         }
     }
 
-    void Pool::IncreaseIndexSize(PoolIndex &Index, SizeT const NewSize)
+    void CPool::IncreaseIndexSize(CPoolIndex &Index, SizeT const NewSize)
     {
         if (!Index.IsValid())
         {
@@ -111,7 +111,7 @@ namespace Corvus
         }
     }
 
-    SizeT Pool::CountBlockSize(
+    SizeT CPool::CountBlockSize(
         SizeT const TablePageID, UInt8 const PageSlotID, SizeT const MaxSize, bool const bIsBlockFree
     ) const
     {
@@ -137,7 +137,7 @@ namespace Corvus
         return Cnt;
     }
 
-    bool Pool::IsFreeBlockFound(SizeT const FreeBlockSize, SizeT &OutTablePageID, UInt8 &OutPageSlotID) const
+    bool CPool::IsFreeBlockFound(SizeT const FreeBlockSize, SizeT &OutTablePageID, UInt8 &OutPageSlotID) const
     {
         SizeT CurrentSlotID   = 0;
         SizeT TablePageID     = 0;
@@ -168,7 +168,7 @@ namespace Corvus
         return bFound;
     }
 
-    bool Pool::IsSlotAvailable(SizeT const TablePageID, UInt8 const PageSlotID) const
+    bool CPool::IsSlotAvailable(SizeT const TablePageID, UInt8 const PageSlotID) const
     {
         UInt8 TablePage = m_PoolInfo.IDTable[TablePageID];
         UInt8 BitCheck  = GetSlotBit(PageSlotID);
@@ -176,12 +176,12 @@ namespace Corvus
         return !(TablePage & BitCheck);
     }
 
-    UInt8 Pool::GetSlotBit(UInt8 const PageSlotID) const
+    UInt8 CPool::GetSlotBit(UInt8 const PageSlotID) const
     {
         return 0b10000000u >> PageSlotID;
     }
 
-    void Pool::SetSlotsAsUsed(SizeT TablePageID, UInt8 PageSlotID, SizeT const BlockSize)
+    void CPool::SetSlotsAsUsed(SizeT TablePageID, UInt8 PageSlotID, SizeT const BlockSize)
     {
         SizeT CurrentSlotID = TablePageID * 8 + PageSlotID;
 
@@ -197,7 +197,7 @@ namespace Corvus
         m_PoolInfo.SlotsUsed += BlockSize;
     }
 
-    void Pool::SetSlotsAsFree(SizeT TablePageID, UInt8 PageSlotID, SizeT const BlockSize)
+    void CPool::SetSlotsAsFree(SizeT TablePageID, UInt8 PageSlotID, SizeT const BlockSize)
     {
         SizeT CurrentSlotID = TablePageID * 8 + PageSlotID;
 
@@ -213,7 +213,7 @@ namespace Corvus
         m_PoolInfo.SlotsUsed -= BlockSize;
     }
 
-    bool Pool::IsIndexFromCurrentPool(PoolIndex const &Index) const
+    bool CPool::IsIndexFromCurrentPool(CPoolIndex const &Index) const
     {
         UInt8 *const DataBegin = m_PoolInfo.Data;
         UInt8 *const DataEnd   = DataBegin + m_DataFormat.ElementSize * m_DataFormat.NumElements;
@@ -221,9 +221,9 @@ namespace Corvus
         return DataBegin <= Index.m_Data && Index.m_Data < DataEnd;
     }
 
-    Pool *Pool::FindOwningPool(PoolIndex const &Index)
+    CPool *CPool::FindOwningPool(CPoolIndex const &Index)
     {
-        Pool *CurrentPool = this;
+        CPool *CurrentPool = this;
         while (CurrentPool->m_Chain.m_ParentPool) // Go to first pool in chain
         {
             CurrentPool = CurrentPool->m_Chain.m_ParentPool;
@@ -242,20 +242,20 @@ namespace Corvus
         return nullptr;
     }
 
-    bool Pool::IsChildPoolDeletable() const
+    bool CPool::IsChildPoolDeletable() const
     {
         return m_Chain.m_Next && m_Chain.m_Next->m_PoolInfo.SlotsUsed == 0 &&
                m_PoolInfo.SlotsUsed < static_cast<SizeT>(m_DataFormat.NumElements * s_FreePoolThreshold);
     }
 
-    void Pool::OnNotEnoughMemory(SizeT const RequestedAmount)
+    void CPool::OnNotEnoughMemory(SizeT const RequestedAmount)
     {
         if (!m_Chain.m_Next)
         {
-            PoolDataFormat ChildDataFormat = m_DataFormat;
-            ChildDataFormat.NumElements    = Math::Max(ChildDataFormat.NumElements, RequestedAmount);
-            ChildDataFormat.NumElements    = static_cast<SizeT>(ChildDataFormat.NumElements * s_ChildPoolSizeMult);
-            ChildDataFormat.NumElements    = Math::Max(ChildDataFormat.NumElements, RequestedAmount);
+            CPoolDataFormat ChildDataFormat = m_DataFormat;
+            ChildDataFormat.NumElements     = FMath::Max(ChildDataFormat.NumElements, RequestedAmount);
+            ChildDataFormat.NumElements     = static_cast<SizeT>(ChildDataFormat.NumElements * s_ChildPoolSizeMult);
+            ChildDataFormat.NumElements     = FMath::Max(ChildDataFormat.NumElements, RequestedAmount);
             CreateChildPool(ChildDataFormat);
 
             CORVUS_CORE_TRACE(
@@ -268,21 +268,21 @@ namespace Corvus
         }
     }
 
-    void Pool::CreateChildPool(PoolDataFormat const ChildPoolDataFormat)
+    void CPool::CreateChildPool(CPoolDataFormat const ChildPoolDataFormat)
     {
-        m_Chain.m_Next                       = MakeOwned<Pool>(Pool{m_PoolID, ChildPoolDataFormat});
+        m_Chain.m_Next                       = MakeOwned<CPool>(CPool{m_PoolID, ChildPoolDataFormat});
         m_Chain.m_Next->m_Chain.m_ParentPool = this;
     }
 
-    void Pool::DeleteChildPool()
+    void CPool::DeleteChildPool()
     {
         if (!m_Chain.m_Next)
         {
             return;
         }
 
-        TOwn<Pool> &NextPool     = m_Chain.m_Next;
-        TOwn<Pool> &NextPoolNext = NextPool->m_Chain.m_Next;
+        TOwn<CPool> &NextPool     = m_Chain.m_Next;
+        TOwn<CPool> &NextPoolNext = NextPool->m_Chain.m_Next;
 
         NextPool = std::move(NextPoolNext);
         if (NextPool)
@@ -291,7 +291,7 @@ namespace Corvus
         }
     }
 
-    void Pool::AddSlotsToIndex(PoolIndex &Index, SizeT const NewSize)
+    void CPool::AddSlotsToIndex(CPoolIndex &Index, SizeT const NewSize)
     {
         SizeT const IndexBlockSize = Index.GetNumElements();
 
@@ -308,7 +308,7 @@ namespace Corvus
         }
         else
         {
-            Pool *const OwningPool = FindOwningPool(Index);
+            CPool *const OwningPool = FindOwningPool(Index);
             if (!OwningPool)
             {
                 CORVUS_CORE_ERROR("PoolIndex passed to not-owning Pool!");
@@ -318,7 +318,7 @@ namespace Corvus
         }
     }
 
-    void Pool::InplaceIndexResize(PoolIndex &Index, SizeT const NewSize)
+    void CPool::InplaceIndexResize(CPoolIndex &Index, SizeT const NewSize)
     {
         SizeT const CurrentSize = Index.GetNumElements();
 
@@ -334,7 +334,7 @@ namespace Corvus
         Index.m_NumElements = NewSize;
     }
 
-    void Pool::MoveIndexResize(PoolIndex &Index, SizeT const NewSize, Pool &OwningPool)
+    void CPool::MoveIndexResize(CPoolIndex &Index, SizeT const NewSize, CPool &OwningPool)
     {
         if (NewSize > m_DataFormat.NumElements - m_PoolInfo.SlotsUsed)
         { // Not enough free slots
@@ -355,13 +355,13 @@ namespace Corvus
         MoveIndexToNewPlace(Index, NewSize, NewTablePageID, NewPageSlotID, OwningPool, *this);
     }
 
-    void Pool::MoveIndexToNewPlace(
-        PoolIndex  &Index,
+    void CPool::MoveIndexToNewPlace(
+        CPoolIndex &Index,
         SizeT const NewSize,
         SizeT const NewTablePageID,
         UInt8 const NewPageSlotID,
-        Pool       &OwningPool,
-        Pool       &NewPool
+        CPool      &OwningPool,
+        CPool      &NewPool
     )
     {
         SizeT const NewSlotID          = NewTablePageID * 8 + NewPageSlotID;

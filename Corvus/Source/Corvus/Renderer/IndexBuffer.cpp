@@ -7,12 +7,12 @@
 namespace Corvus
 {
 
-    TOwn<IndexBuffer> IndexBuffer::Create(UInt32 const *const Data, UInt32 const NumIndices)
+    TOwn<CIndexBuffer> CIndexBuffer::Create(UInt32 const *const Data, UInt32 const NumIndices)
     {
-        switch (GraphicsAPI::GetAPI())
+        switch (CGraphicsAPI::GetAPI())
         {
-        case GraphicsAPI::EAPI::OpenGL:
-            return MakeOwned<OpenGLIndexBuffer>(Data, NumIndices);
+        case CGraphicsAPI::EAPI::OpenGL:
+            return MakeOwned<POpenGLIndexBuffer>(Data, NumIndices);
 
         default:
             CORVUS_NO_ENTRY_FMT("Undefined Graphics EAPI!");
@@ -20,7 +20,7 @@ namespace Corvus
         return nullptr;
     }
 
-    UInt32 IndexBuffer::GetNumIndices() const
+    UInt32 CIndexBuffer::GetNumIndices() const
     {
         return m_NumIndices;
     }

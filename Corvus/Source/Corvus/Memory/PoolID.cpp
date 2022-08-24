@@ -5,21 +5,21 @@
 namespace Corvus
 {
 
-    PoolID::PoolID(EPoolType const Type, SizeT const IDInGroup) : m_Type{Type}, m_IDInGroup{IDInGroup}
+    CPoolID::CPoolID(EPoolType const Type, SizeT const IDInGroup) : m_Type{Type}, m_IDInGroup{IDInGroup}
     {
     }
 
-    EPoolType PoolID::GetType() const
+    EPoolType CPoolID::GetType() const
     {
         return m_Type;
     }
 
-    SizeT PoolID::GetIDInGroup() const
+    SizeT CPoolID::GetIDInGroup() const
     {
         return m_IDInGroup;
     }
 
-    bool PoolID::IsValid() const
+    bool CPoolID::IsValid() const
     {
         return m_IDInGroup != 0;
     }

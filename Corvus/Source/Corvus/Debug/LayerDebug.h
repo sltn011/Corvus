@@ -6,17 +6,17 @@
 namespace Corvus
 {
 
-    class TimeDelta;
+    class FTimeDelta;
 
-    class LayerDebug : public Layer
+    class СLayerDebug : public СLayer
     {
     public:
-        using Super = Layer;
+        using Super = СLayer;
 
-        LayerDebug(String LayerName, bool bEnabled);
+        СLayerDebug(CString LayerName, bool bEnabled);
 
-        virtual void OnUpdate(TimeDelta ElapsedTime) override;
-        virtual void OnEvent(Event &Event) override;
+        virtual void OnUpdate(FTimeDelta ElapsedTime) override;
+        virtual void OnEvent(СEvent &Event) override;
     };
 
 } // namespace Corvus

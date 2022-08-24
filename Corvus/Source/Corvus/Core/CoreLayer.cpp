@@ -10,57 +10,57 @@
 namespace Corvus
 {
 
-    CoreLayer::CoreLayer() : Layer{"Corvus Core Layer", true}
+    СCoreLayer::СCoreLayer() : СLayer{"Corvus Core Layer", true}
     {
     }
 
-    void CoreLayer::OnPushed()
+    void СCoreLayer::OnPushed()
     {
         Super::OnPushed();
     }
 
-    void CoreLayer::OnPoped()
+    void СCoreLayer::OnPoped()
     {
         Super::OnPoped();
     }
 
-    void CoreLayer::OnUpdate(TimeDelta const ElapsedTime)
+    void СCoreLayer::OnUpdate(FTimeDelta const ElapsedTime)
     {
     }
 
-    void CoreLayer::OnEvent(Event &Event)
+    void СCoreLayer::OnEvent(СEvent &Event)
     {
-        if (Event.IsInCategory(Event::EEventCategory::Application))
+        if (Event.IsInCategory(СEvent::EEventCategory::Application))
         {
             OnApplicationEvent(Event);
         }
-        if (Event.IsInCategory(Event::EEventCategory::Keyboard))
+        if (Event.IsInCategory(СEvent::EEventCategory::Keyboard))
         {
             OnKeyboardEvent(Event);
         }
-        if (Event.IsInCategory(Event::EEventCategory::Mouse))
+        if (Event.IsInCategory(СEvent::EEventCategory::Mouse))
         {
             OnMouseEvent(Event);
         }
     }
 
-    void CoreLayer::Render()
+    void СCoreLayer::Render()
     {
     }
 
-    void CoreLayer::OnApplicationEvent(Event &Event)
+    void СCoreLayer::OnApplicationEvent(СEvent &Event)
     {
         switch (Event.GetEventType())
         {
-        case Event::EEventType::WindowResize:
+        case СEvent::EEventType::WindowResize:
             OnWindowResize(Event);
             break;
 
-        case Event::EEventType::WindowClose:
+        case СEvent::EEventType::WindowClose:
             OnWindowClose(Event);
             break;
 
-        case Event::EEventType::WindowChangeFocus:
+        case СEvent::EEventType::WindowChangeFocus:
             OnWindowChangeFocus(Event);
             break;
 
@@ -69,15 +69,15 @@ namespace Corvus
         }
     }
 
-    void CoreLayer::OnKeyboardEvent(Event &Event)
+    void СCoreLayer::OnKeyboardEvent(СEvent &Event)
     {
         switch (Event.GetEventType())
         {
-        case Event::EEventType::KeyPress:
+        case СEvent::EEventType::KeyPress:
             OnKeyPressed(Event);
             break;
 
-        case Event::EEventType::KeyRelease:
+        case СEvent::EEventType::KeyRelease:
             OnKeyReleased(Event);
             break;
 
@@ -86,23 +86,23 @@ namespace Corvus
         }
     }
 
-    void CoreLayer::OnMouseEvent(Event &Event)
+    void СCoreLayer::OnMouseEvent(СEvent &Event)
     {
         switch (Event.GetEventType())
         {
-        case Event::EEventType::MouseButtonPress:
+        case СEvent::EEventType::MouseButtonPress:
             OnMouseButtonPressed(Event);
             break;
 
-        case Event::EEventType::MouseButtonRelease:
+        case СEvent::EEventType::MouseButtonRelease:
             OnMouseButtonReleased(Event);
             break;
 
-        case Event::EEventType::MouseCursorMove:
+        case СEvent::EEventType::MouseCursorMove:
             OnMouseCursorMove(Event);
             break;
 
-        case Event::EEventType::MouseScroll:
+        case СEvent::EEventType::MouseScroll:
             OnMouseScroll(Event);
             break;
 
@@ -111,51 +111,51 @@ namespace Corvus
         }
     }
 
-    void CoreLayer::OnWindowResize(Event &Event)
+    void СCoreLayer::OnWindowResize(СEvent &Event)
     {
-        WindowResizeEvent &WREvent = CastEvent<WindowResizeEvent>(Event);
-        Renderer::ViewportResize(WREvent.NewWidth, WREvent.NewHeight);
+        СWindowResizeEvent &WREvent = CastEvent<СWindowResizeEvent>(Event);
+        CRenderer::ViewportResize(WREvent.NewWidth, WREvent.NewHeight);
         Event.SetHandled();
     }
 
-    void CoreLayer::OnWindowClose(Event &Event)
+    void СCoreLayer::OnWindowClose(СEvent &Event)
     {
-        Application::GetInstance().GetWindow().SetShouldClose();
+        СApplication::GetInstance().GetWindow().SetShouldClose();
         Event.SetHandled();
     }
 
-    void CoreLayer::OnWindowChangeFocus(Event &Event)
+    void СCoreLayer::OnWindowChangeFocus(СEvent &Event)
     {
     }
 
-    void CoreLayer::OnKeyPressed(Event &Event)
+    void СCoreLayer::OnKeyPressed(СEvent &Event)
     {
-        KeyPressEvent &KPEvent = CastEvent<KeyPressEvent &>(Event);
+        СKeyPressEvent &KPEvent = CastEvent<СKeyPressEvent &>(Event);
         if (KPEvent.Key == Key::F1)
         {
-            bool const b = Application::GetInstance().GetWindow().IsFullScreen();
-            Application::GetInstance().GetWindow().SetFullScreen(!b);
+            bool const b = СApplication::GetInstance().GetWindow().IsFullScreen();
+            СApplication::GetInstance().GetWindow().SetFullScreen(!b);
         }
         Event.SetHandled();
     }
 
-    void CoreLayer::OnKeyReleased(Event &Event)
+    void СCoreLayer::OnKeyReleased(СEvent &Event)
     {
     }
 
-    void CoreLayer::OnMouseButtonPressed(Event &Event)
+    void СCoreLayer::OnMouseButtonPressed(СEvent &Event)
     {
     }
 
-    void CoreLayer::OnMouseButtonReleased(Event &Event)
+    void СCoreLayer::OnMouseButtonReleased(СEvent &Event)
     {
     }
 
-    void CoreLayer::OnMouseCursorMove(Event &Event)
+    void СCoreLayer::OnMouseCursorMove(СEvent &Event)
     {
     }
 
-    void CoreLayer::OnMouseScroll(Event &Event)
+    void СCoreLayer::OnMouseScroll(СEvent &Event)
     {
     }
 

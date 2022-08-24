@@ -4,26 +4,26 @@
 
 namespace Corvus
 {
-    OpenGLVertexBuffer::OpenGLVertexBuffer(
-        void const *const Data, UInt32 const NumVertices, VertexBufferLayout const &Layout
+    POpenGLVertexBuffer::POpenGLVertexBuffer(
+        void const *const Data, UInt32 const NumVertices, CVertexBufferLayout const &Layout
     )
     {
         glCreateBuffers(1, &m_VBO);
         SetData(Data, NumVertices, Layout);
     }
 
-    OpenGLVertexBuffer::~OpenGLVertexBuffer()
+    POpenGLVertexBuffer::~POpenGLVertexBuffer()
     {
         glDeleteBuffers(1, &m_VBO);
     }
 
-    OpenGLVertexBuffer::OpenGLVertexBuffer(OpenGLVertexBuffer &&Rhs) noexcept : m_VBO{std::exchange(Rhs.m_VBO, 0)}
+    POpenGLVertexBuffer::POpenGLVertexBuffer(POpenGLVertexBuffer &&Rhs) noexcept : m_VBO{std::exchange(Rhs.m_VBO, 0)}
     {
         m_NumVertices = Rhs.m_NumVertices;
         m_Layout      = std::move(Rhs.m_Layout);
     }
 
-    OpenGLVertexBuffer &OpenGLVertexBuffer::operator=(OpenGLVertexBuffer &&Rhs) noexcept
+    POpenGLVertexBuffer &POpenGLVertexBuffer::operator=(POpenGLVertexBuffer &&Rhs) noexcept
     {
         if (this != &Rhs)
         {
@@ -34,35 +34,37 @@ namespace Corvus
         return *this;
     }
 
-    GLuint OpenGLVertexBuffer::GetID() const
+    GLuint POpenGLVertexBuffer::GetID() const
     {
         return m_VBO;
     }
 
-    void OpenGLVertexBuffer::Bind()
+    void POpenGLVertexBuffer::Bind()
     {
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     }
 
-    void OpenGLVertexBuffer::Unbind()
+    void POpenGLVertexBuffer::Unbind()
     {
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     }
 
-    void OpenGLVertexBuffer::SetData(void const *Data, UInt32 const NumVertices)
+    void POpenGLVertexBuffer::SetData(void const *Data, UInt32 const NumVertices)
     {
         m_NumVertices           = NumVertices;
         UInt32 const VertexSize = m_Layout.Stride();
         glNamedBufferData(m_VBO, static_cast<GLsizei>(VertexSize * m_NumVertices), Data, GL_STATIC_DRAW);
     }
 
-    void OpenGLVertexBuffer::SetData(void const *const Data, UInt32 const NumVertices, VertexBufferLayout const &Layout)
+    void POpenGLVertexBuffer::SetData(
+        void const *const Data, UInt32 const NumVertices, CVertexBufferLayout const &Layout
+    )
     {
         m_Layout = Layout;
         SetData(Data, NumVertices);
     }
 
-    GLenum OpenGLVertexBuffer::BufferLayoutTypeToGLType(EBufferDataType const Type)
+    GLenum POpenGLVertexBuffer::BufferLayoutTypeToGLType(EBufferDataType const Type)
     {
         switch (Type)
         {

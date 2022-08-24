@@ -7,14 +7,14 @@
 namespace Corvus
 {
 
-    TOwn<VertexBuffer> VertexBuffer::Create(
-        void const *const Data, UInt32 const NumVertices, VertexBufferLayout const &Layout
+    TOwn<CVertexBuffer> CVertexBuffer::Create(
+        void const *const Data, UInt32 const NumVertices, CVertexBufferLayout const &Layout
     )
     {
-        switch (GraphicsAPI::GetAPI())
+        switch (CGraphicsAPI::GetAPI())
         {
-        case GraphicsAPI::EAPI::OpenGL:
-            return MakeOwned<OpenGLVertexBuffer>(Data, NumVertices, Layout);
+        case CGraphicsAPI::EAPI::OpenGL:
+            return MakeOwned<POpenGLVertexBuffer>(Data, NumVertices, Layout);
 
         default:
             CORVUS_NO_ENTRY_FMT("Undefined Graphics EAPI!");
@@ -22,12 +22,12 @@ namespace Corvus
         return nullptr;
     }
 
-    UInt32 VertexBuffer::GetNumVertices() const
+    UInt32 CVertexBuffer::GetNumVertices() const
     {
         return m_NumVertices;
     }
 
-    VertexBufferLayout &VertexBuffer::GetLayout()
+    CVertexBufferLayout &CVertexBuffer::GetLayout()
     {
         return m_Layout;
     }

@@ -10,18 +10,18 @@
 namespace Corvus
 {
 
-    TRef<spdlog::logger> Log::s_EngineLogger;
-    TRef<spdlog::logger> Log::s_ClientLogger;
+    TRef<spdlog::logger> СLog::s_EngineLogger;
+    TRef<spdlog::logger> СLog::s_ClientLogger;
 
-    Log::Log()
+    СLog::СLog()
     {
     }
 
-    Log::~Log()
+    СLog::~СLog()
     {
     }
 
-    void Log::Init()
+    void СLog::Init()
     {
         std::vector<spdlog::sink_ptr> LogSinks;
         LogSinks.push_back(MakeRef<spdlog::sinks::stdout_color_sink_mt>());

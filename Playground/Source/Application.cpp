@@ -6,20 +6,20 @@
 namespace Corvus
 {
 
-    class Playground : public Application
+    class CPlayground : public СApplication
     {
     public:
-        Playground() {}
-        ~Playground() {}
+        CPlayground() {}
+        ~CPlayground() {}
     };
 
-    class ApplicationLayer : public Layer
+    class CApplicationLayer : public СLayer
     {
     public:
-        ApplicationLayer() : Layer{"ApplicationLayer", true}
+        CApplicationLayer() : СLayer{"ApplicationLayer", true}
         {
-            Renderer::EnableDepthTest();
-            Renderer::SetClearColor({0.6f, 0.8f, 1.0f, 1.0f});
+            CRenderer::EnableDepthTest();
+            CRenderer::SetClearColor({0.6f, 0.8f, 1.0f, 1.0f});
 
             // clang-format off
             float const Vertices[] = {
@@ -33,138 +33,138 @@ namespace Corvus
 
             UInt32 const Indices[] = {0, 1, 2, 0, 2, 3};
 
-            VertexBufferLayout const Layout = {{EBufferDataType::Vec3}, {EBufferDataType::Vec3}};
+            CVertexBufferLayout const Layout = {{EBufferDataType::Vec3}, {EBufferDataType::Vec3}};
 
-            TOwn<VertexBuffer> VBO = VertexBuffer::Create(Vertices, 4, Layout);
-            TOwn<IndexBuffer>  EBO = IndexBuffer::Create(Indices, 6);
+            TOwn<CVertexBuffer> VBO = CVertexBuffer::Create(Vertices, 4, Layout);
+            TOwn<CIndexBuffer>  EBO = CIndexBuffer::Create(Indices, 6);
 
-            VAO = VertexArray::Create();
+            VAO = CVertexArray::Create();
             VAO->AddVertexBuffer(std::move(VBO));
             VAO->AddIndexBuffer(std::move(EBO));
 
-            TestShader = Shader::CreateFromFile("./Assets/Shaders/TestShader.glsl");
+            TestShader = CShader::CreateFromFile("./Assets/Shaders/TestShader.glsl");
 
-            UInt32 const WindowWidth  = Application::GetInstance().GetWindow().GetWindowWidth();
-            UInt32 const WindowHeight = Application::GetInstance().GetWindow().GetWindowHeight();
-            Camera.SetViewportSize(static_cast<float>(WindowWidth), static_cast<float>(WindowHeight));
-            Camera.SetFoVAngle(60.0f);
-            Camera.SetClipPlanes(0.01f, 100.0f);
-            Camera.SwitchPlayerControl(true, 1.0f);
+            UInt32 const WindowWidth  = СApplication::GetInstance().GetWindow().GetWindowWidth();
+            UInt32 const WindowHeight = СApplication::GetInstance().GetWindow().GetWindowHeight();
+            CCamera.SetViewportSize(static_cast<float>(WindowWidth), static_cast<float>(WindowHeight));
+            CCamera.SetFoVAngle(60.0f);
+            CCamera.SetClipPlanes(0.01f, 100.0f);
+            CCamera.SwitchPlayerControl(true, 1.0f);
 
             Entities.EmplaceBack(
                 TestShader,
                 VAO,
-                Transform{{1.0f, 0.0f, 0.0f}, Vector::OneVec, {ERotationOrder::YXZ, {30.0f, 0.0f, 0.0f}}}
+                FTransform{{1.0f, 0.0f, 0.0f}, FVector::OneVec, {ERotationOrder::YXZ, {30.0f, 0.0f, 0.0f}}}
             );
 
             Entities.EmplaceBack(
                 TestShader,
                 VAO,
-                Transform{{0.0f, 0.0f, 0.5f}, Vector::OneVec * 0.5f, {ERotationOrder::YXZ, {0.0f, 0.0f, 45.0f}}}
+                FTransform{{0.0f, 0.0f, 0.5f}, FVector::OneVec * 0.5f, {ERotationOrder::YXZ, {0.0f, 0.0f, 45.0f}}}
             );
 
             Entities[0].TransformComponent->AddChild(Entities[1].TransformComponent.Get());
         }
 
-        virtual void OnUpdate(TimeDelta const ElapsedTime)
+        virtual void OnUpdate(FTimeDelta const ElapsedTime)
         {
-            Renderer::BeginScene();
-            Renderer::Clear();
+            CRenderer::BeginScene();
+            CRenderer::Clear();
 
             if (bCameraMode)
             {
-                if (Input::IsKeyPressed(Key::W))
+                if (СInput::IsKeyPressed(Key::W))
                 {
-                    Camera.ProcessMovementInput(Camera::EMoveDirection::Forward, ElapsedTime);
+                    CCamera.ProcessMovementInput(CCamera::EMoveDirection::Forward, ElapsedTime);
                 }
-                if (Input::IsKeyPressed(Key::A))
+                if (СInput::IsKeyPressed(Key::A))
                 {
-                    Camera.ProcessMovementInput(Camera::EMoveDirection::Left, ElapsedTime);
+                    CCamera.ProcessMovementInput(CCamera::EMoveDirection::Left, ElapsedTime);
                 }
-                if (Input::IsKeyPressed(Key::S))
+                if (СInput::IsKeyPressed(Key::S))
                 {
-                    Camera.ProcessMovementInput(Camera::EMoveDirection::Backward, ElapsedTime);
+                    CCamera.ProcessMovementInput(CCamera::EMoveDirection::Backward, ElapsedTime);
                 }
-                if (Input::IsKeyPressed(Key::D))
+                if (СInput::IsKeyPressed(Key::D))
                 {
-                    Camera.ProcessMovementInput(Camera::EMoveDirection::Right, ElapsedTime);
+                    CCamera.ProcessMovementInput(CCamera::EMoveDirection::Right, ElapsedTime);
                 }
-                if (Input::IsKeyPressed(Key::Space))
+                if (СInput::IsKeyPressed(Key::Space))
                 {
-                    Camera.ProcessMovementInput(Camera::EMoveDirection::Up, ElapsedTime);
+                    CCamera.ProcessMovementInput(CCamera::EMoveDirection::Up, ElapsedTime);
                 }
-                if (Input::IsKeyPressed(Key::LeftShift))
+                if (СInput::IsKeyPressed(Key::LeftShift))
                 {
-                    Camera.ProcessMovementInput(Camera::EMoveDirection::Down, ElapsedTime);
+                    CCamera.ProcessMovementInput(CCamera::EMoveDirection::Down, ElapsedTime);
                 }
             }
 
-            Vec2 const NewPos = Input::GetCursorPos();
-            Vec2 const Delta  = NewPos - CursorPos;
-            CursorPos         = NewPos;
+            FVector2 const NewPos = СInput::GetCursorPos();
+            FVector2 const Delta  = NewPos - CursorPos;
+            CursorPos             = NewPos;
             if (bCameraMode)
             {
-                Camera.ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
+                CCamera.ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
             }
 
             for (SizeT i = 0; i < Entities.GetSize(); ++i)
             {
-                Entity &SceneEntity = Entities[i];
+                CEntity &SceneEntity = Entities[i];
 
-                Transform EntityTransform = SceneEntity.TransformComponent->GetTransform();
-                Rotation  Rotator         = EntityTransform.GetRotation();
+                FTransform EntityTransform = SceneEntity.TransformComponent->GetTransform();
+                FRotation  Rotator         = EntityTransform.GetRotation();
                 Rotator.AddYawDegrees(-20.0f * ElapsedTime.Seconds());
                 EntityTransform.SetRotation(Rotator);
                 SceneEntity.TransformComponent.Get()->SetTransform(EntityTransform);
 
                 TestShader->Bind();
                 TestShader->SetMat4("u_Transform", SceneEntity.TransformComponent->GetTransformMatrix());
-                TestShader->SetMat4("u_ProjView", Camera.GetProjectionViewMatrix());
-                Renderer::Submit(VAO, TestShader);
+                TestShader->SetMat4("u_ProjView", CCamera.GetProjectionViewMatrix());
+                CRenderer::Submit(VAO, TestShader);
             }
 
-            Renderer::EndScene();
+            CRenderer::EndScene();
         }
 
-        virtual void OnEvent(Event &Event)
+        virtual void OnEvent(СEvent &Event)
         {
-            if (Event.GetEventType() == Event::EEventType::KeyPress)
+            if (Event.GetEventType() == СEvent::EEventType::KeyPress)
             {
-                KeyPressEvent &KPEvent = CastEvent<KeyPressEvent>(Event);
+                СKeyPressEvent &KPEvent = CastEvent<СKeyPressEvent>(Event);
                 if (KPEvent.Key == Key::C)
                 {
                     bCameraMode = !bCameraMode;
-                    Input::SetCursorEnabled(!bCameraMode);
+                    СInput::SetCursorEnabled(!bCameraMode);
 
                     Event.SetHandled();
                 }
             }
-            else if (Event.GetEventType() == Event::EEventType::WindowResize)
+            else if (Event.GetEventType() == СEvent::EEventType::WindowResize)
             {
-                WindowResizeEvent &WREvent = CastEvent<WindowResizeEvent>(Event);
-                Camera.SetViewportSize(static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight));
+                СWindowResizeEvent &WREvent = CastEvent<СWindowResizeEvent>(Event);
+                CCamera.SetViewportSize(static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight));
             }
         }
 
     protected:
-        TArray<Entity>    Entities;
-        PerspectiveCamera Camera;
+        TArray<CEntity>    Entities;
+        CPerspectiveCamera CCamera;
 
-        TOwn<Shader>      TestShader;
-        TOwn<VertexArray> VAO;
+        TOwn<CShader>      TestShader;
+        TOwn<CVertexArray> VAO;
 
-        bool bCameraMode = false;
-        Vec2 CursorPos;
+        bool     bCameraMode = false;
+        FVector2 CursorPos;
     };
 
-    Application *CreateApplication()
+    СApplication *CreateApplication()
     {
-        Playground *App = new Playground;
-        App->PushLayer(Layer::Create<ApplicationLayer>());
+        CPlayground *App = new CPlayground;
+        App->PushLayer(СLayer::Create<CApplicationLayer>());
         return App;
     }
 
-    bool DestroyApplication(Application *const App)
+    bool DestroyApplication(СApplication *const App)
     {
         if (!App)
         {

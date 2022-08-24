@@ -6,18 +6,18 @@
 namespace Corvus
 {
 
-    class OrthographicCamera : public Camera
+    class COrthographicCamera : public CCamera
     {
     public:
-        OrthographicCamera();
-        OrthographicCamera(Transform const &Transform);
-        virtual ~OrthographicCamera();
+        COrthographicCamera();
+        COrthographicCamera(FTransform const &Transform);
+        virtual ~COrthographicCamera();
 
         void SetOrthoSize(float OrthoSize);
 
-        virtual Mat4 GetViewMatrix() override;
-        virtual Mat4 GetProjectionMatrix() override;
-        virtual Mat4 GetProjectionViewMatrix() override;
+        virtual FMatrix4 GetViewMatrix() override;
+        virtual FMatrix4 GetProjectionMatrix() override;
+        virtual FMatrix4 GetProjectionViewMatrix() override;
 
         virtual void RecalculateViewMatrix() override;
         virtual void RecalculateProjectionMatrix() override;

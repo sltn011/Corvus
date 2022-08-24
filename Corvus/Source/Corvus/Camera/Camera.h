@@ -5,10 +5,10 @@
 
 namespace Corvus
 {
-    class CameraMovementComponent;
-    class TimeDelta;
+    class CCameraMovementComponent;
+    class FTimeDelta;
 
-    class Camera
+    class CCamera
     {
     public:
         enum class EMoveDirection
@@ -21,46 +21,46 @@ namespace Corvus
             Down
         };
 
-        Camera();
-        Camera(Transform const &Transform);
-        virtual ~Camera();
+        CCamera();
+        CCamera(FTransform const &Transform);
+        virtual ~CCamera();
 
         void SwitchPlayerControl(bool IsPlayerControlled, float CameraMoveSpeed = 0.0f);
-        void ProcessMovementInput(EMoveDirection Direction, TimeDelta ElapsedTime);
-        void ProcessRotationInput(float XOffset, float YOffset, float Sensitivity, TimeDelta ElapsedTime);
+        void ProcessMovementInput(EMoveDirection Direction, FTimeDelta ElapsedTime);
+        void ProcessRotationInput(float XOffset, float YOffset, float Sensitivity, FTimeDelta ElapsedTime);
 
-        Transform GetTransform() const;
-        Rotation  GetRotation() const;
+        FTransform GetTransform() const;
+        FRotation  GetRotation() const;
 
-        Vec3 GetForwardVector() const;
-        Vec3 GetUpVector() const;
-        Vec3 GetRightVector() const;
-        Mat3 GetFURVectors() const;
+        FVector3 GetForwardVector() const;
+        FVector3 GetUpVector() const;
+        FVector3 GetRightVector() const;
+        FMatrix3 GetFURVectors() const;
 
         void SetMoveSpeed(float CameraMoveSpeed);
-        void SetTransform(Transform const &Transform);
-        void SetRotation(Rotation const &Rotation);
+        void SetTransform(FTransform const &Transform);
+        void SetRotation(FRotation const &Rotation);
 
         void SetViewportSize(float Width, float Height);
         void SetClipPlanes(float NearClip, float FarClip);
 
-        virtual Mat4 GetViewMatrix()           = 0;
-        virtual Mat4 GetProjectionMatrix()     = 0;
-        virtual Mat4 GetProjectionViewMatrix() = 0;
+        virtual FMatrix4 GetViewMatrix()           = 0;
+        virtual FMatrix4 GetProjectionMatrix()     = 0;
+        virtual FMatrix4 GetProjectionViewMatrix() = 0;
 
         virtual void RecalculateViewMatrix()           = 0;
         virtual void RecalculateProjectionMatrix()     = 0;
         virtual void RecalculateProjectionViewMatrix() = 0;
 
     protected:
-        TOwn<CameraMovementComponent> m_MovementComponent;
-        bool                          m_IsPlayerControlled = false;
+        TOwn<CCameraMovementComponent> m_MovementComponent;
+        bool                           m_IsPlayerControlled = false;
 
-        Transform m_Transform;
+        FTransform m_Transform;
 
-        Mat4 m_ViewMatrix           = Mat4(1.0f);
-        Mat4 m_ProjectionMatrix     = Mat4(1.0f);
-        Mat4 m_ProjectionViewMatrix = Mat4(1.0f);
+        FMatrix4 m_ViewMatrix           = FMatrix4(1.0f);
+        FMatrix4 m_ProjectionMatrix     = FMatrix4(1.0f);
+        FMatrix4 m_ProjectionViewMatrix = FMatrix4(1.0f);
 
         float m_Aspect   = 1.0f;
         float m_NearClip = 0.1f;

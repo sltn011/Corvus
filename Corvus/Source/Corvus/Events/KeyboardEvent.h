@@ -7,19 +7,19 @@
 namespace Corvus
 {
 
-    class KeyPressEvent : public Event
+    class СKeyPressEvent : public СEvent
     {
     public:
         CORVUS_EVENT_GENERATED_BODY(
-            Event::EEventCategory::Input | Event::EEventCategory::Keyboard, Event::EEventType::KeyPress
+            СEvent::EEventCategory::Input | СEvent::EEventCategory::Keyboard, СEvent::EEventType::KeyPress
         );
 
-        KeyPressEvent(EKeyCode KeyValue, bool bRepeatedValue, EModifierCode ModifierValue)
+        СKeyPressEvent(EKeyCode KeyValue, bool bRepeatedValue, EModifierCode ModifierValue)
             : Key{KeyValue}, bRepeated{bRepeatedValue}, Modifier{ModifierValue}
         {
         }
 
-        virtual String ToString() const override
+        virtual CString ToString() const override
         {
             std::stringstream ss;
             ss << GetEventTypeString() << " Key:" << Key << " Repeated:" << bRepeated;
@@ -31,16 +31,16 @@ namespace Corvus
         EModifierCode Modifier;
     };
 
-    class KeyReleaseEvent : public Event
+    class СKeyReleaseEvent : public СEvent
     {
     public:
         CORVUS_EVENT_GENERATED_BODY(
-            Event::EEventCategory::Input | Event::EEventCategory::Keyboard, Event::EEventType::KeyRelease
+            СEvent::EEventCategory::Input | СEvent::EEventCategory::Keyboard, СEvent::EEventType::KeyRelease
         );
 
-        KeyReleaseEvent(EKeyCode KeyValue) : Key{KeyValue} {}
+        СKeyReleaseEvent(EKeyCode KeyValue) : Key{KeyValue} {}
 
-        virtual String ToString() const override
+        virtual CString ToString() const override
         {
             std::stringstream ss;
             ss << GetEventTypeString() << " Key:" << Key;

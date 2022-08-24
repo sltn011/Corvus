@@ -8,10 +8,10 @@
 namespace Corvus
 {
 
-    class GraphicsAPI
+    class CGraphicsAPI
     {
     protected:
-        GraphicsAPI() = default;
+        CGraphicsAPI() = default;
 
     public:
         enum class EAPI : UInt8
@@ -19,20 +19,20 @@ namespace Corvus
             OpenGL
         };
 
-        static [[nodiscard]] TOwn<GraphicsAPI> Create();
-        static EAPI                            GetAPI() { return m_API; }
+        static [[nodiscard]] TOwn<CGraphicsAPI> Create();
+        static EAPI                             GetAPI() { return m_API; }
 
-        virtual ~GraphicsAPI()                      = default;
-        GraphicsAPI(GraphicsAPI const &)            = delete;
-        GraphicsAPI &operator=(GraphicsAPI const &) = delete;
-        GraphicsAPI(GraphicsAPI &&)                 = default;
-        GraphicsAPI &operator=(GraphicsAPI &&)      = default;
+        virtual ~CGraphicsAPI()                       = default;
+        CGraphicsAPI(CGraphicsAPI const &)            = delete;
+        CGraphicsAPI &operator=(CGraphicsAPI const &) = delete;
+        CGraphicsAPI(CGraphicsAPI &&)                 = default;
+        CGraphicsAPI &operator=(CGraphicsAPI &&)      = default;
 
         virtual void Init() = 0;
 
         virtual void ViewportResize(UInt32 Width, UInt32 Height) = 0;
 
-        virtual void SetClearColor(Vec4 const &ClearColor)                                                 = 0;
+        virtual void SetClearColor(FVector4 const &ClearColor)                                             = 0;
         virtual void Clear(bool bColorBuffer = true, bool bDepthBuffer = true, bool bStencilBuffer = true) = 0;
 
         virtual void EnableDepthTest()  = 0;

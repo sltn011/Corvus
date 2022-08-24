@@ -12,18 +12,18 @@
 
 namespace Corvus
 {
-    GUIController *GUIController::s_Instance = nullptr;
+    СGUIController *СGUIController::s_Instance = nullptr;
 
-    GUIController::GUIController()
+    СGUIController::СGUIController()
     {
     }
 
-    GUIController::~GUIController()
+    СGUIController::~СGUIController()
     {
         Destroy();
     }
 
-    void GUIController::Init()
+    void СGUIController::Init()
     {
         CORVUS_ASSERT_FMT(!s_Instance, "Only one instance of GUI controller allowed!");
 
@@ -42,7 +42,7 @@ namespace Corvus
         ImGui::StyleColorsDark();
         // ImGui::StyleColorsClassic();
 
-        Application &App = Application::GetInstance();
+        СApplication &App = СApplication::GetInstance();
         ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow()), true);
         ImGui_ImplOpenGL3_Init("#version 460");
 
@@ -50,7 +50,7 @@ namespace Corvus
         CORVUS_CORE_TRACE("ImGui context created");
     }
 
-    void GUIController::Destroy()
+    void СGUIController::Destroy()
     {
         if (!s_Instance)
         {
@@ -65,19 +65,19 @@ namespace Corvus
         CORVUS_CORE_TRACE("ImGui context destroyed");
     }
 
-    void GUIController::BeginFrame()
+    void СGUIController::BeginFrame()
     {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
     }
 
-    void GUIController::EndFrame()
+    void СGUIController::EndFrame()
     {
-        ImGuiIO     &IO  = ImGui::GetIO();
-        Application &App = Application::GetInstance();
-        IO.DisplaySize.x = static_cast<float>(App.GetWindow().GetWindowWidth());
-        IO.DisplaySize.y = static_cast<float>(App.GetWindow().GetWindowHeight());
+        ImGuiIO      &IO  = ImGui::GetIO();
+        СApplication &App = СApplication::GetInstance();
+        IO.DisplaySize.x  = static_cast<float>(App.GetWindow().GetWindowWidth());
+        IO.DisplaySize.y  = static_cast<float>(App.GetWindow().GetWindowHeight());
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

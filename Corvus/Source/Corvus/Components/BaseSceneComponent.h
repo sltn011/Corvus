@@ -8,18 +8,18 @@
 namespace Corvus
 {
 
-    class Entity;
+    class CEntity;
 
     // Component that has transformation in world and supports attachments
     class CBaseSceneComponent : public CBaseDataComponent
     {
     public:
-        CBaseSceneComponent(Entity *Owner, Transform const &ComponentTransform);
+        CBaseSceneComponent(CEntity *Owner, FTransform const &ComponentTransform);
 
-        Mat4 GetTransformMatrix() const;
+        FMatrix4 GetTransformMatrix() const;
 
-        Transform GetTransform() const;
-        void      SetTransform(Transform const &Transform);
+        FTransform GetTransform() const;
+        void       SetTransform(FTransform const &Transform);
 
         TArray<CBaseSceneComponent *> &GetChildren();
         void                           AddChild(CBaseSceneComponent *const Child);
@@ -31,9 +31,9 @@ namespace Corvus
     private:
         void RecalculateTransformMatrix() const;
 
-        Transform    m_Transform;
-        mutable Mat4 m_TransformMatrix = Mat4(1.0f);
-        mutable bool m_bIsDirty        = true;
+        FTransform       m_Transform;
+        mutable FMatrix4 m_TransformMatrix = FMatrix4(1.0f);
+        mutable bool     m_bIsDirty        = true;
 
         TArray<CBaseSceneComponent *> m_Children;
         CBaseSceneComponent          *m_Parent = nullptr;

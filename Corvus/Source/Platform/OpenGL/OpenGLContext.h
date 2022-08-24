@@ -7,12 +7,12 @@ struct GLFWwindow;
 
 namespace Corvus
 {
-    class Window;
+    class CWindow;
 
-    class OpenGLContext : public RenderingContext
+    class POpenGLContext : public CRenderingContext
     {
     public:
-        OpenGLContext(Window &OwnerWindow);
+        POpenGLContext(CWindow &OwnerWindow);
 
         virtual void Init() override;
         virtual void SwapBuffers() override;

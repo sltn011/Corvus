@@ -6,14 +6,14 @@
 namespace Corvus
 {
 
-    class TimeDelta;
+    class FTimeDelta;
 
-    class TimePoint
+    class FTimePoint
     {
     public:
-        TimePoint();
+        FTimePoint();
 
-        TimeDelta operator-(TimePoint const &Rhs) const;
+        FTimeDelta operator-(FTimePoint const &Rhs) const;
 
     private:
         std::chrono::high_resolution_clock::time_point m_Value;

@@ -5,25 +5,25 @@
 namespace Corvus
 {
 
-    PerspectiveCamera::PerspectiveCamera()
+    CPerspectiveCamera::CPerspectiveCamera()
     {
         RecalculateViewMatrix();
         RecalculateProjectionMatrix();
         RecalculateProjectionViewMatrix();
     }
 
-    PerspectiveCamera::PerspectiveCamera(Transform const &Transform) : Camera{Transform}
+    CPerspectiveCamera::CPerspectiveCamera(FTransform const &Transform) : CCamera{Transform}
     {
         RecalculateViewMatrix();
         RecalculateProjectionMatrix();
         RecalculateProjectionViewMatrix();
     }
 
-    PerspectiveCamera::~PerspectiveCamera()
+    CPerspectiveCamera::~CPerspectiveCamera()
     {
     }
 
-    void PerspectiveCamera::SetFoVAngle(float const FoVDegrees)
+    void CPerspectiveCamera::SetFoVAngle(float const FoVDegrees)
     {
         CORVUS_CORE_ASSERT(FoVDegrees > 0);
         m_FoVAngleDegrees = FoVDegrees;
@@ -31,38 +31,38 @@ namespace Corvus
         RecalculateProjectionViewMatrix();
     }
 
-    Mat4 PerspectiveCamera::GetViewMatrix()
+    FMatrix4 CPerspectiveCamera::GetViewMatrix()
     {
         return m_ViewMatrix;
     }
 
-    Mat4 PerspectiveCamera::GetProjectionMatrix()
+    FMatrix4 CPerspectiveCamera::GetProjectionMatrix()
     {
         return m_ProjectionMatrix;
     }
 
-    Mat4 PerspectiveCamera::GetProjectionViewMatrix()
+    FMatrix4 CPerspectiveCamera::GetProjectionViewMatrix()
     {
         return m_ProjectionViewMatrix;
     }
 
-    void PerspectiveCamera::RecalculateViewMatrix()
+    void CPerspectiveCamera::RecalculateViewMatrix()
     {
-        Vec3 const Position = m_Transform.GetPosition();
+        FVector3 const Position = m_Transform.GetPosition();
 
-        Mat3 const FURVectors    = GetFURVectors();
-        Vec3 const ForwardVector = FURVectors[0];
-        Vec3 const UpVector      = FURVectors[1];
+        FMatrix3 const FURVectors    = GetFURVectors();
+        FVector3 const ForwardVector = FURVectors[0];
+        FVector3 const UpVector      = FURVectors[1];
 
-        m_ViewMatrix = Matrix::LookAt(Position, Position + ForwardVector, UpVector);
+        m_ViewMatrix = FMatrix::LookAt(Position, Position + ForwardVector, UpVector);
     }
 
-    void PerspectiveCamera::RecalculateProjectionMatrix()
+    void CPerspectiveCamera::RecalculateProjectionMatrix()
     {
-        m_ProjectionMatrix = Matrix::Perspective(m_FoVAngleDegrees, m_Aspect, m_NearClip, m_FarClip);
+        m_ProjectionMatrix = FMatrix::Perspective(m_FoVAngleDegrees, m_Aspect, m_NearClip, m_FarClip);
     }
 
-    void PerspectiveCamera::RecalculateProjectionViewMatrix()
+    void CPerspectiveCamera::RecalculateProjectionViewMatrix()
     {
         m_ProjectionViewMatrix = m_ProjectionMatrix * m_ViewMatrix;
     }

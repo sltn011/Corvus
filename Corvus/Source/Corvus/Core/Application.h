@@ -7,43 +7,43 @@
 
 namespace Corvus
 {
-    class Application;
+    class СApplication;
 
     // To be defined by Client
-    Application *CreateApplication();
-    bool         DestroyApplication(Application *App);
+    СApplication *CreateApplication();
+    bool          DestroyApplication(СApplication *App);
     //=========================================
 
-    class TimeDelta;
+    class FTimeDelta;
 
-    class Application
+    class СApplication
     {
     public:
-        Application();
-        virtual ~Application();
+        СApplication();
+        virtual ~СApplication();
 
         void Init();
         void Run();
 
-        void                      PushLayer(TOwn<Layer> &&NewLayer);
-        [[nodiscard]] TOwn<Layer> PopLayer();
+        void                       PushLayer(TOwn<СLayer> &&NewLayer);
+        [[nodiscard]] TOwn<СLayer> PopLayer();
 
-        void UpdateLayers(TimeDelta ElapsedTime);
+        void UpdateLayers(FTimeDelta ElapsedTime);
         void RenderLayers();
-        void OnEventReceived(Event &Event);
+        void OnEventReceived(СEvent &Event);
 
-        Window &GetWindow();
+        CWindow &GetWindow();
 
-        static Application &GetInstance() { return *s_ApplicationInstance; }
+        static СApplication &GetInstance() { return *s_ApplicationInstance; }
 
     private:
         void InitWindow();
         void InitRenderer();
 
-        TOwn<Window> m_Window;
-        LayersStack  m_LayersStack;
+        TOwn<CWindow> m_Window;
+        СLayersStack  m_LayersStack;
 
-        static Application *s_ApplicationInstance;
+        static СApplication *s_ApplicationInstance;
     };
 
 } // namespace Corvus

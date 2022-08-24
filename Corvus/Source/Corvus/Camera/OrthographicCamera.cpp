@@ -4,58 +4,58 @@
 
 namespace Corvus
 {
-    OrthographicCamera::OrthographicCamera()
+    COrthographicCamera::COrthographicCamera()
     {
         RecalculateViewMatrix();
         RecalculateProjectionMatrix();
         RecalculateProjectionViewMatrix();
     }
 
-    OrthographicCamera::OrthographicCamera(Transform const &Transform) : Camera{Transform}
+    COrthographicCamera::COrthographicCamera(FTransform const &Transform) : CCamera{Transform}
     {
         RecalculateViewMatrix();
         RecalculateProjectionMatrix();
         RecalculateProjectionViewMatrix();
     }
 
-    OrthographicCamera::~OrthographicCamera()
+    COrthographicCamera::~COrthographicCamera()
     {
     }
 
-    void OrthographicCamera::SetOrthoSize(float OrthoSize)
+    void COrthographicCamera::SetOrthoSize(float OrthoSize)
     {
         m_OrthoSize = OrthoSize;
         RecalculateProjectionMatrix();
         RecalculateProjectionViewMatrix();
     }
 
-    Mat4 OrthographicCamera::GetViewMatrix()
+    FMatrix4 COrthographicCamera::GetViewMatrix()
     {
         return m_ViewMatrix;
     }
 
-    Mat4 OrthographicCamera::GetProjectionMatrix()
+    FMatrix4 COrthographicCamera::GetProjectionMatrix()
     {
         return m_ProjectionMatrix;
     }
 
-    Mat4 OrthographicCamera::GetProjectionViewMatrix()
+    FMatrix4 COrthographicCamera::GetProjectionViewMatrix()
     {
         return m_ProjectionViewMatrix;
     }
 
-    void OrthographicCamera::RecalculateViewMatrix()
+    void COrthographicCamera::RecalculateViewMatrix()
     {
-        Vec3 const Position = m_Transform.GetPosition();
+        FVector3 const Position = m_Transform.GetPosition();
 
-        Mat3 const FURVectors    = GetFURVectors();
-        Vec3 const ForwardVector = FURVectors[0];
-        Vec3 const UpVector      = FURVectors[1];
+        FMatrix3 const FURVectors    = GetFURVectors();
+        FVector3 const ForwardVector = FURVectors[0];
+        FVector3 const UpVector      = FURVectors[1];
 
-        m_ViewMatrix = Matrix::LookAt(Position, Position + ForwardVector, UpVector);
+        m_ViewMatrix = FMatrix::LookAt(Position, Position + ForwardVector, UpVector);
     }
 
-    void OrthographicCamera::RecalculateProjectionMatrix()
+    void COrthographicCamera::RecalculateProjectionMatrix()
     {
         float const OrthSizeW = m_OrthoSize;
         float const OrthSizeH = m_OrthoSize / m_Aspect;
@@ -64,10 +64,10 @@ namespace Corvus
         float const OrthBottom = -OrthSizeH * 0.5f;
         float const OrthLeft   = -OrthSizeW * 0.5f;
         float const OrthRight  = +OrthSizeW * 0.5f;
-        m_ProjectionMatrix     = Matrix::Ortho(OrthLeft, OrthRight, OrthBottom, OrthTop, m_NearClip, m_FarClip);
+        m_ProjectionMatrix     = FMatrix::Ortho(OrthLeft, OrthRight, OrthBottom, OrthTop, m_NearClip, m_FarClip);
     }
 
-    void OrthographicCamera::RecalculateProjectionViewMatrix()
+    void COrthographicCamera::RecalculateProjectionViewMatrix()
     {
         m_ProjectionViewMatrix = m_ProjectionMatrix * m_ViewMatrix;
     }

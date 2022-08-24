@@ -6,35 +6,35 @@
 namespace Corvus
 {
 
-    class IndexBuffer;
-    class VertexBuffer;
+    class CIndexBuffer;
+    class CVertexBuffer;
 
-    class VertexArray
+    class CVertexArray
     {
     protected:
-        VertexArray() = default;
+        CVertexArray() = default;
 
     public:
-        static [[nodiscard]] TOwn<VertexArray> Create();
+        static [[nodiscard]] TOwn<CVertexArray> Create();
 
-        virtual ~VertexArray()                      = default;
-        VertexArray(VertexArray const &)            = delete;
-        VertexArray &operator=(VertexArray const &) = delete;
-        VertexArray(VertexArray &&)                 = default;
-        VertexArray &operator=(VertexArray &&)      = default;
+        virtual ~CVertexArray()                       = default;
+        CVertexArray(CVertexArray const &)            = delete;
+        CVertexArray &operator=(CVertexArray const &) = delete;
+        CVertexArray(CVertexArray &&)                 = default;
+        CVertexArray &operator=(CVertexArray &&)      = default;
 
         virtual void Bind()   = 0;
         virtual void Unbind() = 0;
 
-        virtual void AddIndexBuffer(TOwn<IndexBuffer> &&IndexBuffer)    = 0;
-        virtual void AddVertexBuffer(TOwn<VertexBuffer> &&VertexBuffer) = 0;
+        virtual void AddIndexBuffer(TOwn<CIndexBuffer> &&CIndexBuffer)    = 0;
+        virtual void AddVertexBuffer(TOwn<CVertexBuffer> &&CVertexBuffer) = 0;
 
-        TOwn<IndexBuffer>  &GetIndexBuffer();
-        TOwn<VertexBuffer> &GetVertexBuffer();
+        TOwn<CIndexBuffer>  &GetIndexBuffer();
+        TOwn<CVertexBuffer> &GetVertexBuffer();
 
     protected:
-        TOwn<IndexBuffer>  m_IndexBuffer;
-        TOwn<VertexBuffer> m_VertexBuffer;
+        TOwn<CIndexBuffer>  m_IndexBuffer;
+        TOwn<CVertexBuffer> m_VertexBuffer;
     };
 
 } // namespace Corvus

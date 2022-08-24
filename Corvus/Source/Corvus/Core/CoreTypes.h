@@ -17,8 +17,8 @@ using UInt64 = std::uint64_t;
 
 using SizeT = std::size_t;
 
-using Char   = char;
-using String = std::basic_string<Char>;
-using Name   = std::basic_string_view<Char>;
+using Char    = char;
+using CString = std::basic_string<Char>;
+using CName   = std::basic_string_view<Char>;
 
 #endif //! CORVUS_SOURCE_CORVUS_CORE_CORETYPES_H

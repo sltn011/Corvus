@@ -11,56 +11,56 @@
 namespace Corvus
 {
 
-    TOwn<GraphicsAPI> Renderer::s_GraphicsAPI = nullptr;
+    TOwn<CGraphicsAPI> CRenderer::s_GraphicsAPI = nullptr;
 
-    void Renderer::Init()
+    void CRenderer::Init()
     {
-        s_GraphicsAPI = GraphicsAPI::Create();
+        s_GraphicsAPI = CGraphicsAPI::Create();
         s_GraphicsAPI->Init();
     }
 
-    void Renderer::Destroy()
+    void CRenderer::Destroy()
     {
     }
 
-    void Renderer::BeginScene()
+    void CRenderer::BeginScene()
     {
     }
 
-    void Renderer::EndScene()
+    void CRenderer::EndScene()
     {
     }
 
-    void Renderer::ViewportResize(UInt32 const Width, UInt32 const Height)
+    void CRenderer::ViewportResize(UInt32 const Width, UInt32 const Height)
     {
         s_GraphicsAPI->ViewportResize(Width, Height);
     }
 
-    void Renderer::SetClearColor(Vec4 const &ClearColor)
+    void CRenderer::SetClearColor(FVector4 const &ClearColor)
     {
         s_GraphicsAPI->SetClearColor(ClearColor);
     }
 
-    void Renderer::Clear(bool const bColorBuffer, bool const bDepthBuffer, bool const bStencilBuffer)
+    void CRenderer::Clear(bool const bColorBuffer, bool const bDepthBuffer, bool const bStencilBuffer)
     {
         s_GraphicsAPI->Clear(bColorBuffer, bDepthBuffer, bStencilBuffer);
     }
 
-    void Renderer::EnableDepthTest()
+    void CRenderer::EnableDepthTest()
     {
         s_GraphicsAPI->EnableDepthTest();
         CORVUS_CORE_TRACE("Depth test enabled");
     }
 
-    void Renderer::DisableDepthTest()
+    void CRenderer::DisableDepthTest()
     {
         s_GraphicsAPI->DisableDepthTest();
         CORVUS_CORE_TRACE("Depth test disabled");
     }
 
-    void Renderer::Submit(TOwn<VertexArray> &VAO, TOwn<Shader> &Shader)
+    void CRenderer::Submit(TOwn<CVertexArray> &VAO, TOwn<CShader> &CShader)
     {
-        Shader->Bind();
+        CShader->Bind();
         VAO->Bind();
         s_GraphicsAPI->DrawIndexed(VAO->GetIndexBuffer()->GetNumIndices());
     }

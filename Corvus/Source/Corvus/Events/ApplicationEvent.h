@@ -8,23 +8,23 @@
 namespace Corvus
 {
 
-    class WindowCloseEvent : public Event
+    class СWindowCloseEvent : public СEvent
     {
     public:
-        CORVUS_EVENT_GENERATED_BODY(Event::EEventCategory::Application, Event::EEventType::WindowClose);
+        CORVUS_EVENT_GENERATED_BODY(СEvent::EEventCategory::Application, СEvent::EEventType::WindowClose);
     };
 
-    class WindowResizeEvent : public Event
+    class СWindowResizeEvent : public СEvent
     {
     public:
-        CORVUS_EVENT_GENERATED_BODY(Event::EEventCategory::Application, Event::EEventType::WindowResize);
+        CORVUS_EVENT_GENERATED_BODY(СEvent::EEventCategory::Application, СEvent::EEventType::WindowResize);
 
-        WindowResizeEvent(Int32 NewWidthValue, Int32 NewHeightValue)
+        СWindowResizeEvent(Int32 NewWidthValue, Int32 NewHeightValue)
             : NewWidth{NewWidthValue}, NewHeight{NewHeightValue}
         {
         }
 
-        virtual String ToString() const override
+        virtual CString ToString() const override
         {
             std::stringstream ss;
             ss << GetEventTypeString() << " New Size = " << NewWidth << ":" << NewHeight;
@@ -35,14 +35,14 @@ namespace Corvus
         Int32 NewHeight = 0;
     };
 
-    class WindowChangeFocusEvent : public Event
+    class СWindowChangeFocusEvent : public СEvent
     {
     public:
-        CORVUS_EVENT_GENERATED_BODY(Event::EEventCategory::Application, Event::EEventType::WindowChangeFocus);
+        CORVUS_EVENT_GENERATED_BODY(СEvent::EEventCategory::Application, СEvent::EEventType::WindowChangeFocus);
 
-        WindowChangeFocusEvent(bool bSetFocusValue) : bSetFocus{bSetFocusValue} {}
+        СWindowChangeFocusEvent(bool bSetFocusValue) : bSetFocus{bSetFocusValue} {}
 
-        virtual String ToString() const override
+        virtual CString ToString() const override
         {
             std::stringstream ss;
             ss << GetEventTypeString() << (bSetFocus ? " On" : " Off");

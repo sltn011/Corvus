@@ -8,34 +8,34 @@
 namespace Corvus
 {
 
-    class Shader
+    class CShader
     {
     protected:
-        Shader() = default;
+        CShader() = default;
 
     public:
-        static [[nodiscard]] TOwn<Shader> CreateFromFile(String const &FilePath);
+        static [[nodiscard]] TOwn<CShader> CreateFromFile(CString const &FilePath);
 
-        virtual ~Shader()                 = default;
-        Shader(Shader const &)            = delete;
-        Shader &operator=(Shader const &) = delete;
-        Shader(Shader &&)                 = default;
-        Shader &operator=(Shader &&)      = default;
+        virtual ~CShader()                  = default;
+        CShader(CShader const &)            = delete;
+        CShader &operator=(CShader const &) = delete;
+        CShader(CShader &&)                 = default;
+        CShader &operator=(CShader &&)      = default;
 
         virtual void Bind()   = 0;
         virtual void Unbind() = 0;
 
-        virtual void SetBool(String const &Name, bool Value)     = 0;
-        virtual void SetInt32(String const &Name, Int32 Value)   = 0;
-        virtual void SetUInt32(String const &Name, UInt32 Value) = 0;
-        virtual void SetFloat(String const &Name, float Value)   = 0;
+        virtual void SetBool(CString const &Name, bool Value)     = 0;
+        virtual void SetInt32(CString const &Name, Int32 Value)   = 0;
+        virtual void SetUInt32(CString const &Name, UInt32 Value) = 0;
+        virtual void SetFloat(CString const &Name, float Value)   = 0;
 
-        virtual void SetVec2(String const &Name, Vec2 const &Value) = 0;
-        virtual void SetVec3(String const &Name, Vec3 const &Value) = 0;
-        virtual void SetVec4(String const &Name, Vec4 const &Value) = 0;
+        virtual void SetVec2(CString const &Name, FVector2 const &Value) = 0;
+        virtual void SetVec3(CString const &Name, FVector3 const &Value) = 0;
+        virtual void SetVec4(CString const &Name, FVector4 const &Value) = 0;
 
-        virtual void SetMat3(String const &Name, Mat3 const &Value) = 0;
-        virtual void SetMat4(String const &Name, Mat4 const &Value) = 0;
+        virtual void SetMat3(CString const &Name, FMatrix3 const &Value) = 0;
+        virtual void SetMat4(CString const &Name, FMatrix4 const &Value) = 0;
     };
 
 } // namespace Corvus

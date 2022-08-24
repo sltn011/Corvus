@@ -8,55 +8,55 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-using Mat2 = glm::mat2;
-using Mat3 = glm::mat3;
-using Mat4 = glm::mat4;
+using FMatrix2 = glm::mat2;
+using FMatrix3 = glm::mat3;
+using FMatrix4 = glm::mat4;
 
-namespace Corvus::Matrix
+namespace Corvus::FMatrix
 {
 
-    inline Mat4 Translate(Mat4 const &Matrix, Vec3 const &Vector)
+    inline FMatrix4 Translate(FMatrix4 const &FMatrix, FVector3 const &Vector)
     {
-        return glm::translate(Matrix, Vector);
+        return glm::translate(FMatrix, Vector);
     }
 
-    inline Mat4 Rotate(Mat4 const &Matrix, float Degrees, Vec3 const &Vector)
+    inline FMatrix4 Rotate(FMatrix4 const &FMatrix, float Degrees, FVector3 const &Vector)
     {
-        return glm::rotate(Matrix, Math::Radians(Degrees), Vector);
+        return glm::rotate(FMatrix, FMath::Radians(Degrees), Vector);
     }
 
-    inline Mat4 Scale(Mat4 const &Matrix, Vec3 const &ScaleVector)
+    inline FMatrix4 Scale(FMatrix4 const &FMatrix, FVector3 const &ScaleVector)
     {
-        return glm::scale(Matrix, ScaleVector);
+        return glm::scale(FMatrix, ScaleVector);
     }
 
-    template<typename MatT>
-    inline MatT Transpose(MatT const &Matrix)
+    template<typename TMatrix>
+    inline TMatrix Transpose(TMatrix const &FMatrix)
     {
-        return glm::transpose(Matrix);
+        return glm::transpose(FMatrix);
     }
 
-    inline Mat4 LookAt(Vec3 const &Position, Vec3 const &LookPoint, Vec3 const &Up)
+    inline FMatrix4 LookAt(FVector3 const &Position, FVector3 const &LookPoint, FVector3 const &Up)
     {
         return glm::lookAt(Position, LookPoint, Up);
     }
 
-    inline Mat4 Perspective(float FoVDegrees, float Aspect, float ClipNear, float ClipFar)
+    inline FMatrix4 Perspective(float FoVDegrees, float Aspect, float ClipNear, float ClipFar)
     {
-        return glm::perspective(Math::Radians(FoVDegrees), Aspect, ClipNear, ClipFar);
+        return glm::perspective(FMath::Radians(FoVDegrees), Aspect, ClipNear, ClipFar);
     }
 
-    inline Mat4 Ortho(float Left, float Right, float Bottom, float Top, float ClipNear, float ClipFar)
+    inline FMatrix4 Ortho(float Left, float Right, float Bottom, float Top, float ClipNear, float ClipFar)
     {
         return glm::ortho(Left, Right, Bottom, Top, ClipNear, ClipFar);
     }
 
-    template<typename MatT>
-    inline float const *ValuePtr(MatT const &Matrix)
+    template<typename TMatrix>
+    inline float const *ValuePtr(TMatrix const &FMatrix)
     {
-        return glm::value_ptr(Matrix);
+        return glm::value_ptr(FMatrix);
     }
 
-} // namespace Corvus::Matrix
+} // namespace Corvus::FMatrix
 
 #endif //! CORVUS_SOURCE_CORVUS_MATH_MATRIX_H

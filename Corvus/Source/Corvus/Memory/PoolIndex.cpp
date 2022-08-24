@@ -2,23 +2,23 @@
 
 #include "Corvus/Memory/PoolIndex.h"
 
-#include "Corvus/Memory/AppPools.h"
+#include "Corvus/Memory/ApplicationPools.h"
 #include "Corvus/Memory/Pool.h"
 
 namespace Corvus
 {
 
-    PoolIndex::PoolIndex(PoolID const ID, SizeT const SlotID, UInt8 *const Data, SizeT const NumElements)
+    CPoolIndex::CPoolIndex(CPoolID const ID, SizeT const SlotID, UInt8 *const Data, SizeT const NumElements)
         : m_PoolID{ID}, m_SlotID{SlotID}, m_Data{Data}, m_NumElements{NumElements}
     {
     }
 
-    PoolIndex::~PoolIndex()
+    CPoolIndex::~CPoolIndex()
     {
         Free();
     }
 
-    PoolIndex::PoolIndex(PoolIndex &&Rhs) noexcept
+    CPoolIndex::CPoolIndex(CPoolIndex &&Rhs) noexcept
         : m_PoolID{Rhs.m_PoolID},
           m_SlotID{Rhs.m_SlotID},
           m_Data{std::exchange(Rhs.m_Data, nullptr)},
@@ -26,7 +26,7 @@ namespace Corvus
     {
     }
 
-    PoolIndex &PoolIndex::operator=(PoolIndex &&Rhs) noexcept
+    CPoolIndex &CPoolIndex::operator=(CPoolIndex &&Rhs) noexcept
     {
         if (this != &Rhs)
         {
@@ -40,41 +40,41 @@ namespace Corvus
         return *this;
     }
 
-    bool PoolIndex::IsValid() const
+    bool CPoolIndex::IsValid() const
     {
         return m_Data != nullptr;
     }
 
-    void PoolIndex::Free()
+    void CPoolIndex::Free()
     {
         if (IsValid())
         {
-            AppPools::GetPool(m_PoolID).Free(*this);
+            CApplicationPools::GetPool(m_PoolID).Free(*this);
         }
     }
 
-    UInt8 *PoolIndex::GetRaw() const
+    UInt8 *CPoolIndex::GetRaw() const
     {
         return m_Data;
     }
 
-    SizeT PoolIndex::GetNumElements() const
+    SizeT CPoolIndex::GetNumElements() const
     {
         return m_NumElements;
     }
 
-    void PoolIndex::IncreaseSize(SizeT const NewSize)
+    void CPoolIndex::IncreaseSize(SizeT const NewSize)
     {
         if (IsValid())
         {
-            AppPools::GetPool(m_PoolID).IncreaseIndexSize(*this, NewSize);
+            CApplicationPools::GetPool(m_PoolID).IncreaseIndexSize(*this, NewSize);
         }
     }
 
-    void PoolIndex::Invalidate()
+    void CPoolIndex::Invalidate()
     {
         // Making index invalid without calling Free
-        m_PoolID      = PoolID{};
+        m_PoolID      = CPoolID{};
         m_SlotID      = 0;
         m_Data        = nullptr;
         m_NumElements = 0;

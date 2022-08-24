@@ -6,19 +6,19 @@
 namespace Corvus
 {
 
-    class IndexBuffer
+    class CIndexBuffer
     {
     protected:
-        IndexBuffer() = default;
+        CIndexBuffer() = default;
 
     public:
-        static [[nodiscard]] TOwn<IndexBuffer> Create(UInt32 const *Data, UInt32 NumIndices);
+        static [[nodiscard]] TOwn<CIndexBuffer> Create(UInt32 const *Data, UInt32 NumIndices);
 
-        virtual ~IndexBuffer()                      = default;
-        IndexBuffer(IndexBuffer const &)            = delete;
-        IndexBuffer &operator=(IndexBuffer const &) = delete;
-        IndexBuffer(IndexBuffer &&)                 = default;
-        IndexBuffer &operator=(IndexBuffer &&)      = default;
+        virtual ~CIndexBuffer()                       = default;
+        CIndexBuffer(CIndexBuffer const &)            = delete;
+        CIndexBuffer &operator=(CIndexBuffer const &) = delete;
+        CIndexBuffer(CIndexBuffer &&)                 = default;
+        CIndexBuffer &operator=(CIndexBuffer &&)      = default;
 
         virtual void Bind()   = 0;
         virtual void Unbind() = 0;

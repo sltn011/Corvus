@@ -9,13 +9,13 @@
 
 namespace Corvus
 {
-    OpenGLContext::OpenGLContext(Window &OwnerWindow)
+    POpenGLContext::POpenGLContext(CWindow &OwnerWindow)
         : m_WindowHandle{static_cast<GLFWwindow *>(OwnerWindow.GetRawWindow())}
     {
         CORVUS_ASSERT(m_WindowHandle);
     }
 
-    void OpenGLContext::Init()
+    void POpenGLContext::Init()
     {
         glfwMakeContextCurrent(m_WindowHandle);
 
@@ -32,7 +32,7 @@ namespace Corvus
         CORVUS_CORE_ASSERT_FMT(GLVersion.major >= 4 && GLVersion.minor >= 6, "OpenGL version 4.6 minimum required!");
     }
 
-    void OpenGLContext::SwapBuffers()
+    void POpenGLContext::SwapBuffers()
     {
         glfwSwapBuffers(m_WindowHandle);
     }

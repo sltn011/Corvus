@@ -4,11 +4,11 @@
 namespace Corvus
 {
 
-    class GUIController
+    class СGUIController
     {
     public:
-        GUIController();
-        ~GUIController();
+        СGUIController();
+        ~СGUIController();
 
         void Init();
         void Destroy();
@@ -19,7 +19,7 @@ namespace Corvus
         void EndFrame();
 
     private:
-        static GUIController *s_Instance;
+        static СGUIController *s_Instance;
     };
 
 } // namespace Corvus

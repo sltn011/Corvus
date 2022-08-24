@@ -6,26 +6,26 @@
 namespace Corvus
 {
 
-    class Event;
-    class TimeDelta;
+    class СEvent;
+    class FTimeDelta;
 
-    class Layer
+    class СLayer
     {
     protected:
-        Layer(String LayerName, bool bEnabled);
+        СLayer(CString LayerName, bool bEnabled);
 
     public:
         template<typename LayerType, typename... Args>
-        static [[nodiscard]] TOwn<Layer> Create(Args &&...args)
+        static [[nodiscard]] TOwn<СLayer> Create(Args &&...args)
         {
             return MakeOwned<LayerType>(std::forward<Args>(args)...);
         }
 
-        virtual ~Layer()                = default;
-        Layer(Layer const &)            = delete;
-        Layer &operator=(Layer const &) = delete;
-        Layer(Layer &&)                 = default;
-        Layer &operator=(Layer &&)      = default;
+        virtual ~СLayer()                 = default;
+        СLayer(СLayer const &)            = delete;
+        СLayer &operator=(СLayer const &) = delete;
+        СLayer(СLayer &&)                 = default;
+        СLayer &operator=(СLayer &&)      = default;
 
         void SetEnabled(bool bEnabled);
         bool IsEnabled() const;
@@ -33,14 +33,14 @@ namespace Corvus
         virtual void OnPushed();
         virtual void OnPoped();
 
-        virtual void OnUpdate(TimeDelta ElapsedTime);
-        virtual void OnEvent(Event &Event);
+        virtual void OnUpdate(FTimeDelta ElapsedTime);
+        virtual void OnEvent(СEvent &Event);
 
         virtual void Render();
 
     protected:
-        String m_LayerName;
-        bool   m_bEnabled;
+        CString m_LayerName;
+        bool    m_bEnabled;
     };
 
 } // namespace Corvus
