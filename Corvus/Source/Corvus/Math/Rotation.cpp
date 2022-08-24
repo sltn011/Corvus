@@ -2,7 +2,7 @@
 
 #include "Corvus/Math/Rotation.h"
 
-#include "Corvus/Math/Quat.h"
+#include "Corvus/Math/Quaternion.h"
 
 namespace Corvus
 {
@@ -18,7 +18,7 @@ namespace Corvus
 
     FMatrix4 FRotation::GetRotationMatrix() const
     {
-        FQuat Q = FQuaternion::Unit;
+        FQuaternion Q = FQuaternion::Unit;
 
         switch (m_RotationOrder)
         {

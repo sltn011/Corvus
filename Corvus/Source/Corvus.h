@@ -37,7 +37,7 @@
 // Math
 #include "Corvus/Math/Math.h"
 #include "Corvus/Math/Matrix.h"
-#include "Corvus/Math/Quat.h"
+#include "Corvus/Math/Quaternion.h"
 #include "Corvus/Math/Vector.h"
 
 // Time
