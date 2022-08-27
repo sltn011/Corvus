@@ -116,7 +116,7 @@ namespace Corvus
 
     void СApplication::InitWindow()
     {
-        CWindowData WindowSettings;
+        SWindowData WindowSettings;
         WindowSettings.WindowWidth   = 1600;
         WindowSettings.WindowHeight  = 900;
         WindowSettings.WindowName    = "TestWindow";

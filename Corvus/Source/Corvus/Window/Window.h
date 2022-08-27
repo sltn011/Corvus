@@ -14,7 +14,7 @@ namespace Corvus
 
     CORVUS_DECLARE_MULTICAST_DELEGATE(COnEventDelegate, СEvent &);
 
-    struct CWindowData
+    struct SWindowData
     {
         CString WindowName;
         Int32   WindowWidth  = 0;
@@ -38,7 +38,7 @@ namespace Corvus
         CWindow(CWindow &&)                 = default;
         CWindow &operator=(CWindow &&)      = default;
 
-        virtual void Init(CWindowData const &Settings) = 0;
+        virtual void Init(SWindowData const &Settings) = 0;
         virtual void InitRenderingContext()            = 0;
         virtual void InitGUIRenderingContext()         = 0;
 
@@ -65,7 +65,7 @@ namespace Corvus
         COnEventDelegate OnEvent;
 
     protected:
-        CWindowData m_WindowData;
+        SWindowData m_WindowData;
         bool        m_bIsInitialized = false;
 
         TOwn<CRenderingContext> m_RenderingContext;

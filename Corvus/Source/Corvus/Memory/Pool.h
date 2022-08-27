@@ -10,7 +10,7 @@ namespace Corvus
     class CApplicationPools;
     class CPoolIndex;
 
-    struct CPoolDataFormat
+    struct SPoolDataFormat
     {
         SizeT NumElements = 0;
         SizeT ElementSize = 0;
@@ -21,7 +21,7 @@ namespace Corvus
     private:
         friend class CApplicationPools;
 
-        CPool(CPoolID ID, CPoolDataFormat DataFormat);
+        CPool(CPoolID ID, SPoolDataFormat DataFormat);
 
     public:
         CPoolIndex Request(SizeT RequestedNumElements);
@@ -49,7 +49,7 @@ namespace Corvus
 
         void OnNotEnoughMemory(SizeT RequestedAmount);
 
-        void CreateChildPool(CPoolDataFormat ChildPoolDataFormat);
+        void CreateChildPool(SPoolDataFormat ChildPoolDataFormat);
         void DeleteChildPool();
 
         void AddSlotsToIndex(CPoolIndex &Index, SizeT NewSize);
@@ -64,7 +64,7 @@ namespace Corvus
             CPool      &NewPool
         );
 
-        struct CPoolInfo
+        struct SPoolInfo
         {
             UInt8 *IDTable      = nullptr;
             SizeT  IDTablePages = 0;
@@ -72,17 +72,17 @@ namespace Corvus
             SizeT  SlotsUsed    = 0;
         };
 
-        struct CSubPoolsChain
+        struct SSubPoolsChain
         {
             TOwn<CPool> m_Next       = nullptr;
             CPool      *m_ParentPool = nullptr;
         };
 
         CPoolID         m_PoolID;
-        CPoolDataFormat m_DataFormat;
-        CPoolInfo       m_PoolInfo;
+        SPoolDataFormat m_DataFormat;
+        SPoolInfo       m_PoolInfo;
         TOwn<UInt8[]>   m_Pool;
-        CSubPoolsChain  m_Chain;
+        SSubPoolsChain  m_Chain;
 
         // ChildPoolSize = CurrentPoolSize * s_ChildPoolSizeMult
         static constexpr float s_ChildPoolSizeMult = 1.0f;

@@ -29,7 +29,7 @@ namespace Corvus
         CORVUS_CORE_INFO("ApplicationPools successfully initialized!");
     }
 
-    CPoolID CApplicationPools::CreateGeneralPool(CPoolDataFormat const DataFormat)
+    CPoolID CApplicationPools::CreateGeneralPool(SPoolDataFormat const DataFormat)
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
@@ -41,7 +41,7 @@ namespace Corvus
         return ID;
     }
 
-    CPoolID CApplicationPools::CreateComponentPool(CPoolDataFormat const DataFormat)
+    CPoolID CApplicationPools::CreateComponentPool(SPoolDataFormat const DataFormat)
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
@@ -53,7 +53,7 @@ namespace Corvus
         return ID;
     }
 
-    CPoolID CApplicationPools::CreateEntityPool(CPoolDataFormat DataFormat)
+    CPoolID CApplicationPools::CreateEntityPool(SPoolDataFormat DataFormat)
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
@@ -90,7 +90,7 @@ namespace Corvus
         auto It = s_GeneralPools.find(PoolIDInGroup);
         if (It == s_GeneralPools.end())
         {
-            CPoolDataFormat DataFormat;
+            SPoolDataFormat DataFormat;
             DataFormat.ElementSize = PoolIDInGroup;
             DataFormat.NumElements = s_DefaultPoolSize;
             CreateGeneralPool(DataFormat);
@@ -106,7 +106,7 @@ namespace Corvus
         auto It = s_ComponentPools.find(PoolIDInGroup);
         if (It == s_ComponentPools.end())
         {
-            CPoolDataFormat DataFormat;
+            SPoolDataFormat DataFormat;
             DataFormat.ElementSize = PoolIDInGroup;
             DataFormat.NumElements = s_DefaultPoolSize;
             CreateComponentPool(DataFormat);
@@ -122,7 +122,7 @@ namespace Corvus
         auto It = s_EntityPools.find(PoolIDInGroup);
         if (It == s_EntityPools.end())
         {
-            CPoolDataFormat DataFormat;
+            SPoolDataFormat DataFormat;
             DataFormat.ElementSize = PoolIDInGroup;
             DataFormat.NumElements = s_DefaultPoolSize;
             CreateEntityPool(DataFormat);

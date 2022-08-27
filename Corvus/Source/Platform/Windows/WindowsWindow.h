@@ -15,7 +15,7 @@ namespace Corvus
         PWindowsWindow(PWindowsWindow &&)                 = default;
         PWindowsWindow &operator=(PWindowsWindow &&)      = default;
 
-        virtual void Init(CWindowData const &Settings) override;
+        virtual void Init(SWindowData const &Settings) override;
 
         void Destroy();
 

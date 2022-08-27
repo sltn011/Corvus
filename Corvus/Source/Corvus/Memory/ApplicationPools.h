@@ -6,7 +6,7 @@
 namespace Corvus
 {
     class CPool;
-    struct CPoolDataFormat;
+    struct SPoolDataFormat;
     class CPoolID;
     class CPoolIndex;
     class PoolRegistry;
@@ -16,9 +16,9 @@ namespace Corvus
     public:
         static void Init();
 
-        static CPoolID CreateGeneralPool(CPoolDataFormat DataFormat);
-        static CPoolID CreateComponentPool(CPoolDataFormat DataFormat);
-        static CPoolID CreateEntityPool(CPoolDataFormat DataFormat);
+        static CPoolID CreateGeneralPool(SPoolDataFormat DataFormat);
+        static CPoolID CreateComponentPool(SPoolDataFormat DataFormat);
+        static CPoolID CreateEntityPool(SPoolDataFormat DataFormat);
 
         static CPool &GetPool(CPoolID ID);
         static CPool &GetGeneralPool(SizeT PoolIDInGroup);

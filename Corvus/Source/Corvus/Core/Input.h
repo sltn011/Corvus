@@ -7,8 +7,9 @@
 namespace Corvus
 {
 
-    struct СInput
+    class СInput
     {
+    public:
         // KEYBOARD
 
         static bool IsKeyInState(EKeyCode Key, EActionCode State);

@@ -7,7 +7,7 @@
 namespace Corvus
 {
 
-    CPool::CPool(CPoolID const ID, CPoolDataFormat const DataFormat) : m_PoolID{ID}, m_DataFormat{DataFormat}
+    CPool::CPool(CPoolID const ID, SPoolDataFormat const DataFormat) : m_PoolID{ID}, m_DataFormat{DataFormat}
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
@@ -252,7 +252,7 @@ namespace Corvus
     {
         if (!m_Chain.m_Next)
         {
-            CPoolDataFormat ChildDataFormat = m_DataFormat;
+            SPoolDataFormat ChildDataFormat = m_DataFormat;
             ChildDataFormat.NumElements     = FMath::Max(ChildDataFormat.NumElements, RequestedAmount);
             ChildDataFormat.NumElements     = static_cast<SizeT>(ChildDataFormat.NumElements * s_ChildPoolSizeMult);
             ChildDataFormat.NumElements     = FMath::Max(ChildDataFormat.NumElements, RequestedAmount);
@@ -268,7 +268,7 @@ namespace Corvus
         }
     }
 
-    void CPool::CreateChildPool(CPoolDataFormat const ChildPoolDataFormat)
+    void CPool::CreateChildPool(SPoolDataFormat const ChildPoolDataFormat)
     {
         m_Chain.m_Next                       = MakeOwned<CPool>(CPool{m_PoolID, ChildPoolDataFormat});
         m_Chain.m_Next->m_Chain.m_ParentPool = this;

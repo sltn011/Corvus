@@ -21,7 +21,7 @@ namespace Corvus
         Destroy();
     }
 
-    void PWindowsWindow::Init(CWindowData const &Settings)
+    void PWindowsWindow::Init(SWindowData const &Settings)
     {
         CORVUS_CORE_ASSERT_FMT(
             !m_bIsInitialized, "Can not re-initialize already created window \"{0}\"!", m_WindowData.WindowName
