@@ -3,7 +3,7 @@
 #include "Corvus/Core/CoreLayer.h"
 
 #include "Corvus/Core/Application.h"
-#include "Corvus/Events/Event.h"
+#include "Corvus/Event/Event.h"
 #include "Corvus/Renderer/Renderer.h"
 #include "Corvus/Time/TimeDelta.h"
 

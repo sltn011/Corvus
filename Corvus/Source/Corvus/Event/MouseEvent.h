@@ -1,8 +1,8 @@
-#ifndef CORVUS_SOURCE_CORVUS_EVENTS_MOUSEEVENT_H
-#define CORVUS_SOURCE_CORVUS_EVENTS_MOUSEEVENT_H
+#ifndef CORVUS_SOURCE_CORVUS_EVENT_MOUSEEVENT_H
+#define CORVUS_SOURCE_CORVUS_EVENT_MOUSEEVENT_H
 
 #include "Corvus/Core/KeyCodes.h"
-#include "Corvus/Events/Event.h"
+#include "Corvus/Event/Event.h"
 
 #include <sstream>
 
@@ -95,4 +95,4 @@ namespace Corvus
 
 } // namespace Corvus
 
-#endif //! CORVUS_SOURCE_CORVUS_EVENTS_MOUSEEVENT_H
+#endif //! CORVUS_SOURCE_CORVUS_EVENT_MOUSEEVENT_H

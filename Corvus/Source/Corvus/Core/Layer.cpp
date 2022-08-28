@@ -2,7 +2,7 @@
 
 #include "Corvus/Core/Layer.h"
 
-#include "Corvus/Events/Event.h"
+#include "Corvus/Event/Event.h"
 #include "Corvus/Time/TimeDelta.h"
 
 namespace Corvus

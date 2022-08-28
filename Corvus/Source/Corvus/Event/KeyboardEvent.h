@@ -1,8 +1,8 @@
-#ifndef CORVUS_SOURCE_CORVUS_EVENTS_KEYBOARDEVENT_H
-#define CORVUS_SOURCE_CORVUS_EVENTS_KEYBOARDEVENT_H
+#ifndef CORVUS_SOURCE_CORVUS_EVENT_KEYBOARDEVENT_H
+#define CORVUS_SOURCE_CORVUS_EVENT_KEYBOARDEVENT_H
 
 #include "Corvus/Core/KeyCodes.h"
-#include "Corvus/Events/Event.h"
+#include "Corvus/Event/Event.h"
 
 namespace Corvus
 {
@@ -52,4 +52,4 @@ namespace Corvus
 
 } // namespace Corvus
 
-#endif //! CORVUS_SOURCE_CORVUS_EVENTS_KEYBOARDEVENT_H
+#endif //! CORVUS_SOURCE_CORVUS_EVENT_KEYBOARDEVENT_H

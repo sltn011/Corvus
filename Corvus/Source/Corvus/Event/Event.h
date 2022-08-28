@@ -1,5 +1,5 @@
-#ifndef CORVUS_SOURCE_CORVUS_EVENTS_EVENT_H
-#define CORVUS_SOURCE_CORVUS_EVENTS_EVENT_H
+#ifndef CORVUS_SOURCE_CORVUS_EVENT_EVENT_H
+#define CORVUS_SOURCE_CORVUS_EVENT_EVENT_H
 
 #include "Corvus/Core/Base.h"
 
@@ -76,4 +76,4 @@ namespace Corvus
 
 } // namespace Corvus
 
-#endif //! CORVUS_SOURCE_CORVUS_EVENTS_EVENT_H
+#endif //! CORVUS_SOURCE_CORVUS_EVENT_EVENT_H

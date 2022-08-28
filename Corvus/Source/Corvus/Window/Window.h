@@ -3,7 +3,7 @@
 
 #include "Corvus/Core/Base.h"
 #include "Corvus/Core/Delegate.h"
-#include "Corvus/Events/Event.h"
+#include "Corvus/Event/Event.h"
 #include "Corvus/GUI/GUIController.h"
 #include "Corvus/Renderer/RenderingContext.h"
 

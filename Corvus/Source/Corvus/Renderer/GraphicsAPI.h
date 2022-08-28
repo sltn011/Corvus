@@ -3,8 +3,6 @@
 
 #include "Corvus/Core/Base.h"
 
-#include <glm/glm.hpp>
-
 namespace Corvus
 {
 

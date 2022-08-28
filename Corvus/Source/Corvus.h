@@ -15,9 +15,9 @@
 #include "Corvus/Core/Log.h"
 
 // Events
-#include "Corvus/Events/ApplicationEvent.h"
-#include "Corvus/Events/KeyboardEvent.h"
-#include "Corvus/Events/MouseEvent.h"
+#include "Corvus/Event/ApplicationEvent.h"
+#include "Corvus/Event/KeyboardEvent.h"
+#include "Corvus/Event/MouseEvent.h"
 
 // Camera
 #include "Corvus/Camera/OrthographicCamera.h"
