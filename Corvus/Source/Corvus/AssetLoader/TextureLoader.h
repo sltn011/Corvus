@@ -1,7 +1,7 @@
 #ifndef CORVUS_SOURCE_CORVUS_ASSETLOADER_TEXTURELOADER_H
 #define CORVUS_SOURCE_CORVUS_ASSETLOADER_TEXTURELOADER_H
 
-#include "Corvus/Core/Base.h"
+#include "Corvus/Renderer/TextureProperties.h"
 
 namespace Corvus
 {
@@ -36,14 +36,18 @@ namespace Corvus
 
         SizeT                GetTextureWidth() const { return m_TextureWidth; }
         SizeT                GetTextureHeight() const { return m_TextureHeight; }
-        UInt8               *GetTextureData() const { return m_TextureData; }
+        void                *GetTextureData() const { return m_TextureData; }
         ELoadTextureChannels GetTextureChannels() const { return m_Channels; }
+        EPixelDataType       GetPixelDataType() const { return m_PixelDataType; }
+        bool                 IsSRGB() const { return m_bIsSRGB; }
 
     private:
         SizeT                m_TextureWidth  = 0;
         SizeT                m_TextureHeight = 0;
-        UInt8               *m_TextureData   = nullptr;
+        void                *m_TextureData   = nullptr;
         ELoadTextureChannels m_Channels      = ELoadTextureChannels::DontCare;
+        EPixelDataType       m_PixelDataType = EPixelDataType::UByte;
+        bool                 m_bIsSRGB       = false;
     };
 
     class CTextureLoader
@@ -52,10 +56,20 @@ namespace Corvus
         static CTextureDataWrapper LoadFromImageFile(CString const &FilePath, ELoadTextureChannels ChannelsToLoad);
 
     private:
+        static CTextureDataWrapper LoadHDRImage(CString const &FilePath, ELoadTextureChannels ChannelsToLoad);
+        static CTextureDataWrapper LoadLDRImage(CString const &FilePath, ELoadTextureChannels ChannelsToLoad);
+        static CTextureDataWrapper LoadImageImpl(
+            CString const &FilePath, ELoadTextureChannels ChannelsToLoad, EPixelDataType PixelDataType
+        );
+
         static int CalculateRequiredNumChannels(ELoadTextureChannels ChannelsToLoad);
 
-        static UInt8 *FormatImageData(
-            UInt8 *ImageData, SizeT ImageWidth, SizeT ImageHeight, ELoadTextureChannels ChannelsToLoad
+        static void *FormatImageData(
+            void                *ImageData,
+            SizeT                ImageWidth,
+            SizeT                ImageHeight,
+            ELoadTextureChannels ChannelsToLoad,
+            EPixelDataType       PixelDataType
         );
 
         static ELoadTextureChannels LoadedDataChannels(ELoadTextureChannels ChannelsToLoad);
