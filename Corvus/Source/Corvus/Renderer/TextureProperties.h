@@ -70,19 +70,65 @@ namespace Corvus
     enum class ETextureFiltering : UInt8
     {
         Nearest,
-        Linear
+        Linear,
+
+        NearestMipMap_Nearest,
+        NearestMipMap_Linear,
+
+        LinearMipMap_Nearest,
+        LinearMipMap_Linear,
+    };
+
+    // CRTP class to convert Texture property values to Graphics API-specific values
+    template<typename Implementation>
+    class CTexturePropertyToAPIValueConverter
+    {
+    public:
+        UInt32 GetTextureType(ETextureType const TextureType) const
+        {
+            return GetImpl()->GetTextureTypeImpl(TextureType);
+        }
+
+        UInt32 GetPixelFormat(EPixelFormat const PixelFormat) const
+        {
+            return GetImpl()->GetPixelFormatImpl(PixelFormat);
+        }
+
+        UInt32 GetPixelDataType(EPixelDataType const PixelDataType) const
+        {
+            return GetImpl()->GetPixelDataTypeImpl(PixelDataType);
+        }
+
+        UInt32 GetTextureWrapping(ETextureWrapping const TextureWrapping) const
+        {
+            return GetImpl()->GetTextureWrappingImpl(TextureWrapping);
+        }
+
+        UInt32 GetTextureFiltering(ETextureFiltering const TextureFiltering) const
+        {
+            return GetImpl()->GetTextureFilteringImpl(TextureFiltering);
+        }
+
+    private:
+        Implementation const *GetImpl() const { return static_cast<Implementation const *>(this); }
     };
 
     struct STextureDataFormat
     {
+        SizeT          TextureWidth  = 0;
+        SizeT          TextureHeight = 0;
         EPixelFormat   PixelFormat   = EPixelFormat::RGBA;
         EPixelDataType PixelDataType = EPixelDataType::UByte;
     };
 
     struct STextureParameters
     {
-        ETextureWrapping  Wrapping  = ETextureWrapping::Repeat;
-        ETextureFiltering Filtering = ETextureFiltering::Linear;
+        ETextureWrapping WrappingS = ETextureWrapping::Repeat;
+        ETextureWrapping WrappingT = ETextureWrapping::Repeat;
+        ETextureWrapping WrappingR = ETextureWrapping::Repeat;
+
+        ETextureFiltering MinFiltering = ETextureFiltering::Linear;
+        ETextureFiltering MagFiltering = ETextureFiltering::Linear;
     };
 
     struct STextureProperties
