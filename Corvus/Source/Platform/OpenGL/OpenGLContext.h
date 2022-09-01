@@ -12,6 +12,8 @@ namespace Corvus
     class POpenGLContext : public CRenderingContext
     {
     public:
+        using Super = CRenderingContext;
+
         POpenGLContext(CWindow &OwnerWindow);
 
         virtual void Init() override;

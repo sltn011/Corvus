@@ -11,6 +11,8 @@ namespace Corvus
     class POpenGLGraphicsAPI : public CGraphicsAPI
     {
     public:
+        using Super = CGraphicsAPI;
+
         virtual void Init() override;
 
         virtual void ViewportResize(UInt32 Width, UInt32 Height) override;

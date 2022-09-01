@@ -9,6 +9,8 @@ namespace Corvus
     class CTransformComponent : public CBaseSceneComponent
     {
     public:
+        using Super = CBaseSceneComponent;
+
         CTransformComponent(CEntity *Owner, FTransform const &ComponentTransform);
     };
 

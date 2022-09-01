@@ -11,6 +11,8 @@ namespace Corvus
     class POpenGLIndexBuffer : public CIndexBuffer
     {
     public:
+        using Super = CIndexBuffer;
+
         POpenGLIndexBuffer(UInt32 const *Data, UInt32 NumIndices);
         ~POpenGLIndexBuffer();
 

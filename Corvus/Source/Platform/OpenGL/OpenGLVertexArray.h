@@ -11,6 +11,8 @@ namespace Corvus
     class POpenGLVertexArray : public CVertexArray
     {
     public:
+        using Super = CVertexArray;
+
         POpenGLVertexArray();
         ~POpenGLVertexArray();
 

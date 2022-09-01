@@ -64,7 +64,9 @@ namespace Corvus
     }
 
     POpenGLShader::POpenGLShader(POpenGLShader &&Rhs) noexcept
-        : m_ID{std::exchange(Rhs.m_ID, 0)}, m_UniformLocationCache{std::move(Rhs.m_UniformLocationCache)}
+        : Super{std::move(Rhs)},
+          m_ID{std::exchange(Rhs.m_ID, 0)},
+          m_UniformLocationCache{std::move(Rhs.m_UniformLocationCache)}
     {
     }
 
@@ -72,6 +74,7 @@ namespace Corvus
     {
         if (this != &Rhs)
         {
+            Super::operator=(std::move(Rhs));
             std::swap(m_ID, Rhs.m_ID);
             m_UniformLocationCache = std::move(Rhs.m_UniformLocationCache);
         }

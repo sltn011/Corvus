@@ -28,17 +28,17 @@ namespace Corvus
     {
     }
 
-    void СCoreLayer::OnEvent(СEvent &Event)
+    void СCoreLayer::OnEvent(CEvent &Event)
     {
-        if (Event.IsInCategory(СEvent::EEventCategory::Application))
+        if (Event.IsInCategory(CEvent::EEventCategory::Application))
         {
             OnApplicationEvent(Event);
         }
-        if (Event.IsInCategory(СEvent::EEventCategory::Keyboard))
+        if (Event.IsInCategory(CEvent::EEventCategory::Keyboard))
         {
             OnKeyboardEvent(Event);
         }
-        if (Event.IsInCategory(СEvent::EEventCategory::Mouse))
+        if (Event.IsInCategory(CEvent::EEventCategory::Mouse))
         {
             OnMouseEvent(Event);
         }
@@ -48,19 +48,19 @@ namespace Corvus
     {
     }
 
-    void СCoreLayer::OnApplicationEvent(СEvent &Event)
+    void СCoreLayer::OnApplicationEvent(CEvent &Event)
     {
         switch (Event.GetEventType())
         {
-        case СEvent::EEventType::WindowResize:
+        case CEvent::EEventType::WindowResize:
             OnWindowResize(Event);
             break;
 
-        case СEvent::EEventType::WindowClose:
+        case CEvent::EEventType::WindowClose:
             OnWindowClose(Event);
             break;
 
-        case СEvent::EEventType::WindowChangeFocus:
+        case CEvent::EEventType::WindowChangeFocus:
             OnWindowChangeFocus(Event);
             break;
 
@@ -69,15 +69,15 @@ namespace Corvus
         }
     }
 
-    void СCoreLayer::OnKeyboardEvent(СEvent &Event)
+    void СCoreLayer::OnKeyboardEvent(CEvent &Event)
     {
         switch (Event.GetEventType())
         {
-        case СEvent::EEventType::KeyPress:
+        case CEvent::EEventType::KeyPress:
             OnKeyPressed(Event);
             break;
 
-        case СEvent::EEventType::KeyRelease:
+        case CEvent::EEventType::KeyRelease:
             OnKeyReleased(Event);
             break;
 
@@ -86,23 +86,23 @@ namespace Corvus
         }
     }
 
-    void СCoreLayer::OnMouseEvent(СEvent &Event)
+    void СCoreLayer::OnMouseEvent(CEvent &Event)
     {
         switch (Event.GetEventType())
         {
-        case СEvent::EEventType::MouseButtonPress:
+        case CEvent::EEventType::MouseButtonPress:
             OnMouseButtonPressed(Event);
             break;
 
-        case СEvent::EEventType::MouseButtonRelease:
+        case CEvent::EEventType::MouseButtonRelease:
             OnMouseButtonReleased(Event);
             break;
 
-        case СEvent::EEventType::MouseCursorMove:
+        case CEvent::EEventType::MouseCursorMove:
             OnMouseCursorMove(Event);
             break;
 
-        case СEvent::EEventType::MouseScroll:
+        case CEvent::EEventType::MouseScroll:
             OnMouseScroll(Event);
             break;
 
@@ -111,24 +111,24 @@ namespace Corvus
         }
     }
 
-    void СCoreLayer::OnWindowResize(СEvent &Event)
+    void СCoreLayer::OnWindowResize(CEvent &Event)
     {
         СWindowResizeEvent &WREvent = CastEvent<СWindowResizeEvent>(Event);
         CRenderer::ViewportResize(WREvent.NewWidth, WREvent.NewHeight);
         Event.SetHandled();
     }
 
-    void СCoreLayer::OnWindowClose(СEvent &Event)
+    void СCoreLayer::OnWindowClose(CEvent &Event)
     {
         СApplication::GetInstance().GetWindow().SetShouldClose();
         Event.SetHandled();
     }
 
-    void СCoreLayer::OnWindowChangeFocus(СEvent &Event)
+    void СCoreLayer::OnWindowChangeFocus(CEvent &Event)
     {
     }
 
-    void СCoreLayer::OnKeyPressed(СEvent &Event)
+    void СCoreLayer::OnKeyPressed(CEvent &Event)
     {
         СKeyPressEvent &KPEvent = CastEvent<СKeyPressEvent &>(Event);
         if (KPEvent.Key == Key::F1)
@@ -139,23 +139,23 @@ namespace Corvus
         Event.SetHandled();
     }
 
-    void СCoreLayer::OnKeyReleased(СEvent &Event)
+    void СCoreLayer::OnKeyReleased(CEvent &Event)
     {
     }
 
-    void СCoreLayer::OnMouseButtonPressed(СEvent &Event)
+    void СCoreLayer::OnMouseButtonPressed(CEvent &Event)
     {
     }
 
-    void СCoreLayer::OnMouseButtonReleased(СEvent &Event)
+    void СCoreLayer::OnMouseButtonReleased(CEvent &Event)
     {
     }
 
-    void СCoreLayer::OnMouseCursorMove(СEvent &Event)
+    void СCoreLayer::OnMouseCursorMove(CEvent &Event)
     {
     }
 
-    void СCoreLayer::OnMouseScroll(СEvent &Event)
+    void СCoreLayer::OnMouseScroll(CEvent &Event)
     {
     }
 

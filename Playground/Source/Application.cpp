@@ -126,9 +126,9 @@ namespace Corvus
             CRenderer::EndScene();
         }
 
-        virtual void OnEvent(СEvent &Event)
+        virtual void OnEvent(CEvent &Event)
         {
-            if (Event.GetEventType() == СEvent::EEventType::KeyPress)
+            if (Event.GetEventType() == CEvent::EEventType::KeyPress)
             {
                 СKeyPressEvent &KPEvent = CastEvent<СKeyPressEvent>(Event);
                 if (KPEvent.Key == Key::C)
@@ -139,7 +139,7 @@ namespace Corvus
                     Event.SetHandled();
                 }
             }
-            else if (Event.GetEventType() == СEvent::EEventType::WindowResize)
+            else if (Event.GetEventType() == CEvent::EEventType::WindowResize)
             {
                 СWindowResizeEvent &WREvent = CastEvent<СWindowResizeEvent>(Event);
                 CCamera.SetViewportSize(static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight));

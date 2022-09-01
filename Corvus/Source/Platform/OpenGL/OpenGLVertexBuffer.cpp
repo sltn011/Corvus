@@ -17,7 +17,8 @@ namespace Corvus
         glDeleteBuffers(1, &m_VBO);
     }
 
-    POpenGLVertexBuffer::POpenGLVertexBuffer(POpenGLVertexBuffer &&Rhs) noexcept : m_VBO{std::exchange(Rhs.m_VBO, 0)}
+    POpenGLVertexBuffer::POpenGLVertexBuffer(POpenGLVertexBuffer &&Rhs) noexcept
+        : Super{std::move(Rhs)}, m_VBO{std::exchange(Rhs.m_VBO, 0)}
     {
         m_NumVertices = Rhs.m_NumVertices;
         m_Layout      = std::move(Rhs.m_Layout);
@@ -27,6 +28,7 @@ namespace Corvus
     {
         if (this != &Rhs)
         {
+            Super::operator=(std::move(Rhs));
             std::swap(m_VBO, Rhs.m_VBO);
             m_NumVertices = Rhs.m_NumVertices;
             m_Layout      = std::move(Rhs.m_Layout);

@@ -6,7 +6,7 @@
 namespace Corvus
 {
 
-    class СEvent;
+    class CEvent;
     class FTimeDelta;
 
     class СLayer
@@ -34,7 +34,7 @@ namespace Corvus
         virtual void OnPoped();
 
         virtual void OnUpdate(FTimeDelta ElapsedTime);
-        virtual void OnEvent(СEvent &Event);
+        virtual void OnEvent(CEvent &Event);
 
         virtual void Render();
 

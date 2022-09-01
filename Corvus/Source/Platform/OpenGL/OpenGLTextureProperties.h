@@ -8,6 +8,9 @@ namespace Corvus
 
     class COpenGLTextureProperties : public CTexturePropertyToAPIValueConverter<COpenGLTextureProperties>
     {
+    public:
+        using Super = CTexturePropertyToAPIValueConverter<COpenGLTextureProperties>;
+
     private:
         friend class CTexturePropertyToAPIValueConverter<COpenGLTextureProperties>;
 

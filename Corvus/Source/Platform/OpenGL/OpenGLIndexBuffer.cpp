@@ -15,7 +15,8 @@ namespace Corvus
         glDeleteBuffers(1, &m_EBO);
     }
 
-    POpenGLIndexBuffer::POpenGLIndexBuffer(POpenGLIndexBuffer &&Rhs) noexcept : m_EBO{std::exchange(Rhs.m_EBO, 0)}
+    POpenGLIndexBuffer::POpenGLIndexBuffer(POpenGLIndexBuffer &&Rhs) noexcept
+        : Super{std::move(Rhs)}, m_EBO{std::exchange(Rhs.m_EBO, 0)}
     {
         m_NumIndices = Rhs.m_NumIndices;
     }
@@ -24,6 +25,7 @@ namespace Corvus
     {
         if (this != &Rhs)
         {
+            Super::operator=(std::move(Rhs));
             std::swap(m_EBO, Rhs.m_EBO);
             m_NumIndices = Rhs.m_NumIndices;
         }

@@ -9,11 +9,13 @@
 namespace Corvus
 {
 
-    class СCursorMoveEvent : public СEvent
+    class СCursorMoveEvent : public CEvent
     {
     public:
+        using Super = CEvent;
+
         CORVUS_EVENT_GENERATED_BODY(
-            СEvent::EEventCategory::Input | СEvent::EEventCategory::Mouse, СEvent::EEventType::MouseCursorMove
+            CEvent::EEventCategory::Input | CEvent::EEventCategory::Mouse, CEvent::EEventType::MouseCursorMove
         );
 
         СCursorMoveEvent(float NewXValue, float NewYValue) : NewX{NewXValue}, NewY{NewYValue} {}
@@ -29,11 +31,11 @@ namespace Corvus
         float NewY;
     };
 
-    class СMouseScrollEvent : public СEvent
+    class СMouseScrollEvent : public CEvent
     {
     public:
         CORVUS_EVENT_GENERATED_BODY(
-            СEvent::EEventCategory::Input | СEvent::EEventCategory::Mouse, СEvent::EEventType::MouseScroll
+            CEvent::EEventCategory::Input | CEvent::EEventCategory::Mouse, CEvent::EEventType::MouseScroll
         );
 
         СMouseScrollEvent(float OffsetXValue, float OffsetYValue) : OffsetX{OffsetXValue}, OffsetY{OffsetYValue} {}
@@ -49,12 +51,12 @@ namespace Corvus
         float OffsetY;
     };
 
-    class СMouseButtonPressEvent : public СEvent
+    class СMouseButtonPressEvent : public CEvent
     {
     public:
         CORVUS_EVENT_GENERATED_BODY(
-            СEvent::EEventCategory::Input | СEvent::EEventCategory::Mouse | СEvent::EEventCategory::MouseButton,
-            СEvent::EEventType::MouseButtonPress
+            CEvent::EEventCategory::Input | CEvent::EEventCategory::Mouse | CEvent::EEventCategory::MouseButton,
+            CEvent::EEventType::MouseButtonPress
         );
 
         СMouseButtonPressEvent(EMouseCode ButtonValue, EModifierCode ModifierValue)
@@ -73,12 +75,12 @@ namespace Corvus
         EModifierCode Modifier;
     };
 
-    class СMouseButtonReleaseEvent : public СEvent
+    class СMouseButtonReleaseEvent : public CEvent
     {
     public:
         CORVUS_EVENT_GENERATED_BODY(
-            СEvent::EEventCategory::Input | СEvent::EEventCategory::Mouse | СEvent::EEventCategory::MouseButton,
-            СEvent::EEventType::MouseButtonRelease
+            CEvent::EEventCategory::Input | CEvent::EEventCategory::Mouse | CEvent::EEventCategory::MouseButton,
+            CEvent::EEventType::MouseButtonRelease
         );
 
         СMouseButtonReleaseEvent(EMouseCode ButtonValue) : Button{ButtonValue} {}

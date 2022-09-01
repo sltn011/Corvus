@@ -17,26 +17,26 @@ namespace Corvus
         virtual void OnPoped() override;
 
         virtual void OnUpdate(FTimeDelta ElapsedTime) override;
-        virtual void OnEvent(СEvent &Event) override;
+        virtual void OnEvent(CEvent &Event) override;
 
         virtual void Render() override;
 
     private:
-        void OnApplicationEvent(СEvent &Event);
-        void OnKeyboardEvent(СEvent &Event);
-        void OnMouseEvent(СEvent &Event);
+        void OnApplicationEvent(CEvent &Event);
+        void OnKeyboardEvent(CEvent &Event);
+        void OnMouseEvent(CEvent &Event);
 
-        void OnWindowResize(СEvent &Event);
-        void OnWindowClose(СEvent &Event);
-        void OnWindowChangeFocus(СEvent &Event);
+        void OnWindowResize(CEvent &Event);
+        void OnWindowClose(CEvent &Event);
+        void OnWindowChangeFocus(CEvent &Event);
 
-        void OnKeyPressed(СEvent &Event);
-        void OnKeyReleased(СEvent &Event);
+        void OnKeyPressed(CEvent &Event);
+        void OnKeyReleased(CEvent &Event);
 
-        void OnMouseButtonPressed(СEvent &Event);
-        void OnMouseButtonReleased(СEvent &Event);
-        void OnMouseCursorMove(СEvent &Event);
-        void OnMouseScroll(СEvent &Event);
+        void OnMouseButtonPressed(CEvent &Event);
+        void OnMouseButtonReleased(CEvent &Event);
+        void OnMouseCursorMove(CEvent &Event);
+        void OnMouseScroll(CEvent &Event);
     };
 
 } // namespace Corvus

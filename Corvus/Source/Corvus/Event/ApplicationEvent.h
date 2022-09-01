@@ -8,16 +8,20 @@
 namespace Corvus
 {
 
-    class СWindowCloseEvent : public СEvent
+    class СWindowCloseEvent : public CEvent
     {
     public:
-        CORVUS_EVENT_GENERATED_BODY(СEvent::EEventCategory::Application, СEvent::EEventType::WindowClose);
+        using Super = CEvent;
+
+        CORVUS_EVENT_GENERATED_BODY(CEvent::EEventCategory::Application, CEvent::EEventType::WindowClose);
     };
 
-    class СWindowResizeEvent : public СEvent
+    class СWindowResizeEvent : public CEvent
     {
     public:
-        CORVUS_EVENT_GENERATED_BODY(СEvent::EEventCategory::Application, СEvent::EEventType::WindowResize);
+        using Super = CEvent;
+
+        CORVUS_EVENT_GENERATED_BODY(CEvent::EEventCategory::Application, CEvent::EEventType::WindowResize);
 
         СWindowResizeEvent(Int32 NewWidthValue, Int32 NewHeightValue)
             : NewWidth{NewWidthValue}, NewHeight{NewHeightValue}
@@ -35,10 +39,12 @@ namespace Corvus
         Int32 NewHeight = 0;
     };
 
-    class СWindowChangeFocusEvent : public СEvent
+    class СWindowChangeFocusEvent : public CEvent
     {
     public:
-        CORVUS_EVENT_GENERATED_BODY(СEvent::EEventCategory::Application, СEvent::EEventType::WindowChangeFocus);
+        using Super = CEvent;
+
+        CORVUS_EVENT_GENERATED_BODY(CEvent::EEventCategory::Application, CEvent::EEventType::WindowChangeFocus);
 
         СWindowChangeFocusEvent(bool bSetFocusValue) : bSetFocus{bSetFocusValue} {}
 

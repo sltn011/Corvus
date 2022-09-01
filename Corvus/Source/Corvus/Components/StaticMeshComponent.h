@@ -12,6 +12,8 @@ namespace Corvus
     class CStaticMeshComponent : public CBaseSceneComponent
     {
     public:
+        using Super = CBaseSceneComponent;
+
         CStaticMeshComponent(CEntity *Owner, TOwn<CShader> const &CShader, TOwn<CVertexArray> const &VAO);
 
         TOwn<CShader> const      &GetShader() const;

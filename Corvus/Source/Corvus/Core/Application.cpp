@@ -97,7 +97,7 @@ namespace Corvus
         m_Window->GetGUIController().EndFrame();
     }
 
-    void СApplication::OnEventReceived(СEvent &Event)
+    void СApplication::OnEventReceived(CEvent &Event)
     {
         for (auto It = m_LayersStack.RBegin(); It != m_LayersStack.REnd(); ++It)
         {

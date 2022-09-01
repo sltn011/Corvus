@@ -8,6 +8,8 @@ namespace Corvus
     class PWindowsWindow : public CWindow
     {
     public:
+        using Super = CWindow;
+
         PWindowsWindow();
         ~PWindowsWindow();
         PWindowsWindow(PWindowsWindow const &)            = delete;

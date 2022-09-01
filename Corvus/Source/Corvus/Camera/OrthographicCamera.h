@@ -9,6 +9,8 @@ namespace Corvus
     class COrthographicCamera : public CCamera
     {
     public:
+        using Super = CCamera;
+
         COrthographicCamera();
         COrthographicCamera(FTransform const &Transform);
         virtual ~COrthographicCamera();

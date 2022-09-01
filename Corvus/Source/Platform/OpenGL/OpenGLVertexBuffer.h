@@ -11,6 +11,8 @@ namespace Corvus
     class POpenGLVertexBuffer : public CVertexBuffer
     {
     public:
+        using Super = CVertexBuffer;
+
         POpenGLVertexBuffer(void const *Data, UInt32 NumVertices, CVertexBufferLayout const &Layout);
         ~POpenGLVertexBuffer();
 

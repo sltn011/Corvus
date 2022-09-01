@@ -16,7 +16,7 @@ namespace Corvus
         СLayerDebug(CString LayerName, bool bEnabled);
 
         virtual void OnUpdate(FTimeDelta ElapsedTime) override;
-        virtual void OnEvent(СEvent &Event) override;
+        virtual void OnEvent(CEvent &Event) override;
     };
 
 } // namespace Corvus

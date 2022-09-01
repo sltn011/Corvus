@@ -38,7 +38,7 @@ namespace Corvus
     {
     }
 
-    void СLayer::OnEvent(СEvent &Event)
+    void СLayer::OnEvent(CEvent &Event)
     {
     }
 

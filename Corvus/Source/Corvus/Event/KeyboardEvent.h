@@ -7,11 +7,13 @@
 namespace Corvus
 {
 
-    class СKeyPressEvent : public СEvent
+    class СKeyPressEvent : public CEvent
     {
     public:
+        using Super = CEvent;
+
         CORVUS_EVENT_GENERATED_BODY(
-            СEvent::EEventCategory::Input | СEvent::EEventCategory::Keyboard, СEvent::EEventType::KeyPress
+            CEvent::EEventCategory::Input | CEvent::EEventCategory::Keyboard, CEvent::EEventType::KeyPress
         );
 
         СKeyPressEvent(EKeyCode KeyValue, bool bRepeatedValue, EModifierCode ModifierValue)
@@ -31,11 +33,13 @@ namespace Corvus
         EModifierCode Modifier;
     };
 
-    class СKeyReleaseEvent : public СEvent
+    class СKeyReleaseEvent : public CEvent
     {
     public:
+        using Super = CEvent;
+
         CORVUS_EVENT_GENERATED_BODY(
-            СEvent::EEventCategory::Input | СEvent::EEventCategory::Keyboard, СEvent::EEventType::KeyRelease
+            CEvent::EEventCategory::Input | CEvent::EEventCategory::Keyboard, CEvent::EEventType::KeyRelease
         );
 
         СKeyReleaseEvent(EKeyCode KeyValue) : Key{KeyValue} {}

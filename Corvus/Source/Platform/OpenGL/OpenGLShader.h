@@ -11,6 +11,8 @@ namespace Corvus
     class POpenGLShader : public CShader
     {
     public:
+        using Super = CShader;
+
         POpenGLShader(CString const &FilePath);
         ~POpenGLShader();
 

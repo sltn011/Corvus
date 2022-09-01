@@ -14,6 +14,8 @@ namespace Corvus
     class CBaseSceneComponent : public CBaseDataComponent
     {
     public:
+        using Super = CBaseDataComponent;
+
         CBaseSceneComponent(CEntity *Owner, FTransform const &ComponentTransform);
 
         FMatrix4 GetTransformMatrix() const;

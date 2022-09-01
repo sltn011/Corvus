@@ -12,7 +12,7 @@ struct GLFWwindow;
 namespace Corvus
 {
 
-    CORVUS_DECLARE_MULTICAST_DELEGATE(COnEventDelegate, СEvent &);
+    CORVUS_DECLARE_MULTICAST_DELEGATE(COnEventDelegate, CEvent &);
 
     struct SWindowData
     {

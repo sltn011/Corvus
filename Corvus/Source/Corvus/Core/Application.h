@@ -30,7 +30,7 @@ namespace Corvus
 
         void UpdateLayers(FTimeDelta ElapsedTime);
         void RenderLayers();
-        void OnEventReceived(СEvent &Event);
+        void OnEventReceived(CEvent &Event);
 
         CWindow &GetWindow();
 
