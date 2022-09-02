@@ -1,7 +1,9 @@
 #include <Corvus.h>
 
+#include "Corvus/AssetLoader/TextureLoader.h"
 #include "Corvus/Components/StaticMeshComponent.h"
 #include "Corvus/Components/TransformComponent.h"
+#include "Corvus/Renderer/Texture2D.h"
 
 namespace Corvus
 {
@@ -23,17 +25,17 @@ namespace Corvus
 
             // clang-format off
             float const Vertices[] = {
-                // Position             // Color
-                +0.0f, -0.2f, -0.2f,    1.0f, 0.0f, 0.0f,
-                +0.0f, -0.2f, +0.2f,    0.0f, 1.0f, 0.0f,
-                +0.0f, +0.2f, +0.2f,    0.0f, 0.0f, 1.0f,
-                +0.0f, +0.2f, -0.2f,    1.0f, 1.0f, 0.0f
+                // Position             // UV
+                +0.0f, -0.2f, -0.2f,    0.0f, 0.0f,
+                +0.0f, -0.2f, +0.2f,    1.0f, 0.0f,
+                +0.0f, +0.2f, +0.2f,    1.0f, 1.0f,
+                +0.0f, +0.2f, -0.2f,    0.0f, 1.0f
             };
             // clang-format on
 
             UInt32 const Indices[] = {0, 1, 2, 0, 2, 3};
 
-            CVertexBufferLayout const Layout = {{EBufferDataType::Vec3}, {EBufferDataType::Vec3}};
+            CVertexBufferLayout const Layout = {{EBufferDataType::Vec3}, {EBufferDataType::Vec2}};
 
             TOwn<CVertexBuffer> VBO = CVertexBuffer::Create(Vertices, 4, Layout);
             TOwn<CIndexBuffer>  EBO = CIndexBuffer::Create(Indices, 6);
@@ -43,6 +45,15 @@ namespace Corvus
             VAO->AddIndexBuffer(std::move(EBO));
 
             TestShader = CShader::CreateFromFile("./Assets/Shaders/TestShader.glsl");
+
+            STextureParameters TextureParameters;
+            TextureParameters.bHasMipmaps              = true;
+            TextureParameters.bHasAnisotropicFiltering = true;
+            TextureParameters.MinFiltering             = ETextureFiltering::LinearMipMap_Linear;
+            TextureParameters.MagFiltering             = ETextureFiltering::Linear;
+            CTextureDataWrapper TextureData =
+                CTextureLoader::LoadFromImageFile("./Assets/Textures/OldRabbit.jpg", ELoadTextureChannels::RGB);
+            TestTexture = CTexture2D::Create(std::move(TextureData), TextureParameters);
 
             UInt32 const WindowWidth  = СApplication::GetInstance().GetWindow().GetWindowWidth();
             UInt32 const WindowHeight = СApplication::GetInstance().GetWindow().GetWindowHeight();
@@ -117,9 +128,12 @@ namespace Corvus
                 EntityTransform.SetRotation(Rotator);
                 SceneEntity.TransformComponent.Get()->SetTransform(EntityTransform);
 
+                TestTexture->BindUnit(0);
+
                 TestShader->Bind();
                 TestShader->SetMat4("u_Transform", SceneEntity.TransformComponent->GetTransformMatrix());
                 TestShader->SetMat4("u_ProjView", CCamera.GetProjectionViewMatrix());
+                TestShader->SetInt32("u_Texture", 0);
                 CRenderer::Submit(VAO, TestShader);
             }
 
@@ -152,6 +166,8 @@ namespace Corvus
 
         TOwn<CShader>      TestShader;
         TOwn<CVertexArray> VAO;
+
+        TOwn<CTexture2D> TestTexture;
 
         bool     bCameraMode = false;
         FVector2 CursorPos;

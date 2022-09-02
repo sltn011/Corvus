@@ -12,9 +12,7 @@ namespace Corvus
         R,
         RG,
         RGB,
-        RGBA,
-        Grayscale,
-        GrayscaleAlpha
+        RGBA
     };
 
     class CTextureLoader;
@@ -34,20 +32,18 @@ namespace Corvus
         CTextureDataWrapper &operator=(CTextureDataWrapper const &) = delete;
         CTextureDataWrapper &operator=(CTextureDataWrapper &&) noexcept;
 
-        SizeT                GetTextureWidth() const { return m_TextureWidth; }
-        SizeT                GetTextureHeight() const { return m_TextureHeight; }
-        void                *GetTextureData() const { return m_TextureData; }
-        ELoadTextureChannels GetTextureChannels() const { return m_Channels; }
-        EPixelDataType       GetPixelDataType() const { return m_PixelDataType; }
-        bool                 IsSRGB() const { return m_bIsSRGB; }
+        SizeT        GetTextureWidth() const { return m_TextureWidth; }
+        SizeT        GetTextureHeight() const { return m_TextureHeight; }
+        void        *GetTextureData() const { return m_TextureData; }
+        EPixelFormat GetPixelFormat() const { return m_PixelFormat; }
+        bool         IsSRGB() const { return m_bIsSRGB; }
 
     private:
-        SizeT                m_TextureWidth  = 0;
-        SizeT                m_TextureHeight = 0;
-        void                *m_TextureData   = nullptr;
-        ELoadTextureChannels m_Channels      = ELoadTextureChannels::DontCare;
-        EPixelDataType       m_PixelDataType = EPixelDataType::UByte;
-        bool                 m_bIsSRGB       = false;
+        SizeT        m_TextureWidth  = 0;
+        SizeT        m_TextureHeight = 0;
+        void        *m_TextureData   = nullptr;
+        EPixelFormat m_PixelFormat   = EPixelFormat::RGBA8;
+        bool         m_bIsSRGB       = false;
     };
 
     class CTextureLoader
@@ -59,7 +55,7 @@ namespace Corvus
         static CTextureDataWrapper LoadHDRImage(CString const &FilePath, ELoadTextureChannels ChannelsToLoad);
         static CTextureDataWrapper LoadLDRImage(CString const &FilePath, ELoadTextureChannels ChannelsToLoad);
         static CTextureDataWrapper LoadImageImpl(
-            CString const &FilePath, ELoadTextureChannels ChannelsToLoad, EPixelDataType PixelDataType
+            CString const &FilePath, ELoadTextureChannels ChannelsToLoad, EPixelFormat PixelFormat
         );
 
         static int CalculateRequiredNumChannels(ELoadTextureChannels ChannelsToLoad);
@@ -69,10 +65,10 @@ namespace Corvus
             SizeT                ImageWidth,
             SizeT                ImageHeight,
             ELoadTextureChannels ChannelsToLoad,
-            EPixelDataType       PixelDataType
+            EPixelFormat         PixelFormat
         );
 
-        static ELoadTextureChannels LoadedDataChannels(ELoadTextureChannels ChannelsToLoad);
+        static ELoadTextureChannels CalculateChannelsToLoad(ELoadTextureChannels ChannelsToLoad);
     };
 
 } // namespace Corvus

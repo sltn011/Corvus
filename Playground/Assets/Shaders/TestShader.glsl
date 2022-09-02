@@ -4,16 +4,16 @@
 #version 460 core
 
 layout (location = 0) in vec3 inPos;
-layout (location = 1) in vec3 inColor;
+layout (location = 1) in vec2 inTex;
 
 uniform mat4 u_Transform;
 uniform mat4 u_ProjView;
 
-out vec4 VertexColor;
+out vec2 TextureCoord;
 
 void main()
 {
-	VertexColor = vec4(inColor, 1.0f);
+	TextureCoord = inTex;
 	gl_Position = u_ProjView * u_Transform * vec4(inPos, 1.0f);
 }
 
@@ -21,10 +21,12 @@ void main()
 #type fragment
 #version 460 core
 
-in vec4 VertexColor;
+uniform sampler2D u_Texture;
+
+in vec2 TextureCoord;
 out vec4 FragColor;
 
 void main()
 {
-	FragColor = VertexColor;
+	FragColor = texture(u_Texture, TextureCoord);
 }

@@ -13,7 +13,6 @@ namespace Corvus
         if (m_TextureData)
         {
             stbi_image_free(m_TextureData);
-            CORVUS_CORE_ERROR("Clear!");
         }
     }
 
@@ -21,8 +20,7 @@ namespace Corvus
         : m_TextureWidth{Rhs.m_TextureWidth},
           m_TextureHeight{Rhs.m_TextureHeight},
           m_TextureData{std::exchange(Rhs.m_TextureData, nullptr)},
-          m_Channels{Rhs.m_Channels},
-          m_PixelDataType{Rhs.m_PixelDataType},
+          m_PixelFormat{Rhs.m_PixelFormat},
           m_bIsSRGB{Rhs.m_bIsSRGB}
     {
     }
@@ -34,9 +32,8 @@ namespace Corvus
             m_TextureWidth  = Rhs.m_TextureWidth;
             m_TextureHeight = Rhs.m_TextureHeight;
             std::swap(m_TextureData, Rhs.m_TextureData);
-            m_Channels      = Rhs.m_Channels;
-            m_PixelDataType = Rhs.m_PixelDataType;
-            m_bIsSRGB       = Rhs.m_bIsSRGB;
+            m_PixelFormat = Rhs.m_PixelFormat;
+            m_bIsSRGB     = Rhs.m_bIsSRGB;
         }
         return *this;
     }
@@ -45,28 +42,69 @@ namespace Corvus
         CString const &FilePath, ELoadTextureChannels const ChannelsToLoad
     )
     {
+        // Handle Don'tCare value of loaded channels
+        ELoadTextureChannels RealChannelsToLoad = CalculateChannelsToLoad(ChannelsToLoad);
         if (stbi_is_hdr(FilePath.c_str()))
         {
-            return LoadHDRImage(FilePath, ChannelsToLoad);
+            return LoadHDRImage(FilePath, RealChannelsToLoad);
         }
         else
         {
-            return LoadLDRImage(FilePath, ChannelsToLoad);
+            return LoadLDRImage(FilePath, RealChannelsToLoad);
         }
     }
 
     CTextureDataWrapper CTextureLoader::LoadHDRImage(CString const &FilePath, ELoadTextureChannels ChannelsToLoad)
     {
-        return LoadImageImpl(FilePath, ChannelsToLoad, EPixelDataType::Float);
+        EPixelFormat PixelFormat = EPixelFormat::R8; // HDR should have float value - use R8 as a check
+        switch (ChannelsToLoad)
+        {
+        case ELoadTextureChannels::R:
+            PixelFormat = EPixelFormat::R32F;
+            break;
+        case ELoadTextureChannels::RG:
+            PixelFormat = EPixelFormat::RG32F;
+            break;
+        case ELoadTextureChannels::RGB:
+            PixelFormat = EPixelFormat::RGB32F;
+            break;
+        case ELoadTextureChannels::RGBA:
+            PixelFormat = EPixelFormat::RGBA32F;
+            break;
+        default:
+            break;
+        }
+        CORVUS_CORE_ASSERT(IsPixelFormatFloat(PixelFormat));
+
+        return LoadImageImpl(FilePath, ChannelsToLoad, PixelFormat);
     }
 
     CTextureDataWrapper CTextureLoader::LoadLDRImage(CString const &FilePath, ELoadTextureChannels ChannelsToLoad)
     {
-        return LoadImageImpl(FilePath, ChannelsToLoad, EPixelDataType::UByte);
+        EPixelFormat PixelFormat = EPixelFormat::R32F; // LDR should have UByte values - use float as a check
+        switch (ChannelsToLoad)
+        {
+        case ELoadTextureChannels::R:
+            PixelFormat = EPixelFormat::R8;
+            break;
+        case ELoadTextureChannels::RG:
+            PixelFormat = EPixelFormat::RG8;
+            break;
+        case ELoadTextureChannels::RGB:
+            PixelFormat = EPixelFormat::RGB8;
+            break;
+        case ELoadTextureChannels::RGBA:
+            PixelFormat = EPixelFormat::RGBA8;
+            break;
+        default:
+            break;
+        }
+        CORVUS_CORE_ASSERT(!IsPixelFormatFloat(PixelFormat));
+        return LoadImageImpl(FilePath, ChannelsToLoad, PixelFormat);
     }
 
     CTextureDataWrapper CTextureLoader::LoadImageImpl(
-        CString const &FilePath, ELoadTextureChannels ChannelsToLoad, EPixelDataType PixelDataType
+        CString const &FilePath, ELoadTextureChannels const ChannelsToLoad, EPixelFormat const PixelFormat
     )
     {
         int ImageWidth          = 0;
@@ -75,7 +113,8 @@ namespace Corvus
         int RequiredNumChannels = CalculateRequiredNumChannels(ChannelsToLoad);
 
         void *ImageData = nullptr;
-        if (PixelDataType == EPixelDataType::Float)
+        stbi_set_flip_vertically_on_load(true);
+        if (IsPixelFormatFloat(PixelFormat))
         {
             // Load from .HDR file
             ImageData = stbi_loadf(FilePath.c_str(), &ImageWidth, &ImageHeight, &NumChannels, RequiredNumChannels);
@@ -84,6 +123,7 @@ namespace Corvus
         {
             ImageData = stbi_load(FilePath.c_str(), &ImageWidth, &ImageHeight, &NumChannels, RequiredNumChannels);
         }
+        stbi_set_flip_vertically_on_load(false);
 
         if (!ImageData)
         {
@@ -93,15 +133,14 @@ namespace Corvus
 
         SizeT TextureWidth  = static_cast<SizeT>(ImageWidth);
         SizeT TextureHeight = static_cast<SizeT>(ImageHeight);
-        void *FormattedData = FormatImageData(ImageData, TextureWidth, TextureHeight, ChannelsToLoad, PixelDataType);
+        void *FormattedData = FormatImageData(ImageData, TextureWidth, TextureHeight, ChannelsToLoad, PixelFormat);
 
         CTextureDataWrapper TextureData;
         TextureData.m_TextureWidth  = TextureWidth;
         TextureData.m_TextureHeight = TextureHeight;
         TextureData.m_TextureData   = FormattedData;
-        TextureData.m_Channels      = LoadedDataChannels(ChannelsToLoad);
-        TextureData.m_PixelDataType = PixelDataType;
-        TextureData.m_bIsSRGB       = bool{PixelDataType != EPixelDataType::Float};
+        TextureData.m_PixelFormat   = PixelFormat;
+        TextureData.m_bIsSRGB       = !IsPixelFormatFloat(PixelFormat);
 
         return TextureData;
     }
@@ -123,12 +162,6 @@ namespace Corvus
         case ELoadTextureChannels::RGBA:
             return 4;
 
-        case ELoadTextureChannels::Grayscale:
-            return 1;
-
-        case ELoadTextureChannels::GrayscaleAlpha:
-            return 2;
-
         default:
             return 0;
         }
@@ -139,9 +172,11 @@ namespace Corvus
         SizeT const                ImageWidth,
         SizeT const                ImageHeight,
         ELoadTextureChannels const ChannelsToLoad,
-        EPixelDataType const       PixelDataType
+        EPixelFormat const         PixelFormat
     )
     {
+        // Only needs formatting when loading R or RG channels - stb image loads
+        // grayscale or grayscale+alpha when asked for 1 or 2 channels
         if (!(ChannelsToLoad == ELoadTextureChannels::R || ChannelsToLoad == ELoadTextureChannels::RG))
         {
             return ImageData;
@@ -152,7 +187,7 @@ namespace Corvus
         SizeT const  Size            = ImageWidth * ImageHeight;
         SizeT const  ComponentsInSrc = 3;
         SizeT const  ComponentsInDst = ChannelsToLoad == ELoadTextureChannels::R ? 1 : 2; // 1 for R, 2 for RG
-        SizeT const  SizeOfComponent = PixelTypeSize(PixelDataType);
+        SizeT const  SizeOfComponent = PixelFormatSizeBytes(PixelFormat);
 
         SizeT const SrcStep = ComponentsInSrc * SizeOfComponent;
         SizeT const DstStep = ComponentsInDst * SizeOfComponent;
@@ -174,7 +209,7 @@ namespace Corvus
         return ImageData;
     }
 
-    ELoadTextureChannels CTextureLoader::LoadedDataChannels(ELoadTextureChannels ChannelsToLoad)
+    ELoadTextureChannels CTextureLoader::CalculateChannelsToLoad(ELoadTextureChannels const ChannelsToLoad)
     {
         if (ChannelsToLoad == ELoadTextureChannels::DontCare)
         {

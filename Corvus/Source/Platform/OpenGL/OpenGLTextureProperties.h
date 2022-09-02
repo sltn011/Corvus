@@ -6,19 +6,21 @@
 namespace Corvus
 {
 
-    class COpenGLTextureProperties : public CTexturePropertyToAPIValueConverter<COpenGLTextureProperties>
+    class POpenGLTextureProperties : public CTexturePropertyToAPIValueConverter<POpenGLTextureProperties>
     {
     public:
-        using Super = CTexturePropertyToAPIValueConverter<COpenGLTextureProperties>;
+        using Super = CTexturePropertyToAPIValueConverter<POpenGLTextureProperties>;
 
     private:
-        friend class CTexturePropertyToAPIValueConverter<COpenGLTextureProperties>;
+        friend class CTexturePropertyToAPIValueConverter<POpenGLTextureProperties>;
 
         UInt32 GetTextureTypeImpl(ETextureType TextureType) const;
 
-        UInt32 GetPixelFormatImpl(EPixelFormat PixelFormat) const;
+        UInt32 GetPixelBaseFormatImpl(EPixelFormat PixelFormat) const;
 
-        UInt32 GetPixelDataTypeImpl(EPixelDataType PixelDataType) const;
+        UInt32 GetPixelSizedFormatImpl(EPixelFormat PixelFormat) const;
+
+        UInt32 GetPixelTypeImpl(EPixelFormat PixelFormat) const;
 
         UInt32 GetTextureWrappingImpl(ETextureWrapping TextureWrapping) const;
 

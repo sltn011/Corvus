@@ -6,7 +6,7 @@
 
 namespace Corvus
 {
-    UInt32 COpenGLTextureProperties::GetTextureTypeImpl(ETextureType const TextureType) const
+    UInt32 POpenGLTextureProperties::GetTextureTypeImpl(ETextureType const TextureType) const
     {
         switch (TextureType)
         {
@@ -19,26 +19,107 @@ namespace Corvus
         }
     }
 
-    UInt32 COpenGLTextureProperties::GetPixelFormatImpl(EPixelFormat const PixelFormat) const
+    UInt32 POpenGLTextureProperties::GetPixelBaseFormatImpl(EPixelFormat const PixelFormat) const
     {
         switch (PixelFormat)
         {
-        case EPixelFormat::R:
+        case EPixelFormat::R8:
+            return GL_RED;
+        case EPixelFormat::R8I:
+            return GL_RED;
+        case EPixelFormat::R8UI:
+            return GL_RED;
+        case EPixelFormat::R16:
+            return GL_RED;
+        case EPixelFormat::R16I:
+            return GL_RED;
+        case EPixelFormat::R16UI:
+            return GL_RED;
+        case EPixelFormat::R32I:
+            return GL_RED;
+        case EPixelFormat::R32UI:
+            return GL_RED;
+        case EPixelFormat::R16F:
+            return GL_RED;
+        case EPixelFormat::R32F:
             return GL_RED;
 
-        case EPixelFormat::RG:
+        case EPixelFormat::RG8:
+            return GL_RG;
+        case EPixelFormat::RG8I:
+            return GL_RG;
+        case EPixelFormat::RG8UI:
+            return GL_RG;
+        case EPixelFormat::RG16:
+            return GL_RG;
+        case EPixelFormat::RG16I:
+            return GL_RG;
+        case EPixelFormat::RG16UI:
+            return GL_RG;
+        case EPixelFormat::RG32I:
+            return GL_RG;
+        case EPixelFormat::RG32UI:
+            return GL_RG;
+        case EPixelFormat::RG16F:
+            return GL_RG;
+        case EPixelFormat::RG32F:
             return GL_RG;
 
-        case EPixelFormat::RGB:
+        case EPixelFormat::RGB8:
+            return GL_RGB;
+        case EPixelFormat::RGB8I:
+            return GL_RGB;
+        case EPixelFormat::RGB8UI:
+            return GL_RGB;
+        case EPixelFormat::RGB16:
+            return GL_RGB;
+        case EPixelFormat::RGB16I:
+            return GL_RGB;
+        case EPixelFormat::RGB16UI:
+            return GL_RGB;
+        case EPixelFormat::RGB32I:
+            return GL_RGB;
+        case EPixelFormat::RGB32UI:
+            return GL_RGB;
+        case EPixelFormat::RGB16F:
+            return GL_RGB;
+        case EPixelFormat::RGB32F:
             return GL_RGB;
 
-        case EPixelFormat::RGBA:
+        case EPixelFormat::RGBA8:
+            return GL_RGBA;
+        case EPixelFormat::RGBA8I:
+            return GL_RGBA;
+        case EPixelFormat::RGBA8UI:
+            return GL_RGBA;
+        case EPixelFormat::RGBA16:
+            return GL_RGBA;
+        case EPixelFormat::RGBA16I:
+            return GL_RGBA;
+        case EPixelFormat::RGBA16UI:
+            return GL_RGBA;
+        case EPixelFormat::RGBA32I:
+            return GL_RGBA;
+        case EPixelFormat::RGBA32UI:
+            return GL_RGBA;
+        case EPixelFormat::RGBA16F:
+            return GL_RGBA;
+        case EPixelFormat::RGBA32F:
             return GL_RGBA;
 
-        case EPixelFormat::Depth:
+        case EPixelFormat::Depth16:
+            return GL_DEPTH_COMPONENT;
+        case EPixelFormat::Depth24:
+            return GL_DEPTH_COMPONENT;
+        case EPixelFormat::Depth32F:
             return GL_DEPTH_COMPONENT;
 
-        case EPixelFormat::DepthStencil:
+        case EPixelFormat::Stencil8:
+            return GL_STENCIL_INDEX;
+
+        case EPixelFormat::Depth24_Stencil8:
+            return GL_DEPTH_STENCIL;
+        case EPixelFormat::Depth32F_Stencil8:
             return GL_DEPTH_STENCIL;
 
         default:
@@ -47,38 +128,225 @@ namespace Corvus
         }
     }
 
-    UInt32 COpenGLTextureProperties::GetPixelDataTypeImpl(EPixelDataType const PixelDataType) const
+    UInt32 POpenGLTextureProperties::GetPixelSizedFormatImpl(EPixelFormat const PixelFormat) const
     {
-        switch (PixelDataType)
+        switch (PixelFormat)
         {
-        case EPixelDataType::Byte:
-            return GL_BYTE;
+        case EPixelFormat::R8:
+            return GL_R8;
+        case EPixelFormat::R8I:
+            return GL_R8I;
+        case EPixelFormat::R8UI:
+            return GL_R8UI;
+        case EPixelFormat::R16:
+            return GL_R16;
+        case EPixelFormat::R16I:
+            return GL_R16I;
+        case EPixelFormat::R16UI:
+            return GL_R16UI;
+        case EPixelFormat::R32I:
+            return GL_R32I;
+        case EPixelFormat::R32UI:
+            return GL_R32UI;
+        case EPixelFormat::R16F:
+            return GL_R16F;
+        case EPixelFormat::R32F:
+            return GL_R32F;
 
-        case EPixelDataType::UByte:
-            return GL_UNSIGNED_BYTE;
+        case EPixelFormat::RG8:
+            return GL_RG8;
+        case EPixelFormat::RG8I:
+            return GL_RG8I;
+        case EPixelFormat::RG8UI:
+            return GL_RG8UI;
+        case EPixelFormat::RG16:
+            return GL_RG16;
+        case EPixelFormat::RG16I:
+            return GL_RG16I;
+        case EPixelFormat::RG16UI:
+            return GL_RG16UI;
+        case EPixelFormat::RG32I:
+            return GL_RG32I;
+        case EPixelFormat::RG32UI:
+            return GL_RG32UI;
+        case EPixelFormat::RG16F:
+            return GL_RG16F;
+        case EPixelFormat::RG32F:
+            return GL_RG32F;
 
-        case EPixelDataType::Word:
-            return GL_SHORT;
+        case EPixelFormat::RGB8:
+            return GL_RGB8;
+        case EPixelFormat::RGB8I:
+            return GL_RGB8I;
+        case EPixelFormat::RGB8UI:
+            return GL_RGB8UI;
+        case EPixelFormat::RGB16:
+            return GL_RGB16;
+        case EPixelFormat::RGB16I:
+            return GL_RGB16I;
+        case EPixelFormat::RGB16UI:
+            return GL_RGB16UI;
+        case EPixelFormat::RGB32I:
+            return GL_RGB32I;
+        case EPixelFormat::RGB32UI:
+            return GL_RGB32UI;
+        case EPixelFormat::RGB16F:
+            return GL_RGB16F;
+        case EPixelFormat::RGB32F:
+            return GL_RGB32F;
 
-        case EPixelDataType::UWord:
-            return GL_UNSIGNED_SHORT;
+        case EPixelFormat::RGBA8:
+            return GL_RGBA8;
+        case EPixelFormat::RGBA8I:
+            return GL_RGBA8I;
+        case EPixelFormat::RGBA8UI:
+            return GL_RGBA8UI;
+        case EPixelFormat::RGBA16:
+            return GL_RGBA16;
+        case EPixelFormat::RGBA16I:
+            return GL_RGBA16I;
+        case EPixelFormat::RGBA16UI:
+            return GL_RGBA16UI;
+        case EPixelFormat::RGBA32I:
+            return GL_RGBA32I;
+        case EPixelFormat::RGBA32UI:
+            return GL_RGBA32UI;
+        case EPixelFormat::RGBA16F:
+            return GL_RGBA16F;
+        case EPixelFormat::RGBA32F:
+            return GL_RGBA32F;
 
-        case EPixelDataType::Int:
-            return GL_INT;
+        case EPixelFormat::Depth16:
+            return GL_DEPTH_COMPONENT16;
+        case EPixelFormat::Depth24:
+            return GL_DEPTH_COMPONENT24;
+        case EPixelFormat::Depth32F:
+            return GL_DEPTH_COMPONENT32F;
 
-        case EPixelDataType::UInt:
-            return GL_UNSIGNED_INT;
+        case EPixelFormat::Stencil8:
+            return GL_STENCIL_INDEX8;
 
-        case EPixelDataType::Float:
-            return GL_FLOAT;
+        case EPixelFormat::Depth24_Stencil8:
+            return GL_DEPTH24_STENCIL8;
+        case EPixelFormat::Depth32F_Stencil8:
+            return GL_DEPTH32F_STENCIL8;
 
         default:
-            CORVUS_CORE_NO_ENTRY_FMT("Invalid PixelDataType passed to OpenGLTextureProperty!");
+            CORVUS_CORE_NO_ENTRY_FMT("Invalid PixelFormat passed to OpenGLTextureProperty!");
             return 0;
         }
     }
 
-    UInt32 COpenGLTextureProperties::GetTextureWrappingImpl(ETextureWrapping const TextureWrapping) const
+    UInt32 POpenGLTextureProperties::GetPixelTypeImpl(EPixelFormat const PixelFormat) const
+    {
+        switch (PixelFormat)
+        {
+        case EPixelFormat::R8:
+            return GL_UNSIGNED_BYTE;
+        case EPixelFormat::R8I:
+            return GL_UNSIGNED_BYTE;
+        case EPixelFormat::R8UI:
+            return GL_UNSIGNED_BYTE;
+        case EPixelFormat::R16:
+            return GL_UNSIGNED_SHORT;
+        case EPixelFormat::R16I:
+            return GL_UNSIGNED_SHORT;
+        case EPixelFormat::R16UI:
+            return GL_UNSIGNED_SHORT;
+        case EPixelFormat::R32I:
+            return GL_UNSIGNED_INT;
+        case EPixelFormat::R32UI:
+            return GL_UNSIGNED_INT;
+        case EPixelFormat::R16F:
+            return GL_HALF_FLOAT;
+        case EPixelFormat::R32F:
+            return GL_FLOAT;
+
+        case EPixelFormat::RG8:
+            return GL_UNSIGNED_BYTE;
+        case EPixelFormat::RG8I:
+            return GL_UNSIGNED_BYTE;
+        case EPixelFormat::RG8UI:
+            return GL_UNSIGNED_BYTE;
+        case EPixelFormat::RG16:
+            return GL_UNSIGNED_SHORT;
+        case EPixelFormat::RG16I:
+            return GL_UNSIGNED_SHORT;
+        case EPixelFormat::RG16UI:
+            return GL_UNSIGNED_SHORT;
+        case EPixelFormat::RG32I:
+            return GL_UNSIGNED_INT;
+        case EPixelFormat::RG32UI:
+            return GL_UNSIGNED_INT;
+        case EPixelFormat::RG16F:
+            return GL_HALF_FLOAT;
+        case EPixelFormat::RG32F:
+            return GL_FLOAT;
+
+        case EPixelFormat::RGB8:
+            return GL_UNSIGNED_BYTE;
+        case EPixelFormat::RGB8I:
+            return GL_UNSIGNED_BYTE;
+        case EPixelFormat::RGB8UI:
+            return GL_UNSIGNED_BYTE;
+        case EPixelFormat::RGB16:
+            return GL_UNSIGNED_SHORT;
+        case EPixelFormat::RGB16I:
+            return GL_UNSIGNED_SHORT;
+        case EPixelFormat::RGB16UI:
+            return GL_UNSIGNED_SHORT;
+        case EPixelFormat::RGB32I:
+            return GL_UNSIGNED_INT;
+        case EPixelFormat::RGB32UI:
+            return GL_UNSIGNED_INT;
+        case EPixelFormat::RGB16F:
+            return GL_HALF_FLOAT;
+        case EPixelFormat::RGB32F:
+            return GL_FLOAT;
+
+        case EPixelFormat::RGBA8:
+            return GL_UNSIGNED_BYTE;
+        case EPixelFormat::RGBA8I:
+            return GL_UNSIGNED_BYTE;
+        case EPixelFormat::RGBA8UI:
+            return GL_UNSIGNED_BYTE;
+        case EPixelFormat::RGBA16:
+            return GL_UNSIGNED_SHORT;
+        case EPixelFormat::RGBA16I:
+            return GL_UNSIGNED_SHORT;
+        case EPixelFormat::RGBA16UI:
+            return GL_UNSIGNED_SHORT;
+        case EPixelFormat::RGBA32I:
+            return GL_UNSIGNED_INT;
+        case EPixelFormat::RGBA32UI:
+            return GL_UNSIGNED_INT;
+        case EPixelFormat::RGBA16F:
+            return GL_HALF_FLOAT;
+        case EPixelFormat::RGBA32F:
+            return GL_FLOAT;
+
+        case EPixelFormat::Depth16:
+            return GL_UNSIGNED_SHORT;
+        case EPixelFormat::Depth24:
+            return GL_UNSIGNED_INT;
+        case EPixelFormat::Depth32F:
+            return GL_FLOAT;
+
+        case EPixelFormat::Stencil8:
+            return GL_UNSIGNED_BYTE;
+
+        case EPixelFormat::Depth24_Stencil8:
+            return GL_UNSIGNED_INT_24_8;
+        case EPixelFormat::Depth32F_Stencil8:
+            return GL_FLOAT_32_UNSIGNED_INT_24_8_REV;
+
+        default:
+            CORVUS_CORE_NO_ENTRY_FMT("Invalid PixelFormat passed to OpenGLTextureProperty!");
+            return 0;
+        }
+    }
+
+    UInt32 POpenGLTextureProperties::GetTextureWrappingImpl(ETextureWrapping const TextureWrapping) const
     {
         switch (TextureWrapping)
         {
@@ -100,7 +368,7 @@ namespace Corvus
         }
     }
 
-    UInt32 COpenGLTextureProperties::GetTextureFilteringImpl(ETextureFiltering const TextureFiltering) const
+    UInt32 POpenGLTextureProperties::GetTextureFilteringImpl(ETextureFiltering const TextureFiltering) const
     {
         switch (TextureFiltering)
         {

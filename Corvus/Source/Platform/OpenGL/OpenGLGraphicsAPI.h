@@ -20,8 +20,8 @@ namespace Corvus
         virtual void SetClearColor(FVector4 const &ClearColor) override;
         virtual void Clear(bool bColorBuffer = true, bool bDepthBuffer = true, bool bStencilBuffer = true) override;
 
-        virtual void EnableDepthTest();
-        virtual void DisableDepthTest();
+        virtual void EnableDepthTest() override;
+        virtual void DisableDepthTest() override;
 
         virtual void DrawIndexed(UInt32 NumIndices) override;
     };
