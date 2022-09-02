@@ -4,7 +4,7 @@
 ![Preview from 02-09-2022](https://github.com/sltn011/Corvus/blob/main/PreviewImages/02-09-2022.png)  
   
 Corvus is a 3D Game Engine currenlty being developed for x64 Windows, designed to be a lightweight solution for making high performance games with high quality graphics.  
-Engine uses OpenGL as it's Rendering API for now, but is built to allow easy integration of other APIs and Platforms support in future.  
+Engine uses OpenGL 4.6 as it's Rendering API for now, but is built to allow easy integration of other APIs and Platforms support in future.  
 
 Features:
 - Layers based architecture
