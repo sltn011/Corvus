@@ -23,6 +23,9 @@ namespace Corvus
         virtual void EnableDepthTest() override;
         virtual void DisableDepthTest() override;
 
+        virtual void EnableBackfaceCulling(bool bIsCulledCCW) override;
+        virtual void DisableBackfaceCulling() override;
+
         virtual void DrawIndexed(UInt32 NumIndices) override;
     };
 

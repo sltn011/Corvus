@@ -27,6 +27,9 @@ namespace Corvus
         static void EnableDepthTest();
         static void DisableDepthTest();
 
+        static void EnableBackfaceCulling(bool bIsCulledCCW = true);
+        static void DisableBackfaceCulling();
+
         static void Submit(TOwn<CVertexArray> &VAO, TOwn<CShader> &CShader);
 
     private:

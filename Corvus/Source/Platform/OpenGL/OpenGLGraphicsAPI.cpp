@@ -36,6 +36,17 @@ namespace Corvus
         glDisable(GL_DEPTH_TEST);
     }
 
+    void POpenGLGraphicsAPI::EnableBackfaceCulling(bool bIsCulledCCW)
+    {
+        glCullFace(bIsCulledCCW ? GL_BACK : GL_FRONT);
+        glEnable(GL_CULL_FACE);
+    }
+
+    void POpenGLGraphicsAPI::DisableBackfaceCulling()
+    {
+        glDisable(GL_CULL_FACE);
+    }
+
     void POpenGLGraphicsAPI::DrawIndexed(UInt32 NumIndices)
     {
         glDrawElements(GL_TRIANGLES, NumIndices, GL_UNSIGNED_INT, nullptr);

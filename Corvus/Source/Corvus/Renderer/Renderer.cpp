@@ -58,6 +58,18 @@ namespace Corvus
         CORVUS_CORE_TRACE("Depth test disabled");
     }
 
+    void CRenderer::EnableBackfaceCulling(bool const bIsCulledCCW)
+    {
+        s_GraphicsAPI->EnableBackfaceCulling(bIsCulledCCW);
+        CORVUS_CORE_TRACE("Backface culling enabled");
+    }
+
+    void CRenderer::DisableBackfaceCulling()
+    {
+        s_GraphicsAPI->DisableBackfaceCulling();
+        CORVUS_CORE_TRACE("Backface culling disabled");
+    }
+
     void CRenderer::Submit(TOwn<CVertexArray> &VAO, TOwn<CShader> &CShader)
     {
         CShader->Bind();
