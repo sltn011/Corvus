@@ -2,6 +2,7 @@
 #define CORVUS_SOURCE_CORVUS_MEMORY_ARRAY_H
 
 #include "Corvus/Memory/Poolable.h"
+#include "Corvus/Memory/Utils.h"
 
 namespace Corvus
 {
@@ -76,16 +77,14 @@ namespace Corvus
                 return;
             }
 
-            SizeT NewCapacity = static_cast<SizeT>(m_Capacity * s_CapacityGrowthCoeff);
-            m_Capacity        = (NewCapacity > m_Capacity) ? NewCapacity : m_Capacity + 1;
+            float ArrayGrowthCoeff = GetContainerGrowthValue(EContainerGrowthCoeff::Double);
+            m_Capacity             = static_cast<SizeT>(m_Capacity * ArrayGrowthCoeff);
             m_Data.IncreaseArraySize(m_Capacity);
         }
 
         TPoolable<T> m_Data;
         SizeT        m_Size     = 0;
         SizeT        m_Capacity = 0;
-
-        static constexpr float s_CapacityGrowthCoeff = 2.0f;
     };
 
 } // namespace Corvus

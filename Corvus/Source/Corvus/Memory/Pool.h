@@ -3,6 +3,7 @@
 
 #include "Corvus/Core/Base.h"
 #include "Corvus/Memory/PoolID.h"
+#include "Corvus/Memory/Utils.h"
 
 namespace Corvus
 {
@@ -21,7 +22,7 @@ namespace Corvus
     private:
         friend class CApplicationPools;
 
-        CPool(CPoolID ID, SPoolDataFormat DataFormat);
+        CPool(CPoolID ID, SPoolDataFormat DataFormat, EContainerGrowthCoeff PoolGrowthCoeff);
 
     public:
         CPoolIndex Request(SizeT RequestedNumElements);
@@ -78,14 +79,12 @@ namespace Corvus
             CPool      *m_ParentPool = nullptr;
         };
 
-        CPoolID         m_PoolID;
-        SPoolDataFormat m_DataFormat;
-        SPoolInfo       m_PoolInfo;
-        TOwn<UInt8[]>   m_Pool;
-        SSubPoolsChain  m_Chain;
-
-        // ChildPoolSize = CurrentPoolSize * s_ChildPoolSizeMult
-        static constexpr float s_ChildPoolSizeMult = 1.0f;
+        CPoolID               m_PoolID;
+        SPoolDataFormat       m_DataFormat;
+        SPoolInfo             m_PoolInfo;
+        TOwn<UInt8[]>         m_Pool;
+        SSubPoolsChain        m_Chain;
+        EContainerGrowthCoeff m_PoolGrowthCoeff = EContainerGrowthCoeff::Double;
 
         // if CurrentPoolUsed < CurrentPoolSize * s_FreePoolThreshold
         // then DeleteChildPool()

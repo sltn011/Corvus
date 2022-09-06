@@ -5,6 +5,7 @@
 #include "Corvus/Memory/Pool.h"
 #include "Corvus/Memory/PoolID.h"
 #include "Corvus/Memory/PoolIndex.h"
+#include "Corvus/Memory/Utils.h"
 
 namespace Corvus
 {
@@ -20,11 +21,11 @@ namespace Corvus
         // Can be used to pre-allocate memory in pools
         // before running the application
 
-        // CreateGeneralPool({ 128, 1 });
-        // CreateGeneralPool({ 32,  4 });
-        // CreateGeneralPool({ 32,  8 });
-        // CreateGeneralPool({ 32, 16 });
-        // CreateGeneralPool({ 32, 32 });
+        // CreateGeneralPool({ 128, 1, EContainerGrowthCoeff::Double });
+        // CreateGeneralPool({ 32,  4, EContainerGrowthCoeff::Double });
+        // CreateGeneralPool({ 32,  8, EContainerGrowthCoeff::Double });
+        // CreateGeneralPool({ 32, 16, EContainerGrowthCoeff::Double });
+        // CreateGeneralPool({ 32, 32, EContainerGrowthCoeff::Double });
 
         CORVUS_CORE_INFO("ApplicationPools successfully initialized!");
     }
@@ -36,7 +37,7 @@ namespace Corvus
         CPoolID const ID = CPoolID{EPoolType::General, DataFormat.ElementSize};
         if (s_GeneralPools.find(ID.GetIDInGroup()) == s_GeneralPools.end())
         {
-            s_GeneralPools.emplace(ID.GetIDInGroup(), CPool{ID, DataFormat});
+            s_GeneralPools.emplace(ID.GetIDInGroup(), CPool{ID, DataFormat, EContainerGrowthCoeff::Double});
         }
         return ID;
     }
@@ -48,7 +49,7 @@ namespace Corvus
         CPoolID const ID = CPoolID{EPoolType::Component, DataFormat.ElementSize};
         if (s_ComponentPools.find(ID.GetIDInGroup()) == s_ComponentPools.end())
         {
-            s_ComponentPools.emplace(ID.GetIDInGroup(), CPool{ID, DataFormat});
+            s_ComponentPools.emplace(ID.GetIDInGroup(), CPool{ID, DataFormat, EContainerGrowthCoeff::Double});
         }
         return ID;
     }
@@ -60,7 +61,7 @@ namespace Corvus
         CPoolID const ID = CPoolID{EPoolType::Entity, DataFormat.ElementSize};
         if (s_EntityPools.find(ID.GetIDInGroup()) == s_EntityPools.end())
         {
-            s_EntityPools.emplace(ID.GetIDInGroup(), CPool{ID, DataFormat});
+            s_EntityPools.emplace(ID.GetIDInGroup(), CPool{ID, DataFormat, EContainerGrowthCoeff::Double});
         }
         return ID;
     }

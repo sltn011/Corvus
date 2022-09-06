@@ -7,7 +7,8 @@
 namespace Corvus
 {
 
-    CPool::CPool(CPoolID const ID, SPoolDataFormat const DataFormat) : m_PoolID{ID}, m_DataFormat{DataFormat}
+    CPool::CPool(CPoolID const ID, SPoolDataFormat const DataFormat, EContainerGrowthCoeff PoolGrowthCoeff)
+        : m_PoolID{ID}, m_DataFormat{DataFormat}, m_PoolGrowthCoeff{PoolGrowthCoeff}
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
@@ -252,9 +253,14 @@ namespace Corvus
     {
         if (!m_Chain.m_Next)
         {
+            // m_PoolGrowthCoeff describes how total pool size increases
+            // we only need to add some memory, so subtract 1 from growth coeff value
+            // example: when doubling total pool size from N to 2N values, need to add N slots
+            float PoolGrowthCoeff = GetContainerGrowthValue(m_PoolGrowthCoeff) - 1;
+
             SPoolDataFormat ChildDataFormat = m_DataFormat;
             ChildDataFormat.NumElements     = FMath::Max(ChildDataFormat.NumElements, RequestedAmount);
-            ChildDataFormat.NumElements     = static_cast<SizeT>(ChildDataFormat.NumElements * s_ChildPoolSizeMult);
+            ChildDataFormat.NumElements     = static_cast<SizeT>(ChildDataFormat.NumElements * PoolGrowthCoeff);
             ChildDataFormat.NumElements     = FMath::Max(ChildDataFormat.NumElements, RequestedAmount);
             CreateChildPool(ChildDataFormat);
 
@@ -270,7 +276,7 @@ namespace Corvus
 
     void CPool::CreateChildPool(SPoolDataFormat const ChildPoolDataFormat)
     {
-        m_Chain.m_Next                       = MakeOwned<CPool>(CPool{m_PoolID, ChildPoolDataFormat});
+        m_Chain.m_Next = MakeOwned<CPool>(CPool{m_PoolID, ChildPoolDataFormat, m_PoolGrowthCoeff});
         m_Chain.m_Next->m_Chain.m_ParentPool = this;
     }
 
