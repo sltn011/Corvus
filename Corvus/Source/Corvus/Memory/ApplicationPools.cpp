@@ -5,7 +5,6 @@
 #include "Corvus/Memory/Pool.h"
 #include "Corvus/Memory/PoolID.h"
 #include "Corvus/Memory/PoolIndex.h"
-#include "Corvus/Memory/Utils.h"
 
 namespace Corvus
 {
@@ -21,47 +20,51 @@ namespace Corvus
         // Can be used to pre-allocate memory in pools
         // before running the application
 
-        // CreateGeneralPool({ 128, 1, EContainerGrowthCoeff::Double });
-        // CreateGeneralPool({ 32,  4, EContainerGrowthCoeff::Double });
-        // CreateGeneralPool({ 32,  8, EContainerGrowthCoeff::Double });
-        // CreateGeneralPool({ 32, 16, EContainerGrowthCoeff::Double });
-        // CreateGeneralPool({ 32, 32, EContainerGrowthCoeff::Double });
+        // CreateGeneralPool({ 128, 1 }, EContainerGrowthCoeff::Double);
+        // CreateGeneralPool({ 32,  4 }, EContainerGrowthCoeff::Double);
+        // CreateGeneralPool({ 32,  8 }, EContainerGrowthCoeff::Double);
+        // CreateGeneralPool({ 32, 16 }, EContainerGrowthCoeff::Double);
+        // CreateGeneralPool({ 32, 32 }, EContainerGrowthCoeff::Double);
 
         CORVUS_CORE_INFO("ApplicationPools successfully initialized!");
     }
 
-    CPoolID CApplicationPools::CreateGeneralPool(SPoolDataFormat const DataFormat)
+    CPoolID CApplicationPools::CreateGeneralPool(
+        SPoolDataFormat const DataFormat, EContainerGrowthCoeff PoolGrowthCoeff
+    )
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
         CPoolID const ID = CPoolID{EPoolType::General, DataFormat.ElementSize};
         if (s_GeneralPools.find(ID.GetIDInGroup()) == s_GeneralPools.end())
         {
-            s_GeneralPools.emplace(ID.GetIDInGroup(), CPool{ID, DataFormat, EContainerGrowthCoeff::Double});
+            s_GeneralPools.emplace(ID.GetIDInGroup(), CPool{ID, DataFormat, PoolGrowthCoeff});
         }
         return ID;
     }
 
-    CPoolID CApplicationPools::CreateComponentPool(SPoolDataFormat const DataFormat)
+    CPoolID CApplicationPools::CreateComponentPool(
+        SPoolDataFormat const DataFormat, EContainerGrowthCoeff PoolGrowthCoeff
+    )
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
         CPoolID const ID = CPoolID{EPoolType::Component, DataFormat.ElementSize};
         if (s_ComponentPools.find(ID.GetIDInGroup()) == s_ComponentPools.end())
         {
-            s_ComponentPools.emplace(ID.GetIDInGroup(), CPool{ID, DataFormat, EContainerGrowthCoeff::Double});
+            s_ComponentPools.emplace(ID.GetIDInGroup(), CPool{ID, DataFormat, PoolGrowthCoeff});
         }
         return ID;
     }
 
-    CPoolID CApplicationPools::CreateEntityPool(SPoolDataFormat DataFormat)
+    CPoolID CApplicationPools::CreateEntityPool(SPoolDataFormat DataFormat, EContainerGrowthCoeff PoolGrowthCoeff)
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
         CPoolID const ID = CPoolID{EPoolType::Entity, DataFormat.ElementSize};
         if (s_EntityPools.find(ID.GetIDInGroup()) == s_EntityPools.end())
         {
-            s_EntityPools.emplace(ID.GetIDInGroup(), CPool{ID, DataFormat, EContainerGrowthCoeff::Double});
+            s_EntityPools.emplace(ID.GetIDInGroup(), CPool{ID, DataFormat, PoolGrowthCoeff});
         }
         return ID;
     }
@@ -94,7 +97,7 @@ namespace Corvus
             SPoolDataFormat DataFormat;
             DataFormat.ElementSize = PoolIDInGroup;
             DataFormat.NumElements = s_DefaultPoolSize;
-            CreateGeneralPool(DataFormat);
+            CreateGeneralPool(DataFormat, EContainerGrowthCoeff::Double);
             It = s_GeneralPools.find(PoolIDInGroup);
         }
         return It->second;
@@ -110,7 +113,7 @@ namespace Corvus
             SPoolDataFormat DataFormat;
             DataFormat.ElementSize = PoolIDInGroup;
             DataFormat.NumElements = s_DefaultPoolSize;
-            CreateComponentPool(DataFormat);
+            CreateComponentPool(DataFormat, EContainerGrowthCoeff::Double);
             It = s_ComponentPools.find(PoolIDInGroup);
         }
         return It->second;
@@ -126,7 +129,7 @@ namespace Corvus
             SPoolDataFormat DataFormat;
             DataFormat.ElementSize = PoolIDInGroup;
             DataFormat.NumElements = s_DefaultPoolSize;
-            CreateEntityPool(DataFormat);
+            CreateEntityPool(DataFormat, EContainerGrowthCoeff::Double);
             It = s_EntityPools.find(PoolIDInGroup);
         }
         return It->second;

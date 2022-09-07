@@ -2,6 +2,7 @@
 #define CORVUS_SOURCE_CORVUS_MEMORY_APPLICATIONPOOLS_H
 
 #include "Corvus/Core/Base.h"
+#include "Corvus/Memory/Utils.h"
 
 namespace Corvus
 {
@@ -16,9 +17,9 @@ namespace Corvus
     public:
         static void Init();
 
-        static CPoolID CreateGeneralPool(SPoolDataFormat DataFormat);
-        static CPoolID CreateComponentPool(SPoolDataFormat DataFormat);
-        static CPoolID CreateEntityPool(SPoolDataFormat DataFormat);
+        static CPoolID CreateGeneralPool(SPoolDataFormat DataFormat, EContainerGrowthCoeff PoolGrowthCoeff);
+        static CPoolID CreateComponentPool(SPoolDataFormat DataFormat, EContainerGrowthCoeff PoolGrowthCoeff);
+        static CPoolID CreateEntityPool(SPoolDataFormat DataFormat, EContainerGrowthCoeff PoolGrowthCoeff);
 
         static CPool &GetPool(CPoolID ID);
         static CPool &GetGeneralPool(SizeT PoolIDInGroup);
