@@ -78,7 +78,7 @@ namespace Corvus
             }
 
             float ArrayGrowthCoeff = GetContainerGrowthValue(EContainerGrowthCoeff::Double);
-            m_Capacity             = static_cast<SizeT>(m_Capacity * ArrayGrowthCoeff);
+            m_Capacity             = static_cast<SizeT>(m_Capacity * static_cast<double>(ArrayGrowthCoeff));
             m_Data.IncreaseArraySize(m_Capacity);
         }
 
