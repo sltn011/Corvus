@@ -22,7 +22,7 @@ namespace Corvus
             return MakeOwned<POpenGLTexture2D>(Image, TextureParameters);
 
         default:
-            CORVUS_NO_ENTRY_FMT("Undefined Graphics EAPI!");
+            CORVUS_NO_ENTRY_FMT("Undefined Graphics API!");
         }
         return nullptr;
     }

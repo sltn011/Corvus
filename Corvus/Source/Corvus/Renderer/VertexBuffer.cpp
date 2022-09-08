@@ -17,7 +17,7 @@ namespace Corvus
             return MakeOwned<POpenGLVertexBuffer>(Data, NumVertices, Layout);
 
         default:
-            CORVUS_NO_ENTRY_FMT("Undefined Graphics EAPI!");
+            CORVUS_NO_ENTRY_FMT("Undefined Graphics API!");
         }
         return nullptr;
     }

@@ -14,7 +14,7 @@ namespace Corvus
             return MakeOwned<POpenGLShader>(FilePath);
 
         default:
-            CORVUS_NO_ENTRY_FMT("Undefined Graphics EAPI!");
+            CORVUS_NO_ENTRY_FMT("Undefined Graphics API!");
         }
         return nullptr;
     }
