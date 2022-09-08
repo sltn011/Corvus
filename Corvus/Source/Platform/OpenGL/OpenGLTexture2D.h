@@ -13,7 +13,7 @@ namespace Corvus
     public:
         using Super = CTexture2D;
 
-        POpenGLTexture2D(CTextureDataWrapper &&TextureDataWrapper, STextureParameters const &TextureParameters);
+        POpenGLTexture2D(CImage const &Image, STextureParameters const &TextureParameters);
         virtual ~POpenGLTexture2D();
 
         POpenGLTexture2D(POpenGLTexture2D const &) = delete;

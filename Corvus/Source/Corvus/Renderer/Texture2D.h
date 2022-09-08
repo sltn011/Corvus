@@ -6,7 +6,7 @@
 namespace Corvus
 {
 
-    class CTextureDataWrapper;
+    class CImage;
 
     class CTexture2D : public CTexture
     {
@@ -14,9 +14,7 @@ namespace Corvus
         CTexture2D();
 
     public:
-        static [[nodiscard]] TOwn<CTexture2D> Create(
-            CTextureDataWrapper &&TextureDataWrapper, STextureParameters const &TextureParameters
-        );
+        static [[nodiscard]] TOwn<CTexture2D> Create(CImage const &Image, STextureParameters const &TextureParameters);
 
         virtual ~CTexture2D();
         CTexture2D(CTexture2D const &)            = delete;

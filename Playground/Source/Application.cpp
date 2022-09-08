@@ -1,6 +1,7 @@
 #include <Corvus.h>
 
-#include "Corvus/AssetLoader/TextureLoader.h"
+#include "Corvus/Assets/Image/Image.h"
+#include "Corvus/Assets/Image/ImageLoader.h"
 #include "Corvus/Components/StaticMeshComponent.h"
 #include "Corvus/Components/TransformComponent.h"
 #include "Corvus/Renderer/Texture2D.h"
@@ -51,9 +52,9 @@ namespace Corvus
             TextureParameters.bHasAnisotropicFiltering = true;
             TextureParameters.MinFiltering             = ETextureFiltering::LinearMipMap_Linear;
             TextureParameters.MagFiltering             = ETextureFiltering::Linear;
-            CTextureDataWrapper TextureData =
+            CImage Image =
                 CTextureLoader::LoadFromImageFile("./Assets/Textures/OldRabbit.jpg", ELoadTextureChannels::RGB);
-            TestTexture = CTexture2D::Create(std::move(TextureData), TextureParameters);
+            TestTexture = CTexture2D::Create(Image, TextureParameters);
 
             UInt32 const WindowWidth  = СApplication::GetInstance().GetWindow().GetWindowWidth();
             UInt32 const WindowHeight = СApplication::GetInstance().GetWindow().GetWindowHeight();

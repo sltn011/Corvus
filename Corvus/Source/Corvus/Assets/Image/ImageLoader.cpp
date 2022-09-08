@@ -1,6 +1,8 @@
 #include "CorvusPCH.h"
 
-#include "TextureLoader.h"
+#include "Corvus/Assets/Image/ImageLoader.h"
+
+#include "Corvus/Assets/Image/Image.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -8,53 +10,38 @@
 namespace Corvus
 {
 
-    Corvus::CTextureDataWrapper::~CTextureDataWrapper()
+    CImage CTextureLoader::LoadFromImageFile(CString const &FilePath, ELoadTextureChannels const ChannelsToLoad)
     {
-        if (m_TextureData)
-        {
-            stbi_image_free(m_TextureData);
-        }
-    }
+        FTimePoint ImageLoadStart;
 
-    CTextureDataWrapper::CTextureDataWrapper(CTextureDataWrapper &&Rhs) noexcept
-        : m_TextureWidth{Rhs.m_TextureWidth},
-          m_TextureHeight{Rhs.m_TextureHeight},
-          m_TextureData{std::exchange(Rhs.m_TextureData, nullptr)},
-          m_PixelFormat{Rhs.m_PixelFormat},
-          m_bIsSRGB{Rhs.m_bIsSRGB}
-    {
-    }
-
-    CTextureDataWrapper &CTextureDataWrapper::operator=(CTextureDataWrapper &&Rhs) noexcept
-    {
-        if (this != &Rhs)
-        {
-            m_TextureWidth  = Rhs.m_TextureWidth;
-            m_TextureHeight = Rhs.m_TextureHeight;
-            std::swap(m_TextureData, Rhs.m_TextureData);
-            m_PixelFormat = Rhs.m_PixelFormat;
-            m_bIsSRGB     = Rhs.m_bIsSRGB;
-        }
-        return *this;
-    }
-
-    CTextureDataWrapper CTextureLoader::LoadFromImageFile(
-        CString const &FilePath, ELoadTextureChannels const ChannelsToLoad
-    )
-    {
         // Handle Don'tCare value of loaded channels
         ELoadTextureChannels RealChannelsToLoad = CalculateChannelsToLoad(ChannelsToLoad);
+
+        CImage Image;
         if (stbi_is_hdr(FilePath.c_str()))
         {
-            return LoadHDRImage(FilePath, RealChannelsToLoad);
+            Image = LoadHDRImage(FilePath, RealChannelsToLoad);
         }
         else
         {
-            return LoadLDRImage(FilePath, RealChannelsToLoad);
+            Image = LoadLDRImage(FilePath, RealChannelsToLoad);
         }
+
+        if (Image.GetImageData())
+        {
+            FTimePoint ImageLoadEnd;
+            FTimeDelta ImageLoadTime = ImageLoadEnd - ImageLoadStart;
+            CORVUS_CORE_TRACE("Loaded Image {0} in {1}ms", FilePath, ImageLoadTime.MilliSeconds());
+        }
+        else
+        {
+            CORVUS_CORE_ERROR("Error loading Image {0}!", FilePath);
+        }
+
+        return Image;
     }
 
-    CTextureDataWrapper CTextureLoader::LoadHDRImage(CString const &FilePath, ELoadTextureChannels ChannelsToLoad)
+    CImage CTextureLoader::LoadHDRImage(CString const &FilePath, ELoadTextureChannels ChannelsToLoad)
     {
         EPixelFormat PixelFormat = EPixelFormat::R8; // HDR should have float value - use R8 as a check
         switch (ChannelsToLoad)
@@ -79,7 +66,7 @@ namespace Corvus
         return LoadImageImpl(FilePath, ChannelsToLoad, PixelFormat);
     }
 
-    CTextureDataWrapper CTextureLoader::LoadLDRImage(CString const &FilePath, ELoadTextureChannels ChannelsToLoad)
+    CImage CTextureLoader::LoadLDRImage(CString const &FilePath, ELoadTextureChannels ChannelsToLoad)
     {
         EPixelFormat PixelFormat = EPixelFormat::R32F; // LDR should have UByte values - use float as a check
         switch (ChannelsToLoad)
@@ -103,12 +90,12 @@ namespace Corvus
         return LoadImageImpl(FilePath, ChannelsToLoad, PixelFormat);
     }
 
-    CTextureDataWrapper CTextureLoader::LoadImageImpl(
+    CImage CTextureLoader::LoadImageImpl(
         CString const &FilePath, ELoadTextureChannels const ChannelsToLoad, EPixelFormat const PixelFormat
     )
     {
-        int ImageWidth          = 0;
-        int ImageHeight         = 0;
+        int Width               = 0;
+        int Height              = 0;
         int NumChannels         = 0;
         int RequiredNumChannels = CalculateRequiredNumChannels(ChannelsToLoad);
 
@@ -117,32 +104,32 @@ namespace Corvus
         if (IsPixelFormatFloat(PixelFormat))
         {
             // Load from .HDR file
-            ImageData = stbi_loadf(FilePath.c_str(), &ImageWidth, &ImageHeight, &NumChannels, RequiredNumChannels);
+            ImageData = stbi_loadf(FilePath.c_str(), &Width, &Height, &NumChannels, RequiredNumChannels);
         }
         else
         {
-            ImageData = stbi_load(FilePath.c_str(), &ImageWidth, &ImageHeight, &NumChannels, RequiredNumChannels);
+            ImageData = stbi_load(FilePath.c_str(), &Width, &Height, &NumChannels, RequiredNumChannels);
         }
         stbi_set_flip_vertically_on_load(false);
 
         if (!ImageData)
         {
             CORVUS_CORE_ERROR("Failed to load Texture from Image File {}!", FilePath);
-            return CTextureDataWrapper{};
+            return CImage{};
         }
 
-        SizeT TextureWidth  = static_cast<SizeT>(ImageWidth);
-        SizeT TextureHeight = static_cast<SizeT>(ImageHeight);
-        void *FormattedData = FormatImageData(ImageData, TextureWidth, TextureHeight, ChannelsToLoad, PixelFormat);
+        SizeT ImageWidth    = static_cast<SizeT>(Width);
+        SizeT ImageHeight   = static_cast<SizeT>(Height);
+        void *FormattedData = FormatImageData(ImageData, ImageWidth, ImageHeight, ChannelsToLoad, PixelFormat);
 
-        CTextureDataWrapper TextureData;
-        TextureData.m_TextureWidth  = TextureWidth;
-        TextureData.m_TextureHeight = TextureHeight;
-        TextureData.m_TextureData   = FormattedData;
-        TextureData.m_PixelFormat   = PixelFormat;
-        TextureData.m_bIsSRGB       = !IsPixelFormatFloat(PixelFormat);
+        CImage Image;
+        Image.m_ImageWidth  = ImageWidth;
+        Image.m_ImageHeight = ImageHeight;
+        Image.m_ImageData   = FormattedData;
+        Image.m_PixelFormat = PixelFormat;
+        Image.m_bIsSRGB     = !IsPixelFormatFloat(PixelFormat);
 
-        return TextureData;
+        return Image;
     }
 
     int CTextureLoader::CalculateRequiredNumChannels(ELoadTextureChannels const ChannelsToLoad)

@@ -2,21 +2,20 @@
 
 #include "Platform/OpenGL/OpenGLTexture2D.h"
 
-#include "Corvus/AssetLoader/TextureLoader.h"
+#include "Corvus/Assets/Image/Image.h"
+#include "Corvus/Assets/Image/ImageLoader.h"
 #include "Platform/OpenGL/OpenGLTextureProperties.h"
 
 namespace Corvus
 {
 
-    POpenGLTexture2D::POpenGLTexture2D(
-        CTextureDataWrapper &&TextureDataWrapper, STextureParameters const &TextureParameters
-    )
+    POpenGLTexture2D::POpenGLTexture2D(CImage const &Image, STextureParameters const &TextureParameters)
     {
         glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
 
-        EPixelFormat PixelFormat   = TextureDataWrapper.GetPixelFormat();
-        GLsizei      TextureWidth  = static_cast<GLsizei>(TextureDataWrapper.GetTextureWidth());
-        GLsizei      TextureHeight = static_cast<GLsizei>(TextureDataWrapper.GetTextureHeight());
+        EPixelFormat PixelFormat   = Image.GetPixelFormat();
+        GLsizei      TextureWidth  = static_cast<GLsizei>(Image.GetImageWidth());
+        GLsizei      TextureHeight = static_cast<GLsizei>(Image.GetImageHeight());
 
         // Allocate immutable storage
         glTextureStorage2D(
@@ -37,7 +36,7 @@ namespace Corvus
             TextureHeight,
             static_cast<GLenum>(POpenGLTextureProperties{}.GetPixelBaseFormat(PixelFormat)),
             static_cast<GLenum>(POpenGLTextureProperties{}.GetPixelType(PixelFormat)),
-            TextureDataWrapper.GetTextureData()
+            Image.GetImageData()
         );
 
         SetWrappingS(TextureParameters.WrappingS);

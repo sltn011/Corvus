@@ -14,14 +14,12 @@ namespace Corvus
     {
     }
 
-    TOwn<CTexture2D> CTexture2D::Create(
-        CTextureDataWrapper &&TextureDataWrapper, STextureParameters const &TextureParameters
-    )
+    TOwn<CTexture2D> CTexture2D::Create(CImage const &Image, STextureParameters const &TextureParameters)
     {
         switch (CGraphicsAPI::GetAPI())
         {
         case CGraphicsAPI::EAPI::OpenGL:
-            return MakeOwned<POpenGLTexture2D>(std::move(TextureDataWrapper), TextureParameters);
+            return MakeOwned<POpenGLTexture2D>(Image, TextureParameters);
 
         default:
             CORVUS_NO_ENTRY_FMT("Undefined Graphics EAPI!");
