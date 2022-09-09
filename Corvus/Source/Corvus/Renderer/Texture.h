@@ -6,6 +6,8 @@
 namespace Corvus
 {
 
+    class CShader;
+
     class CTexture
     {
     protected:
@@ -18,7 +20,8 @@ namespace Corvus
         CTexture(CTexture &&)                 = default;
         CTexture &operator=(CTexture &&)      = default;
 
-        virtual void BindUnit(UInt32 Unit) = 0;
+        virtual void BindUnit(UInt32 Unit)                                           = 0;
+        virtual void LoadInShader(CShader &Shader, CString const &Name, UInt32 Unit) = 0;
 
         virtual void SetWrappingS(ETextureWrapping Wrapping) = 0;
         virtual void SetWrappingT(ETextureWrapping Wrapping) = 0;

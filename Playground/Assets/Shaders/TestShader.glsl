@@ -21,12 +21,31 @@ void main()
 #type fragment
 #version 460 core
 
-uniform sampler2D u_Texture;
+struct Material
+{
+	sampler2D AlbedoMap;
+	vec4      AlbedoValue;
+	bool      bHasAlbedoMap;
+	
+	sampler2D NormalMap;
+	vec3      NormalValue;
+	bool      bHasNormalMap;
+	
+	sampler2D RoughnessMap;
+	float     RoughnessValue;
+	bool      bHasRoughnessMap;
+	
+	sampler2D MetallicMap;
+	float     MetallicValue;
+	bool      bHasMetallicMap;
+};
+uniform Material u_Material;
 
 in vec2 TextureCoord;
 out vec4 FragColor;
 
 void main()
 {
-	FragColor = texture(u_Texture, TextureCoord);
+	vec4 Color = vec4(u_Material.bHasAlbedoMap ? texture(u_Material.AlbedoMap, TextureCoord) : u_Material.AlbedoValue);
+	FragColor = Color;
 }

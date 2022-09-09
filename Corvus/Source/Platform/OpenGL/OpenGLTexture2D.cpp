@@ -4,6 +4,7 @@
 
 #include "Corvus/Assets/Image/Image.h"
 #include "Corvus/Assets/Image/ImageLoader.h"
+#include "Corvus/Renderer/Shader.h"
 #include "Platform/OpenGL/OpenGLTextureProperties.h"
 
 namespace Corvus
@@ -81,6 +82,11 @@ namespace Corvus
     {
         GLuint TextureUnit = static_cast<GLuint>(Unit);
         glBindTextureUnit(TextureUnit, m_TextureID);
+    }
+
+    void POpenGLTexture2D::LoadInShader(CShader &Shader, CString const &Name, UInt32 const Unit)
+    {
+        Shader.SetInt32(Name, Unit);
     }
 
     void POpenGLTexture2D::SetWrappingS(ETextureWrapping Wrapping)

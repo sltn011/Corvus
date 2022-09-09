@@ -1,6 +1,7 @@
 #ifndef CORVUS_SOURCE_CORVUS_ASSETS_IMAGE_IMAGE_H
 #define CORVUS_SOURCE_CORVUS_ASSETS_IMAGE_IMAGE_H
 
+#include "Corvus/Core/UUID.h"
 #include "Corvus/Renderer/TextureProperties.h"
 
 namespace Corvus
@@ -28,6 +29,8 @@ namespace Corvus
         void        *GetImageData() const { return m_ImageData; }
         EPixelFormat GetPixelFormat() const { return m_PixelFormat; }
         bool         IsSRGB() const { return m_bIsSRGB; }
+
+        FUUID UUID;
 
     private:
         SizeT        m_ImageWidth  = 0;

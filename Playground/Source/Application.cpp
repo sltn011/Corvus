@@ -2,6 +2,7 @@
 
 #include "Corvus/Assets/Image/Image.h"
 #include "Corvus/Assets/Image/ImageLoader.h"
+#include "Corvus/Assets/Material/Material.h"
 #include "Corvus/Components/StaticMeshComponent.h"
 #include "Corvus/Components/TransformComponent.h"
 #include "Corvus/Renderer/Texture2D.h"
@@ -24,58 +25,13 @@ namespace Corvus
             CRenderer::EnableDepthTest();
             CRenderer::SetClearColor({0.6f, 0.8f, 1.0f, 1.0f});
 
-            // clang-format off
-            float const Vertices[] = {
-                // Position             // UV
-                +0.0f, -0.2f, -0.2f,    0.0f, 0.0f,
-                +0.0f, -0.2f, +0.2f,    1.0f, 0.0f,
-                +0.0f, +0.2f, +0.2f,    1.0f, 1.0f,
-                +0.0f, +0.2f, -0.2f,    0.0f, 1.0f
-            };
-            // clang-format on
+            InitCamera();
+            CreateMeshData();
+            PopulateScene();
 
-            UInt32 const Indices[] = {0, 1, 2, 0, 2, 3};
-
-            CVertexBufferLayout const Layout = {{EBufferDataType::Vec3}, {EBufferDataType::Vec2}};
-
-            TOwn<CVertexBuffer> VBO = CVertexBuffer::Create(Vertices, 4, Layout);
-            TOwn<CIndexBuffer>  EBO = CIndexBuffer::Create(Indices, 6);
-
-            VAO = CVertexArray::Create();
-            VAO->AddVertexBuffer(std::move(VBO));
-            VAO->AddIndexBuffer(std::move(EBO));
-
-            TestShader = CShader::CreateFromFile("./Assets/Shaders/TestShader.glsl");
-
-            STextureParameters TextureParameters;
-            TextureParameters.bHasMipmaps              = true;
-            TextureParameters.bHasAnisotropicFiltering = true;
-            TextureParameters.MinFiltering             = ETextureFiltering::LinearMipMap_Linear;
-            TextureParameters.MagFiltering             = ETextureFiltering::Linear;
-            CImage Image =
-                CTextureLoader::LoadFromImageFile("./Assets/Textures/OldRabbit.jpg", ELoadTextureChannels::RGB);
-            TestTexture = CTexture2D::Create(Image, TextureParameters);
-
-            UInt32 const WindowWidth  = СApplication::GetInstance().GetWindow().GetWindowWidth();
-            UInt32 const WindowHeight = СApplication::GetInstance().GetWindow().GetWindowHeight();
-            CCamera.SetViewportSize(static_cast<float>(WindowWidth), static_cast<float>(WindowHeight));
-            CCamera.SetFoVAngle(60.0f);
-            CCamera.SetClipPlanes(0.01f, 100.0f);
-            CCamera.SwitchPlayerControl(true, 1.0f);
-
-            Entities.EmplaceBack(
-                TestShader,
-                VAO,
-                FTransform{{1.0f, 0.0f, 0.0f}, FVector::OneVec, {ERotationOrder::YXZ, {30.0f, 0.0f, 0.0f}}}
-            );
-
-            Entities.EmplaceBack(
-                TestShader,
-                VAO,
-                FTransform{{0.0f, 0.0f, 0.5f}, FVector::OneVec * 0.5f, {ERotationOrder::YXZ, {0.0f, 0.0f, 45.0f}}}
-            );
-
-            Entities[0].TransformComponent->AddChild(Entities[1].TransformComponent.Get());
+            CreateShader();
+            CreateTexture();
+            CreateMaterial();
         }
 
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
@@ -134,7 +90,9 @@ namespace Corvus
                 TestShader->Bind();
                 TestShader->SetMat4("u_Transform", SceneEntity.TransformComponent->GetTransformMatrix());
                 TestShader->SetMat4("u_ProjView", CCamera.GetProjectionViewMatrix());
-                TestShader->SetInt32("u_Texture", 0);
+
+                TestMaterial.LoadInShader(*TestShader);
+
                 CRenderer::Submit(VAO, TestShader);
             }
 
@@ -161,6 +119,72 @@ namespace Corvus
             }
         }
 
+        void InitCamera()
+        {
+            UInt32 const WindowWidth  = СApplication::GetInstance().GetWindow().GetWindowWidth();
+            UInt32 const WindowHeight = СApplication::GetInstance().GetWindow().GetWindowHeight();
+            CCamera.SetViewportSize(static_cast<float>(WindowWidth), static_cast<float>(WindowHeight));
+            CCamera.SetFoVAngle(60.0f);
+            CCamera.SetClipPlanes(0.01f, 100.0f);
+            CCamera.SwitchPlayerControl(true, 1.0f);
+        }
+        void CreateMeshData()
+        {
+            // clang-format off
+            float const Vertices[] = {
+                // Position             // UV
+                +0.0f, -0.2f, -0.2f,    0.0f, 0.0f,
+                +0.0f, -0.2f, +0.2f,    1.0f, 0.0f,
+                +0.0f, +0.2f, +0.2f,    1.0f, 1.0f,
+                +0.0f, +0.2f, -0.2f,    0.0f, 1.0f
+            };
+            // clang-format on
+
+            UInt32 const Indices[] = {0, 1, 2, 0, 2, 3};
+
+            CVertexBufferLayout const Layout = {{EBufferDataType::Vec3}, {EBufferDataType::Vec2}};
+
+            TOwn<CVertexBuffer> VBO = CVertexBuffer::Create(Vertices, 4, Layout);
+            TOwn<CIndexBuffer>  EBO = CIndexBuffer::Create(Indices, 6);
+
+            VAO = CVertexArray::Create();
+            VAO->AddVertexBuffer(std::move(VBO));
+            VAO->AddIndexBuffer(std::move(EBO));
+        }
+        void PopulateScene()
+        {
+            Entities.EmplaceBack(
+                TestShader,
+                VAO,
+                FTransform{{1.0f, 0.0f, 0.0f}, FVector::OneVec, {ERotationOrder::YXZ, {30.0f, 0.0f, 0.0f}}}
+            );
+
+            Entities.EmplaceBack(
+                TestShader,
+                VAO,
+                FTransform{{0.0f, 0.0f, 0.5f}, FVector::OneVec * 0.5f, {ERotationOrder::YXZ, {0.0f, 0.0f, 45.0f}}}
+            );
+
+            Entities[0].TransformComponent->AddChild(Entities[1].TransformComponent.Get());
+        }
+        void CreateShader() { TestShader = CShader::CreateFromFile("./Assets/Shaders/TestShader.glsl"); }
+        void CreateTexture()
+        {
+            STextureParameters TextureParameters;
+            TextureParameters.bHasMipmaps              = true;
+            TextureParameters.bHasAnisotropicFiltering = true;
+            TextureParameters.MinFiltering             = ETextureFiltering::LinearMipMap_Linear;
+            TextureParameters.MagFiltering             = ETextureFiltering::Linear;
+            CImage Image =
+                CTextureLoader::LoadFromImageFile("./Assets/Textures/OldRabbit.jpg", ELoadTextureChannels::RGB);
+            TestTexture = CTexture2D::Create(Image, TextureParameters);
+        }
+        void CreateMaterial()
+        {
+            TestMaterial.AlbedoMap.SetTexture(TestTexture.get());
+            TestMaterial.AlbedoMap.UseTexture();
+        }
+
     protected:
         TArray<CEntity>    Entities;
         CPerspectiveCamera CCamera;
@@ -169,6 +193,7 @@ namespace Corvus
         TOwn<CVertexArray> VAO;
 
         TOwn<CTexture2D> TestTexture;
+        CMaterial        TestMaterial;
 
         bool     bCameraMode = false;
         FVector2 CursorPos;

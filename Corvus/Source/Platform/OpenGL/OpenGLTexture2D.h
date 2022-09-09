@@ -22,6 +22,7 @@ namespace Corvus
         POpenGLTexture2D &operator=(POpenGLTexture2D &&Rhs) noexcept;
 
         virtual void BindUnit(UInt32 Unit) override;
+        virtual void LoadInShader(CShader &Shader, CString const &Name, UInt32 Unit) override;
 
         virtual void SetWrappingS(ETextureWrapping Wrapping) override;
         virtual void SetWrappingT(ETextureWrapping Wrapping) override;
