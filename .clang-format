@@ -2,6 +2,7 @@
 AccessModifierOffset: '-4'
 AlignAfterOpenBracket: BlockIndent
 AlignConsecutiveAssignments: 'true'
+AlignConsecutiveBitFields: 'true'
 AlignConsecutiveDeclarations: 'true'
 AlignConsecutiveMacros: 'true'
 AlignEscapedNewlines: Left
