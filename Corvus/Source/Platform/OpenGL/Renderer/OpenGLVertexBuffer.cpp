@@ -1,6 +1,6 @@
 #include "CorvusPCH.h"
 
-#include "Platform/OpenGL/OpenGLVertexBuffer.h"
+#include "Platform/OpenGL/Renderer/OpenGLVertexBuffer.h"
 
 namespace Corvus
 {

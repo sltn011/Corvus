@@ -1,8 +1,8 @@
 #ifndef CORVUS_SOURCE_CORVUS_EVENT_KEYBOARDEVENT_H
 #define CORVUS_SOURCE_CORVUS_EVENT_KEYBOARDEVENT_H
 
-#include "Corvus/Core/KeyCodes.h"
 #include "Corvus/Event/Event.h"
+#include "Corvus/Input/KeyCodes.h"
 
 namespace Corvus
 {

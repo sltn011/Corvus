@@ -4,7 +4,7 @@
 
 #include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/VertexBuffer.h"
-#include "Platform/OpenGL/OpenGLVertexArray.h"
+#include "Platform/OpenGL/Renderer/OpenGLVertexArray.h"
 
 namespace Corvus
 {

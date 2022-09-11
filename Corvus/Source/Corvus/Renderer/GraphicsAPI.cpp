@@ -2,7 +2,7 @@
 
 #include "Corvus/Renderer/GraphicsAPI.h"
 
-#include "Platform/OpenGL/OpenGLGraphicsAPI.h"
+#include "Platform/OpenGL/Renderer/OpenGLGraphicsAPI.h"
 
 namespace Corvus
 {

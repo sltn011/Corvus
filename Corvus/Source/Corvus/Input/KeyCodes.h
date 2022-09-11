@@ -1,5 +1,5 @@
-#ifndef CORVUS_SOURCE_CORVUS_CORE_KEYCODES_H
-#define CORVUS_SOURCE_CORVUS_CORE_KEYCODES_H
+#ifndef CORVUS_SOURCE_CORVUS_INPUT_KEYCODES_H
+#define CORVUS_SOURCE_CORVUS_INPUT_KEYCODES_H
 
 #include "Corvus/Core/CoreTypes.h"
 
@@ -187,4 +187,4 @@ namespace Corvus
     } // namespace Action
 } // namespace Corvus
 
-#endif //! CORVUS_SOURCE_CORVUS_CORE_KEYCODES_H
+#endif //! CORVUS_SOURCE_CORVUS_INPUT_KEYCODES_H

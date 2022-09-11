@@ -2,7 +2,7 @@
 
 #include "Corvus/Renderer/Shader.h"
 
-#include "Platform/OpenGL/OpenGLShader.h"
+#include "Platform/OpenGL/Renderer/OpenGLShader.h"
 
 namespace Corvus
 {

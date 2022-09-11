@@ -1,8 +1,8 @@
 #ifndef CORVUS_SOURCE_CORVUS_EVENT_MOUSEEVENT_H
 #define CORVUS_SOURCE_CORVUS_EVENT_MOUSEEVENT_H
 
-#include "Corvus/Core/KeyCodes.h"
 #include "Corvus/Event/Event.h"
+#include "Corvus/Input/KeyCodes.h"
 
 #include <sstream>
 

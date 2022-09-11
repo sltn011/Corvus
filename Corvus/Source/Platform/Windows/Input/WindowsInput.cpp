@@ -1,7 +1,7 @@
 #include "CorvusPCH.h"
 
 #include "Corvus/Core/Application.h"
-#include "Corvus/Core/Input.h"
+#include "Corvus/Input/Input.h"
 
 #include <GLFW/glfw3.h>
 

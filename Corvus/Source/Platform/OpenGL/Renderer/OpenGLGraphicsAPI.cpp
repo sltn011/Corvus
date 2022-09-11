@@ -1,6 +1,6 @@
 #include "CorvusPCH.h"
 
-#include "Platform/OpenGL/OpenGLGraphicsAPI.h"
+#include "Platform/OpenGL/Renderer/OpenGLGraphicsAPI.h"
 
 namespace Corvus
 {
@@ -51,4 +51,5 @@ namespace Corvus
     {
         glDrawElements(GL_TRIANGLES, NumIndices, GL_UNSIGNED_INT, nullptr);
     }
+
 } // namespace Corvus

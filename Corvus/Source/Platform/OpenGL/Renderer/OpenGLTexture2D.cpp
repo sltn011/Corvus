@@ -1,11 +1,11 @@
 #include "CorvusPCH.h"
 
-#include "Platform/OpenGL/OpenGLTexture2D.h"
+#include "Platform/OpenGL/Renderer/OpenGLTexture2D.h"
 
 #include "Corvus/Assets/Image/Image.h"
 #include "Corvus/Assets/Image/ImageLoader.h"
 #include "Corvus/Renderer/Shader.h"
-#include "Platform/OpenGL/OpenGLTextureProperties.h"
+#include "Platform/OpenGL/Renderer/OpenGLTextureProperties.h"
 
 namespace Corvus
 {

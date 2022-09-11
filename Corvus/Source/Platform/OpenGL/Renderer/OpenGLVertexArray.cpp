@@ -1,9 +1,9 @@
 #include "CorvusPCH.h"
 
-#include "Platform/OpenGL/OpenGLVertexArray.h"
+#include "Platform/OpenGL/Renderer/OpenGLVertexArray.h"
 
-#include "Platform/OpenGL/OpenGLIndexBuffer.h"
-#include "Platform/OpenGL/OpenGLVertexBuffer.h"
+#include "Platform/OpenGL/Renderer/OpenGLIndexBuffer.h"
+#include "Platform/OpenGL/Renderer/OpenGLVertexBuffer.h"
 
 namespace Corvus
 {

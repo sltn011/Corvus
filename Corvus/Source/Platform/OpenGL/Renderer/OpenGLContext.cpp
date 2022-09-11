@@ -1,6 +1,6 @@
 #include "CorvusPCH.h"
 
-#include "Platform/OpenGL/OpenGLContext.h"
+#include "Platform/OpenGL/Renderer/OpenGLContext.h"
 
 #include "Corvus/Window/Window.h"
 

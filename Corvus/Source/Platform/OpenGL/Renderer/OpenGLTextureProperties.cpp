@@ -1,6 +1,6 @@
 #include "CorvusPCH.h"
 
-#include "Platform/OpenGL/OpenGLTextureProperties.h"
+#include "Platform/OpenGL/Renderer/OpenGLTextureProperties.h"
 
 #include <glad/glad.h>
 

@@ -2,7 +2,7 @@
 
 #include "Corvus/Renderer/RenderingContext.h"
 
-#include "Platform/OpenGL/OpenGLContext.h"
+#include "Platform/OpenGL/Renderer/OpenGLContext.h"
 
 namespace Corvus
 {

@@ -1,7 +1,7 @@
-#ifndef CORVUS_SOURCE_CORVUS_CORE_INPUT_H
-#define CORVUS_SOURCE_CORVUS_CORE_INPUT_H
+#ifndef CORVUS_SOURCE_CORVUS_INPUT_INPUT_H
+#define CORVUS_SOURCE_CORVUS_INPUT_INPUT_H
 
-#include "Corvus/Core/KeyCodes.h"
+#include "Corvus/Input/KeyCodes.h"
 #include "Corvus/Math/Vector.h"
 
 namespace Corvus
@@ -34,4 +34,4 @@ namespace Corvus
 
 } // namespace Corvus
 
-#endif //! CORVUS_SOURCE_CORVUS_CORE_INPUT_H
+#endif //! CORVUS_SOURCE_CORVUS_INPUT_INPUT_H

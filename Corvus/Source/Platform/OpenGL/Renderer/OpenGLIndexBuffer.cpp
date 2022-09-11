@@ -1,6 +1,6 @@
 #include "CorvusPCH.h"
 
-#include "Platform/OpenGL/OpenGLIndexBuffer.h"
+#include "Platform/OpenGL/Renderer/OpenGLIndexBuffer.h"
 
 namespace Corvus
 {

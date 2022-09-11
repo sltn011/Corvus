@@ -2,7 +2,7 @@
 
 #include "Corvus/Renderer/Texture2D.h"
 
-#include "Platform/OpenGL/OpenGLTexture2D.h"
+#include "Platform/OpenGL/Renderer/OpenGLTexture2D.h"
 
 namespace Corvus
 {

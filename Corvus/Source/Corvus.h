@@ -9,10 +9,12 @@
 #include "Corvus/Core/Base.h"
 #include "Corvus/Core/CoreTypes.h"
 #include "Corvus/Core/Delegate.h"
-#include "Corvus/Core/Input.h"
-#include "Corvus/Core/KeyCodes.h"
 #include "Corvus/Core/Layer.h"
 #include "Corvus/Core/Log.h"
+
+// Input
+#include "Corvus/Input/Input.h"
+#include "Corvus/Input/KeyCodes.h"
 
 // Events
 #include "Corvus/Event/ApplicationEvent.h"
