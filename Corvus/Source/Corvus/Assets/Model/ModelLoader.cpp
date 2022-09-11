@@ -10,6 +10,7 @@ namespace Corvus
 
     CStaticModel CModelLoader::LoadStaticModelFromFile(CString const &FilePath)
     {
+        CORVUS_CORE_TRACE("Loading StaticMesh {}", FilePath);
         FTimePoint ModelLoadStart;
 
         SizeT FormatPrefixIndex = FilePath.find_last_of('.');

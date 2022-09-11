@@ -12,6 +12,7 @@ namespace Corvus
 
     CImage CTextureLoader::LoadFromImageFile(CString const &FilePath, ELoadTextureChannels const ChannelsToLoad)
     {
+        CORVUS_CORE_TRACE("Loading Image {}", FilePath);
         FTimePoint ImageLoadStart;
 
         // Handle Don'tCare value of loaded channels
