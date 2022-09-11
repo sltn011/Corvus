@@ -3,6 +3,8 @@
 #include "Corvus/Assets/Image/Image.h"
 #include "Corvus/Assets/Image/ImageLoader.h"
 #include "Corvus/Assets/Material/Material.h"
+#include "Corvus/Assets/Model/ModelLoader.h"
+#include "Corvus/Assets/Model/StaticModel.h"
 #include "Corvus/Components/StaticMeshComponent.h"
 #include "Corvus/Components/TransformComponent.h"
 #include "Corvus/Renderer/Texture2D.h"
@@ -32,6 +34,8 @@ namespace Corvus
             CreateShader();
             CreateTexture();
             CreateMaterial();
+
+            CModelLoader::LoadStaticModelFromFile("./Assets/Models/Shack.glb");
         }
 
         virtual void OnUpdate(FTimeDelta const ElapsedTime)

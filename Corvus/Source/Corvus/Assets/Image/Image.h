@@ -30,6 +30,8 @@ namespace Corvus
         EPixelFormat GetPixelFormat() const { return m_PixelFormat; }
         bool         IsSRGB() const { return m_bIsSRGB; }
 
+        void SetIsSRGB(bool bValue) { m_bIsSRGB = bValue; }
+
         FUUID UUID;
 
     private:

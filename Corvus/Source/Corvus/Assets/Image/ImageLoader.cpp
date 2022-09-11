@@ -41,6 +41,23 @@ namespace Corvus
         return Image;
     }
 
+    CImage CTextureLoader::LoadFromMemory(
+        void *ImageData, SizeT ImageWidth, SizeT ImageHeight, EPixelFormat PixelFormat, bool bIsSRGB
+    )
+    {
+        CORVUS_CORE_ASSERT(ImageData != nullptr);
+        CORVUS_CORE_ASSERT(ImageWidth > 0);
+        CORVUS_CORE_ASSERT(ImageHeight > 0);
+
+        CImage Image;
+        Image.m_ImageData   = ImageData;
+        Image.m_ImageWidth  = ImageWidth;
+        Image.m_ImageHeight = ImageHeight;
+        Image.m_PixelFormat = PixelFormat;
+        Image.m_bIsSRGB     = bIsSRGB;
+        return Image;
+    }
+
     CImage CTextureLoader::LoadHDRImage(CString const &FilePath, ELoadTextureChannels ChannelsToLoad)
     {
         EPixelFormat PixelFormat = EPixelFormat::R8; // HDR should have float value - use R8 as a check

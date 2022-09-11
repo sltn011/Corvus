@@ -474,7 +474,7 @@ namespace Corvus
     };
 
     // CRTP class to convert Texture property values to Graphics API-specific values
-    template<typename Implementation>
+    template<typename TImplementation>
     class CTexturePropertyToAPIValueConverter
     {
     public:
@@ -506,7 +506,7 @@ namespace Corvus
         }
 
     private:
-        Implementation const *GetImpl() const { return static_cast<Implementation const *>(this); }
+        TImplementation const *GetImpl() const { return static_cast<TImplementation const *>(this); }
     };
 
     struct STextureDataFormat

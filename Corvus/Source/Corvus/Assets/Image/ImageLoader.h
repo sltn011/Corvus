@@ -21,6 +21,9 @@ namespace Corvus
     {
     public:
         static CImage LoadFromImageFile(CString const &FilePath, ELoadTextureChannels ChannelsToLoad);
+        static CImage LoadFromMemory(
+            void *ImageData, SizeT ImageWidth, SizeT ImageHeight, EPixelFormat PixelFormat, bool bIsSRGB
+        );
 
     private:
         static CImage LoadHDRImage(CString const &FilePath, ELoadTextureChannels ChannelsToLoad);
