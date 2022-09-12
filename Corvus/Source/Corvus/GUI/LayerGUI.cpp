@@ -6,13 +6,13 @@
 
 namespace Corvus
 {
-    UInt8 СLayerGUI::s_NumImGUIInstances = 0;
+    UInt8 CLayerGUI::s_NumImGUIInstances = 0;
 
-    СLayerGUI::СLayerGUI(CString LayerName, bool const bEnabled) : Super{std::move(LayerName), bEnabled}
+    CLayerGUI::CLayerGUI(CString LayerName, bool const bEnabled) : Super{std::move(LayerName), bEnabled}
     {
     }
 
-    void СLayerGUI::Render()
+    void CLayerGUI::Render()
     {
         static bool bShow = true;
         ImGui::ShowDemoWindow(&bShow);

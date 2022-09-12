@@ -12,17 +12,17 @@
 namespace Corvus
 {
 
-    class CPlayground : public СApplication
+    class CPlayground : public CApplication
     {
     public:
         CPlayground() {}
         ~CPlayground() {}
     };
 
-    class CApplicationLayer : public СLayer
+    class CApplicationLayer : public CLayer
     {
     public:
-        CApplicationLayer() : СLayer{"ApplicationLayer", true}
+        CApplicationLayer() : CLayer{"ApplicationLayer", true}
         {
             CRenderer::EnableDepthTest();
             CRenderer::SetClearColor({0.6f, 0.8f, 1.0f, 1.0f});
@@ -45,33 +45,33 @@ namespace Corvus
 
             if (bCameraMode)
             {
-                if (СInput::IsKeyPressed(Key::W))
+                if (CInput::IsKeyPressed(Key::W))
                 {
                     CCamera.ProcessMovementInput(CCamera::EMoveDirection::Forward, ElapsedTime);
                 }
-                if (СInput::IsKeyPressed(Key::A))
+                if (CInput::IsKeyPressed(Key::A))
                 {
                     CCamera.ProcessMovementInput(CCamera::EMoveDirection::Left, ElapsedTime);
                 }
-                if (СInput::IsKeyPressed(Key::S))
+                if (CInput::IsKeyPressed(Key::S))
                 {
                     CCamera.ProcessMovementInput(CCamera::EMoveDirection::Backward, ElapsedTime);
                 }
-                if (СInput::IsKeyPressed(Key::D))
+                if (CInput::IsKeyPressed(Key::D))
                 {
                     CCamera.ProcessMovementInput(CCamera::EMoveDirection::Right, ElapsedTime);
                 }
-                if (СInput::IsKeyPressed(Key::Space))
+                if (CInput::IsKeyPressed(Key::Space))
                 {
                     CCamera.ProcessMovementInput(CCamera::EMoveDirection::Up, ElapsedTime);
                 }
-                if (СInput::IsKeyPressed(Key::LeftShift))
+                if (CInput::IsKeyPressed(Key::LeftShift))
                 {
                     CCamera.ProcessMovementInput(CCamera::EMoveDirection::Down, ElapsedTime);
                 }
             }
 
-            FVector2 const NewPos = СInput::GetCursorPos();
+            FVector2 const NewPos = CInput::GetCursorPos();
             FVector2 const Delta  = NewPos - CursorPos;
             CursorPos             = NewPos;
             if (bCameraMode)
@@ -107,31 +107,32 @@ namespace Corvus
         {
             if (Event.GetEventType() == CEvent::EEventType::KeyPress)
             {
-                СKeyPressEvent &KPEvent = CastEvent<СKeyPressEvent>(Event);
+                CKeyPressEvent &KPEvent = CastEvent<CKeyPressEvent>(Event);
                 if (KPEvent.Key == Key::C)
                 {
                     bCameraMode = !bCameraMode;
-                    СInput::SetCursorEnabled(!bCameraMode);
+                    CInput::SetCursorEnabled(!bCameraMode);
 
                     Event.SetHandled();
                 }
             }
             else if (Event.GetEventType() == CEvent::EEventType::WindowResize)
             {
-                СWindowResizeEvent &WREvent = CastEvent<СWindowResizeEvent>(Event);
+                CWindowResizeEvent &WREvent = CastEvent<CWindowResizeEvent>(Event);
                 CCamera.SetViewportSize(static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight));
             }
         }
 
         void InitCamera()
         {
-            UInt32 const WindowWidth  = СApplication::GetInstance().GetWindow().GetWindowWidth();
-            UInt32 const WindowHeight = СApplication::GetInstance().GetWindow().GetWindowHeight();
+            UInt32 const WindowWidth  = CApplication::GetInstance().GetWindow().GetWindowWidth();
+            UInt32 const WindowHeight = CApplication::GetInstance().GetWindow().GetWindowHeight();
             CCamera.SetViewportSize(static_cast<float>(WindowWidth), static_cast<float>(WindowHeight));
             CCamera.SetFoVAngle(60.0f);
             CCamera.SetClipPlanes(0.01f, 100.0f);
             CCamera.SwitchPlayerControl(true, 1.0f);
         }
+
         void CreateMeshData()
         {
             // clang-format off
@@ -155,6 +156,7 @@ namespace Corvus
             VAO->AddVertexBuffer(std::move(VBO));
             VAO->AddIndexBuffer(std::move(EBO));
         }
+
         void PopulateScene()
         {
             Entities.EmplaceBack(
@@ -171,7 +173,9 @@ namespace Corvus
 
             Entities[0].TransformComponent->AddChild(Entities[1].TransformComponent.Get());
         }
+
         void CreateShader() { TestShader = CShader::CreateFromFile("./Assets/Shaders/TestShader.glsl"); }
+
         void CreateTexture()
         {
             STextureParameters TextureParameters;
@@ -183,6 +187,7 @@ namespace Corvus
                 CTextureLoader::LoadFromImageFile("./Assets/Textures/OldRabbit.jpg", ELoadTextureChannels::RGB);
             TestTexture = CTexture2D::Create(Image, TextureParameters);
         }
+
         void CreateMaterial()
         {
             TestMaterial.AlbedoMap.SetTexture(TestTexture.get());
@@ -203,14 +208,14 @@ namespace Corvus
         FVector2 CursorPos;
     };
 
-    СApplication *CreateApplication()
+    CApplication *CreateApplication()
     {
         CPlayground *App = new CPlayground;
-        App->PushLayer(СLayer::Create<CApplicationLayer>());
+        App->PushLayer(CLayer::Create<CApplicationLayer>());
         return App;
     }
 
-    bool DestroyApplication(СApplication *const App)
+    bool DestroyApplication(CApplication *const App)
     {
         if (!App)
         {

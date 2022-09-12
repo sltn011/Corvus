@@ -7,7 +7,7 @@
 namespace Corvus
 {
 
-    class СKeyPressEvent : public CEvent
+    class CKeyPressEvent : public CEvent
     {
     public:
         using Super = CEvent;
@@ -16,7 +16,7 @@ namespace Corvus
             CEvent::EEventCategory::Input | CEvent::EEventCategory::Keyboard, CEvent::EEventType::KeyPress
         );
 
-        СKeyPressEvent(EKeyCode KeyValue, bool bRepeatedValue, EModifierCode ModifierValue)
+        CKeyPressEvent(EKeyCode KeyValue, bool bRepeatedValue, EModifierCode ModifierValue)
             : Key{KeyValue}, bRepeated{bRepeatedValue}, Modifier{ModifierValue}
         {
         }
@@ -33,7 +33,7 @@ namespace Corvus
         EModifierCode Modifier;
     };
 
-    class СKeyReleaseEvent : public CEvent
+    class CKeyReleaseEvent : public CEvent
     {
     public:
         using Super = CEvent;
@@ -42,7 +42,7 @@ namespace Corvus
             CEvent::EEventCategory::Input | CEvent::EEventCategory::Keyboard, CEvent::EEventType::KeyRelease
         );
 
-        СKeyReleaseEvent(EKeyCode KeyValue) : Key{KeyValue} {}
+        CKeyReleaseEvent(EKeyCode KeyValue) : Key{KeyValue} {}
 
         virtual CString ToString() const override
         {

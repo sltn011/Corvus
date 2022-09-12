@@ -7,14 +7,14 @@
 
 #ifdef CORVUS_PLATFORM_WINDOWS
 
-extern Corvus::СApplication *Corvus::CreateApplication();
-extern bool                  Corvus::DestroyApplication(Corvus::СApplication *App);
+extern Corvus::CApplication *Corvus::CreateApplication();
+extern bool                  Corvus::DestroyApplication(Corvus::CApplication *App);
 
 int main(int const argc, char **const argv)
 {
-    Corvus::СLog::Init();
+    Corvus::CLog::Init();
 
-    Corvus::СApplication *const App = Corvus::CreateApplication();
+    Corvus::CApplication *const App = Corvus::CreateApplication();
     if (!App)
     {
         CORVUS_CORE_NO_ENTRY_FMT("Application was not created properly!");

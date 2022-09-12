@@ -12,18 +12,18 @@
 
 namespace Corvus
 {
-    СGUIController *СGUIController::s_Instance = nullptr;
+    CGUIController *CGUIController::s_Instance = nullptr;
 
-    СGUIController::СGUIController()
+    CGUIController::CGUIController()
     {
     }
 
-    СGUIController::~СGUIController()
+    CGUIController::~CGUIController()
     {
         Destroy();
     }
 
-    void СGUIController::Init()
+    void CGUIController::Init()
     {
         CORVUS_ASSERT_FMT(!s_Instance, "Only one instance of GUI controller allowed!");
 
@@ -42,7 +42,7 @@ namespace Corvus
         ImGui::StyleColorsDark();
         // ImGui::StyleColorsClassic();
 
-        СApplication &App = СApplication::GetInstance();
+        CApplication &App = CApplication::GetInstance();
         ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow()), true);
         ImGui_ImplOpenGL3_Init("#version 460");
 
@@ -50,7 +50,7 @@ namespace Corvus
         CORVUS_CORE_TRACE("ImGui context created");
     }
 
-    void СGUIController::Destroy()
+    void CGUIController::Destroy()
     {
         if (!s_Instance)
         {
@@ -65,17 +65,17 @@ namespace Corvus
         CORVUS_CORE_TRACE("ImGui context destroyed");
     }
 
-    void СGUIController::BeginFrame()
+    void CGUIController::BeginFrame()
     {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
     }
 
-    void СGUIController::EndFrame()
+    void CGUIController::EndFrame()
     {
         ImGuiIO      &IO  = ImGui::GetIO();
-        СApplication &App = СApplication::GetInstance();
+        CApplication &App = CApplication::GetInstance();
         IO.DisplaySize.x  = static_cast<float>(App.GetWindow().GetWindowWidth());
         IO.DisplaySize.y  = static_cast<float>(App.GetWindow().GetWindowHeight());
 

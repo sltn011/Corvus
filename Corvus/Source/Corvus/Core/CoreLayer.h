@@ -6,12 +6,12 @@
 namespace Corvus
 {
 
-    class СCoreLayer : public СLayer
+    class CCoreLayer : public CLayer
     {
     public:
-        using Super = СLayer;
+        using Super = CLayer;
 
-        СCoreLayer();
+        CCoreLayer();
 
         virtual void OnPushed() override;
         virtual void OnPoped() override;

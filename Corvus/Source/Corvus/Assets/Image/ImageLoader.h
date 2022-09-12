@@ -20,8 +20,8 @@ namespace Corvus
     class CTextureLoader
     {
     public:
-        static CImage LoadFromImageFile(CString const &FilePath, ELoadTextureChannels ChannelsToLoad);
-        static CImage LoadFromMemory(
+        static [[nodiscard]] CImage LoadFromImageFile(CString const &FilePath, ELoadTextureChannels ChannelsToLoad);
+        static [[nodiscard]] CImage LoadFromMemory(
             void *ImageData, SizeT ImageWidth, SizeT ImageHeight, EPixelFormat PixelFormat, bool bIsSRGB
         );
 

@@ -11,7 +11,7 @@ namespace Corvus
     class CModelLoader
     {
     public:
-        static CStaticModel LoadStaticModelFromFile(CString const &FilePath);
+        static [[nodiscard]] CStaticModel LoadStaticModelFromFile(CString const &FilePath);
     };
 
 } // namespace Corvus

@@ -14,6 +14,11 @@ namespace Corvus
         using Super = CShader;
 
         POpenGLShader(CString const &FilePath);
+        POpenGLShader(CString const &FilePath, std::vector<char const *> const &Parameters);
+        POpenGLShader(
+            std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+        );
+
         ~POpenGLShader();
 
         POpenGLShader(POpenGLShader const &) = delete;
@@ -36,18 +41,29 @@ namespace Corvus
         virtual void SetMat3(CString const &Name, FMatrix3 const &Value) override;
         virtual void SetMat4(CString const &Name, FMatrix4 const &Value) override;
 
-    protected:
-        GLuint CreateShader(GLenum ShaderType, CString const &SourceCode) const;
+    private:
+        void CreateFromFile(CString const &FilePath, std::vector<char const *> const &Parameters);
+        void CreateFromMemory(
+            std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+        );
 
-        void AssertShaderCompiledSuccessfully(GLuint CShader) const;
-        void AssertProgramLinkedSuccessfully() const;
+        bool IsReadFileSuccessfull(
+            CString const &FilePath,
+            CString       &OutVersionString,
+            CString       &OutVertexShaderCode,
+            CString       &OutFragmentShaderCode
+        );
+
+        void CreateProgram(
+            std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+        );
+        GLuint CreateShader(GLenum ShaderType, std::vector<char const *> const &ShaderCode) const;
+
+        bool IsShaderCompiledSuccessfully(GLuint CShader, CString &OutErrorMessage) const;
+        bool IsProgramLinkedSuccessfully(CString &OutErrorMessage) const;
 
         GLint GetUniformLocation(CString const &Name);
 
-        GLuint                             m_ID = 0;
-        std::unordered_map<CString, GLint> m_UniformLocationCache;
-
-    private:
         enum class EShaderType : Int8
         {
             NONE = -1,
@@ -55,6 +71,9 @@ namespace Corvus
             Fragment,
             MAX
         };
+
+        GLuint                             m_ID = 0;
+        std::unordered_map<CString, GLint> m_UniformLocationCache;
     };
 
 } // namespace Corvus

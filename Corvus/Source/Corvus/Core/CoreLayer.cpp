@@ -10,25 +10,25 @@
 namespace Corvus
 {
 
-    СCoreLayer::СCoreLayer() : СLayer{"Corvus Core Layer", true}
+    CCoreLayer::CCoreLayer() : CLayer{"Corvus Core Layer", true}
     {
     }
 
-    void СCoreLayer::OnPushed()
+    void CCoreLayer::OnPushed()
     {
         Super::OnPushed();
     }
 
-    void СCoreLayer::OnPoped()
+    void CCoreLayer::OnPoped()
     {
         Super::OnPoped();
     }
 
-    void СCoreLayer::OnUpdate(FTimeDelta const ElapsedTime)
+    void CCoreLayer::OnUpdate(FTimeDelta const ElapsedTime)
     {
     }
 
-    void СCoreLayer::OnEvent(CEvent &Event)
+    void CCoreLayer::OnEvent(CEvent &Event)
     {
         if (Event.IsInCategory(CEvent::EEventCategory::Application))
         {
@@ -44,11 +44,11 @@ namespace Corvus
         }
     }
 
-    void СCoreLayer::Render()
+    void CCoreLayer::Render()
     {
     }
 
-    void СCoreLayer::OnApplicationEvent(CEvent &Event)
+    void CCoreLayer::OnApplicationEvent(CEvent &Event)
     {
         switch (Event.GetEventType())
         {
@@ -69,7 +69,7 @@ namespace Corvus
         }
     }
 
-    void СCoreLayer::OnKeyboardEvent(CEvent &Event)
+    void CCoreLayer::OnKeyboardEvent(CEvent &Event)
     {
         switch (Event.GetEventType())
         {
@@ -86,7 +86,7 @@ namespace Corvus
         }
     }
 
-    void СCoreLayer::OnMouseEvent(CEvent &Event)
+    void CCoreLayer::OnMouseEvent(CEvent &Event)
     {
         switch (Event.GetEventType())
         {
@@ -111,51 +111,51 @@ namespace Corvus
         }
     }
 
-    void СCoreLayer::OnWindowResize(CEvent &Event)
+    void CCoreLayer::OnWindowResize(CEvent &Event)
     {
-        СWindowResizeEvent &WREvent = CastEvent<СWindowResizeEvent>(Event);
+        CWindowResizeEvent &WREvent = CastEvent<CWindowResizeEvent>(Event);
         CRenderer::ViewportResize(WREvent.NewWidth, WREvent.NewHeight);
         Event.SetHandled();
     }
 
-    void СCoreLayer::OnWindowClose(CEvent &Event)
+    void CCoreLayer::OnWindowClose(CEvent &Event)
     {
-        СApplication::GetInstance().GetWindow().SetShouldClose();
+        CApplication::GetInstance().GetWindow().SetShouldClose();
         Event.SetHandled();
     }
 
-    void СCoreLayer::OnWindowChangeFocus(CEvent &Event)
+    void CCoreLayer::OnWindowChangeFocus(CEvent &Event)
     {
     }
 
-    void СCoreLayer::OnKeyPressed(CEvent &Event)
+    void CCoreLayer::OnKeyPressed(CEvent &Event)
     {
-        СKeyPressEvent &KPEvent = CastEvent<СKeyPressEvent &>(Event);
+        CKeyPressEvent &KPEvent = CastEvent<CKeyPressEvent &>(Event);
         if (KPEvent.Key == Key::F1)
         {
-            bool const b = СApplication::GetInstance().GetWindow().IsFullScreen();
-            СApplication::GetInstance().GetWindow().SetFullScreen(!b);
+            bool const b = CApplication::GetInstance().GetWindow().IsFullScreen();
+            CApplication::GetInstance().GetWindow().SetFullScreen(!b);
         }
         Event.SetHandled();
     }
 
-    void СCoreLayer::OnKeyReleased(CEvent &Event)
+    void CCoreLayer::OnKeyReleased(CEvent &Event)
     {
     }
 
-    void СCoreLayer::OnMouseButtonPressed(CEvent &Event)
+    void CCoreLayer::OnMouseButtonPressed(CEvent &Event)
     {
     }
 
-    void СCoreLayer::OnMouseButtonReleased(CEvent &Event)
+    void CCoreLayer::OnMouseButtonReleased(CEvent &Event)
     {
     }
 
-    void СCoreLayer::OnMouseCursorMove(CEvent &Event)
+    void CCoreLayer::OnMouseCursorMove(CEvent &Event)
     {
     }
 
-    void СCoreLayer::OnMouseScroll(CEvent &Event)
+    void CCoreLayer::OnMouseScroll(CEvent &Event)
     {
     }
 

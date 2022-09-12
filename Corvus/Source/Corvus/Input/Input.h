@@ -7,7 +7,7 @@
 namespace Corvus
 {
 
-    class СInput
+    class CInput
     {
     public:
         // KEYBOARD

@@ -9,23 +9,23 @@ namespace Corvus
     class CEvent;
     class FTimeDelta;
 
-    class СLayer
+    class CLayer
     {
     protected:
-        СLayer(CString LayerName, bool bEnabled);
+        CLayer(CString LayerName, bool bEnabled);
 
     public:
         template<typename LayerType, typename... Args>
-        static [[nodiscard]] TOwn<СLayer> Create(Args &&...args)
+        static [[nodiscard]] TOwn<CLayer> Create(Args &&...args)
         {
             return MakeOwned<LayerType>(std::forward<Args>(args)...);
         }
 
-        virtual ~СLayer()                 = default;
-        СLayer(СLayer const &)            = delete;
-        СLayer &operator=(СLayer const &) = delete;
-        СLayer(СLayer &&)                 = default;
-        СLayer &operator=(СLayer &&)      = default;
+        virtual ~CLayer()                 = default;
+        CLayer(CLayer const &)            = delete;
+        CLayer &operator=(CLayer const &) = delete;
+        CLayer(CLayer &&)                 = default;
+        CLayer &operator=(CLayer &&)      = default;
 
         void SetEnabled(bool bEnabled);
         bool IsEnabled() const;

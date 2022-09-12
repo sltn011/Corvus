@@ -6,16 +6,36 @@
 
 namespace Corvus
 {
-    TOwn<CShader> CShader::CreateFromFile(CString const &FilePath)
+
+    template<typename... Args>
+    static [[nodiscard]] TOwn<CShader> ShaderCreation(Args &&...args)
     {
         switch (CGraphicsAPI::GetAPI())
         {
         case CGraphicsAPI::EAPI::OpenGL:
-            return MakeOwned<POpenGLShader>(FilePath);
+            return MakeOwned<POpenGLShader>(std::forward<Args>(args)...);
 
         default:
             CORVUS_NO_ENTRY_FMT("Undefined Graphics API!");
         }
         return nullptr;
     }
+
+    TOwn<CShader> CShader::CreateFromFile(CString const &FilePath)
+    {
+        return ShaderCreation(FilePath);
+    }
+
+    TOwn<CShader> CShader::CreateFromFile(CString const &FilePath, std::vector<char const *> const &Parameters)
+    {
+        return ShaderCreation(FilePath, Parameters);
+    }
+
+    TOwn<CShader> CShader::CreateFromMemory(
+        std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+    )
+    {
+        return ShaderCreation(VertexShaderCode, FragmentShaderCode);
+    }
+
 } // namespace Corvus
