@@ -7,6 +7,7 @@
 #include "Corvus/Assets/Model/StaticModel.h"
 #include "Corvus/Components/StaticMeshComponent.h"
 #include "Corvus/Components/TransformComponent.h"
+#include "Corvus/Math/Color.h"
 #include "Corvus/Renderer/Texture2D.h"
 
 namespace Corvus
@@ -31,7 +32,6 @@ namespace Corvus
             CreateMeshData();
             PopulateScene();
 
-            CreateShader();
             CreateTexture();
             CreateMaterial();
 
@@ -91,13 +91,13 @@ namespace Corvus
 
                 TestTexture->BindUnit(0);
 
-                TestShader->Bind();
-                TestShader->SetMat4("u_Transform", SceneEntity.TransformComponent->GetTransformMatrix());
-                TestShader->SetMat4("u_ProjView", CCamera.GetProjectionViewMatrix());
+                TOwn<CShader> &MaterialShader = TestMaterial.GetShader();
+                MaterialShader->Bind();
+                MaterialShader->SetMat4("u_Transform", SceneEntity.TransformComponent->GetTransformMatrix());
+                MaterialShader->SetMat4("u_ProjView", CCamera.GetProjectionViewMatrix());
+                TestMaterial.LoadInShader();
 
-                TestMaterial.LoadInShader(*TestShader);
-
-                CRenderer::Submit(VAO, TestShader);
+                CRenderer::Submit(VAO, MaterialShader);
             }
 
             CRenderer::EndScene();
@@ -160,21 +160,15 @@ namespace Corvus
         void PopulateScene()
         {
             Entities.EmplaceBack(
-                TestShader,
-                VAO,
-                FTransform{{1.0f, 0.0f, 0.0f}, FVector::OneVec, {ERotationOrder::YXZ, {30.0f, 0.0f, 0.0f}}}
+                VAO, FTransform{{1.0f, 0.0f, 0.0f}, FVector::OneVec, {ERotationOrder::YXZ, {30.0f, 0.0f, 0.0f}}}
             );
 
             Entities.EmplaceBack(
-                TestShader,
-                VAO,
-                FTransform{{0.0f, 0.0f, 0.5f}, FVector::OneVec * 0.5f, {ERotationOrder::YXZ, {0.0f, 0.0f, 45.0f}}}
+                VAO, FTransform{{0.0f, 0.0f, 0.5f}, FVector::OneVec * 0.5f, {ERotationOrder::YXZ, {0.0f, 0.0f, 45.0f}}}
             );
 
             Entities[0].TransformComponent->AddChild(Entities[1].TransformComponent.Get());
         }
-
-        void CreateShader() { TestShader = CShader::CreateFromFile("./Assets/Shaders/TestShader.glsl"); }
 
         void CreateTexture()
         {
@@ -192,17 +186,20 @@ namespace Corvus
         {
             TestMaterial.AlbedoMap.SetTexture(TestTexture.get());
             TestMaterial.AlbedoMap.UseTexture();
+
+            // TestMaterial.AlbedoMap.SetOther(FVector4{FColor::Magenta, 1.0f});
+            // TestMaterial.AlbedoMap.UseOther();
+
+            TestMaterial.CompileMaterialShader("./Assets/Shaders/TestShader.glsl");
         }
 
     protected:
         TArray<CEntity>    Entities;
         CPerspectiveCamera CCamera;
 
-        TOwn<CShader>      TestShader;
         TOwn<CVertexArray> VAO;
-
-        TOwn<CTexture2D> TestTexture;
-        CMaterial        TestMaterial;
+        TOwn<CTexture2D>   TestTexture;
+        CMaterial          TestMaterial;
 
         bool     bCameraMode = false;
         FVector2 CursorPos;

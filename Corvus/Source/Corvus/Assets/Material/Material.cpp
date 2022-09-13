@@ -6,21 +6,22 @@
 
 namespace Corvus
 {
-    static const CString s_AlbedoMapName      = CString{"u_Material.AlbedoMap"};
-    static const CString s_AlbedoValueName    = CString{"u_Material.AlbedoValue"};
-    static const CString s_AlbedoSelectorName = CString{"u_Material.bHasAlbedoMap"};
+    static const CString s_UseAlbedoMapParam   = CString{"#define USE_ALBEDO_MAP\n"};
+    static const CString s_UseAlbedoValueParam = CString{"#define USE_ALBEDO_VAL\n"};
 
-    static const CString s_NormalMapName      = CString{"u_Material.NormalMap"};
-    static const CString s_NormalValueName    = CString{"u_Material.NormalValue"};
-    static const CString s_NormalSelectorName = CString{"u_Material.bHasNormalMap"};
+    static const CString s_UseNormalMapParam   = CString{"#define USE_NORMAL_MAP\n"};
+    static const CString s_UseNormalValueParam = CString{"#define USE_NORMAL_VAL\n"};
 
-    static const CString s_RoughnessMapName      = CString{"u_Material.RoughnessMap"};
-    static const CString s_RoughnessValueName    = CString{"u_Material.RoughnessValue"};
-    static const CString s_RoughnessSelectorName = CString{"u_Material.bHasRoughnessMap"};
+    static const CString s_UseRoughnessMapParam   = CString{"#define USE_ROUGHNESS_MAP\n"};
+    static const CString s_UseRoughnessValueParam = CString{"#define USE_ROUGHNESS_VAL\n"};
 
-    static const CString s_MetallicMapName      = CString{"u_Material.MetallicMap"};
-    static const CString s_MetallicValueName    = CString{"u_Material.MetallicValue"};
-    static const CString s_MetallicSelectorName = CString{"u_Material.bHasMetallicMap"};
+    static const CString s_UseMetallicMapParam   = CString{"#define USE_METALLIC_MAP\n"};
+    static const CString s_UseMetallicValueParam = CString{"#define USE_METALLIC_VAL\n"};
+
+    static const CString s_AlbedoName    = CString{"u_Material.Albedo"};
+    static const CString s_NormalName    = CString{"u_Material.Normal"};
+    static const CString s_RoughnessName = CString{"u_Material.Roughness"};
+    static const CString s_MetallicName  = CString{"u_Material.Metallic"};
 
     template<typename OtherT>
     void LoadNotATextureParam(CShader &Shader, CString const &Name, OtherT const &Value);
@@ -45,37 +46,38 @@ namespace Corvus
 
     template<typename OtherT>
     UInt32 LoadMapInShader(
-        CShader                         &Shader,
-        UInt32                           Unit,
-        TMaterialTexParam<OtherT> const &Parameter,
-        CString const                   &MapName,
-        CString const                   &OtherName,
-        CString const                   &IsMapUsedVariableName
+        CShader &Shader, UInt32 Unit, TMaterialTexParam<OtherT> const &Parameter, CString const &ParameterName
     )
     {
         if (Parameter.IsTexture())
         {
             Parameter.GetTexture()->BindUnit(Unit);
-            Parameter.GetTexture()->LoadInShader(Shader, MapName, Unit);
-            Shader.SetBool(IsMapUsedVariableName, true);
+            Parameter.GetTexture()->LoadInShader(Shader, ParameterName, Unit);
             return Unit + 1;
         }
         else
         {
-            LoadNotATextureParam(Shader, OtherName, Parameter.GetOther());
-            Shader.SetBool(IsMapUsedVariableName, false);
+            LoadNotATextureParam(Shader, ParameterName, Parameter.GetOther());
             return Unit;
         }
     }
 
-    void CMaterial::LoadInShader(CShader &Shader)
+    TOwn<CShader> &CMaterial::GetShader()
     {
+        return m_MaterialShader;
+    }
+
+    void CMaterial::LoadInShader()
+    {
+        if (!m_MaterialShader)
+        {
+            CORVUS_CORE_NO_ENTRY_FMT("Material Shader was not compiled!");
+        }
+
         UInt32 TextureUnitCnt = 0;
 
         // Albedo
-        TextureUnitCnt = LoadMapInShader(
-            Shader, TextureUnitCnt, AlbedoMap, s_AlbedoMapName, s_AlbedoValueName, s_AlbedoSelectorName
-        );
+        TextureUnitCnt = LoadMapInShader(*m_MaterialShader, TextureUnitCnt, AlbedoMap, s_AlbedoName);
 
         //// Normal
         // TextureUnitCnt = LoadMapInShader(
@@ -91,6 +93,60 @@ namespace Corvus
         // TextureUnitCnt = LoadMapInShader(
         //     Shader, TextureUnitCnt, MetallicMap, s_MetallicMapName, s_MetallicValueName, s_MetallicSelectorName
         //);
+    }
+
+    void CMaterial::CompileMaterialShader(CString const &BaseShaderFilePath)
+    {
+        std::vector<char const *> Parameters;
+
+        // Albedo
+        if (AlbedoMap.IsTexture())
+        {
+            Parameters.push_back(s_UseAlbedoMapParam.c_str());
+        }
+        else
+        {
+            Parameters.push_back(s_UseAlbedoValueParam.c_str());
+        }
+
+        // Normal
+        if (NormalMap.IsTexture())
+        {
+            Parameters.push_back(s_UseNormalMapParam.c_str());
+        }
+        else
+        {
+            Parameters.push_back(s_UseNormalValueParam.c_str());
+        }
+
+        // Roughness
+        if (RoughnessMap.IsTexture())
+        {
+            Parameters.push_back(s_UseRoughnessMapParam.c_str());
+        }
+        else
+        {
+            Parameters.push_back(s_UseRoughnessValueParam.c_str());
+        }
+
+        // Metallic
+        if (MetallicMap.IsTexture())
+        {
+            Parameters.push_back(s_UseMetallicMapParam.c_str());
+        }
+        else
+        {
+            Parameters.push_back(s_UseMetallicValueParam.c_str());
+        }
+
+        if (!m_MaterialShader)
+        {
+            m_MaterialShader = CShader::CreateFromFile(BaseShaderFilePath, Parameters);
+        }
+        else
+        {
+            m_MaterialShader->Recompile(BaseShaderFilePath, Parameters);
+        }
     }
 
 } // namespace Corvus

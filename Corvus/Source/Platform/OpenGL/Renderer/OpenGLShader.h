@@ -26,6 +26,12 @@ namespace Corvus
         POpenGLShader &operator=(POpenGLShader const &) = delete;
         POpenGLShader &operator=(POpenGLShader &&Rhs) noexcept;
 
+        virtual bool Recompile(CString const &FilePath) override;
+        virtual bool Recompile(CString const &FilePath, std::vector<char const *> const &Parameters) override;
+        virtual bool Recompile(
+            std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+        ) override;
+
         virtual void Bind() override;
         virtual void Unbind() override;
 
@@ -42,8 +48,8 @@ namespace Corvus
         virtual void SetMat4(CString const &Name, FMatrix4 const &Value) override;
 
     private:
-        void CreateFromFile(CString const &FilePath, std::vector<char const *> const &Parameters);
-        void CreateFromMemory(
+        GLuint CreateFromFile(CString const &FilePath, std::vector<char const *> const &Parameters);
+        GLuint CreateFromMemory(
             std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
         );
 
@@ -54,7 +60,7 @@ namespace Corvus
             CString       &OutFragmentShaderCode
         );
 
-        void CreateProgram(
+        GLuint CreateProgram(
             std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
         );
         GLuint CreateShader(GLenum ShaderType, std::vector<char const *> const &ShaderCode) const;

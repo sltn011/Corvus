@@ -7,16 +7,16 @@
 
 namespace Corvus
 {
-    CEntity::CEntity(TOwn<CShader> const &CShader, TOwn<CVertexArray> const &VAO)
+    CEntity::CEntity(TOwn<CVertexArray> const &VAO)
     {
         TransformComponent  = ConstructPoolable<CTransformComponent>(this, FTransform{});
-        StaticMeshComponent = ConstructPoolable<CStaticMeshComponent>(this, CShader, VAO);
+        StaticMeshComponent = ConstructPoolable<CStaticMeshComponent>(this, VAO);
     }
 
-    CEntity::CEntity(TOwn<CShader> const &CShader, TOwn<CVertexArray> const &VAO, FTransform const &Transform)
+    CEntity::CEntity(TOwn<CVertexArray> const &VAO, FTransform const &Transform)
     {
         TransformComponent  = ConstructPoolable<CTransformComponent>(this, Transform);
-        StaticMeshComponent = ConstructPoolable<CStaticMeshComponent>(this, CShader, VAO);
+        StaticMeshComponent = ConstructPoolable<CStaticMeshComponent>(this, VAO);
     }
 
 } // namespace Corvus

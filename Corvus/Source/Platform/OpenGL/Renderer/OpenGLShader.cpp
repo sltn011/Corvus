@@ -9,7 +9,8 @@ namespace Corvus
         CORVUS_CORE_TRACE("Creating OpenGL Shader {}", FilePath);
         FTimePoint const ShaderCreationBegin;
 
-        CreateFromFile(FilePath, {}); // Empty parameters array
+        m_ID = CreateFromFile(FilePath, {}); // Empty parameters array
+        CORVUS_CORE_ASSERT_FMT(m_ID != 0, "Failed to create OpenGL Shader from file {}", FilePath);
 
         FTimePoint const ShaderCreationEnd;
         FTimeDelta const ShaderCreationTime = ShaderCreationEnd - ShaderCreationBegin;
@@ -21,7 +22,8 @@ namespace Corvus
         CORVUS_CORE_TRACE("Creating OpenGL Shader {}", FilePath);
         FTimePoint const ShaderCreationBegin;
 
-        CreateFromFile(FilePath, Parameters);
+        m_ID = CreateFromFile(FilePath, Parameters);
+        CORVUS_CORE_ASSERT_FMT(m_ID != 0, "Failed to create OpenGL Shader from file {}", FilePath);
 
         FTimePoint const ShaderCreationEnd;
         FTimeDelta const ShaderCreationTime = ShaderCreationEnd - ShaderCreationBegin;
@@ -35,7 +37,8 @@ namespace Corvus
         CORVUS_CORE_TRACE("Creating OpenGL Shader");
         FTimePoint const ShaderCreationBegin;
 
-        CreateFromMemory(VertexShaderCode, FragmentShaderCode);
+        m_ID = CreateFromMemory(VertexShaderCode, FragmentShaderCode);
+        CORVUS_CORE_ASSERT_FMT(m_ID != 0, "Failed to create OpenGL Shader from memory");
 
         FTimePoint const ShaderCreationEnd;
         FTimeDelta const ShaderCreationTime = ShaderCreationEnd - ShaderCreationBegin;
@@ -63,6 +66,50 @@ namespace Corvus
             m_UniformLocationCache = std::move(Rhs.m_UniformLocationCache);
         }
         return *this;
+    }
+
+    bool POpenGLShader::Recompile(CString const &FilePath)
+    {
+        GLuint NewProgram = CreateFromFile(FilePath, {});
+        if (NewProgram == 0)
+        {
+            CORVUS_CORE_ERROR("Failed to recompile OpenGL Shader from file {}", FilePath);
+            return false;
+        }
+
+        glDeleteProgram(m_ID);
+        m_ID = NewProgram;
+        return true;
+    }
+
+    bool POpenGLShader::Recompile(CString const &FilePath, std::vector<char const *> const &Parameters)
+    {
+        GLuint NewProgram = CreateFromFile(FilePath, Parameters);
+        if (NewProgram == 0)
+        {
+            CORVUS_CORE_ERROR("Failed to recompile OpenGL Shader from file {}", FilePath);
+            return false;
+        }
+
+        glDeleteProgram(m_ID);
+        m_ID = NewProgram;
+        return true;
+    }
+
+    bool POpenGLShader::Recompile(
+        std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+    )
+    {
+        GLuint NewProgram = CreateFromMemory(VertexShaderCode, FragmentShaderCode);
+        if (NewProgram == 0)
+        {
+            CORVUS_CORE_ERROR("Failed to recompile OpenGL Shader from memory");
+            return false;
+        }
+
+        glDeleteProgram(m_ID);
+        m_ID = NewProgram;
+        return true;
     }
 
     void POpenGLShader::Bind()
@@ -129,7 +176,7 @@ namespace Corvus
         glUniformMatrix4fv(Location, 1, false, FMatrix::ValuePtr(Value));
     }
 
-    void POpenGLShader::CreateFromFile(CString const &FilePath, std::vector<char const *> const &Parameters)
+    GLuint POpenGLShader::CreateFromFile(CString const &FilePath, std::vector<char const *> const &Parameters)
     {
         CString VersionString;
         CString VertexShaderCodeString;
@@ -153,14 +200,14 @@ namespace Corvus
         VertexShaderCode.back()   = VertexShaderCodeString.c_str();
         FragmentShaderCode.back() = FragmentShaderCodeString.c_str();
 
-        CreateProgram(VertexShaderCode, FragmentShaderCode);
+        return CreateProgram(VertexShaderCode, FragmentShaderCode);
     }
 
-    void POpenGLShader::CreateFromMemory(
+    GLuint POpenGLShader::CreateFromMemory(
         std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
     )
     {
-        CreateProgram(VertexShaderCode, FragmentShaderCode);
+        return CreateProgram(VertexShaderCode, FragmentShaderCode);
     }
 
     bool POpenGLShader::IsReadFileSuccessfull(
@@ -221,17 +268,22 @@ namespace Corvus
         return true;
     }
 
-    void POpenGLShader::CreateProgram(
+    GLuint POpenGLShader::CreateProgram(
         std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
     )
     {
         GLuint const VertexShader   = CreateShader(GL_VERTEX_SHADER, VertexShaderCode);
         GLuint const FragmentShader = CreateShader(GL_FRAGMENT_SHADER, FragmentShaderCode);
 
-        m_ID = glCreateProgram();
-        glAttachShader(m_ID, VertexShader);
-        glAttachShader(m_ID, FragmentShader);
-        glLinkProgram(m_ID);
+        if (VertexShader == 0 || FragmentShader == 0)
+        {
+            return 0;
+        }
+
+        GLuint Program = glCreateProgram();
+        glAttachShader(Program, VertexShader);
+        glAttachShader(Program, FragmentShader);
+        glLinkProgram(Program);
 
         CString LinkError;
         if (!IsProgramLinkedSuccessfully(LinkError))
@@ -246,33 +298,37 @@ namespace Corvus
                 CORVUS_DUMP(CodePart);
             }
             CORVUS_CORE_NO_ENTRY_FMT("OpenGLShader failed to link! {1}", LinkError);
+            return 0;
         }
 
         glDeleteShader(VertexShader);
         glDeleteShader(FragmentShader);
+
+        return Program;
     }
 
     GLuint POpenGLShader::CreateShader(GLenum const ShaderType, std::vector<char const *> const &ShaderCode) const
     {
         CORVUS_CORE_ASSERT(ShaderCode.size() != 0);
 
-        GLuint const CShader = glCreateShader(ShaderType);
-        CORVUS_CORE_ASSERT_FMT(CShader != 0, "Failed to create OpenGL CShader!");
+        GLuint const Shader = glCreateShader(ShaderType);
+        CORVUS_CORE_ASSERT_FMT(Shader != 0, "Failed to create OpenGL CShader!");
 
-        glShaderSource(CShader, static_cast<GLsizei>(ShaderCode.size()), ShaderCode.data(), nullptr);
-        glCompileShader(CShader);
+        glShaderSource(Shader, static_cast<GLsizei>(ShaderCode.size()), ShaderCode.data(), nullptr);
+        glCompileShader(Shader);
 
         CString CompileError;
-        if (!IsShaderCompiledSuccessfully(CShader, CompileError))
+        if (!IsShaderCompiledSuccessfully(Shader, CompileError))
         {
             for (char const *const CodePart : ShaderCode)
             {
                 CORVUS_DUMP(CodePart);
             }
             CORVUS_CORE_NO_ENTRY_FMT("OpenGLShader failed to compile! {1}", CompileError);
+            return 0;
         }
 
-        return CShader;
+        return Shader;
     }
 
     bool POpenGLShader::IsShaderCompiledSuccessfully(GLuint const CShader, CString &OutErrorMessage) const
