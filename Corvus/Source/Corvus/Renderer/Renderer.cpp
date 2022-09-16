@@ -74,7 +74,7 @@ namespace Corvus
     {
         CShader->Bind();
         VAO->Bind();
-        s_GraphicsAPI->DrawIndexed(VAO->GetIndexBuffer()->GetNumIndices());
+        s_GraphicsAPI->DrawIndexed(VAO->GetIndexBuffer().GetNumIndices());
     }
 
 } // namespace Corvus

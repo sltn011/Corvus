@@ -22,14 +22,18 @@ namespace Corvus
         return nullptr;
     }
 
-    TOwn<CIndexBuffer> &CVertexArray::GetIndexBuffer()
+    CIndexBuffer &CVertexArray::GetIndexBuffer()
     {
-        return m_IndexBuffer;
+        return *m_IndexBuffer;
     }
 
-    TOwn<CVertexBuffer> &CVertexArray::GetVertexBuffer()
+    CVertexBuffer &CVertexArray::GetVertexBuffer(SizeT const BufferIndex)
     {
-        return m_VertexBuffer;
+        if (BufferIndex >= m_VertexBuffers.size())
+        {
+            CORVUS_NO_ENTRY_FMT("Index out of range!");
+        }
+        return *(m_VertexBuffers[BufferIndex]);
     }
 
 } // namespace Corvus

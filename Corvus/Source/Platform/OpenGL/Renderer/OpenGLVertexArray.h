@@ -25,13 +25,15 @@ namespace Corvus
         virtual void Unbind() override;
 
         virtual void AddIndexBuffer(TOwn<CIndexBuffer> &&CIndexBuffer) override;
-        virtual void AddVertexBuffer(TOwn<CVertexBuffer> &&CVertexBuffer) override;
+
+        virtual SizeT AddVertexBuffer(TOwn<CVertexBuffer> &&CVertexBuffer) override;
+        virtual void  AddVertexBuffer(TOwn<CVertexBuffer> &&CVertexBuffer, SizeT BufferIndex) override;
 
     protected:
-        void EnableVertexAttributes();
-        void DisableVertexAttributes();
+        void EnableVertexAttributes(SizeT BufferIndex);
 
-        GLuint m_VAO = 0;
+        GLuint m_VAO              = 0;
+        SizeT  m_VertexAttributes = 0;
     };
 
 } // namespace Corvus

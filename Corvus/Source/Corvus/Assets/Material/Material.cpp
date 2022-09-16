@@ -79,20 +79,14 @@ namespace Corvus
         // Albedo
         TextureUnitCnt = LoadMapInShader(*m_MaterialShader, TextureUnitCnt, AlbedoMap, s_AlbedoName);
 
-        //// Normal
-        // TextureUnitCnt = LoadMapInShader(
-        //     Shader, TextureUnitCnt, NormalMap, s_NormalMapName, s_NormalValueName, s_NormalSelectorName
-        //);
+        // Normal
+        // TextureUnitCnt = LoadMapInShader(*m_MaterialShader, TextureUnitCnt, NormalMap, s_NormalName);
         //
-        //// Roughness
-        // TextureUnitCnt = LoadMapInShader(
-        //     Shader, TextureUnitCnt, RoughnessMap, s_RoughnessMapName, s_RoughnessValueName, s_RoughnessSelectorName
-        //);
+        // Roughness
+        // TextureUnitCnt = LoadMapInShader(*m_MaterialShader, TextureUnitCnt, RoughnessMap, s_RoughnessName);
         //
-        //// Metallic
-        // TextureUnitCnt = LoadMapInShader(
-        //     Shader, TextureUnitCnt, MetallicMap, s_MetallicMapName, s_MetallicValueName, s_MetallicSelectorName
-        //);
+        // Metallic
+        // TextureUnitCnt = LoadMapInShader(*m_MaterialShader, TextureUnitCnt, MetallicMap, s_MetallicName);
     }
 
     void CMaterial::CompileMaterialShader(CString const &BaseShaderFilePath)

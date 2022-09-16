@@ -35,7 +35,7 @@ namespace Corvus
             CreateTexture();
             CreateMaterial();
 
-            CModelLoader::LoadStaticModelFromFile("./Assets/Models/Shack.glb");
+            // CModelLoader::LoadStaticModelFromFile("./Assets/Models/Cube3.glb");
         }
 
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
@@ -136,24 +136,34 @@ namespace Corvus
         void CreateMeshData()
         {
             // clang-format off
-            float const Vertices[] = {
-                // Position             // UV
-                +0.0f, -0.2f, -0.2f,    0.0f, 0.0f,
-                +0.0f, -0.2f, +0.2f,    1.0f, 0.0f,
-                +0.0f, +0.2f, +0.2f,    1.0f, 1.0f,
-                +0.0f, +0.2f, -0.2f,    0.0f, 1.0f
+            float const VerticesPositions[] = {
+                +0.0f, -0.2f, -0.2f,
+                +0.0f, -0.2f, +0.2f,
+                +0.0f, +0.2f, +0.2f,
+                +0.0f, +0.2f, -0.2f
+            };
+
+            float const VerticesUVs[] = {
+                0.0f, 0.0f,
+                1.0f, 0.0f,
+                1.0f, 1.0f,
+                0.0f, 1.0f
             };
             // clang-format on
 
             UInt32 const Indices[] = {0, 1, 2, 0, 2, 3};
 
-            CVertexBufferLayout const Layout = {{EBufferDataType::Vec3}, {EBufferDataType::Vec2}};
+            CVertexBufferLayout const VBOPosLayout = {{EBufferDataType::Vec3}};
+            TOwn<CVertexBuffer>       VBOPos       = CVertexBuffer::Create(VerticesPositions, 4, VBOPosLayout);
 
-            TOwn<CVertexBuffer> VBO = CVertexBuffer::Create(Vertices, 4, Layout);
-            TOwn<CIndexBuffer>  EBO = CIndexBuffer::Create(Indices, 6);
+            CVertexBufferLayout const VBOUVsLayout = {{EBufferDataType::Vec2}};
+            TOwn<CVertexBuffer>       VBOUVs       = CVertexBuffer::Create(VerticesUVs, 4, VBOUVsLayout);
+
+            TOwn<CIndexBuffer> EBO = CIndexBuffer::Create(Indices, 6);
 
             VAO = CVertexArray::Create();
-            VAO->AddVertexBuffer(std::move(VBO));
+            VAO->AddVertexBuffer(std::move(VBOPos));
+            VAO->AddVertexBuffer(std::move(VBOUVs));
             VAO->AddIndexBuffer(std::move(EBO));
         }
 
