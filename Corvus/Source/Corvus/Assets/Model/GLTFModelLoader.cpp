@@ -27,7 +27,6 @@ namespace Corvus
                 Translation.y = static_cast<float>(Node.translation[1]);
                 Translation.z = static_cast<float>(Node.translation[2]);
             }
-            CORVUS_TRACE("{} Translation: {} {} {}", Node.name, Translation.x, Translation.y, Translation.z);
 
             FVector3 Scale{1.0f};
             if (!Node.scale.empty())
@@ -36,7 +35,6 @@ namespace Corvus
                 Scale.y = static_cast<float>(Node.scale[1]);
                 Scale.z = static_cast<float>(Node.scale[2]);
             }
-            CORVUS_TRACE("{} Scale: {} {} {}", Node.name, Scale.x, Scale.y, Scale.z);
 
             FQuaternion Rotation = FQuaternion::Unit;
             if (!Node.rotation.empty())
@@ -46,7 +44,6 @@ namespace Corvus
                 Rotation.z = static_cast<float>(Node.rotation[2]);
                 Rotation.w = static_cast<float>(Node.rotation[3]);
             }
-            CORVUS_TRACE("{} Rotation: {} {} {} {}", Node.name, Rotation.x, Rotation.y, Rotation.z, Rotation.w);
 
             FMatrix4 EyeMatrix       = FMatrix4{1.0f};
             FMatrix4 TranslateMatrix = FMatrix::Translate(EyeMatrix, Translation);
@@ -65,8 +62,6 @@ namespace Corvus
             UInt32                &OutNumComponents
         )
         {
-            CORVUS_INFO("{} {}", AttributeKey, AttributeValue);
-
             tinygltf::Accessor const   &Accessor   = GLTFModel.accessors[AttributeValue];
             tinygltf::BufferView const &BufferView = GLTFModel.bufferViews[Accessor.bufferView];
             tinygltf::Buffer const     &Buffer     = GLTFModel.buffers[BufferView.buffer];
