@@ -70,7 +70,6 @@ namespace Corvus
 
         if (BufferIndex == m_VertexBuffers.size())
         {
-            m_VertexAttributes += VertexBuffer->GetLayout().Size();
             m_VertexBuffers.emplace_back(std::move(VertexBuffer));
         }
         else

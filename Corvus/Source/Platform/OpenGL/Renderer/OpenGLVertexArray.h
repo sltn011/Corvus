@@ -32,8 +32,7 @@ namespace Corvus
     protected:
         void EnableVertexAttributes(SizeT BufferIndex);
 
-        GLuint m_VAO              = 0;
-        SizeT  m_VertexAttributes = 0;
+        GLuint m_VAO = 0;
     };
 
 } // namespace Corvus

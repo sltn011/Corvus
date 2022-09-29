@@ -35,7 +35,7 @@ namespace Corvus
             CreateTexture();
             CreateMaterial();
 
-            // CModelLoader::LoadStaticModelFromFile("./Assets/Models/Cube3.glb");
+            CModelLoader::LoadStaticModelFromFile("./Assets/Models/3Cubes.glb");
         }
 
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
