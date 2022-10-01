@@ -3,6 +3,7 @@
 #include "Corvus/Assets/Model/GLTFModelLoader.h"
 
 #include "Corvus/Assets/Model/StaticMesh.h"
+#include "Corvus/Assets/Model/StaticMeshPrimitive.h"
 #include "Corvus/Assets/Model/StaticModel.h"
 #include "Corvus/Math/Matrix.h"
 #include "Corvus/Math/Quaternion.h"
@@ -18,6 +19,7 @@ namespace Corvus
 {
     namespace
     {
+
         FMatrix4 GetNodeTransformMatrix(tinygltf::Model const &GLTFModel, tinygltf::Node const &Node)
         {
             FVector3 Translation{};
@@ -52,11 +54,124 @@ namespace Corvus
             return TranslateMatrix * RotateMatrix * ScaleMatrix;
         }
 
+        FIntVector4 ReadIntegerElement(UInt8 const *Data, SizeT NumComponents, SizeT ComponentSize)
+        {
+            FIntVector4 Result{};
+
+            for (SizeT Component = 0; Component < NumComponents; ++Component)
+            {
+                SizeT ComponentOffset = Component * ComponentSize;
+
+                switch (ComponentSize) // can be 1, 2 or 4 bytes
+                {
+                case 1:
+                    Result[static_cast<FIntVector4::length_type>(Component)] =
+                        *(reinterpret_cast<UInt8 const *>(Data + ComponentOffset));
+                    break;
+                case 2:
+                    Result[static_cast<FIntVector4::length_type>(Component)] =
+                        *(reinterpret_cast<UInt16 const *>(Data + ComponentOffset));
+                    break;
+                case 4:
+                    Result[static_cast<FIntVector4::length_type>(Component)] =
+                        *(reinterpret_cast<UInt32 const *>(Data + ComponentOffset));
+                    break;
+                }
+            }
+
+            return Result;
+        }
+
+        FVector4 ReadFloatElement(UInt8 const *Data, SizeT NumComponents, SizeT ComponentSize)
+        {
+            FVector4 Result{};
+
+            for (SizeT Component = 0; Component < NumComponents; ++Component)
+            {
+                SizeT ComponentOffset = Component * ComponentSize;
+
+                switch (ComponentSize) // Float components are always 4 byte float
+                {
+                case 4:
+                    Result[static_cast<FVector4::length_type>(Component)] =
+                        *(reinterpret_cast<float const *>(Data + ComponentOffset));
+                    break;
+                default:
+                    CORVUS_ERROR("Unsupported float component type!");
+                    break;
+                }
+            }
+
+            return Result;
+        }
+
+        void AddIntegerElementToBuffer(
+            UInt8 *BufferData, SizeT Element, UInt8 const *Data, SizeT NumComponents, SizeT ComponentSize
+        )
+        {
+            FIntVector4 ElementData = ReadIntegerElement(Data, NumComponents, ComponentSize);
+            switch (NumComponents)
+            {
+            case 1:
+                *(reinterpret_cast<UInt32 *>(BufferData) + Element) = ElementData[0];
+                break;
+            case 2:
+                *(reinterpret_cast<FIntVector2 *>(BufferData) + Element) = FIntVector2{ElementData};
+                break;
+            case 3:
+                *(reinterpret_cast<FIntVector3 *>(BufferData) + Element) = FIntVector3{ElementData};
+                break;
+            default:
+                CORVUS_ERROR("Invalid number of element components!");
+                break;
+            }
+        }
+
+        void AddFloatElementToBuffer(
+            UInt8          *BufferData,
+            SizeT           Element,
+            UInt8 const    *Data,
+            SizeT           NumComponents,
+            SizeT           ComponentSize,
+            FMatrix4 const &NodeTransformMatrix,
+            CString const  &AttributeKey
+        )
+        {
+            FVector4 ElementData = ReadFloatElement(Data, NumComponents, ComponentSize);
+
+            if (AttributeKey == "POSITION")
+            {
+                ElementData[3] = 1.0f;
+                ElementData    = NodeTransformMatrix * ElementData;
+            }
+            else if (AttributeKey == "NORMAL")
+            {
+                ElementData[3] = 0.0f;
+                ElementData    = NodeTransformMatrix * ElementData;
+            }
+
+            switch (NumComponents)
+            {
+            case 1:
+                *(reinterpret_cast<float *>(BufferData) + Element) = ElementData[0];
+                break;
+            case 2:
+                *(reinterpret_cast<FVector2 *>(BufferData) + Element) = FVector2{ElementData};
+                break;
+            case 3:
+                *(reinterpret_cast<FVector3 *>(BufferData) + Element) = FVector3{ElementData};
+                break;
+            default:
+                CORVUS_ERROR("Invalid number of element components!");
+                break;
+            }
+        }
+
         bool GetAttributeData(
             tinygltf::Model const &GLTFModel,
             FMatrix4 const        &NodeTransformMatrix,
             CString const         &AttributeKey,
-            int const              AttributeValue,
+            UInt32 const           AttributeValue,
             std::vector<UInt8>    &OutAttributeData,
             UInt32                &OutNumElements,
             UInt32                &OutNumComponents
@@ -82,68 +197,80 @@ namespace Corvus
 
             SizeT Count         = Accessor.count;
             SizeT DataType      = Accessor.type;
+            SizeT ComponentType = Accessor.componentType;
             SizeT NumComponents = 0;
-            SizeT ComponentSize = 4; // All are either ints or floats (4 bytes per component)
-            if (DataType == TINYGLTF_TYPE_SCALAR)
+            SizeT ComponentSize = 0;
+            bool  bIsInteger    = false;
+
+            switch (DataType)
             {
+            case TINYGLTF_TYPE_SCALAR:
                 NumComponents = 1;
-            }
-            else if (DataType == TINYGLTF_TYPE_VEC2)
-            {
+                break;
+            case TINYGLTF_TYPE_VEC2:
                 NumComponents = 2;
-            }
-            else if (DataType == TINYGLTF_TYPE_VEC3)
-            {
+                break;
+            case TINYGLTF_TYPE_VEC3:
                 NumComponents = 3;
-            }
-            else
-            {
+                break;
+            default:
                 CORVUS_ERROR("Unsupported data type in gltf model!");
                 return false;
             }
 
-            SizeT ElementSize = NumComponents * ComponentSize;
-            SizeT DataBytes   = Count * ElementSize;
+            switch (ComponentType)
+            {
+            case TINYGLTF_COMPONENT_TYPE_BYTE:
+            case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
+                ComponentSize = 1;
+                bIsInteger    = true;
+                break;
+            case TINYGLTF_COMPONENT_TYPE_SHORT:
+            case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
+                ComponentSize = 2;
+                bIsInteger    = true;
+                break;
+            case TINYGLTF_COMPONENT_TYPE_INT:
+            case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
+                ComponentSize = 4;
+                bIsInteger    = true;
+                break;
+            case TINYGLTF_COMPONENT_TYPE_FLOAT:
+                ComponentSize = 4;
+                break;
+            default:
+                CORVUS_ERROR("Unsupported data component type in gltf model!");
+                return false;
+            }
+
+            SizeT SrcElementSize = NumComponents * ComponentSize;
+            SizeT DstElementSize = NumComponents * 4; // Types used in geometry buffers are int or float(4 byte)
+            SizeT DataBytes      = Count * DstElementSize;
 
             std::vector<UInt8> AttributeData(DataBytes);
 
-            FVector4 Data = {};
             for (SizeT Element = 0; Element < Count; ++Element)
             {
-                for (SizeT Component = 0; Component < NumComponents; ++Component)
-                {
-                    SizeT DataStartOffset = BufferViewOffset + AccessorOffset;
-                    SizeT ElementOffset   = Element * (ElementSize + AccessorOffset);
-                    SizeT ComponentOffset = Component * ComponentSize;
+                SizeT DataStartOffset = BufferViewOffset + AccessorOffset;
+                SizeT ElementOffset   = Element * (SrcElementSize + AccessorOffset);
 
-                    Data[static_cast<FVector4::length_type>(Component)] = *(reinterpret_cast<float const *>(
-                        Buffer.data.data() + DataStartOffset + ElementOffset + ComponentOffset
-                    ));
-                }
+                UInt8 const *Data = Buffer.data.data() + DataStartOffset + ElementOffset;
 
-                if (AttributeKey == "POSITION")
+                if (bIsInteger)
                 {
-                    Data[3] = 1.0f;
-                    Data    = NodeTransformMatrix * Data;
+                    AddIntegerElementToBuffer(AttributeData.data(), Element, Data, NumComponents, ComponentSize);
                 }
-                else if (AttributeKey == "NORMAL")
+                else
                 {
-                    Data[3] = 0.0f;
-                    Data    = NodeTransformMatrix * Data;
-                }
-
-                // Copy 4byte components into data, don't care about type here
-                if (NumComponents == 1)
-                {
-                    *(reinterpret_cast<FVector4::value_type *>(AttributeData.data()) + Element) = Data[0];
-                }
-                else if (NumComponents == 2)
-                {
-                    *(reinterpret_cast<FVector2 *>(AttributeData.data()) + Element) = FVector2{Data};
-                }
-                else if (NumComponents == 3)
-                {
-                    *(reinterpret_cast<FVector3 *>(AttributeData.data()) + Element) = FVector3{Data};
+                    AddFloatElementToBuffer(
+                        AttributeData.data(),
+                        Element,
+                        Data,
+                        NumComponents,
+                        ComponentSize,
+                        NodeTransformMatrix,
+                        AttributeKey
+                    );
                 }
             }
 
@@ -153,15 +280,34 @@ namespace Corvus
             return true;
         }
 
-        TOwn<CVertexArray> ProcessPrimitive(
+        bool GetPrimitiveMaterial(
+            tinygltf::Model const &GLTFModel, tinygltf::Primitive const &Primitive, CMaterial &OutMaterial
+        )
+        {
+            tinygltf::Material const &MaterialData = GLTFModel.materials[Primitive.material];
+
+            CMaterial Material;
+            return true;
+        }
+
+        CStaticMeshPrimitive ProcessPrimitive(
             tinygltf::Model const &GLTFModel, tinygltf::Primitive const &Primitive, FMatrix4 const &NodeTransformMatrix
         )
         {
             TOwn<CVertexArray> VertexArray = CVertexArray::Create();
 
+            std::array<CString, 3> const AttributeKeys = {"POSITION", "TEXCOORD_0", "NORMAL"};
+
             // Vertex data
-            for (auto const &[AttributeKey, AttributeValue] : Primitive.attributes)
+            for (CString const &AttributeKey : AttributeKeys)
             {
+                auto AttributeIt = Primitive.attributes.find(AttributeKey);
+                if (AttributeIt == Primitive.attributes.end())
+                {
+                    continue;
+                }
+
+                UInt32             AttributeValue = AttributeIt->second;
                 std::vector<UInt8> AttributeData;
                 UInt32             AttributeNumElements;
                 UInt32             AttributeNumComponents;
@@ -224,31 +370,39 @@ namespace Corvus
                 VertexArray->AddIndexBuffer(std::move(IndexBuffer));
             }
 
-            return VertexArray;
+            CMaterial Material; // Fill material data
+
+            return CStaticMeshPrimitive{std::move(VertexArray), std::move(Material)};
         }
 
         CStaticMesh ProcessMesh(
             tinygltf::Model const &GLTFModel, tinygltf::Node const &Node, tinygltf::Mesh const &Mesh
         )
         {
-            FMatrix4 NodeTransformMatrix = GetNodeTransformMatrix(GLTFModel, Node);
+            CStaticMesh StaticMesh;
 
+            FMatrix4 NodeTransformMatrix = GetNodeTransformMatrix(GLTFModel, Node);
             for (tinygltf::Primitive const &Primitive : Mesh.primitives)
             {
-                ProcessPrimitive(GLTFModel, Primitive, NodeTransformMatrix);
+                StaticMesh.AddPrimitive(ProcessPrimitive(GLTFModel, Primitive, NodeTransformMatrix));
             }
-            return {};
+
+            return StaticMesh;
         }
 
-        void ParseGLTFModel(tinygltf::Model &GLTFModel)
+        CStaticModel ProcessModel(tinygltf::Model &GLTFModel)
         {
+            CStaticModel StaticModel;
+
             for (tinygltf::Node const &Node : GLTFModel.nodes)
             {
-                auto const &MeshIndex = Node.mesh;
-                auto const &Mesh      = GLTFModel.meshes[MeshIndex];
-                ProcessMesh(GLTFModel, Node, Mesh);
+                tinygltf::Mesh const &Mesh = GLTFModel.meshes[Node.mesh];
+                StaticModel.AddMesh(ProcessMesh(GLTFModel, Node, Mesh));
             }
+
+            return StaticModel;
         }
+
     } // namespace
 
     CStaticModel CGLTFModelLoader::LoadStaticModelFromFile(CString const &FilePath, bool bIsBinary)
@@ -286,9 +440,7 @@ namespace Corvus
             CORVUS_CORE_ERROR("Failed to load StaticModel from {}", FilePath);
         }
 
-        ParseGLTFModel(GLTFModel);
-
-        return CStaticModel();
+        return ProcessModel(GLTFModel);
     }
 
 } // namespace Corvus

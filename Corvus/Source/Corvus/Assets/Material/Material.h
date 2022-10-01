@@ -3,6 +3,7 @@
 
 #include "Corvus/Core/UUID.h"
 #include "Corvus/Math/Vector.h"
+#include "Corvus/Renderer/Shader.h"
 #include "Corvus/Renderer/Texture2D.h"
 
 namespace Corvus
@@ -36,8 +37,6 @@ namespace Corvus
     using CNormalMap    = TMaterialTexParam<FVector3>;
     using CRoughnessMap = TMaterialTexParam<float>;
     using CMetallicMap  = TMaterialTexParam<float>;
-
-    class CShader;
 
     class CMaterial
     {
