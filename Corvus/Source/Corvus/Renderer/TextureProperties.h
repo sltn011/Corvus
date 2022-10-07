@@ -67,7 +67,7 @@ namespace Corvus
         Depth32F_Stencil8
     };
 
-    constexpr SizeT PixelFormatSizeBytes(EPixelFormat const Format)
+    constexpr SizeT PixelFormatComponentSize(EPixelFormat const Format)
     {
         switch (Format)
         {
@@ -183,7 +183,7 @@ namespace Corvus
             return 8;
 
         default:
-            CORVUS_NO_ENTRY_FMT("Invalid PixelFormat passed to PixelFormatSizeBytes!");
+            CORVUS_NO_ENTRY_FMT("Invalid PixelFormat passed to PixelFormatComponentSize!");
             return 0;
         }
     }
@@ -296,6 +296,11 @@ namespace Corvus
             CORVUS_NO_ENTRY_FMT("Invalid PixelFormat passed to PixelFormatNumComponents!");
             return 0;
         }
+    }
+
+    constexpr SizeT PixelFormatElementSize(EPixelFormat const Format)
+    {
+        return PixelFormatComponentSize(Format) * PixelFormatNumComponents(Format);
     }
 
     constexpr bool IsPixelFormatFloat(EPixelFormat const Format)

@@ -182,9 +182,8 @@ namespace Corvus
             TextureParameters.bHasAnisotropicFiltering = true;
             TextureParameters.MinFiltering             = ETextureFiltering::LinearMipMap_Linear;
             TextureParameters.MagFiltering             = ETextureFiltering::Linear;
-            CImage Image =
-                CTextureLoader::LoadFromImageFile("./Assets/Textures/OldRabbit.jpg", ELoadTextureChannels::RGB);
-            TestTexture = CTexture2D::Create(Image, TextureParameters);
+            CImage Image = CImageLoader::LoadFromImageFile("./Assets/Textures/OldRabbit.jpg", ELoadImageChannels::RGB);
+            TestTexture  = CTexture2D::Create(Image, TextureParameters);
         }
 
         void CreateMaterial()

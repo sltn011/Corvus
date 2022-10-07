@@ -6,7 +6,7 @@
 namespace Corvus
 {
 
-    enum class ELoadTextureChannels : UInt8
+    enum class ELoadImageChannels : UInt8
     {
         DontCare,
         R,
@@ -17,32 +17,32 @@ namespace Corvus
 
     class CImage;
 
-    class CTextureLoader
+    class CImageLoader
     {
     public:
-        static [[nodiscard]] CImage LoadFromImageFile(CString const &FilePath, ELoadTextureChannels ChannelsToLoad);
+        static [[nodiscard]] CImage LoadFromImageFile(CString const &FilePath, ELoadImageChannels ChannelsToLoad);
         static [[nodiscard]] CImage LoadFromMemory(
-            void *ImageData, SizeT ImageWidth, SizeT ImageHeight, EPixelFormat PixelFormat, bool bIsSRGB
+            UInt8 const *ImageData, SizeT ImageWidth, SizeT ImageHeight, EPixelFormat PixelFormat, bool bIsSRGB
         );
 
     private:
-        static CImage LoadHDRImage(CString const &FilePath, ELoadTextureChannels ChannelsToLoad);
-        static CImage LoadLDRImage(CString const &FilePath, ELoadTextureChannels ChannelsToLoad);
+        static CImage LoadHDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad);
+        static CImage LoadLDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad);
         static CImage LoadImageImpl(
-            CString const &FilePath, ELoadTextureChannels ChannelsToLoad, EPixelFormat PixelFormat
+            CString const &FilePath, ELoadImageChannels ChannelsToLoad, EPixelFormat PixelFormat
         );
 
-        static int CalculateRequiredNumChannels(ELoadTextureChannels ChannelsToLoad);
+        static int CalculateRequiredNumChannels(ELoadImageChannels ChannelsToLoad);
 
-        static void *FormatImageData(
-            void                *ImageData,
-            SizeT                ImageWidth,
-            SizeT                ImageHeight,
-            ELoadTextureChannels ChannelsToLoad,
-            EPixelFormat         PixelFormat
+        static UInt8 *FormatImageData(
+            UInt8             *ImageData,
+            SizeT              ImageWidth,
+            SizeT              ImageHeight,
+            ELoadImageChannels ChannelsToLoad,
+            EPixelFormat       PixelFormat
         );
 
-        static ELoadTextureChannels CalculateChannelsToLoad(ELoadTextureChannels ChannelsToLoad);
+        static ELoadImageChannels CalculateChannelsToLoad(ELoadImageChannels ChannelsToLoad);
     };
 
 } // namespace Corvus

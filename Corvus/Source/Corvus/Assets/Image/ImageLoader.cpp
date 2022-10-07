@@ -10,13 +10,13 @@
 namespace Corvus
 {
 
-    CImage CTextureLoader::LoadFromImageFile(CString const &FilePath, ELoadTextureChannels const ChannelsToLoad)
+    CImage CImageLoader::LoadFromImageFile(CString const &FilePath, ELoadImageChannels const ChannelsToLoad)
     {
         CORVUS_CORE_TRACE("Loading Image {}", FilePath);
         FTimePoint ImageLoadStart;
 
         // Handle Don'tCare value of loaded channels
-        ELoadTextureChannels RealChannelsToLoad = CalculateChannelsToLoad(ChannelsToLoad);
+        ELoadImageChannels RealChannelsToLoad = CalculateChannelsToLoad(ChannelsToLoad);
 
         CImage Image;
         if (stbi_is_hdr(FilePath.c_str()))
@@ -42,16 +42,19 @@ namespace Corvus
         return Image;
     }
 
-    CImage CTextureLoader::LoadFromMemory(
-        void *ImageData, SizeT ImageWidth, SizeT ImageHeight, EPixelFormat PixelFormat, bool bIsSRGB
+    CImage CImageLoader::LoadFromMemory(
+        UInt8 const *ImageData, SizeT ImageWidth, SizeT ImageHeight, EPixelFormat PixelFormat, bool bIsSRGB
     )
     {
         CORVUS_CORE_ASSERT(ImageData != nullptr);
         CORVUS_CORE_ASSERT(ImageWidth > 0);
         CORVUS_CORE_ASSERT(ImageHeight > 0);
 
+        SizeT DataBytes = ImageWidth * ImageHeight * PixelFormatElementSize(PixelFormat);
+
         CImage Image;
-        Image.m_ImageData   = ImageData;
+        Image.m_ImageData.resize(DataBytes);
+        std::memcpy(Image.m_ImageData.data(), ImageData, DataBytes);
         Image.m_ImageWidth  = ImageWidth;
         Image.m_ImageHeight = ImageHeight;
         Image.m_PixelFormat = PixelFormat;
@@ -59,21 +62,21 @@ namespace Corvus
         return Image;
     }
 
-    CImage CTextureLoader::LoadHDRImage(CString const &FilePath, ELoadTextureChannels ChannelsToLoad)
+    CImage CImageLoader::LoadHDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad)
     {
         EPixelFormat PixelFormat = EPixelFormat::R8; // HDR should have float value - use R8 as a check
         switch (ChannelsToLoad)
         {
-        case ELoadTextureChannels::R:
+        case ELoadImageChannels::R:
             PixelFormat = EPixelFormat::R32F;
             break;
-        case ELoadTextureChannels::RG:
+        case ELoadImageChannels::RG:
             PixelFormat = EPixelFormat::RG32F;
             break;
-        case ELoadTextureChannels::RGB:
+        case ELoadImageChannels::RGB:
             PixelFormat = EPixelFormat::RGB32F;
             break;
-        case ELoadTextureChannels::RGBA:
+        case ELoadImageChannels::RGBA:
             PixelFormat = EPixelFormat::RGBA32F;
             break;
         default:
@@ -84,21 +87,21 @@ namespace Corvus
         return LoadImageImpl(FilePath, ChannelsToLoad, PixelFormat);
     }
 
-    CImage CTextureLoader::LoadLDRImage(CString const &FilePath, ELoadTextureChannels ChannelsToLoad)
+    CImage CImageLoader::LoadLDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad)
     {
         EPixelFormat PixelFormat = EPixelFormat::R32F; // LDR should have UByte values - use float as a check
         switch (ChannelsToLoad)
         {
-        case ELoadTextureChannels::R:
+        case ELoadImageChannels::R:
             PixelFormat = EPixelFormat::R8;
             break;
-        case ELoadTextureChannels::RG:
+        case ELoadImageChannels::RG:
             PixelFormat = EPixelFormat::RG8;
             break;
-        case ELoadTextureChannels::RGB:
+        case ELoadImageChannels::RGB:
             PixelFormat = EPixelFormat::RGB8;
             break;
-        case ELoadTextureChannels::RGBA:
+        case ELoadImageChannels::RGBA:
             PixelFormat = EPixelFormat::RGBA8;
             break;
         default:
@@ -108,8 +111,8 @@ namespace Corvus
         return LoadImageImpl(FilePath, ChannelsToLoad, PixelFormat);
     }
 
-    CImage CTextureLoader::LoadImageImpl(
-        CString const &FilePath, ELoadTextureChannels const ChannelsToLoad, EPixelFormat const PixelFormat
+    CImage CImageLoader::LoadImageImpl(
+        CString const &FilePath, ELoadImageChannels const ChannelsToLoad, EPixelFormat const PixelFormat
     )
     {
         int Width               = 0;
@@ -117,16 +120,20 @@ namespace Corvus
         int NumChannels         = 0;
         int RequiredNumChannels = CalculateRequiredNumChannels(ChannelsToLoad);
 
-        void *ImageData = nullptr;
+        UInt8 *ImageData = nullptr;
         stbi_set_flip_vertically_on_load(true);
         if (IsPixelFormatFloat(PixelFormat))
         {
             // Load from .HDR file
-            ImageData = stbi_loadf(FilePath.c_str(), &Width, &Height, &NumChannels, RequiredNumChannels);
+            ImageData = reinterpret_cast<UInt8 *>(
+                stbi_loadf(FilePath.c_str(), &Width, &Height, &NumChannels, RequiredNumChannels)
+            );
         }
         else
         {
-            ImageData = stbi_load(FilePath.c_str(), &Width, &Height, &NumChannels, RequiredNumChannels);
+            ImageData = reinterpret_cast<UInt8 *>(
+                stbi_load(FilePath.c_str(), &Width, &Height, &NumChannels, RequiredNumChannels)
+            );
         }
         stbi_set_flip_vertically_on_load(false);
 
@@ -136,35 +143,41 @@ namespace Corvus
             return CImage{};
         }
 
-        SizeT ImageWidth    = static_cast<SizeT>(Width);
-        SizeT ImageHeight   = static_cast<SizeT>(Height);
-        void *FormattedData = FormatImageData(ImageData, ImageWidth, ImageHeight, ChannelsToLoad, PixelFormat);
+        SizeT  ImageWidth    = static_cast<SizeT>(Width);
+        SizeT  ImageHeight   = static_cast<SizeT>(Height);
+        UInt8 *FormattedData = FormatImageData(ImageData, ImageWidth, ImageHeight, ChannelsToLoad, PixelFormat);
+
+        SizeT DataBytes = ImageWidth * ImageHeight * PixelFormatElementSize(PixelFormat);
 
         CImage Image;
+        Image.m_ImageData.resize(DataBytes);
+        std::memcpy(Image.m_ImageData.data(), FormattedData, DataBytes);
         Image.m_ImageWidth  = ImageWidth;
         Image.m_ImageHeight = ImageHeight;
-        Image.m_ImageData   = FormattedData;
         Image.m_PixelFormat = PixelFormat;
         Image.m_bIsSRGB     = !IsPixelFormatFloat(PixelFormat);
+
+        stbi_image_free(ImageData);
 
         return Image;
     }
 
-    int CTextureLoader::CalculateRequiredNumChannels(ELoadTextureChannels const ChannelsToLoad)
+    int CImageLoader::CalculateRequiredNumChannels(ELoadImageChannels const ChannelsToLoad)
     {
         switch (ChannelsToLoad)
         {
-        case ELoadTextureChannels::DontCare:
+        case ELoadImageChannels::DontCare:
             return 4;
 
-        case ELoadTextureChannels::R:
+        // Force 1 or 2 channels to be loaded as 3 channeled images, format them later
+        case ELoadImageChannels::R:
             [[fallthrough]];
-        case ELoadTextureChannels::RG:
+        case ELoadImageChannels::RG:
             [[fallthrough]];
-        case ELoadTextureChannels::RGB:
+        case ELoadImageChannels::RGB:
             return 3;
 
-        case ELoadTextureChannels::RGBA:
+        case ELoadImageChannels::RGBA:
             return 4;
 
         default:
@@ -172,40 +185,41 @@ namespace Corvus
         }
     }
 
-    void *CTextureLoader::FormatImageData(
-        void *const                ImageData,
-        SizeT const                ImageWidth,
-        SizeT const                ImageHeight,
-        ELoadTextureChannels const ChannelsToLoad,
-        EPixelFormat const         PixelFormat
+    UInt8 *CImageLoader::FormatImageData(
+        UInt8                   *ImageData,
+        SizeT const              ImageWidth,
+        SizeT const              ImageHeight,
+        ELoadImageChannels const ChannelsToLoad,
+        EPixelFormat const       PixelFormat
     )
     {
         // Only needs formatting when loading R or RG channels - stb image loads
         // grayscale or grayscale+alpha when asked for 1 or 2 channels
-        if (!(ChannelsToLoad == ELoadTextureChannels::R || ChannelsToLoad == ELoadTextureChannels::RG))
+        if (!(ChannelsToLoad == ELoadImageChannels::R || ChannelsToLoad == ELoadImageChannels::RG))
         {
             return ImageData;
         }
 
-        UInt8 const *Source          = static_cast<UInt8 const *>(ImageData);
-        UInt8       *Destination     = static_cast<UInt8 *>(ImageData);
+        UInt8 const *Source          = ImageData;
+        UInt8       *Destination     = ImageData;
         SizeT const  Size            = ImageWidth * ImageHeight;
-        SizeT const  ComponentsInSrc = 3;
-        SizeT const  ComponentsInDst = ChannelsToLoad == ELoadTextureChannels::R ? 1 : 2; // 1 for R, 2 for RG
-        SizeT const  SizeOfComponent = PixelFormatSizeBytes(PixelFormat);
+        SizeT const  ComponentsInSrc = 3; // 1 and 2 channeled images are forced to load with 3 channels at first
+        SizeT const  ComponentsInDst = ChannelsToLoad == ELoadImageChannels::R ? 1 : 2; // 1 for R, 2 for RG
+        SizeT const  SizeOfComponent = PixelFormatComponentSize(PixelFormat);
 
         SizeT const SrcStep = ComponentsInSrc * SizeOfComponent;
         SizeT const DstStep = ComponentsInDst * SizeOfComponent;
 
-        for (SizeT Step = 0; Step < Size; ++Step)
+        for (SizeT Element = 0; Element < Size; ++Element)
         {
+            SizeT CompOffset = 0;
             for (SizeT Comp = 0; Comp < ComponentsInDst; ++Comp)
             {
-                SizeT const CompOffset = Comp * SizeOfComponent;
                 for (SizeT Byte = 0; Byte < SizeOfComponent; ++Byte)
                 {
                     *(Destination + CompOffset + Byte) = *(Source + CompOffset + Byte);
                 }
+                CompOffset += SizeOfComponent;
             }
             Source += SrcStep;
             Destination += DstStep;
@@ -214,11 +228,11 @@ namespace Corvus
         return ImageData;
     }
 
-    ELoadTextureChannels CTextureLoader::CalculateChannelsToLoad(ELoadTextureChannels const ChannelsToLoad)
+    ELoadImageChannels CImageLoader::CalculateChannelsToLoad(ELoadImageChannels const ChannelsToLoad)
     {
-        if (ChannelsToLoad == ELoadTextureChannels::DontCare)
+        if (ChannelsToLoad == ELoadImageChannels::DontCare)
         {
-            return ELoadTextureChannels::RGBA;
+            return ELoadImageChannels::RGBA;
         }
         else
         {

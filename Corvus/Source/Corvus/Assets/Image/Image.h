@@ -7,26 +7,19 @@
 namespace Corvus
 {
 
-    class CTextureLoader;
+    class CImageLoader;
 
     class CImage
     {
     private:
-        friend class CTextureLoader;
+        friend class CImageLoader;
 
         CImage() = default;
 
     public:
-        ~CImage();
-
-        CImage(CImage const &) = delete;
-        CImage(CImage &&) noexcept;
-        CImage &operator=(CImage const &) = delete;
-        CImage &operator=(CImage &&) noexcept;
-
         SizeT        GetImageWidth() const { return m_ImageWidth; }
         SizeT        GetImageHeight() const { return m_ImageHeight; }
-        void        *GetImageData() const { return m_ImageData; }
+        UInt8 const *GetImageData() const { return m_ImageData.data(); }
         EPixelFormat GetPixelFormat() const { return m_PixelFormat; }
         bool         IsSRGB() const { return m_bIsSRGB; }
 
@@ -35,11 +28,11 @@ namespace Corvus
         FUUID UUID;
 
     private:
-        SizeT        m_ImageWidth  = 0;
-        SizeT        m_ImageHeight = 0;
-        void        *m_ImageData   = nullptr;
-        EPixelFormat m_PixelFormat = EPixelFormat::RGBA8;
-        bool         m_bIsSRGB     = false;
+        SizeT              m_ImageWidth  = 0;
+        SizeT              m_ImageHeight = 0;
+        std::vector<UInt8> m_ImageData;
+        EPixelFormat       m_PixelFormat = EPixelFormat::RGBA8;
+        bool               m_bIsSRGB     = false;
     };
 
 } // namespace Corvus
