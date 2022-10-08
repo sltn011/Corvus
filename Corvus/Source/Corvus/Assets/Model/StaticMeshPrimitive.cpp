@@ -4,8 +4,8 @@
 
 namespace Corvus
 {
-    CStaticMeshPrimitive::CStaticMeshPrimitive(TOwn<CVertexArray> &&VertexArray, CMaterial &&Material)
-        : m_VertexArray{std::move(VertexArray)}, m_Material{std::move(Material)}
+    CStaticMeshPrimitive::CStaticMeshPrimitive(TOwn<CVertexArray> &&VertexArray, CMaterial const &Material)
+        : m_VertexArray{std::move(VertexArray)}, m_Material{Material}
     {
     }
 

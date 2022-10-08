@@ -1,7 +1,7 @@
 #ifndef CORVUS_SOURCE_CORVUS_ASSETS_MODEL_GLTFMODELLOADER_H
 #define CORVUS_SOURCE_CORVUS_ASSETS_MODEL_GLTFMODELLOADER_H
 
-#include "Corvus/Core/Base.h"
+#include "Corvus/Assets/Model/ModelLoader.h"
 
 namespace Corvus
 {
@@ -11,7 +11,7 @@ namespace Corvus
     class CGLTFModelLoader
     {
     public:
-        static CStaticModel LoadStaticModelFromFile(CString const &FilePath, bool bIsBinary);
+        static SStaticModelLoadedData LoadStaticModelFromFile(CString const &FilePath, bool bIsBinary);
     };
 
 } // namespace Corvus

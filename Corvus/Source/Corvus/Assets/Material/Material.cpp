@@ -62,34 +62,18 @@ namespace Corvus
         }
     }
 
-    TOwn<CShader> &CMaterial::GetShader()
+    CShader *CMaterial::GetShader()
     {
         return m_MaterialShader;
     }
 
-    void CMaterial::LoadInShader()
+    void CMaterial::SetShader(CShader *Shader)
     {
-        if (!m_MaterialShader)
-        {
-            CORVUS_CORE_NO_ENTRY_FMT("Material Shader was not compiled!");
-        }
-
-        UInt32 TextureUnitCnt = 0;
-
-        // Albedo
-        TextureUnitCnt = LoadMapInShader(*m_MaterialShader, TextureUnitCnt, AlbedoMap, s_AlbedoName);
-
-        // Normal
-        // TextureUnitCnt = LoadMapInShader(*m_MaterialShader, TextureUnitCnt, NormalMap, s_NormalName);
-        //
-        // Roughness
-        // TextureUnitCnt = LoadMapInShader(*m_MaterialShader, TextureUnitCnt, RoughnessMap, s_RoughnessName);
-        //
-        // Metallic
-        // TextureUnitCnt = LoadMapInShader(*m_MaterialShader, TextureUnitCnt, MetallicMap, s_MetallicName);
+        CORVUS_CORE_ASSERT(Shader != nullptr);
+        m_MaterialShader = Shader;
     }
 
-    void CMaterial::CompileMaterialShader(CString const &BaseShaderFilePath)
+    std::vector<char const *> CMaterial::GetShaderCompileParameters() const
     {
         std::vector<char const *> Parameters;
 
@@ -133,14 +117,29 @@ namespace Corvus
             Parameters.push_back(s_UseMetallicValueParam.c_str());
         }
 
+        return Parameters;
+    }
+
+    void CMaterial::LoadInShader()
+    {
         if (!m_MaterialShader)
         {
-            m_MaterialShader = CShader::CreateFromFile(BaseShaderFilePath, Parameters);
+            CORVUS_CORE_NO_ENTRY_FMT("Material Shader was not compiled!");
         }
-        else
-        {
-            m_MaterialShader->Recompile(BaseShaderFilePath, Parameters);
-        }
+
+        UInt32 TextureUnitCnt = 0;
+
+        // Albedo
+        TextureUnitCnt = LoadMapInShader(*m_MaterialShader, TextureUnitCnt, AlbedoMap, s_AlbedoName);
+
+        // Normal
+        // TextureUnitCnt = LoadMapInShader(*m_MaterialShader, TextureUnitCnt, NormalMap, s_NormalName);
+        //
+        // Roughness
+        // TextureUnitCnt = LoadMapInShader(*m_MaterialShader, TextureUnitCnt, RoughnessMap, s_RoughnessName);
+        //
+        // Metallic
+        // TextureUnitCnt = LoadMapInShader(*m_MaterialShader, TextureUnitCnt, MetallicMap, s_MetallicName);
     }
 
 } // namespace Corvus

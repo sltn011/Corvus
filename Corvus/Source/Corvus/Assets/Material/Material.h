@@ -43,11 +43,12 @@ namespace Corvus
     public:
         CMaterial() = default;
 
-        TOwn<CShader> &GetShader();
+        CShader *GetShader();
+        void     SetShader(CShader *Shader);
+
+        std::vector<char const *> GetShaderCompileParameters() const;
 
         void LoadInShader();
-
-        void CompileMaterialShader(CString const &BaseShaderFilePath);
 
         CAlbedoMap    AlbedoMap;
         CNormalMap    NormalMap;
@@ -57,7 +58,7 @@ namespace Corvus
         FUUID UUID;
 
     private:
-        TOwn<CShader> m_MaterialShader;
+        CShader *m_MaterialShader = nullptr;
     };
 
 } // namespace Corvus

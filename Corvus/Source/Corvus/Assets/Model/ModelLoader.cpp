@@ -8,7 +8,7 @@
 namespace Corvus
 {
 
-    CStaticModel CModelLoader::LoadStaticModelFromFile(CString const &FilePath)
+    SStaticModelLoadedData CModelLoader::LoadStaticModelFromFile(CString const &FilePath)
     {
         CORVUS_CORE_TRACE("Loading StaticMesh {}", FilePath);
         FTimePoint ModelLoadStart;
@@ -17,31 +17,31 @@ namespace Corvus
         if (FormatPrefixIndex == CString::npos)
         {
             CORVUS_CORE_ERROR("Invalid file path passed to ModelLoader: {}", FilePath);
-            return CStaticModel();
+            return SStaticModelLoadedData();
         }
 
         CString const Format = FilePath.substr(FormatPrefixIndex + 1);
 
-        CStaticModel StaticModel;
+        SStaticModelLoadedData LoadedData;
         if (Format == "gltf") // glTF
         {
-            StaticModel = CGLTFModelLoader::LoadStaticModelFromFile(FilePath, false);
+            LoadedData = CGLTFModelLoader::LoadStaticModelFromFile(FilePath, false);
         }
         else if (Format == "glb") // Binary glTF
         {
-            StaticModel = CGLTFModelLoader::LoadStaticModelFromFile(FilePath, true);
+            LoadedData = CGLTFModelLoader::LoadStaticModelFromFile(FilePath, true);
         }
         else
         {
             CORVUS_CORE_ERROR("Unknown file format \"{}\" passed to ModelLoader: {}", Format, FilePath);
-            return StaticModel;
+            return LoadedData;
         }
 
         FTimePoint ModelLoadEnd;
         FTimeDelta ModelLoadTime = ModelLoadEnd - ModelLoadStart;
         CORVUS_CORE_TRACE("Loaded Model {0} in {1}ms", FilePath, ModelLoadTime.MilliSeconds());
 
-        return StaticModel;
+        return LoadedData;
     }
 
 } // namespace Corvus

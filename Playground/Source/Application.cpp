@@ -29,11 +29,6 @@ namespace Corvus
             CRenderer::SetClearColor({0.6f, 0.8f, 1.0f, 1.0f});
 
             InitCamera();
-            // CreateMeshData();
-            // PopulateScene();
-
-            CreateTexture();
-            CreateMaterial();
 
             CreateStaticMesh();
         }
@@ -79,19 +74,24 @@ namespace Corvus
                 CCamera.ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
             }
 
-            TOwn<CShader> &MaterialShader = TestMaterial.GetShader();
-            MaterialShader->Bind();
-            MaterialShader->SetMat4("u_Transform", TestModelTransform.GetTransformMatrix());
-            MaterialShader->SetMat4("u_ProjView", CCamera.GetProjectionViewMatrix());
-            TestMaterial.LoadInShader();
-
-            for (SizeT MeshIndex = 0; MeshIndex < TestModel.GetNumMeshes(); ++MeshIndex)
+            for (SizeT MeshIndex = 0; MeshIndex < TestModelData.StaticModel.GetNumMeshes(); ++MeshIndex)
             {
-                CStaticMesh &Mesh = TestModel.GetMesh(MeshIndex);
+                CStaticMesh &Mesh = TestModelData.StaticModel.GetMesh(MeshIndex);
                 for (SizeT PrimitiveIndex = 0; PrimitiveIndex < Mesh.GetNumPrimitives(); ++PrimitiveIndex)
                 {
                     CStaticMeshPrimitive &Primitive = Mesh.GetPrimitive(PrimitiveIndex);
-                    CRenderer::Submit(Primitive.GetVertexArray(), MaterialShader);
+
+                    CShader *PrimitiveShader = Primitive.GetMaterial().GetShader();
+                    CORVUS_ASSERT(PrimitiveShader != nullptr);
+
+                    PrimitiveShader->Bind();
+                    PrimitiveShader->SetMat4("u_Transform", TestModelTransform.GetTransformMatrix());
+                    PrimitiveShader->SetMat4("u_ProjView", CCamera.GetProjectionViewMatrix());
+                    Primitive.GetMaterial().LoadInShader();
+
+                    CRenderer::Submit(
+                        Primitive.GetVertexArray().get(), PrimitiveShader
+                    ); // Reminder of a changed signature
                 }
             }
 
@@ -128,78 +128,36 @@ namespace Corvus
             CCamera.SwitchPlayerControl(true, 1.0f);
         }
 
-        void CreateMeshData()
-        {
-            // clang-format off
-            float const VerticesPositions[] = {
-                +0.0f, -0.2f, -0.2f,
-                +0.0f, -0.2f, +0.2f,
-                +0.0f, +0.2f, +0.2f,
-                +0.0f, +0.2f, -0.2f
-            };
-
-            float const VerticesUVs[] = {
-                0.0f, 0.0f,
-                1.0f, 0.0f,
-                1.0f, 1.0f,
-                0.0f, 1.0f
-            };
-            // clang-format on
-
-            UInt32 const Indices[] = {0, 1, 2, 0, 2, 3};
-
-            CVertexBufferLayout const VBOPosLayout = {{EBufferDataType::Vec3}};
-            TOwn<CVertexBuffer>       VBOPos       = CVertexBuffer::Create(VerticesPositions, 4, VBOPosLayout);
-
-            CVertexBufferLayout const VBOUVsLayout = {{EBufferDataType::Vec2}};
-            TOwn<CVertexBuffer>       VBOUVs       = CVertexBuffer::Create(VerticesUVs, 4, VBOUVsLayout);
-
-            TOwn<CIndexBuffer> EBO = CIndexBuffer::Create(Indices, 6);
-
-            VAO = CVertexArray::Create();
-            VAO->AddVertexBuffer(std::move(VBOPos));
-            VAO->AddVertexBuffer(std::move(VBOUVs));
-            VAO->AddIndexBuffer(std::move(EBO));
-        }
-
-        void PopulateScene()
-        {
-            Entities.EmplaceBack(
-                VAO, FTransform{{1.0f, 0.0f, 0.0f}, FVector::OneVec, {ERotationOrder::YXZ, {30.0f, 0.0f, 0.0f}}}
-            );
-
-            Entities.EmplaceBack(
-                VAO, FTransform{{0.0f, 0.0f, 0.5f}, FVector::OneVec * 0.5f, {ERotationOrder::YXZ, {0.0f, 0.0f, 45.0f}}}
-            );
-
-            Entities[0].TransformComponent->AddChild(Entities[1].TransformComponent.Get());
-        }
-
-        void CreateTexture()
-        {
-            STextureParameters TextureParameters;
-            TextureParameters.bHasMipmaps              = true;
-            TextureParameters.bHasAnisotropicFiltering = true;
-            TextureParameters.MinFiltering             = ETextureFiltering::LinearMipMap_Linear;
-            TextureParameters.MagFiltering             = ETextureFiltering::Linear;
-            CImage Image = CImageLoader::LoadFromImageFile("./Assets/Textures/OldRabbit.jpg", ELoadImageChannels::RGB);
-            TestTexture  = CTexture2D::Create(Image, TextureParameters);
-        }
-
-        void CreateMaterial()
-        {
-            TestMaterial.AlbedoMap.SetTexture(TestTexture.get());
-            TestMaterial.AlbedoMap.UseTexture();
-
-            // TestMaterial.AlbedoMap.SetOther(FVector4{FColor::Magenta, 1.0f});
-            // TestMaterial.AlbedoMap.UseOther();
-
-            TestMaterial.CompileMaterialShader("./Assets/Shaders/TestShader.glsl");
-        }
-
         void CreateStaticMesh()
         {
-            TestModel = CModelLoader::LoadStaticModelFromFile("./Assets/Models/Shack.glb");
+            TestModelData = CModelLoader::LoadStaticModelFromFile("./Assets/Models/Shack.glb");
+            // TestModelData = CModelLoader::LoadStaticModelFromFile("./Assets/Models/3Cubes.glb");
+
+            // Create separate shader for each primitive
+            // Very ugly and bad way of doing it will be changed ASAP
+            // Only for model loading tests
+
+            SizeT NumPrimitives = 0;
+            for (SizeT i = 0; i < TestModelData.StaticModel.GetNumMeshes(); ++i)
+            {
+                NumPrimitives += TestModelData.StaticModel.GetMesh(i).GetNumPrimitives();
+            }
+            TestShaders.resize(NumPrimitives);
+
+            SizeT ShaderCnt = 0;
+            for (SizeT i = 0; i < TestModelData.StaticModel.GetNumMeshes(); ++i)
+            {
+                CStaticMesh &StaticMesh = TestModelData.StaticModel.GetMesh(i);
+                for (SizeT j = 0; j < StaticMesh.GetNumPrimitives(); ++j)
+                {
+                    CStaticMeshPrimitive &StaticMeshPrimitive = StaticMesh.GetPrimitive(j);
+
+                    auto Parameters        = StaticMeshPrimitive.GetMaterial().GetShaderCompileParameters();
+                    TestShaders[ShaderCnt] = CShader::CreateFromFile("./Assets/Shaders/TestShader.glsl", Parameters);
+                    StaticMeshPrimitive.GetMaterial().SetShader(TestShaders[ShaderCnt].get());
+                    ShaderCnt++;
+                }
+            }
 
             TestModelTransform =
                 FTransform{{5.0f, -1.5f, 0.0f}, FVector::OneVec, {ERotationOrder::YXZ, {0.0f, -45.0f, 0.0f}}};
@@ -209,12 +167,9 @@ namespace Corvus
         TArray<CEntity>    Entities;
         CPerspectiveCamera CCamera;
 
-        TOwn<CVertexArray> VAO;
-        TOwn<CTexture2D>   TestTexture;
-        CMaterial          TestMaterial;
-
-        CStaticModel TestModel;
-        FTransform   TestModelTransform;
+        SStaticModelLoadedData     TestModelData;
+        FTransform                 TestModelTransform;
+        std::vector<TOwn<CShader>> TestShaders;
 
         bool     bCameraMode = false;
         FVector2 CursorPos;

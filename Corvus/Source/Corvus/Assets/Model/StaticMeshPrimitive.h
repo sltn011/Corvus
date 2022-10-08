@@ -10,7 +10,7 @@ namespace Corvus
     class CStaticMeshPrimitive
     {
     public:
-        CStaticMeshPrimitive(TOwn<CVertexArray> &&VertexArray, CMaterial &&Material);
+        CStaticMeshPrimitive(TOwn<CVertexArray> &&VertexArray, CMaterial const &Material);
 
         TOwn<CVertexArray> &GetVertexArray();
         CMaterial          &GetMaterial();
