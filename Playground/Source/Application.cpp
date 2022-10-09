@@ -24,6 +24,7 @@ namespace Corvus
         CApplicationLayer() : CLayer{"ApplicationLayer", true}
         {
             CRenderer::EnableDepthTest();
+            CRenderer::EnableBackfaceCulling();
             CRenderer::SetClearColor({0.6f, 0.8f, 1.0f, 1.0f});
 
             InitCamera();
@@ -102,12 +103,23 @@ namespace Corvus
 
         virtual void OnEvent(CEvent &Event)
         {
-            if (Event.GetEventType() == CEvent::EEventType::KeyPress)
+            if (Event.GetEventType() == CEvent::EEventType::MouseButtonPress)
             {
-                CKeyPressEvent &KPEvent = CastEvent<CKeyPressEvent>(Event);
-                if (KPEvent.Key == Key::C)
+                CMouseButtonPressEvent &MBPEvent = CastEvent<CMouseButtonPressEvent>(Event);
+                if (MBPEvent.Button == Mouse::ButtonRight)
                 {
-                    bCameraMode = !bCameraMode;
+                    bCameraMode = true;
+                    CInput::SetCursorEnabled(!bCameraMode);
+
+                    Event.SetHandled();
+                }
+            }
+            else if (Event.GetEventType() == CEvent::EEventType::MouseButtonRelease)
+            {
+                CMouseButtonReleaseEvent &MBREvent = CastEvent<CMouseButtonReleaseEvent>(Event);
+                if (MBREvent.Button == Mouse::ButtonRight)
+                {
+                    bCameraMode = false;
                     CInput::SetCursorEnabled(!bCameraMode);
 
                     Event.SetHandled();
