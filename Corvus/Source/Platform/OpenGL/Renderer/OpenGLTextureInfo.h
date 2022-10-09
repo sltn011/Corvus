@@ -1,18 +1,18 @@
 #ifndef CORVUS_SOURCE_PLATFORM_OPENGL_RENDERER_OPENGLTEXTUREPROPERTIES_H
 #define CORVUS_SOURCE_PLATFORM_OPENGL_RENDERER_OPENGLTEXTUREPROPERTIES_H
 
-#include "Corvus/Renderer/TextureProperties.h"
+#include "Corvus/Renderer/TextureInfo.h"
 
 namespace Corvus
 {
 
-    class POpenGLTextureProperties : public CTexturePropertyToAPIValueConverter<POpenGLTextureProperties>
+    class POpenGLTextureInfo : public CTexturePropertyToAPIValueConverter<POpenGLTextureInfo>
     {
     public:
-        using Super = CTexturePropertyToAPIValueConverter<POpenGLTextureProperties>;
+        using Super = CTexturePropertyToAPIValueConverter<POpenGLTextureInfo>;
 
     private:
-        friend class CTexturePropertyToAPIValueConverter<POpenGLTextureProperties>;
+        friend class CTexturePropertyToAPIValueConverter<POpenGLTextureInfo>;
 
         UInt32 GetTextureTypeImpl(ETextureType TextureType) const;
 

@@ -1,6 +1,6 @@
 #include "CorvusPCH.h"
 
-#include "Corvus/Assets/Image/Image.h"
+#include "Corvus/Assets/Texture/ImageData.h"
 
 namespace Corvus
 {

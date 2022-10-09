@@ -1,40 +1,37 @@
-#ifndef CORVUS_SOURCE_CORVUS_ASSETS_IMAGE_IMAGE_H
-#define CORVUS_SOURCE_CORVUS_ASSETS_IMAGE_IMAGE_H
+#ifndef CORVUS_SOURCE_CORVUS_ASSETS_TEXTURE_IMAGEDATA_H
+#define CORVUS_SOURCE_CORVUS_ASSETS_TEXTURE_IMAGEDATA_H
 
-#include "Corvus/Core/UUID.h"
-#include "Corvus/Renderer/TextureProperties.h"
+#include "Corvus/Renderer/TextureInfo.h"
 
 namespace Corvus
 {
 
-    class CImageLoader;
+    class CImageDataLoader;
 
-    class CImage
+    class CImageData
     {
     private:
-        friend class CImageLoader;
+        friend class CImageDataLoader;
 
-        CImage() = default;
+        CImageData() = default;
 
     public:
         SizeT        GetImageWidth() const { return m_ImageWidth; }
         SizeT        GetImageHeight() const { return m_ImageHeight; }
-        UInt8 const *GetImageData() const { return m_ImageData.data(); }
+        UInt8 const *GetImageRawData() const { return m_ImageRawData.data(); }
         EPixelFormat GetPixelFormat() const { return m_PixelFormat; }
         bool         IsSRGB() const { return m_bIsSRGB; }
 
         void SetIsSRGB(bool bValue) { m_bIsSRGB = bValue; }
 
-        FUUID UUID;
-
     private:
         SizeT              m_ImageWidth  = 0;
         SizeT              m_ImageHeight = 0;
-        std::vector<UInt8> m_ImageData;
+        std::vector<UInt8> m_ImageRawData;
         EPixelFormat       m_PixelFormat = EPixelFormat::RGBA8;
         bool               m_bIsSRGB     = false;
     };
 
 } // namespace Corvus
 
-#endif // !CORVUS_SOURCE_CORVUS_ASSETS_IMAGE_IMAGE_H
+#endif // !CORVUS_SOURCE_CORVUS_ASSETS_TEXTURE_IMAGEDATA_H

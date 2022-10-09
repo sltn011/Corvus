@@ -1,25 +1,25 @@
-#ifndef CORVUS_SOURCE_PLATFORM_OPENGL_RENDERER_OPENGLTEXTURE2D_H
-#define CORVUS_SOURCE_PLATFORM_OPENGL_RENDERER_OPENGLTEXTURE2D_H
+#ifndef CORVUS_SOURCE_PLATFORM_OPENGL_RENDERER_OPENGLTEXTURE2DBUFFER_H
+#define CORVUS_SOURCE_PLATFORM_OPENGL_RENDERER_OPENGLTEXTURE2DBUFFER_H
 
-#include "Corvus/Renderer/Texture2D.h"
+#include "Corvus/Renderer/Texture2DBuffer.h"
 
 #include <glad/glad.h>
 
 namespace Corvus
 {
 
-    class POpenGLTexture2D : public CTexture2D
+    class POpenGLTexture2DBuffer : public CTexture2DBuffer
     {
     public:
-        using Super = CTexture2D;
+        using Super = CTexture2DBuffer;
 
-        POpenGLTexture2D(CImage const &Image, STextureParameters const &TextureParameters);
-        virtual ~POpenGLTexture2D();
+        POpenGLTexture2DBuffer(CImageData const &Image, STextureParameters const &TextureParameters);
+        virtual ~POpenGLTexture2DBuffer();
 
-        POpenGLTexture2D(POpenGLTexture2D const &) = delete;
-        POpenGLTexture2D(POpenGLTexture2D &&Rhs) noexcept;
-        POpenGLTexture2D &operator=(POpenGLTexture2D const &) = delete;
-        POpenGLTexture2D &operator=(POpenGLTexture2D &&Rhs) noexcept;
+        POpenGLTexture2DBuffer(POpenGLTexture2DBuffer const &) = delete;
+        POpenGLTexture2DBuffer(POpenGLTexture2DBuffer &&Rhs) noexcept;
+        POpenGLTexture2DBuffer &operator=(POpenGLTexture2DBuffer const &) = delete;
+        POpenGLTexture2DBuffer &operator=(POpenGLTexture2DBuffer &&Rhs) noexcept;
 
         virtual void BindUnit(UInt32 Unit) override;
         virtual void LoadInShader(CShader &Shader, CString const &Name, UInt32 Unit) override;
@@ -44,4 +44,4 @@ namespace Corvus
 
 } // namespace Corvus
 
-#endif // !CORVUS_SOURCE_PLATFORM_OPENGL_RENDERER_OPENGLTEXTURE2D_H
+#endif // !CORVUS_SOURCE_PLATFORM_OPENGL_RENDERER_OPENGLTEXTURE2DBUFFER_H

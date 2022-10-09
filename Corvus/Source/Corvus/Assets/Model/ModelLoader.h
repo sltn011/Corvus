@@ -13,9 +13,9 @@ namespace Corvus
 
     struct SStaticModelLoadedData
     {
-        CStaticModel                  StaticModel;
-        std::vector<TOwn<CTexture2D>> Textures;
-        std::vector<CMaterial>        Materials;
+        CStaticModel            StaticModel;
+        std::vector<CTexture2D> Textures;
+        std::vector<CMaterial>  Materials;
     };
 
     class CModelLoader

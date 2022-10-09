@@ -1,8 +1,8 @@
 #include "CorvusPCH.h"
 
-#include "Corvus/Assets/Image/ImageLoader.h"
+#include "Corvus/Assets/Texture/ImageDataLoader.h"
 
-#include "Corvus/Assets/Image/Image.h"
+#include "Corvus/Assets/Texture/ImageData.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -10,7 +10,7 @@
 namespace Corvus
 {
 
-    CImage CImageLoader::LoadFromImageFile(CString const &FilePath, ELoadImageChannels const ChannelsToLoad)
+    CImageData CImageDataLoader::LoadFromImageFile(CString const &FilePath, ELoadImageChannels const ChannelsToLoad)
     {
         CORVUS_CORE_TRACE("Loading Image {}", FilePath);
         FTimePoint ImageLoadStart;
@@ -18,7 +18,7 @@ namespace Corvus
         // Handle Don'tCare value of loaded channels
         ELoadImageChannels RealChannelsToLoad = CalculateChannelsToLoad(ChannelsToLoad);
 
-        CImage Image;
+        CImageData Image;
         if (stbi_is_hdr(FilePath.c_str()))
         {
             Image = LoadHDRImage(FilePath, RealChannelsToLoad);
@@ -28,7 +28,7 @@ namespace Corvus
             Image = LoadLDRImage(FilePath, RealChannelsToLoad);
         }
 
-        if (Image.GetImageData())
+        if (Image.GetImageRawData())
         {
             FTimePoint ImageLoadEnd;
             FTimeDelta ImageLoadTime = ImageLoadEnd - ImageLoadStart;
@@ -42,7 +42,7 @@ namespace Corvus
         return Image;
     }
 
-    CImage CImageLoader::LoadFromMemory(
+    CImageData CImageDataLoader::LoadFromMemory(
         UInt8 const *ImageData, SizeT ImageWidth, SizeT ImageHeight, EPixelFormat PixelFormat, bool bIsSRGB
     )
     {
@@ -52,9 +52,9 @@ namespace Corvus
 
         SizeT DataBytes = ImageWidth * ImageHeight * PixelFormatElementSize(PixelFormat);
 
-        CImage Image;
-        Image.m_ImageData.resize(DataBytes);
-        std::memcpy(Image.m_ImageData.data(), ImageData, DataBytes);
+        CImageData Image;
+        Image.m_ImageRawData.resize(DataBytes);
+        std::memcpy(Image.m_ImageRawData.data(), ImageData, DataBytes);
         Image.m_ImageWidth  = ImageWidth;
         Image.m_ImageHeight = ImageHeight;
         Image.m_PixelFormat = PixelFormat;
@@ -62,7 +62,7 @@ namespace Corvus
         return Image;
     }
 
-    CImage CImageLoader::LoadHDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad)
+    CImageData CImageDataLoader::LoadHDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad)
     {
         EPixelFormat PixelFormat = EPixelFormat::R8; // HDR should have float value - use R8 as a check
         switch (ChannelsToLoad)
@@ -87,7 +87,7 @@ namespace Corvus
         return LoadImageImpl(FilePath, ChannelsToLoad, PixelFormat);
     }
 
-    CImage CImageLoader::LoadLDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad)
+    CImageData CImageDataLoader::LoadLDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad)
     {
         EPixelFormat PixelFormat = EPixelFormat::R32F; // LDR should have UByte values - use float as a check
         switch (ChannelsToLoad)
@@ -111,7 +111,7 @@ namespace Corvus
         return LoadImageImpl(FilePath, ChannelsToLoad, PixelFormat);
     }
 
-    CImage CImageLoader::LoadImageImpl(
+    CImageData CImageDataLoader::LoadImageImpl(
         CString const &FilePath, ELoadImageChannels const ChannelsToLoad, EPixelFormat const PixelFormat
     )
     {
@@ -140,7 +140,7 @@ namespace Corvus
         if (!ImageData)
         {
             CORVUS_CORE_ERROR("Failed to load Texture from Image File {}!", FilePath);
-            return CImage{};
+            return CImageData{};
         }
 
         SizeT  ImageWidth    = static_cast<SizeT>(Width);
@@ -149,9 +149,9 @@ namespace Corvus
 
         SizeT DataBytes = ImageWidth * ImageHeight * PixelFormatElementSize(PixelFormat);
 
-        CImage Image;
-        Image.m_ImageData.resize(DataBytes);
-        std::memcpy(Image.m_ImageData.data(), FormattedData, DataBytes);
+        CImageData Image;
+        Image.m_ImageRawData.resize(DataBytes);
+        std::memcpy(Image.m_ImageRawData.data(), FormattedData, DataBytes);
         Image.m_ImageWidth  = ImageWidth;
         Image.m_ImageHeight = ImageHeight;
         Image.m_PixelFormat = PixelFormat;
@@ -162,7 +162,7 @@ namespace Corvus
         return Image;
     }
 
-    int CImageLoader::CalculateRequiredNumChannels(ELoadImageChannels const ChannelsToLoad)
+    int CImageDataLoader::CalculateRequiredNumChannels(ELoadImageChannels const ChannelsToLoad)
     {
         switch (ChannelsToLoad)
         {
@@ -185,7 +185,7 @@ namespace Corvus
         }
     }
 
-    UInt8 *CImageLoader::FormatImageData(
+    UInt8 *CImageDataLoader::FormatImageData(
         UInt8                   *ImageData,
         SizeT const              ImageWidth,
         SizeT const              ImageHeight,
@@ -228,7 +228,7 @@ namespace Corvus
         return ImageData;
     }
 
-    ELoadImageChannels CImageLoader::CalculateChannelsToLoad(ELoadImageChannels const ChannelsToLoad)
+    ELoadImageChannels CImageDataLoader::CalculateChannelsToLoad(ELoadImageChannels const ChannelsToLoad)
     {
         if (ChannelsToLoad == ELoadImageChannels::DontCare)
         {

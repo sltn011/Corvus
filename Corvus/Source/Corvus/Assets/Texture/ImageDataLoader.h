@@ -1,7 +1,7 @@
-#ifndef CORVUS_SOURCE_CORVUS_ASSETS_IMAGE_IMAGELOADER_H
-#define CORVUS_SOURCE_CORVUS_ASSETS_IMAGE_IMAGELOADER_H
+#ifndef CORVUS_SOURCE_CORVUS_ASSETS_TEXTURE_IMAGEDATALOADER_H
+#define CORVUS_SOURCE_CORVUS_ASSETS_TEXTURE_IMAGEDATALOADER_H
 
-#include "Corvus/Renderer/TextureProperties.h"
+#include "Corvus/Renderer/TextureInfo.h"
 
 namespace Corvus
 {
@@ -15,20 +15,20 @@ namespace Corvus
         RGBA
     };
 
-    class CImage;
+    class CImageData;
 
-    class CImageLoader
+    class CImageDataLoader
     {
     public:
-        static [[nodiscard]] CImage LoadFromImageFile(CString const &FilePath, ELoadImageChannels ChannelsToLoad);
-        static [[nodiscard]] CImage LoadFromMemory(
+        static [[nodiscard]] CImageData LoadFromImageFile(CString const &FilePath, ELoadImageChannels ChannelsToLoad);
+        static [[nodiscard]] CImageData LoadFromMemory(
             UInt8 const *ImageData, SizeT ImageWidth, SizeT ImageHeight, EPixelFormat PixelFormat, bool bIsSRGB
         );
 
     private:
-        static CImage LoadHDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad);
-        static CImage LoadLDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad);
-        static CImage LoadImageImpl(
+        static CImageData LoadHDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad);
+        static CImageData LoadLDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad);
+        static CImageData LoadImageImpl(
             CString const &FilePath, ELoadImageChannels ChannelsToLoad, EPixelFormat PixelFormat
         );
 
@@ -47,4 +47,4 @@ namespace Corvus
 
 } // namespace Corvus
 
-#endif //! CORVUS_SOURCE_CORVUS_ASSETS_IMAGE_IMAGELOADER_H
+#endif //! CORVUS_SOURCE_CORVUS_ASSETS_TEXTURE_IMAGEDATALOADER_H

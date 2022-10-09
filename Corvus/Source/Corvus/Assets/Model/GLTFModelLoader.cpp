@@ -2,14 +2,17 @@
 
 #include "Corvus/Assets/Model/GLTFModelLoader.h"
 
-#include "Corvus/Assets/Image/Image.h"
-#include "Corvus/Assets/Image/ImageLoader.h"
 #include "Corvus/Assets/Model/StaticMesh.h"
 #include "Corvus/Assets/Model/StaticMeshPrimitive.h"
 #include "Corvus/Assets/Model/StaticModel.h"
+#include "Corvus/Assets/Texture/ImageData.h"
+#include "Corvus/Assets/Texture/ImageDataLoader.h"
+#include "Corvus/Assets/Texture/Texture2D.h"
 #include "Corvus/Math/Matrix.h"
 #include "Corvus/Math/Quaternion.h"
 #include "Corvus/Renderer/IndexBuffer.h"
+#include "Corvus/Renderer/Shader.h"
+#include "Corvus/Renderer/Texture2DBuffer.h"
 #include "Corvus/Renderer/VertexArray.h"
 #include "Corvus/Renderer/VertexBuffer.h"
 
@@ -121,7 +124,7 @@ namespace Corvus
             return TextureParameters;
         }
 
-        CImage ProcessImage(tinygltf::Image const &Image)
+        CImageData ProcessImage(tinygltf::Image const &Image)
         {
             CORVUS_CORE_ASSERT_FMT(
                 Image.pixel_type == TINYGLTF_COMPONENT_TYPE_BYTE ||
@@ -150,12 +153,12 @@ namespace Corvus
             }
 
             // TODO: sRGB check?
-            return CImageLoader::LoadFromMemory(Image.image.data(), Image.width, Image.height, PixelFormat, true);
+            return CImageDataLoader::LoadFromMemory(Image.image.data(), Image.width, Image.height, PixelFormat, true);
         }
 
-        std::vector<TOwn<CTexture2D>> LoadTextures(tinygltf::Model const &GLTFModel)
+        std::vector<CTexture2D> LoadTextures(tinygltf::Model const &GLTFModel)
         {
-            std::vector<TOwn<CTexture2D>> Textures(GLTFModel.textures.size());
+            std::vector<CTexture2D> Textures(GLTFModel.textures.size());
 
             for (SizeT i = 0; i < Textures.size(); ++i)
             {
@@ -174,17 +177,15 @@ namespace Corvus
 
                 Int32 ImageIndex = Texture.source;
                 CORVUS_CORE_ASSERT(ImageIndex != -1);
-                CImage Image = ProcessImage(GLTFModel.images[ImageIndex]);
+                CImageData Image = ProcessImage(GLTFModel.images[ImageIndex]);
 
-                Textures[i] = CTexture2D::Create(Image, TextureParameters);
+                Textures[i] = CTexture2D{CTexture2DBuffer::Create(Image, TextureParameters)};
             }
 
             return Textures;
         }
 
-        std::vector<CMaterial> LoadMaterials(
-            tinygltf::Model const &GLTFModel, std::vector<TOwn<CTexture2D>> const &Textures
-        )
+        std::vector<CMaterial> LoadMaterials(tinygltf::Model const &GLTFModel, std::vector<CTexture2D> const &Textures)
         {
             std::vector<CMaterial> Materials(GLTFModel.materials.size());
 
@@ -204,29 +205,17 @@ namespace Corvus
                     VertexColor.b = static_cast<float>(VertexColorData[2]);
                     VertexColor.a = static_cast<float>(VertexColorData[3]);
 
-                    Material.AlbedoMap.SetOther(VertexColor);
+                    Material.AlbedoMap.Other = VertexColor;
                     Material.AlbedoMap.UseOther();
                 }
                 else // Albedo map
                 {
                     Int32 AlbedoIndex = MaterialInfo.pbrMetallicRoughness.baseColorTexture.index;
-                    Material.AlbedoMap.SetTexture(Textures[AlbedoIndex].get());
+                    Material.AlbedoMap.TextureRef.SetUUID(Textures[AlbedoIndex].UUID);
                     Material.AlbedoMap.UseTexture();
                 }
 
-                // Normals
-                if (MaterialInfo.normalTexture.index == -1)
-                {
-                    Material.NormalMap.SetOther(FVector::Right);
-                    Material.NormalMap.UseOther();
-                }
-                else
-                {
-                    Int32 NormalIndex = MaterialInfo.normalTexture.index;
-                    Material.NormalMap.SetTexture(Textures[NormalIndex].get());
-                    Material.NormalMap.UseTexture();
-                }
-
+                // TODO: Normals
                 // TODO: MetallicRoughness
             }
 
@@ -506,7 +495,9 @@ namespace Corvus
             return true;
         }
 
-        CMaterial GetPrimitiveMaterial(tinygltf::Primitive const &Primitive, std::vector<CMaterial> const &Materials)
+        CMaterial const &GetPrimitiveMaterial(
+            tinygltf::Primitive const &Primitive, std::vector<CMaterial> const &Materials
+        )
         {
             return Materials[Primitive.material];
         }
@@ -600,9 +591,11 @@ namespace Corvus
                 VertexArray->AddIndexBuffer(std::move(IndexBuffer));
             }
 
-            CMaterial Material = GetPrimitiveMaterial(Primitive, Materials);
+            CStaticMeshPrimitive MeshPrimitive{std::move(VertexArray)};
+            CMaterial const     &Material = GetPrimitiveMaterial(Primitive, Materials);
+            MeshPrimitive.MaterialRef.SetUUID(Material.UUID);
 
-            return CStaticMeshPrimitive{std::move(VertexArray), Material};
+            return MeshPrimitive;
         }
 
         CStaticMesh ProcessMesh(
@@ -625,8 +618,8 @@ namespace Corvus
 
         SStaticModelLoadedData ProcessModel(tinygltf::Model &GLTFModel)
         {
-            std::vector<TOwn<CTexture2D>> Textures  = LoadTextures(GLTFModel);
-            std::vector<CMaterial>        Materials = LoadMaterials(GLTFModel, Textures);
+            std::vector<CTexture2D> Textures  = LoadTextures(GLTFModel);
+            std::vector<CMaterial>  Materials = LoadMaterials(GLTFModel, Textures);
 
             CStaticModel StaticModel;
 

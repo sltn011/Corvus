@@ -1,5 +1,5 @@
-#ifndef CORVUS_SOURCE_CORVUS_RENDERER_TEXTUREPROPERTIES_H
-#define CORVUS_SOURCE_CORVUS_RENDERER_TEXTUREPROPERTIES_H
+#ifndef CORVUS_SOURCE_CORVUS_RENDERER_TEXTUREINFO_H
+#define CORVUS_SOURCE_CORVUS_RENDERER_TEXTUREINFO_H
 
 #include "Corvus/Core/Base.h"
 
@@ -534,7 +534,7 @@ namespace Corvus
         bool bHasAnisotropicFiltering = false;
     };
 
-    struct STextureProperties
+    struct STextureInfo
     {
         ETextureType       Type;
         STextureDataFormat DataFormat;
@@ -544,4 +544,4 @@ namespace Corvus
 
 } // namespace Corvus
 
-#endif // !CORVUS_SOURCE_CORVUS_RENDERER_TEXTUREPROPERTIES_H
+#endif // !CORVUS_SOURCE_CORVUS_RENDERER_TEXTUREINFO_H

@@ -1,12 +1,12 @@
 #include "CorvusPCH.h"
 
-#include "Platform/OpenGL/Renderer/OpenGLTextureProperties.h"
+#include "Platform/OpenGL/Renderer/OpenGLTextureInfo.h"
 
 #include <glad/glad.h>
 
 namespace Corvus
 {
-    UInt32 POpenGLTextureProperties::GetTextureTypeImpl(ETextureType const TextureType) const
+    UInt32 POpenGLTextureInfo::GetTextureTypeImpl(ETextureType const TextureType) const
     {
         switch (TextureType)
         {
@@ -19,7 +19,7 @@ namespace Corvus
         }
     }
 
-    UInt32 POpenGLTextureProperties::GetPixelBaseFormatImpl(EPixelFormat const PixelFormat) const
+    UInt32 POpenGLTextureInfo::GetPixelBaseFormatImpl(EPixelFormat const PixelFormat) const
     {
         switch (PixelFormat)
         {
@@ -128,7 +128,7 @@ namespace Corvus
         }
     }
 
-    UInt32 POpenGLTextureProperties::GetPixelSizedFormatImpl(EPixelFormat const PixelFormat) const
+    UInt32 POpenGLTextureInfo::GetPixelSizedFormatImpl(EPixelFormat const PixelFormat) const
     {
         switch (PixelFormat)
         {
@@ -237,7 +237,7 @@ namespace Corvus
         }
     }
 
-    UInt32 POpenGLTextureProperties::GetPixelTypeImpl(EPixelFormat const PixelFormat) const
+    UInt32 POpenGLTextureInfo::GetPixelTypeImpl(EPixelFormat const PixelFormat) const
     {
         switch (PixelFormat)
         {
@@ -346,7 +346,7 @@ namespace Corvus
         }
     }
 
-    UInt32 POpenGLTextureProperties::GetTextureWrappingImpl(ETextureWrapping const TextureWrapping) const
+    UInt32 POpenGLTextureInfo::GetTextureWrappingImpl(ETextureWrapping const TextureWrapping) const
     {
         switch (TextureWrapping)
         {
@@ -368,7 +368,7 @@ namespace Corvus
         }
     }
 
-    UInt32 POpenGLTextureProperties::GetTextureFilteringImpl(ETextureFiltering const TextureFiltering) const
+    UInt32 POpenGLTextureInfo::GetTextureFilteringImpl(ETextureFiltering const TextureFiltering) const
     {
         switch (TextureFiltering)
         {
