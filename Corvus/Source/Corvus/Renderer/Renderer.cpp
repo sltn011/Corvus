@@ -70,11 +70,11 @@ namespace Corvus
         CORVUS_CORE_TRACE("Backface culling disabled");
     }
 
-    void CRenderer::Submit(TOwn<CVertexArray> &VAO, TOwn<CShader> &CShader)
+    void CRenderer::Submit(CVertexArray &VAO, CShader &CShader)
     {
-        CShader->Bind();
-        VAO->Bind();
-        s_GraphicsAPI->DrawIndexed(VAO->GetIndexBuffer()->GetNumIndices());
+        CShader.Bind();
+        VAO.Bind();
+        s_GraphicsAPI->DrawIndexed(VAO.GetIndexBuffer().GetNumIndices());
     }
 
 } // namespace Corvus

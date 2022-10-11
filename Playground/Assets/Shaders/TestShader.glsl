@@ -5,6 +5,7 @@
 
 layout (location = 0) in vec3 inPos;
 layout (location = 1) in vec2 inTex;
+layout (location = 2) in vec3 inNorm;
 
 uniform mat4 u_Transform;
 uniform mat4 u_ProjView;
@@ -21,23 +22,40 @@ void main()
 #type fragment
 #version 460 core
 
+vec4  GetAlbedo(vec2 TextureCoord);
+vec3  GetNormal(vec2 TextureCoord);
+float GetRoughness(vec2 TextureCoord);
+float GetMetallic(vec2 TextureCoord);
+
 struct Material
 {
-	sampler2D AlbedoMap;
-	vec4      AlbedoValue;
-	bool      bHasAlbedoMap;
-	
-	sampler2D NormalMap;
-	vec3      NormalValue;
-	bool      bHasNormalMap;
-	
-	sampler2D RoughnessMap;
-	float     RoughnessValue;
-	bool      bHasRoughnessMap;
-	
-	sampler2D MetallicMap;
-	float     MetallicValue;
-	bool      bHasMetallicMap;
+#ifdef USE_ALBEDO_MAP
+	sampler2D Albedo;
+#endif
+#ifdef USE_ALBEDO_VAL
+	vec4 Albedo;
+#endif
+
+#ifdef USE_NORMAL_MAP
+	sampler2D Normal;
+#endif
+#ifdef USE_NORMAL_VAL
+	vec3 Normal;
+#endif
+
+#ifdef USE_ROUGHNESS_MAP
+	sampler2D Roughness;
+#endif
+#ifdef USE_ROUGHNESS_VAL
+	float Roughness;
+#endif
+
+#ifdef USE_METALLIC_MAP
+	sampler2D Metallic;
+#endif
+#ifdef USE_METALLIC_VAL
+	float Metallic;
+#endif
 };
 uniform Material u_Material;
 
@@ -46,6 +64,34 @@ out vec4 FragColor;
 
 void main()
 {
-	vec4 Color = vec4(u_Material.bHasAlbedoMap ? texture(u_Material.AlbedoMap, TextureCoord) : u_Material.AlbedoValue);
+	vec4 Color = GetAlbedo(TextureCoord);
 	FragColor = Color;
 }
+
+#ifdef USE_ALBEDO_MAP
+	vec4  GetAlbedo(vec2 TextureCoord) { return texture(u_Material.Albedo, TextureCoord); }
+#endif
+#ifdef USE_ALBEDO_VAL
+	vec4  GetAlbedo(vec2 TextureCoord) { return u_Material.Albedo; }
+#endif
+
+#ifdef USE_NORMAL_MAP
+	vec3  GetNormal(vec2 TextureCoord) { return texture(u_Material.Normal, TextureCoord).xyz; }
+#endif
+#ifdef USE_NORMAL_VAL
+	vec3  GetNormal(vec2 TextureCoord) { return u_Material.Normal; }
+#endif
+
+#ifdef USE_ROUGHNESS_MAP
+	float  GetRoughness(vec2 TextureCoord) { return texture(u_Material.Roughness, TextureCoord).x; }
+#endif
+#ifdef USE_ROUGHNESS_VAL
+	float  GetRoughness(vec2 TextureCoord) { return u_Material.Roughness; }
+#endif
+
+#ifdef USE_METALLIC_MAP
+	float  GetMetallic(vec2 TextureCoord) { return texture(u_Material.Metallic, TextureCoord).x; }
+#endif
+#ifdef USE_METALLIC_VAL
+	float  GetMetallic(vec2 TextureCoord) { return u_Material.Metallic; }
+#endif

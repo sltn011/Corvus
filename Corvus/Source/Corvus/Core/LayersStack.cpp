@@ -7,11 +7,11 @@
 namespace Corvus
 {
 
-    СLayersStack::СLayersStack()
+    CLayersStack::CLayersStack()
     {
     }
 
-    СLayersStack::~СLayersStack()
+    CLayersStack::~CLayersStack()
     {
         // Front - Stack's bottom, Back - Stack's top
         for (auto It = RBegin(); It != REnd(); ++It)
@@ -23,7 +23,7 @@ namespace Corvus
         }
     }
 
-    void СLayersStack::PushLayer(TOwn<СLayer> NewLayer)
+    void CLayersStack::PushLayer(TOwn<CLayer> NewLayer)
     {
         if (!NewLayer)
         {
@@ -35,11 +35,11 @@ namespace Corvus
         m_Stack.back()->OnPushed();
     }
 
-    TOwn<СLayer> СLayersStack::PopLayer()
+    TOwn<CLayer> CLayersStack::PopLayer()
     {
         CORVUS_CORE_ASSERT_FMT(!m_Stack.empty(), "Can't pop layer from empty stack!");
 
-        TOwn<СLayer> PopedLayer = std::move(m_Stack.back());
+        TOwn<CLayer> PopedLayer = std::move(m_Stack.back());
         m_Stack.erase(End() - 1);
         PopedLayer->OnPoped();
 

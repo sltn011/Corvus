@@ -4,58 +4,45 @@
 
 namespace Corvus
 {
-    POpenGLShader::POpenGLShader(CString const &FilePath) : m_ID{0}
+    POpenGLShader::POpenGLShader(CString const &FilePath)
     {
         CORVUS_CORE_TRACE("Creating OpenGL Shader {}", FilePath);
         FTimePoint const ShaderCreationBegin;
 
-        std::ifstream CodeFile(FilePath);
-        CORVUS_CORE_ASSERT_FMT(CodeFile.is_open(), "Error opening OpenGL Shader file {1}", FilePath);
-
-        std::stringstream ShadersCode[static_cast<UInt8>(EShaderType::MAX)];
-        EShaderType       Type = EShaderType::NONE;
-
-        std::string CodeLine;
-        while (std::getline(CodeFile, CodeLine))
-        {
-            if (CodeLine.find("#type") != std::string::npos)
-            {
-                if (CodeLine.find("vertex") != std::string::npos)
-                {
-                    Type = EShaderType::Vertex;
-                }
-                else if (CodeLine.find("fragment") != std::string::npos)
-                {
-                    Type = EShaderType::Fragment;
-                }
-            }
-            else
-            {
-                if (Type != EShaderType::NONE)
-                {
-                    ShadersCode[static_cast<UInt8>(Type)] << CodeLine << "\n";
-                }
-            }
-        }
-
-        CString const VertexCode   = ShadersCode[static_cast<UInt8>(EShaderType::Vertex)].str();
-        CString const FragmentCode = ShadersCode[static_cast<UInt8>(EShaderType::Fragment)].str();
-
-        GLuint const VertexShader   = CreateShader(GL_VERTEX_SHADER, VertexCode);
-        GLuint const FragmentShader = CreateShader(GL_FRAGMENT_SHADER, FragmentCode);
-
-        m_ID = glCreateProgram();
-        glAttachShader(m_ID, VertexShader);
-        glAttachShader(m_ID, FragmentShader);
-        glLinkProgram(m_ID);
-        AssertProgramLinkedSuccessfully();
-
-        glDeleteShader(VertexShader);
-        glDeleteShader(FragmentShader);
+        m_ID = CreateFromFile(FilePath, {}); // Empty parameters array
+        CORVUS_CORE_ASSERT_FMT(m_ID != 0, "Failed to create OpenGL Shader from file {}", FilePath);
 
         FTimePoint const ShaderCreationEnd;
         FTimeDelta const ShaderCreationTime = ShaderCreationEnd - ShaderCreationBegin;
         CORVUS_CORE_TRACE("Created OpenGL Shader {0}, took {1}ms", FilePath, ShaderCreationTime.MilliSeconds());
+    }
+
+    POpenGLShader::POpenGLShader(CString const &FilePath, std::vector<char const *> const &Parameters)
+    {
+        CORVUS_CORE_TRACE("Creating OpenGL Shader {}", FilePath);
+        FTimePoint const ShaderCreationBegin;
+
+        m_ID = CreateFromFile(FilePath, Parameters);
+        CORVUS_CORE_ASSERT_FMT(m_ID != 0, "Failed to create OpenGL Shader from file {}", FilePath);
+
+        FTimePoint const ShaderCreationEnd;
+        FTimeDelta const ShaderCreationTime = ShaderCreationEnd - ShaderCreationBegin;
+        CORVUS_CORE_TRACE("Created OpenGL Shader {0}, took {1}ms", FilePath, ShaderCreationTime.MilliSeconds());
+    }
+
+    POpenGLShader::POpenGLShader(
+        std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+    )
+    {
+        CORVUS_CORE_TRACE("Creating OpenGL Shader");
+        FTimePoint const ShaderCreationBegin;
+
+        m_ID = CreateFromMemory(VertexShaderCode, FragmentShaderCode);
+        CORVUS_CORE_ASSERT_FMT(m_ID != 0, "Failed to create OpenGL Shader from memory");
+
+        FTimePoint const ShaderCreationEnd;
+        FTimeDelta const ShaderCreationTime = ShaderCreationEnd - ShaderCreationBegin;
+        CORVUS_CORE_TRACE("Created OpenGL Shader, took {}ms", ShaderCreationTime.MilliSeconds());
     }
 
     POpenGLShader::~POpenGLShader()
@@ -79,6 +66,50 @@ namespace Corvus
             m_UniformLocationCache = std::move(Rhs.m_UniformLocationCache);
         }
         return *this;
+    }
+
+    bool POpenGLShader::Recompile(CString const &FilePath)
+    {
+        GLuint NewProgram = CreateFromFile(FilePath, {});
+        if (NewProgram == 0)
+        {
+            CORVUS_CORE_ERROR("Failed to recompile OpenGL Shader from file {}", FilePath);
+            return false;
+        }
+
+        glDeleteProgram(m_ID);
+        m_ID = NewProgram;
+        return true;
+    }
+
+    bool POpenGLShader::Recompile(CString const &FilePath, std::vector<char const *> const &Parameters)
+    {
+        GLuint NewProgram = CreateFromFile(FilePath, Parameters);
+        if (NewProgram == 0)
+        {
+            CORVUS_CORE_ERROR("Failed to recompile OpenGL Shader from file {}", FilePath);
+            return false;
+        }
+
+        glDeleteProgram(m_ID);
+        m_ID = NewProgram;
+        return true;
+    }
+
+    bool POpenGLShader::Recompile(
+        std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+    )
+    {
+        GLuint NewProgram = CreateFromMemory(VertexShaderCode, FragmentShaderCode);
+        if (NewProgram == 0)
+        {
+            CORVUS_CORE_ERROR("Failed to recompile OpenGL Shader from memory");
+            return false;
+        }
+
+        glDeleteProgram(m_ID);
+        m_ID = NewProgram;
+        return true;
     }
 
     void POpenGLShader::Bind()
@@ -145,22 +176,162 @@ namespace Corvus
         glUniformMatrix4fv(Location, 1, false, FMatrix::ValuePtr(Value));
     }
 
-    GLuint POpenGLShader::CreateShader(GLenum const ShaderType, CString const &SourceCode) const
+    GLuint POpenGLShader::CreateFromFile(CString const &FilePath, std::vector<char const *> const &Parameters)
     {
-        GLuint const CShader = glCreateShader(ShaderType);
-        CORVUS_CORE_ASSERT_FMT(CShader != 0, "Failed to create OpenGL CShader!");
+        CString VersionString;
+        CString VertexShaderCodeString;
+        CString FragmentShaderCodeString;
+        if (!IsReadFileSuccessfull(FilePath, VersionString, VertexShaderCodeString, FragmentShaderCodeString))
+        {
+            CORVUS_CORE_NO_ENTRY_FMT("Failed to read shader from file{1}", FilePath);
+        }
 
-        char const *const SourceCodeString = SourceCode.c_str();
-        glShaderSource(CShader, 1, &SourceCodeString, nullptr);
+        SizeT                     ShaderCodeStrings = Parameters.size() + 2; // +version string, +shader code
+        std::vector<char const *> VertexShaderCode(ShaderCodeStrings);
+        std::vector<char const *> FragmentShaderCode(ShaderCodeStrings);
 
-        glCompileShader(CShader);
+        VertexShaderCode.front()   = VersionString.c_str();
+        FragmentShaderCode.front() = VersionString.c_str();
+        for (SizeT i = 0; i < Parameters.size(); ++i)
+        {
+            VertexShaderCode[i + 1]   = Parameters[i];
+            FragmentShaderCode[i + 1] = Parameters[i];
+        }
+        VertexShaderCode.back()   = VertexShaderCodeString.c_str();
+        FragmentShaderCode.back() = FragmentShaderCodeString.c_str();
 
-        AssertShaderCompiledSuccessfully(CShader);
-
-        return CShader;
+        return CreateProgram(VertexShaderCode, FragmentShaderCode);
     }
 
-    void POpenGLShader::AssertShaderCompiledSuccessfully(GLuint const CShader) const
+    GLuint POpenGLShader::CreateFromMemory(
+        std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+    )
+    {
+        return CreateProgram(VertexShaderCode, FragmentShaderCode);
+    }
+
+    bool POpenGLShader::IsReadFileSuccessfull(
+        CString const &FilePath, CString &OutVersionString, CString &OutVertexShaderCode, CString &OutFragmentShaderCode
+    )
+    {
+        std::ifstream CodeFile(FilePath);
+        if (!CodeFile.is_open())
+        {
+            CORVUS_CORE_NO_ENTRY_FMT("Error opening OpenGL Shader file {1}", FilePath);
+            return false;
+        }
+
+        std::stringstream ShadersCode[static_cast<UInt8>(EShaderType::MAX)];
+        EShaderType       Type          = EShaderType::NONE;
+        bool              bVersionFound = false;
+
+        CString CodeLine;
+        while (std::getline(CodeFile, CodeLine, '\n'))
+        {
+            if (CodeLine.find("#version") != CString::npos)
+            {
+                if (!bVersionFound)
+                {
+                    OutVersionString = CodeLine;
+                    OutVersionString += '\n';
+                    bVersionFound = true;
+                }
+            }
+            else if (CodeLine.find("#type") != CString::npos)
+            {
+                if (CodeLine.find("vertex") != CString::npos)
+                {
+                    Type = EShaderType::Vertex;
+                }
+                else if (CodeLine.find("fragment") != CString::npos)
+                {
+                    Type = EShaderType::Fragment;
+                }
+            }
+            else
+            {
+                if (Type != EShaderType::NONE)
+                {
+                    ShadersCode[static_cast<UInt8>(Type)] << CodeLine << "\n";
+                }
+            }
+        }
+
+        if (!bVersionFound)
+        {
+            CORVUS_CORE_NO_ENTRY_FMT("No #version found in Shader {1}", FilePath);
+            return false;
+        }
+
+        OutVertexShaderCode   = ShadersCode[static_cast<UInt8>(EShaderType::Vertex)].str();
+        OutFragmentShaderCode = ShadersCode[static_cast<UInt8>(EShaderType::Fragment)].str();
+        return true;
+    }
+
+    GLuint POpenGLShader::CreateProgram(
+        std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+    )
+    {
+        GLuint const VertexShader   = CreateShader(GL_VERTEX_SHADER, VertexShaderCode);
+        GLuint const FragmentShader = CreateShader(GL_FRAGMENT_SHADER, FragmentShaderCode);
+
+        if (VertexShader == 0 || FragmentShader == 0)
+        {
+            return 0;
+        }
+
+        GLuint Program = glCreateProgram();
+        glAttachShader(Program, VertexShader);
+        glAttachShader(Program, FragmentShader);
+        glLinkProgram(Program);
+
+        CString LinkError;
+        if (!IsProgramLinkedSuccessfully(LinkError))
+        {
+            for (char const *const CodePart : VertexShaderCode)
+            {
+                CORVUS_DUMP(CodePart);
+            }
+            CORVUS_DUMP("==================\n");
+            for (char const *const CodePart : FragmentShaderCode)
+            {
+                CORVUS_DUMP(CodePart);
+            }
+            CORVUS_CORE_NO_ENTRY_FMT("OpenGLShader failed to link! {1}", LinkError);
+            return 0;
+        }
+
+        glDeleteShader(VertexShader);
+        glDeleteShader(FragmentShader);
+
+        return Program;
+    }
+
+    GLuint POpenGLShader::CreateShader(GLenum const ShaderType, std::vector<char const *> const &ShaderCode) const
+    {
+        CORVUS_CORE_ASSERT(ShaderCode.size() != 0);
+
+        GLuint const Shader = glCreateShader(ShaderType);
+        CORVUS_CORE_ASSERT_FMT(Shader != 0, "Failed to create OpenGL CShader!");
+
+        glShaderSource(Shader, static_cast<GLsizei>(ShaderCode.size()), ShaderCode.data(), nullptr);
+        glCompileShader(Shader);
+
+        CString CompileError;
+        if (!IsShaderCompiledSuccessfully(Shader, CompileError))
+        {
+            for (char const *const CodePart : ShaderCode)
+            {
+                CORVUS_DUMP(CodePart);
+            }
+            CORVUS_CORE_NO_ENTRY_FMT("OpenGLShader failed to compile! {1}", CompileError);
+            return 0;
+        }
+
+        return Shader;
+    }
+
+    bool POpenGLShader::IsShaderCompiledSuccessfully(GLuint const CShader, CString &OutErrorMessage) const
     {
         GLint CompileStatus;
         glGetShaderiv(CShader, GL_COMPILE_STATUS, &CompileStatus);
@@ -169,11 +340,14 @@ namespace Corvus
             static constexpr GLsizei InfoLogSize = 255;
             char                     InfoLog[InfoLogSize];
             glGetShaderInfoLog(CShader, InfoLogSize, nullptr, InfoLog);
-            CORVUS_CORE_NO_ENTRY_FMT("CShader failed to compile! {1:s}", InfoLog);
+            InfoLog[InfoLogSize - 1] = '\0';
+            OutErrorMessage          = CString{InfoLog};
+            return false;
         }
+        return true;
     }
 
-    void POpenGLShader::AssertProgramLinkedSuccessfully() const
+    bool POpenGLShader::IsProgramLinkedSuccessfully(CString &OutErrorMessage) const
     {
         GLint LinkStatus;
         glGetProgramiv(m_ID, GL_LINK_STATUS, &LinkStatus);
@@ -182,8 +356,11 @@ namespace Corvus
             static constexpr GLsizei InfoLogSize = 255;
             char                     InfoLog[InfoLogSize];
             glGetProgramInfoLog(m_ID, InfoLogSize, nullptr, InfoLog);
-            CORVUS_CORE_NO_ENTRY_FMT("CShader Programm failed to link! {1:s}", InfoLog);
+            InfoLog[InfoLogSize - 1] = '\0';
+            OutErrorMessage          = CString{InfoLog};
+            return false;
         }
+        return true;
     }
 
     GLint POpenGLShader::GetUniformLocation(CString const &Name)
@@ -202,7 +379,7 @@ namespace Corvus
 
         if (Location == -1)
         {
-            CORVUS_CORE_WARN("Invalid OpenGL CShader uniform location for {0} in Programm {1}", Name, m_ID);
+            CORVUS_CORE_WARN("Invalid OpenGL Shader uniform location for {0} in Programm {1}", Name, m_ID);
         }
 
         return Location;

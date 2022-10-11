@@ -26,15 +26,16 @@ namespace Corvus
         virtual void Bind()   = 0;
         virtual void Unbind() = 0;
 
-        virtual void AddIndexBuffer(TOwn<CIndexBuffer> &&CIndexBuffer)    = 0;
-        virtual void AddVertexBuffer(TOwn<CVertexBuffer> &&CVertexBuffer) = 0;
+        virtual void  AddIndexBuffer(TOwn<CIndexBuffer> &&CIndexBuffer) = 0;
+        CIndexBuffer &GetIndexBuffer();
 
-        TOwn<CIndexBuffer>  &GetIndexBuffer();
-        TOwn<CVertexBuffer> &GetVertexBuffer();
+        virtual SizeT  AddVertexBuffer(TOwn<CVertexBuffer> &&CVertexBuffer)                    = 0;
+        virtual void   AddVertexBuffer(TOwn<CVertexBuffer> &&CVertexBuffer, SizeT BufferIndex) = 0;
+        CVertexBuffer &GetVertexBuffer(SizeT BufferIndex);
 
     protected:
-        TOwn<CIndexBuffer>  m_IndexBuffer;
-        TOwn<CVertexBuffer> m_VertexBuffer;
+        TOwn<CIndexBuffer>               m_IndexBuffer;
+        std::vector<TOwn<CVertexBuffer>> m_VertexBuffers;
     };
 
 } // namespace Corvus

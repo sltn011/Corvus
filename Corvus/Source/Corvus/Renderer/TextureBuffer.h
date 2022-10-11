@@ -1,24 +1,24 @@
-#ifndef CORVUS_SOURCE_CORVUS_RENDERER_TEXTURE_H
-#define CORVUS_SOURCE_CORVUS_RENDERER_TEXTURE_H
+#ifndef CORVUS_SOURCE_CORVUS_RENDERER_TEXTUREBUFFER_H
+#define CORVUS_SOURCE_CORVUS_RENDERER_TEXTUREBUFFER_H
 
-#include "Corvus/Renderer/TextureProperties.h"
+#include "Corvus/Renderer/TextureInfo.h"
 
 namespace Corvus
 {
 
     class CShader;
 
-    class CTexture
+    class CTextureBuffer
     {
     protected:
-        CTexture(ETextureType Type);
-        virtual ~CTexture();
+        CTextureBuffer(ETextureType Type);
+        virtual ~CTextureBuffer();
 
     public:
-        CTexture(CTexture const &)            = delete;
-        CTexture &operator=(CTexture const &) = delete;
-        CTexture(CTexture &&)                 = default;
-        CTexture &operator=(CTexture &&)      = default;
+        CTextureBuffer(CTextureBuffer const &)            = delete;
+        CTextureBuffer &operator=(CTextureBuffer const &) = delete;
+        CTextureBuffer(CTextureBuffer &&)                 = default;
+        CTextureBuffer &operator=(CTextureBuffer &&)      = default;
 
         virtual void BindUnit(UInt32 Unit)                                           = 0;
         virtual void LoadInShader(CShader &Shader, CString const &Name, UInt32 Unit) = 0;
@@ -36,9 +36,9 @@ namespace Corvus
         virtual void DisableAnisotropicFiltering() = 0;
 
     protected:
-        STextureProperties m_Properties;
+        STextureInfo m_Info;
     };
 
 } // namespace Corvus
 
-#endif // !CORVUS_SOURCE_CORVUS_RENDERER_TEXTURE_H
+#endif // !CORVUS_SOURCE_CORVUS_RENDERER_TEXTUREBUFFER_H

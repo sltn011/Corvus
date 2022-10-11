@@ -60,7 +60,7 @@ namespace Corvus
 
         virtual void *GetRawWindow() = 0;
 
-        СGUIController &GetGUIController();
+        CGUIController &GetGUIController();
 
         COnEventDelegate OnEvent;
 
@@ -69,7 +69,7 @@ namespace Corvus
         bool        m_bIsInitialized = false;
 
         TOwn<CRenderingContext> m_RenderingContext;
-        СGUIController          m_GUIController;
+        CGUIController          m_GUIController;
     };
 
 } // namespace Corvus

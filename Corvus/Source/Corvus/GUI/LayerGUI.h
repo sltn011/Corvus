@@ -6,12 +6,12 @@
 namespace Corvus
 {
 
-    class СLayerGUI : public СLayer
+    class CLayerGUI : public CLayer
     {
     public:
-        using Super = СLayer;
+        using Super = CLayer;
 
-        СLayerGUI(CString LayerName, bool bEnabled);
+        CLayerGUI(CString LayerName, bool bEnabled);
 
         virtual void Render() override;
 

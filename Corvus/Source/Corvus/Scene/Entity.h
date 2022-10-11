@@ -16,8 +16,8 @@ namespace Corvus
     class CEntity
     {
     public:
-        CEntity(TOwn<CShader> const &CShader, TOwn<CVertexArray> const &VAO);
-        CEntity(TOwn<CShader> const &CShader, TOwn<CVertexArray> const &VAO, FTransform const &Transform);
+        CEntity(TOwn<CVertexArray> const &VAO);
+        CEntity(TOwn<CVertexArray> const &VAO, FTransform const &Transform);
 
     public:
         TPoolable<CTransformComponent>  TransformComponent;

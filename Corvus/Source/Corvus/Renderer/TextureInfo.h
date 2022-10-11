@@ -1,5 +1,5 @@
-#ifndef CORVUS_SOURCE_CORVUS_RENDERER_TEXTUREPROPERTIES_H
-#define CORVUS_SOURCE_CORVUS_RENDERER_TEXTUREPROPERTIES_H
+#ifndef CORVUS_SOURCE_CORVUS_RENDERER_TEXTUREINFO_H
+#define CORVUS_SOURCE_CORVUS_RENDERER_TEXTUREINFO_H
 
 #include "Corvus/Core/Base.h"
 
@@ -67,7 +67,7 @@ namespace Corvus
         Depth32F_Stencil8
     };
 
-    constexpr SizeT PixelFormatSizeBytes(EPixelFormat const Format)
+    constexpr SizeT PixelFormatComponentSize(EPixelFormat const Format)
     {
         switch (Format)
         {
@@ -183,7 +183,7 @@ namespace Corvus
             return 8;
 
         default:
-            CORVUS_NO_ENTRY_FMT("Invalid PixelFormat passed to PixelFormatSizeBytes!");
+            CORVUS_NO_ENTRY_FMT("Invalid PixelFormat passed to PixelFormatComponentSize!");
             return 0;
         }
     }
@@ -296,6 +296,11 @@ namespace Corvus
             CORVUS_NO_ENTRY_FMT("Invalid PixelFormat passed to PixelFormatNumComponents!");
             return 0;
         }
+    }
+
+    constexpr SizeT PixelFormatElementSize(EPixelFormat const Format)
+    {
+        return PixelFormatComponentSize(Format) * PixelFormatNumComponents(Format);
     }
 
     constexpr bool IsPixelFormatFloat(EPixelFormat const Format)
@@ -474,7 +479,7 @@ namespace Corvus
     };
 
     // CRTP class to convert Texture property values to Graphics API-specific values
-    template<typename Implementation>
+    template<typename TImplementation>
     class CTexturePropertyToAPIValueConverter
     {
     public:
@@ -506,7 +511,7 @@ namespace Corvus
         }
 
     private:
-        Implementation const *GetImpl() const { return static_cast<Implementation const *>(this); }
+        TImplementation const *GetImpl() const { return static_cast<TImplementation const *>(this); }
     };
 
     struct STextureDataFormat
@@ -529,7 +534,7 @@ namespace Corvus
         bool bHasAnisotropicFiltering = false;
     };
 
-    struct STextureProperties
+    struct STextureInfo
     {
         ETextureType       Type;
         STextureDataFormat DataFormat;
@@ -539,4 +544,4 @@ namespace Corvus
 
 } // namespace Corvus
 
-#endif // !CORVUS_SOURCE_CORVUS_RENDERER_TEXTUREPROPERTIES_H
+#endif // !CORVUS_SOURCE_CORVUS_RENDERER_TEXTUREINFO_H

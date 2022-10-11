@@ -10,35 +10,35 @@
 namespace Corvus
 {
 
-    class СLayersStack
+    class CLayersStack
     {
     public:
-        СLayersStack();
-        ~СLayersStack();
+        CLayersStack();
+        ~CLayersStack();
 
-        void                       PushLayer(TOwn<СLayer> NewLayer);
-        [[nodiscard]] TOwn<СLayer> PopLayer();
+        void                       PushLayer(TOwn<CLayer> NewLayer);
+        [[nodiscard]] TOwn<CLayer> PopLayer();
 
-        std::vector<TOwn<СLayer>>::iterator         Begin() { return m_Stack.begin(); }
-        std::vector<TOwn<СLayer>>::iterator         End() { return m_Stack.end(); }
-        std::vector<TOwn<СLayer>>::reverse_iterator RBegin() { return m_Stack.rbegin(); }
-        std::vector<TOwn<СLayer>>::reverse_iterator REnd() { return m_Stack.rend(); }
+        std::vector<TOwn<CLayer>>::iterator         Begin() { return m_Stack.begin(); }
+        std::vector<TOwn<CLayer>>::iterator         End() { return m_Stack.end(); }
+        std::vector<TOwn<CLayer>>::reverse_iterator RBegin() { return m_Stack.rbegin(); }
+        std::vector<TOwn<CLayer>>::reverse_iterator REnd() { return m_Stack.rend(); }
 
-        std::vector<TOwn<СLayer>>::const_iterator         Begin() const { return m_Stack.begin(); }
-        std::vector<TOwn<СLayer>>::const_iterator         End() const { return m_Stack.end(); }
-        std::vector<TOwn<СLayer>>::const_reverse_iterator RBegin() const { return m_Stack.rbegin(); }
-        std::vector<TOwn<СLayer>>::const_reverse_iterator REnd() const { return m_Stack.rend(); }
+        std::vector<TOwn<CLayer>>::const_iterator         Begin() const { return m_Stack.begin(); }
+        std::vector<TOwn<CLayer>>::const_iterator         End() const { return m_Stack.end(); }
+        std::vector<TOwn<CLayer>>::const_reverse_iterator RBegin() const { return m_Stack.rbegin(); }
+        std::vector<TOwn<CLayer>>::const_reverse_iterator REnd() const { return m_Stack.rend(); }
 
         // For for-each loops
-        std::vector<TOwn<СLayer>>::iterator begin() { return m_Stack.begin(); }
-        std::vector<TOwn<СLayer>>::iterator end() { return m_Stack.end(); }
+        std::vector<TOwn<CLayer>>::iterator begin() { return m_Stack.begin(); }
+        std::vector<TOwn<CLayer>>::iterator end() { return m_Stack.end(); }
 
-        std::vector<TOwn<СLayer>>::const_iterator begin() const { return m_Stack.begin(); }
-        std::vector<TOwn<СLayer>>::const_iterator end() const { return m_Stack.end(); }
+        std::vector<TOwn<CLayer>>::const_iterator begin() const { return m_Stack.begin(); }
+        std::vector<TOwn<CLayer>>::const_iterator end() const { return m_Stack.end(); }
 
     private:
         // Front - Stack's bottom, Back - Stack's top
-        std::vector<TOwn<СLayer>> m_Stack;
+        std::vector<TOwn<CLayer>> m_Stack;
     };
 
 } // namespace Corvus

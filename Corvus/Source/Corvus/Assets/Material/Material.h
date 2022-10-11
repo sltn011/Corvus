@@ -1,34 +1,31 @@
 #ifndef CORVUS_SOURCE_CORVUS_ASSETS_MATERIAL_MATERIAL_H
 #define CORVUS_SOURCE_CORVUS_ASSETS_MATERIAL_MATERIAL_H
 
-#include "Corvus/Core/UUID.h"
+#include "Corvus/Assets/AssetRef.h"
 #include "Corvus/Math/Vector.h"
-#include "Corvus/Renderer/Texture2D.h"
 
 namespace Corvus
 {
+
+    class CShader;
+    class CTexture2D;
+
     template<typename OtherT>
     class TMaterialTexParam
     {
     public:
         TMaterialTexParam() = default;
 
-        bool IsTexture() const { return m_Texture && m_bUseTexture; }
+        bool IsTexture() const { return (TextureRef.GetUUID() != FUUID{0}) && m_bUseTexture; }
         bool IsOther() const { return !IsTexture(); }
-
-        CTexture2D *GetTexture() const { return m_Texture; }
-        void        SetTexture(CTexture2D *const Texture2D) { m_Texture = Texture2D; }
-
-        OtherT GetOther() const { return m_Other; }
-        void   SetOther(OtherT const &Value) { m_Other = Value; }
 
         void UseTexture() { m_bUseTexture = true; }
         void UseOther() { m_bUseTexture = false; }
 
-    private:
-        CTexture2D *m_Texture = nullptr;
-        OtherT      m_Other   = OtherT{};
+        TAssetRef<CTexture2D> TextureRef;
+        OtherT                Other = OtherT{};
 
+    private:
         bool m_bUseTexture = false;
     };
 
@@ -37,14 +34,16 @@ namespace Corvus
     using CRoughnessMap = TMaterialTexParam<float>;
     using CMetallicMap  = TMaterialTexParam<float>;
 
-    class CShader;
-
     class CMaterial
     {
     public:
         CMaterial() = default;
 
-        void LoadInShader(CShader &Shader);
+        TOwn<CShader> const &GetShader() const;
+
+        void LoadInShader();
+
+        void CompileMaterialShader(CString const &BaseShaderFilePath);
 
         CAlbedoMap    AlbedoMap;
         CNormalMap    NormalMap;
@@ -52,6 +51,9 @@ namespace Corvus
         CMetallicMap  MetallicMap;
 
         FUUID UUID;
+
+    private:
+        TOwn<CShader> m_MaterialShader;
     };
 
 } // namespace Corvus

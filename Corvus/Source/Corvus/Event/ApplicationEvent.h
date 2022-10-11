@@ -8,7 +8,7 @@
 namespace Corvus
 {
 
-    class СWindowCloseEvent : public CEvent
+    class CWindowCloseEvent : public CEvent
     {
     public:
         using Super = CEvent;
@@ -16,14 +16,14 @@ namespace Corvus
         CORVUS_EVENT_GENERATED_BODY(CEvent::EEventCategory::Application, CEvent::EEventType::WindowClose);
     };
 
-    class СWindowResizeEvent : public CEvent
+    class CWindowResizeEvent : public CEvent
     {
     public:
         using Super = CEvent;
 
         CORVUS_EVENT_GENERATED_BODY(CEvent::EEventCategory::Application, CEvent::EEventType::WindowResize);
 
-        СWindowResizeEvent(Int32 NewWidthValue, Int32 NewHeightValue)
+        CWindowResizeEvent(Int32 NewWidthValue, Int32 NewHeightValue)
             : NewWidth{NewWidthValue}, NewHeight{NewHeightValue}
         {
         }
@@ -39,14 +39,14 @@ namespace Corvus
         Int32 NewHeight = 0;
     };
 
-    class СWindowChangeFocusEvent : public CEvent
+    class CWindowChangeFocusEvent : public CEvent
     {
     public:
         using Super = CEvent;
 
         CORVUS_EVENT_GENERATED_BODY(CEvent::EEventCategory::Application, CEvent::EEventType::WindowChangeFocus);
 
-        СWindowChangeFocusEvent(bool bSetFocusValue) : bSetFocus{bSetFocusValue} {}
+        CWindowChangeFocusEvent(bool bSetFocusValue) : bSetFocus{bSetFocusValue} {}
 
         virtual CString ToString() const override
         {

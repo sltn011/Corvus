@@ -37,7 +37,9 @@ project "Corvus"
 		"Dependencies/GLAD/Source/include",
 		"Dependencies/imgui/Source",
 		"Dependencies/glm",
-		"Dependencies/stb"
+		"Dependencies/stb",
+		"Dependencies/json",
+		"Dependencies/tiny"
 	}
 	
 	links

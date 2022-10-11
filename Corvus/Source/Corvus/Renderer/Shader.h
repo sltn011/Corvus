@@ -15,12 +15,25 @@ namespace Corvus
 
     public:
         static [[nodiscard]] TOwn<CShader> CreateFromFile(CString const &FilePath);
+        static [[nodiscard]] TOwn<CShader> CreateFromFile(
+            CString const &FilePath, std::vector<char const *> const &Parameters
+        );
+
+        static [[nodiscard]] TOwn<CShader> CreateFromMemory(
+            std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+        );
 
         virtual ~CShader()                  = default;
         CShader(CShader const &)            = delete;
         CShader &operator=(CShader const &) = delete;
         CShader(CShader &&)                 = default;
         CShader &operator=(CShader &&)      = default;
+
+        virtual bool Recompile(CString const &FilePath)                                              = 0;
+        virtual bool Recompile(CString const &FilePath, std::vector<char const *> const &Parameters) = 0;
+        virtual bool Recompile(
+            std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+        ) = 0;
 
         virtual void Bind()   = 0;
         virtual void Unbind() = 0;

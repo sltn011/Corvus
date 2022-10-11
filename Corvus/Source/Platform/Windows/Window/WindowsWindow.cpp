@@ -208,7 +208,7 @@ namespace Corvus
             [](GLFWwindow *const Caller, int const NewWidth, int const NewHeight)
             {
                 CWindow const *const Owner = static_cast<CWindow *>(glfwGetWindowUserPointer(Caller));
-                СWindowResizeEvent   Event{NewWidth, NewHeight};
+                CWindowResizeEvent   Event{NewWidth, NewHeight};
                 Owner->OnEvent.Broadcast(Event);
             }
         );
@@ -218,7 +218,7 @@ namespace Corvus
             [](GLFWwindow *const Caller)
             {
                 CWindow const *const Owner = static_cast<CWindow *>(glfwGetWindowUserPointer(Caller));
-                СWindowCloseEvent    Event{};
+                CWindowCloseEvent    Event{};
                 Owner->OnEvent.Broadcast(Event);
             }
         );
@@ -236,19 +236,19 @@ namespace Corvus
 
                 if (Action == Action::Press)
                 {
-                    СKeyPressEvent Event{Key, false, Mods};
+                    CKeyPressEvent Event{Key, false, Mods};
                     Owner->OnEvent.Broadcast(Event);
                     return;
                 }
                 else if (Action == Action::Repeat)
                 {
-                    СKeyPressEvent Event{Key, true, Mods};
+                    CKeyPressEvent Event{Key, true, Mods};
                     Owner->OnEvent.Broadcast(Event);
                     return;
                 }
                 else if (Action == Action::Release)
                 {
-                    СKeyReleaseEvent Event{Key};
+                    CKeyReleaseEvent Event{Key};
                     Owner->OnEvent.Broadcast(Event);
                     return;
                 }
@@ -267,13 +267,13 @@ namespace Corvus
 
                 if (Action == Action::Press)
                 {
-                    СMouseButtonPressEvent Event{Button, Mods};
+                    CMouseButtonPressEvent Event{Button, Mods};
                     Owner->OnEvent.Broadcast(Event);
                     return;
                 }
                 else if (Action == Action::Release)
                 {
-                    СMouseButtonReleaseEvent Event{Button};
+                    CMouseButtonReleaseEvent Event{Button};
                     Owner->OnEvent.Broadcast(Event);
                     return;
                 }
@@ -285,7 +285,7 @@ namespace Corvus
             [](GLFWwindow *const Caller, double const NewX, double const NewY)
             {
                 CWindow const *const Owner = static_cast<CWindow *>(glfwGetWindowUserPointer(Caller));
-                СCursorMoveEvent     Event{static_cast<float>(NewX), static_cast<float>(NewY)};
+                CCursorMoveEvent     Event{static_cast<float>(NewX), static_cast<float>(NewY)};
                 Owner->OnEvent(Event);
             }
         );
@@ -295,7 +295,7 @@ namespace Corvus
             [](GLFWwindow *const Caller, double const OffsetX, double const OffsetY)
             {
                 CWindow const *const Owner = static_cast<CWindow *>(glfwGetWindowUserPointer(Caller));
-                СMouseScrollEvent    Event{static_cast<float>(OffsetX), static_cast<float>(OffsetY)};
+                CMouseScrollEvent    Event{static_cast<float>(OffsetX), static_cast<float>(OffsetY)};
                 Owner->OnEvent(Event);
             }
         );

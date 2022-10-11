@@ -9,7 +9,7 @@
 namespace Corvus
 {
 
-    class СCursorMoveEvent : public CEvent
+    class CCursorMoveEvent : public CEvent
     {
     public:
         using Super = CEvent;
@@ -18,7 +18,7 @@ namespace Corvus
             CEvent::EEventCategory::Input | CEvent::EEventCategory::Mouse, CEvent::EEventType::MouseCursorMove
         );
 
-        СCursorMoveEvent(float NewXValue, float NewYValue) : NewX{NewXValue}, NewY{NewYValue} {}
+        CCursorMoveEvent(float NewXValue, float NewYValue) : NewX{NewXValue}, NewY{NewYValue} {}
 
         virtual CString ToString() const override
         {
@@ -31,14 +31,14 @@ namespace Corvus
         float NewY;
     };
 
-    class СMouseScrollEvent : public CEvent
+    class CMouseScrollEvent : public CEvent
     {
     public:
         CORVUS_EVENT_GENERATED_BODY(
             CEvent::EEventCategory::Input | CEvent::EEventCategory::Mouse, CEvent::EEventType::MouseScroll
         );
 
-        СMouseScrollEvent(float OffsetXValue, float OffsetYValue) : OffsetX{OffsetXValue}, OffsetY{OffsetYValue} {}
+        CMouseScrollEvent(float OffsetXValue, float OffsetYValue) : OffsetX{OffsetXValue}, OffsetY{OffsetYValue} {}
 
         virtual CString ToString() const override
         {
@@ -51,7 +51,7 @@ namespace Corvus
         float OffsetY;
     };
 
-    class СMouseButtonPressEvent : public CEvent
+    class CMouseButtonPressEvent : public CEvent
     {
     public:
         CORVUS_EVENT_GENERATED_BODY(
@@ -59,7 +59,7 @@ namespace Corvus
             CEvent::EEventType::MouseButtonPress
         );
 
-        СMouseButtonPressEvent(EMouseCode ButtonValue, EModifierCode ModifierValue)
+        CMouseButtonPressEvent(EMouseCode ButtonValue, EModifierCode ModifierValue)
             : Button{ButtonValue}, Modifier{ModifierValue}
         {
         }
@@ -75,7 +75,7 @@ namespace Corvus
         EModifierCode Modifier;
     };
 
-    class СMouseButtonReleaseEvent : public CEvent
+    class CMouseButtonReleaseEvent : public CEvent
     {
     public:
         CORVUS_EVENT_GENERATED_BODY(
@@ -83,7 +83,7 @@ namespace Corvus
             CEvent::EEventType::MouseButtonRelease
         );
 
-        СMouseButtonReleaseEvent(EMouseCode ButtonValue) : Button{ButtonValue} {}
+        CMouseButtonReleaseEvent(EMouseCode ButtonValue) : Button{ButtonValue} {}
 
         virtual CString ToString() const override
         {

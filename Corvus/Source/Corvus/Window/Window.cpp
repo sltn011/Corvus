@@ -31,7 +31,7 @@ namespace Corvus
         return m_WindowData.bFullScreen;
     }
 
-    СGUIController &CWindow::GetGUIController()
+    CGUIController &CWindow::GetGUIController()
     {
         return m_GUIController;
     }

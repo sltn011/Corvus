@@ -8,12 +8,12 @@ namespace Corvus
 
     class FTimeDelta;
 
-    class СLayerDebug : public СLayer
+    class CLayerDebug : public CLayer
     {
     public:
-        using Super = СLayer;
+        using Super = CLayer;
 
-        СLayerDebug(CString LayerName, bool bEnabled);
+        CLayerDebug(CString LayerName, bool bEnabled);
 
         virtual void OnUpdate(FTimeDelta ElapsedTime) override;
         virtual void OnEvent(CEvent &Event) override;

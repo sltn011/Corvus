@@ -30,7 +30,7 @@ namespace Corvus
         static void EnableBackfaceCulling(bool bIsCulledCCW = true);
         static void DisableBackfaceCulling();
 
-        static void Submit(TOwn<CVertexArray> &VAO, TOwn<CShader> &CShader);
+        static void Submit(CVertexArray &VAO, CShader &CShader);
 
     private:
         static TOwn<CGraphicsAPI> s_GraphicsAPI;

@@ -1,37 +1,38 @@
 #include <Corvus.h>
 
-#include "Corvus/Assets/Image/Image.h"
-#include "Corvus/Assets/Image/ImageLoader.h"
 #include "Corvus/Assets/Material/Material.h"
-#include "Corvus/Components/StaticMeshComponent.h"
+#include "Corvus/Assets/Model/ModelLoader.h"
+#include "Corvus/Assets/Model/StaticModel.h"
+#include "Corvus/Assets/Texture/Texture2D.h"
 #include "Corvus/Components/TransformComponent.h"
-#include "Corvus/Renderer/Texture2D.h"
+#include "Corvus/Math/Color.h"
+#include "Corvus/Renderer/Texture2DBuffer.h"
 
 namespace Corvus
 {
 
-    class CPlayground : public СApplication
+    class CPlayground : public CApplication
     {
     public:
         CPlayground() {}
         ~CPlayground() {}
     };
 
-    class CApplicationLayer : public СLayer
+    class CApplicationLayer : public CLayer
     {
     public:
-        CApplicationLayer() : СLayer{"ApplicationLayer", true}
+        CApplicationLayer() : CLayer{"ApplicationLayer", true}
         {
             CRenderer::EnableDepthTest();
+            CRenderer::EnableBackfaceCulling();
             CRenderer::SetClearColor({0.6f, 0.8f, 1.0f, 1.0f});
 
             InitCamera();
-            CreateMeshData();
-            PopulateScene();
 
-            CreateShader();
-            CreateTexture();
-            CreateMaterial();
+            LoadAssets();
+            WireUpAssets();
+
+            TestModelTransform = FTransform{{5.0f, -1.5f, 0.0f}, {ERotationOrder::YXZ, {0.0f, -45.0f, 0.0f}}};
         }
 
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
@@ -41,59 +42,57 @@ namespace Corvus
 
             if (bCameraMode)
             {
-                if (СInput::IsKeyPressed(Key::W))
+                if (CInput::IsKeyPressed(Key::W))
                 {
-                    CCamera.ProcessMovementInput(CCamera::EMoveDirection::Forward, ElapsedTime);
+                    Camera.ProcessMovementInput(CCamera::EMoveDirection::Forward, ElapsedTime);
                 }
-                if (СInput::IsKeyPressed(Key::A))
+                if (CInput::IsKeyPressed(Key::A))
                 {
-                    CCamera.ProcessMovementInput(CCamera::EMoveDirection::Left, ElapsedTime);
+                    Camera.ProcessMovementInput(CCamera::EMoveDirection::Left, ElapsedTime);
                 }
-                if (СInput::IsKeyPressed(Key::S))
+                if (CInput::IsKeyPressed(Key::S))
                 {
-                    CCamera.ProcessMovementInput(CCamera::EMoveDirection::Backward, ElapsedTime);
+                    Camera.ProcessMovementInput(CCamera::EMoveDirection::Backward, ElapsedTime);
                 }
-                if (СInput::IsKeyPressed(Key::D))
+                if (CInput::IsKeyPressed(Key::D))
                 {
-                    CCamera.ProcessMovementInput(CCamera::EMoveDirection::Right, ElapsedTime);
+                    Camera.ProcessMovementInput(CCamera::EMoveDirection::Right, ElapsedTime);
                 }
-                if (СInput::IsKeyPressed(Key::Space))
+                if (CInput::IsKeyPressed(Key::Space))
                 {
-                    CCamera.ProcessMovementInput(CCamera::EMoveDirection::Up, ElapsedTime);
+                    Camera.ProcessMovementInput(CCamera::EMoveDirection::Up, ElapsedTime);
                 }
-                if (СInput::IsKeyPressed(Key::LeftShift))
+                if (CInput::IsKeyPressed(Key::LeftShift))
                 {
-                    CCamera.ProcessMovementInput(CCamera::EMoveDirection::Down, ElapsedTime);
+                    Camera.ProcessMovementInput(CCamera::EMoveDirection::Down, ElapsedTime);
                 }
             }
 
-            FVector2 const NewPos = СInput::GetCursorPos();
+            FVector2 const NewPos = CInput::GetCursorPos();
             FVector2 const Delta  = NewPos - CursorPos;
             CursorPos             = NewPos;
             if (bCameraMode)
             {
-                CCamera.ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
+                Camera.ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
             }
 
-            for (SizeT i = 0; i < Entities.GetSize(); ++i)
+            for (CStaticMesh &Mesh : TestModel)
             {
-                CEntity &SceneEntity = Entities[i];
+                for (CStaticMeshPrimitive &Primitive : Mesh)
+                {
+                    CMaterial *Material = Primitive.MaterialRef.GetRawPtr();
+                    CORVUS_ASSERT(Material != nullptr);
 
-                FTransform EntityTransform = SceneEntity.TransformComponent->GetTransform();
-                FRotation  Rotator         = EntityTransform.GetRotation();
-                Rotator.AddYawDegrees(-20.0f * ElapsedTime.Seconds());
-                EntityTransform.SetRotation(Rotator);
-                SceneEntity.TransformComponent.Get()->SetTransform(EntityTransform);
+                    TOwn<CShader> const &MaterialShader = Material->GetShader();
+                    CORVUS_ASSERT(MaterialShader != nullptr);
 
-                TestTexture->BindUnit(0);
+                    MaterialShader->Bind();
+                    MaterialShader->SetMat4("u_Transform", TestModelTransform.GetTransformMatrix());
+                    MaterialShader->SetMat4("u_ProjView", Camera.GetProjectionViewMatrix());
+                    Material->LoadInShader();
 
-                TestShader->Bind();
-                TestShader->SetMat4("u_Transform", SceneEntity.TransformComponent->GetTransformMatrix());
-                TestShader->SetMat4("u_ProjView", CCamera.GetProjectionViewMatrix());
-
-                TestMaterial.LoadInShader(*TestShader);
-
-                CRenderer::Submit(VAO, TestShader);
+                    CRenderer::Submit(*Primitive.GetVertexArray(), *MaterialShader);
+                }
             }
 
             CRenderer::EndScene();
@@ -101,112 +100,115 @@ namespace Corvus
 
         virtual void OnEvent(CEvent &Event)
         {
-            if (Event.GetEventType() == CEvent::EEventType::KeyPress)
+            if (Event.GetEventType() == CEvent::EEventType::MouseButtonPress)
             {
-                СKeyPressEvent &KPEvent = CastEvent<СKeyPressEvent>(Event);
-                if (KPEvent.Key == Key::C)
+                CMouseButtonPressEvent &MBPEvent = CastEvent<CMouseButtonPressEvent>(Event);
+                if (MBPEvent.Button == Mouse::ButtonRight)
                 {
-                    bCameraMode = !bCameraMode;
-                    СInput::SetCursorEnabled(!bCameraMode);
+                    bCameraMode = true;
+                    CInput::SetCursorEnabled(!bCameraMode);
+
+                    Event.SetHandled();
+                }
+            }
+            else if (Event.GetEventType() == CEvent::EEventType::MouseButtonRelease)
+            {
+                CMouseButtonReleaseEvent &MBREvent = CastEvent<CMouseButtonReleaseEvent>(Event);
+                if (MBREvent.Button == Mouse::ButtonRight)
+                {
+                    bCameraMode = false;
+                    CInput::SetCursorEnabled(!bCameraMode);
 
                     Event.SetHandled();
                 }
             }
             else if (Event.GetEventType() == CEvent::EEventType::WindowResize)
             {
-                СWindowResizeEvent &WREvent = CastEvent<СWindowResizeEvent>(Event);
-                CCamera.SetViewportSize(static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight));
+                CWindowResizeEvent &WREvent = CastEvent<CWindowResizeEvent>(Event);
+                Camera.SetViewportSize(static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight));
             }
         }
 
         void InitCamera()
         {
-            UInt32 const WindowWidth  = СApplication::GetInstance().GetWindow().GetWindowWidth();
-            UInt32 const WindowHeight = СApplication::GetInstance().GetWindow().GetWindowHeight();
-            CCamera.SetViewportSize(static_cast<float>(WindowWidth), static_cast<float>(WindowHeight));
-            CCamera.SetFoVAngle(60.0f);
-            CCamera.SetClipPlanes(0.01f, 100.0f);
-            CCamera.SwitchPlayerControl(true, 1.0f);
+            UInt32 const WindowWidth  = CApplication::GetInstance().GetWindow().GetWindowWidth();
+            UInt32 const WindowHeight = CApplication::GetInstance().GetWindow().GetWindowHeight();
+            Camera.SetViewportSize(static_cast<float>(WindowWidth), static_cast<float>(WindowHeight));
+            Camera.SetFoVAngle(60.0f);
+            Camera.SetClipPlanes(0.01f, 100.0f);
+            Camera.SwitchPlayerControl(true, 1.0f);
         }
-        void CreateMeshData()
+
+        void LoadAssets()
         {
-            // clang-format off
-            float const Vertices[] = {
-                // Position             // UV
-                +0.0f, -0.2f, -0.2f,    0.0f, 0.0f,
-                +0.0f, -0.2f, +0.2f,    1.0f, 0.0f,
-                +0.0f, +0.2f, +0.2f,    1.0f, 1.0f,
-                +0.0f, +0.2f, -0.2f,    0.0f, 1.0f
-            };
-            // clang-format on
+            SStaticModelLoadedData LoadedModelData = CModelLoader::LoadStaticModelFromFile("./Assets/Models/Shack.glb");
 
-            UInt32 const Indices[] = {0, 1, 2, 0, 2, 3};
+            // StaticModel
+            TestModel = std::move(LoadedModelData.StaticModel);
 
-            CVertexBufferLayout const Layout = {{EBufferDataType::Vec3}, {EBufferDataType::Vec2}};
+            // Textures
+            for (CTexture2D &Texture : LoadedModelData.Textures)
+            {
+                TexturesAssets.emplace(Texture.UUID, std::move(Texture));
+            }
 
-            TOwn<CVertexBuffer> VBO = CVertexBuffer::Create(Vertices, 4, Layout);
-            TOwn<CIndexBuffer>  EBO = CIndexBuffer::Create(Indices, 6);
-
-            VAO = CVertexArray::Create();
-            VAO->AddVertexBuffer(std::move(VBO));
-            VAO->AddIndexBuffer(std::move(EBO));
+            // Materials
+            for (CMaterial &Material : LoadedModelData.Materials)
+            {
+                Material.CompileMaterialShader("./Assets/Shaders/TestShader.glsl");
+                MaterialsAssets.emplace(Material.UUID, std::move(Material));
+            }
         }
-        void PopulateScene()
-        {
-            Entities.EmplaceBack(
-                TestShader,
-                VAO,
-                FTransform{{1.0f, 0.0f, 0.0f}, FVector::OneVec, {ERotationOrder::YXZ, {30.0f, 0.0f, 0.0f}}}
-            );
 
-            Entities.EmplaceBack(
-                TestShader,
-                VAO,
-                FTransform{{0.0f, 0.0f, 0.5f}, FVector::OneVec * 0.5f, {ERotationOrder::YXZ, {0.0f, 0.0f, 45.0f}}}
-            );
+        void WireUpAssets()
+        {
+            // Provide materials with their textures
+            for (auto &[MaterialUUID, Material] : MaterialsAssets)
+            {
+                if (Material.AlbedoMap.IsTexture())
+                {
+                    FUUID AlbedoUUID = Material.AlbedoMap.TextureRef.GetUUID();
+                    Material.AlbedoMap.TextureRef.SetRawPtr(&TexturesAssets.at(AlbedoUUID));
+                }
+            }
 
-            Entities[0].TransformComponent->AddChild(Entities[1].TransformComponent.Get());
-        }
-        void CreateShader() { TestShader = CShader::CreateFromFile("./Assets/Shaders/TestShader.glsl"); }
-        void CreateTexture()
-        {
-            STextureParameters TextureParameters;
-            TextureParameters.bHasMipmaps              = true;
-            TextureParameters.bHasAnisotropicFiltering = true;
-            TextureParameters.MinFiltering             = ETextureFiltering::LinearMipMap_Linear;
-            TextureParameters.MagFiltering             = ETextureFiltering::Linear;
-            CImage Image =
-                CTextureLoader::LoadFromImageFile("./Assets/Textures/OldRabbit.jpg", ELoadTextureChannels::RGB);
-            TestTexture = CTexture2D::Create(Image, TextureParameters);
-        }
-        void CreateMaterial()
-        {
-            TestMaterial.AlbedoMap.SetTexture(TestTexture.get());
-            TestMaterial.AlbedoMap.UseTexture();
+            // Provide StaticMeshPrimitives with their materials
+            for (SizeT MeshIndex = 0; MeshIndex < TestModel.GetNumMeshes(); ++MeshIndex)
+            {
+                CStaticMesh &Mesh = TestModel.GetMesh(MeshIndex);
+                for (SizeT PrimitiveIndex = 0; PrimitiveIndex < Mesh.GetNumPrimitives(); ++PrimitiveIndex)
+                {
+                    CStaticMeshPrimitive &Primitive = Mesh.GetPrimitive(PrimitiveIndex);
+
+                    FUUID MaterialUUID = Primitive.MaterialRef.GetUUID();
+                    Primitive.MaterialRef.SetRawPtr(&MaterialsAssets.at(MaterialUUID));
+                }
+            }
         }
 
     protected:
-        TArray<CEntity>    Entities;
-        CPerspectiveCamera CCamera;
+        CPerspectiveCamera Camera;
 
-        TOwn<CShader>      TestShader;
-        TOwn<CVertexArray> VAO;
+        CStaticModel TestModel;
+        FTransform   TestModelTransform;
 
-        TOwn<CTexture2D> TestTexture;
-        CMaterial        TestMaterial;
+        std::unordered_map<FUUID, CTexture2D> TexturesAssets;
+        std::unordered_map<FUUID, CMaterial>  MaterialsAssets;
+
+        std::vector<TOwn<CShader>> TestShaders;
 
         bool     bCameraMode = false;
         FVector2 CursorPos;
     };
 
-    СApplication *CreateApplication()
+    CApplication *CreateApplication()
     {
         CPlayground *App = new CPlayground;
-        App->PushLayer(СLayer::Create<CApplicationLayer>());
+        App->PushLayer(CLayer::Create<CApplicationLayer>());
         return App;
     }
 
-    bool DestroyApplication(СApplication *const App)
+    bool DestroyApplication(CApplication *const App)
     {
         if (!App)
         {

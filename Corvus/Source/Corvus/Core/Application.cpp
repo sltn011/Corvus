@@ -17,9 +17,9 @@
 
 namespace Corvus
 {
-    СApplication *СApplication::s_ApplicationInstance = nullptr;
+    CApplication *CApplication::s_ApplicationInstance = nullptr;
 
-    СApplication::СApplication()
+    CApplication::CApplication()
     {
         CORVUS_CORE_ASSERT_FMT(!s_ApplicationInstance, "Only one instance of application is allowed!");
 
@@ -28,22 +28,22 @@ namespace Corvus
         Init();
     }
 
-    СApplication::~СApplication()
+    CApplication::~CApplication()
     {
     }
 
-    void СApplication::Init()
+    void CApplication::Init()
     {
         CApplicationPools::Init();
 
         InitWindow();
         InitRenderer();
 
-        PushLayer(СLayer::Create<СCoreLayer>());
-        // PushLayer(Layer::Create<СLayerGUI>("GUI", true));
+        PushLayer(CLayer::Create<CCoreLayer>());
+        // PushLayer(Layer::Create<CLayerGUI>("GUI", true));
     }
 
-    void СApplication::Run()
+    void CApplication::Run()
     {
         FTimePoint TimePointOld;
         while (!m_Window->ShouldClose())
@@ -59,17 +59,17 @@ namespace Corvus
         }
     }
 
-    void СApplication::PushLayer(TOwn<СLayer> &&NewLayer)
+    void CApplication::PushLayer(TOwn<CLayer> &&NewLayer)
     {
         m_LayersStack.PushLayer(std::move(NewLayer));
     }
 
-    TOwn<СLayer> СApplication::PopLayer()
+    TOwn<CLayer> CApplication::PopLayer()
     {
         return m_LayersStack.PopLayer();
     }
 
-    void СApplication::UpdateLayers(FTimeDelta ElapsedTime)
+    void CApplication::UpdateLayers(FTimeDelta ElapsedTime)
     {
         for (auto It = m_LayersStack.Begin(); It != m_LayersStack.End(); ++It)
         {
@@ -77,7 +77,7 @@ namespace Corvus
         }
     }
 
-    void СApplication::RenderLayers()
+    void CApplication::RenderLayers()
     {
         if (!m_Window->GetGUIController().IsInitialized())
         {
@@ -97,7 +97,7 @@ namespace Corvus
         m_Window->GetGUIController().EndFrame();
     }
 
-    void СApplication::OnEventReceived(CEvent &Event)
+    void CApplication::OnEventReceived(CEvent &Event)
     {
         for (auto It = m_LayersStack.RBegin(); It != m_LayersStack.REnd(); ++It)
         {
@@ -109,12 +109,12 @@ namespace Corvus
         }
     }
 
-    CWindow &СApplication::GetWindow()
+    CWindow &CApplication::GetWindow()
     {
         return *m_Window;
     }
 
-    void СApplication::InitWindow()
+    void CApplication::InitWindow()
     {
         SWindowData WindowSettings;
         WindowSettings.WindowWidth   = 1600;
@@ -125,7 +125,7 @@ namespace Corvus
         m_Window = CWindow::Create();
         CORVUS_CORE_ASSERT(m_Window);
         m_Window->Init(WindowSettings);
-        m_Window->OnEvent.BindObject(this, &СApplication::OnEventReceived);
+        m_Window->OnEvent.BindObject(this, &CApplication::OnEventReceived);
 
         CORVUS_CORE_INFO(
             "Application Window \"{0}\" {1}x{2} initialized",
@@ -135,7 +135,7 @@ namespace Corvus
         );
     }
 
-    void СApplication::InitRenderer()
+    void CApplication::InitRenderer()
     {
         CRenderer::Init();
         CORVUS_CORE_INFO("Renderer initialized");

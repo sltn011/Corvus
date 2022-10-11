@@ -14,13 +14,11 @@ namespace Corvus
     public:
         using Super = CBaseSceneComponent;
 
-        CStaticMeshComponent(CEntity *Owner, TOwn<CShader> const &CShader, TOwn<CVertexArray> const &VAO);
+        CStaticMeshComponent(CEntity *Owner, TOwn<CVertexArray> const &VAO);
 
-        TOwn<CShader> const      &GetShader() const;
         TOwn<CVertexArray> const &GetVertexArray() const;
 
     private:
-        TOwn<CShader> const      &m_Shader;
         TOwn<CVertexArray> const &m_VAO;
     };
 
