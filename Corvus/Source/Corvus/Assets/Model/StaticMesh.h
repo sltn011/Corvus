@@ -17,6 +17,12 @@ namespace Corvus
 
         CStaticMeshPrimitive &GetPrimitive(SizeT PrimitiveIndex);
 
+        // For foreach loops
+        std::vector<CStaticMeshPrimitive>::iterator       begin() { return m_Primitives.begin(); }
+        std::vector<CStaticMeshPrimitive>::const_iterator begin() const { return m_Primitives.begin(); }
+        std::vector<CStaticMeshPrimitive>::iterator       end() { return m_Primitives.end(); }
+        std::vector<CStaticMeshPrimitive>::const_iterator end() const { return m_Primitives.end(); }
+
     private:
         std::vector<CStaticMeshPrimitive> m_Primitives;
     };

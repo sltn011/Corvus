@@ -76,13 +76,10 @@ namespace Corvus
                 Camera.ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
             }
 
-            for (SizeT MeshIndex = 0; MeshIndex < TestModel.GetNumMeshes(); ++MeshIndex)
+            for (CStaticMesh &Mesh : TestModel)
             {
-                CStaticMesh &Mesh = TestModel.GetMesh(MeshIndex);
-                for (SizeT PrimitiveIndex = 0; PrimitiveIndex < Mesh.GetNumPrimitives(); ++PrimitiveIndex)
+                for (CStaticMeshPrimitive &Primitive : Mesh)
                 {
-                    CStaticMeshPrimitive &Primitive = Mesh.GetPrimitive(PrimitiveIndex);
-
                     CMaterial *Material = Primitive.MaterialRef.GetRawPtr();
                     CORVUS_ASSERT(Material != nullptr);
 
@@ -94,7 +91,7 @@ namespace Corvus
                     MaterialShader->SetMat4("u_ProjView", Camera.GetProjectionViewMatrix());
                     Material->LoadInShader();
 
-                    CRenderer::Submit(*Primitive.GetVertexArray(), *MaterialShader); // Reminder of a changed signature
+                    CRenderer::Submit(*Primitive.GetVertexArray(), *MaterialShader);
                 }
             }
 
