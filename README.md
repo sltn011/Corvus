@@ -9,7 +9,8 @@ Engine uses OpenGL 4.6 as it's Rendering API for now, but is built to allow easy
 Features:
 - Layers based architecture
 - Custom high perfomance system of memory pools for game objects creation
-- Single and Multicast delegates
+- Single and Multicast delegates  
+- Loading models and their materials using gltf 2.0 files
 - Log and assert debug tools
   
 Planned features:
