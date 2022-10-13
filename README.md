@@ -30,9 +30,5 @@ Clone repository using `git clone --recursive https://github.com/sltn011/Corvus.
 If repository was cloned non-recursive, open project folder and run ```git submodule update --init``` to download submodules  
   
 ## 2. Generate project files  
-Go to Scripts folder and run Setup.bat or  
-Run these commands inside project root directory using command prompt:
-```bat
-"./Dependencies/Premake/Binary/premake5.exe" vs2022
-```  
-Generated solution file can be found in project root folder.  
+Go to Scripts folder and run Setup.bat for your IDE  
+Generated Corvus.sln solution file can be found in project root folder.  

@@ -1,5 +1,5 @@
 @echo off
-cd ..\
+cd ..\..\
 echo Formatting Engine files...
 for /r .\Corvus\Source %%f in (*.cpp, *.h) do (
 	echo %%f
