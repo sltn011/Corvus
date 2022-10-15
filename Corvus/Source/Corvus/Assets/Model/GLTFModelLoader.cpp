@@ -625,6 +625,13 @@ namespace Corvus
 
             for (tinygltf::Node const &Node : GLTFModel.nodes)
             {
+                Int32 MeshIndex = Node.mesh;
+                if (MeshIndex == -1)
+                {
+                    CORVUS_CORE_WARN("Not-a-model node {} found in gltf model file and was skipped!", Node.name);
+                    continue;
+                }
+
                 tinygltf::Mesh const &Mesh = GLTFModel.meshes[Node.mesh];
                 StaticModel.AddMesh(ProcessMesh(GLTFModel, Node, Mesh, Materials));
             }
