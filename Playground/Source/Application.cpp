@@ -32,7 +32,7 @@ namespace Corvus
             LoadAssets();
             WireUpAssets();
 
-            TestModelTransform = FTransform{{5.0f, -1.5f, 0.0f}, {ERotationOrder::YXZ, {0.0f, -45.0f, 0.0f}}};
+            TestModelTransform = FTransform{{5.0f, -1.5f, 0.0f}, {{0.0f, -45.0f, 0.0f}}};
         }
 
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
@@ -76,8 +76,11 @@ namespace Corvus
                 Camera.ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
             }
 
+            FMatrix4 ModelTransformMatrix = TestModelTransform.GetTransformMatrix();
             for (CStaticMesh &Mesh : TestModel)
             {
+                FMatrix4 MeshTransformMatrix = ModelTransformMatrix * Mesh.GetTransform().GetTransformMatrix();
+
                 for (CStaticMeshPrimitive &Primitive : Mesh)
                 {
                     CMaterial *Material = Primitive.MaterialRef.GetRawPtr();
@@ -87,7 +90,7 @@ namespace Corvus
                     CORVUS_ASSERT(MaterialShader != nullptr);
 
                     MaterialShader->Bind();
-                    MaterialShader->SetMat4("u_Transform", TestModelTransform.GetTransformMatrix());
+                    MaterialShader->SetMat4("u_Transform", MeshTransformMatrix);
                     MaterialShader->SetMat4("u_ProjView", Camera.GetProjectionViewMatrix());
                     Material->LoadInShader();
 

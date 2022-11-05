@@ -16,11 +16,14 @@ namespace Corvus
         ZYX
     };
 
+    class FQuaternion;
+
     class FRotation
     {
     public:
         FRotation(ERotationOrder Order = ERotationOrder::YXZ);
-        FRotation(ERotationOrder Order, FVector3 const &Degrees);
+        FRotation(FVector3 const &Degrees, ERotationOrder Order = ERotationOrder::YXZ);
+        FRotation(FQuaternion const &Quaternion, ERotationOrder Order = ERotationOrder::YXZ);
 
         FMatrix4 GetRotationMatrix() const;
         FMatrix4 GetRollMatrix() const;

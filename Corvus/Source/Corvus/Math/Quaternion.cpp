@@ -2,6 +2,8 @@
 
 #include "Corvus/Math/Quaternion.h"
 
+#include <glm/gtx/euler_angles.hpp>
+
 namespace Corvus
 {
 
@@ -102,6 +104,87 @@ namespace Corvus
         R.y = C.z * S.y * C.x + S.z * C.y * S.x;
         R.z = S.z * C.y * C.x - C.z * S.y * S.x;
         return R;
+    }
+
+    FVector3 FQuaternion::ToEuler(FQuaternion const &Quaternion, ERotationOrder Order)
+    {
+        switch (Order)
+        {
+        case Corvus::ERotationOrder::XYZ:
+            return ToEulerXYZ(Quaternion);
+
+        case Corvus::ERotationOrder::XZY:
+            return ToEulerXZY(Quaternion);
+
+        case Corvus::ERotationOrder::YXZ:
+            return ToEulerYXZ(Quaternion);
+
+        case Corvus::ERotationOrder::YZX:
+            return ToEulerYZX(Quaternion);
+
+        case Corvus::ERotationOrder::ZXY:
+            return ToEulerZXY(Quaternion);
+
+        case Corvus::ERotationOrder::ZYX:
+            return ToEulerZYX(Quaternion);
+
+        default:
+            return FVector3{};
+        }
+    }
+
+    FVector3 FQuaternion::ToEulerXYZ(FQuaternion const &Quaternion)
+    {
+        FVector3 V{};
+        FMatrix4 Mat4 = FQuaternion::ToMat4(Quaternion);
+        glm::extractEulerAngleXYZ(Mat4, V.x, V.y, V.z);
+        V = FVector::Degrees(V);
+        return V;
+    }
+
+    FVector3 FQuaternion::ToEulerXZY(FQuaternion const &Quaternion)
+    {
+        FVector3 V{};
+        FMatrix4 Mat4 = FQuaternion::ToMat4(Quaternion);
+        glm::extractEulerAngleXZY(Mat4, V.x, V.z, V.y);
+        V = FVector::Degrees(V);
+        return V;
+    }
+
+    FVector3 FQuaternion::ToEulerYXZ(FQuaternion const &Quaternion)
+    {
+        FVector3 V{};
+        FMatrix4 Mat4 = FQuaternion::ToMat4(Quaternion);
+        glm::extractEulerAngleYXZ(Mat4, V.y, V.x, V.z);
+        V = FVector::Degrees(V);
+        return V;
+    }
+
+    FVector3 FQuaternion::ToEulerYZX(FQuaternion const &Quaternion)
+    {
+        FVector3 V{};
+        FMatrix4 Mat4 = FQuaternion::ToMat4(Quaternion);
+        glm::extractEulerAngleYZX(Mat4, V.y, V.z, V.x);
+        V = FVector::Degrees(V);
+        return V;
+    }
+
+    FVector3 FQuaternion::ToEulerZXY(FQuaternion const &Quaternion)
+    {
+        FVector3 V{};
+        FMatrix4 Mat4 = FQuaternion::ToMat4(Quaternion);
+        glm::extractEulerAngleZXY(Mat4, V.z, V.x, V.y);
+        V = FVector::Degrees(V);
+        return V;
+    }
+
+    FVector3 FQuaternion::ToEulerZYX(FQuaternion const &Quaternion)
+    {
+        FVector3 V{};
+        FMatrix4 Mat4 = FQuaternion::ToMat4(Quaternion);
+        glm::extractEulerAngleZYX(Mat4, V.z, V.y, V.x);
+        V = FVector::Degrees(V);
+        return V;
     }
 
 } // namespace Corvus

@@ -33,6 +33,14 @@ namespace Corvus
         static FQuaternion FromEulerZXY(FVector3 const &Degrees);
         static FQuaternion FromEulerZYX(FVector3 const &Degrees);
 
+        static FVector3 ToEuler(FQuaternion const &Quaternion, ERotationOrder Order = ERotationOrder::YXZ);
+        static FVector3 ToEulerXYZ(FQuaternion const &Quaternion);
+        static FVector3 ToEulerXZY(FQuaternion const &Quaternion);
+        static FVector3 ToEulerYXZ(FQuaternion const &Quaternion);
+        static FVector3 ToEulerYZX(FQuaternion const &Quaternion);
+        static FVector3 ToEulerZXY(FQuaternion const &Quaternion);
+        static FVector3 ToEulerZYX(FQuaternion const &Quaternion);
+
         static constexpr FQuaternionBase Unit = FQuaternionBase{1.0f, 0.0f, 0.0f, 0.0f};
     };
 

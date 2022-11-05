@@ -2,6 +2,7 @@
 #define CORVUS_SOURCE_CORVUS_ASSETS_MODEL_STATICMESH_H
 
 #include "Corvus/Assets/Model/StaticMeshPrimitive.h"
+#include "Corvus/Math/Transform.h"
 
 namespace Corvus
 {
@@ -11,11 +12,17 @@ namespace Corvus
     class CStaticMesh
     {
     public:
+        CStaticMesh() = default;
+        CStaticMesh(FTransform const &Transform);
+
         SizeT AddPrimitive(CStaticMeshPrimitive &&Primitive);
 
         SizeT GetNumPrimitives() const;
 
         CStaticMeshPrimitive &GetPrimitive(SizeT PrimitiveIndex);
+
+        FTransform &GetTransform();
+        void        SetTransform(FTransform const &Transform);
 
         // For foreach loops
         std::vector<CStaticMeshPrimitive>::iterator       begin() { return m_Primitives.begin(); }
@@ -25,6 +32,7 @@ namespace Corvus
 
     private:
         std::vector<CStaticMeshPrimitive> m_Primitives;
+        FTransform                        m_Transform;
     };
 
 } // namespace Corvus

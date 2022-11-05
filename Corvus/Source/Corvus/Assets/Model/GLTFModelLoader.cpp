@@ -18,6 +18,8 @@
 
 #define TINYGLTF_IMPLEMENTATION
 #define TINYGLTF_NO_STB_IMAGE_WRITE
+#include "Corvus/Math/Transform.h"
+
 #include <tiny_gltf.h>
 
 namespace Corvus
@@ -42,6 +44,34 @@ namespace Corvus
             SElementFormat ElementFormat;
             SizeT          NumElements = 0;
         };
+
+        std::vector<SizeT> FindRootNodes(tinygltf::Model const &GLTFModel)
+        {
+            std::vector<tinygltf::Node> const &Nodes = GLTFModel.nodes;
+
+            SizeT             RootNodesCounter = Nodes.size();
+            std::vector<bool> IsRootNode(Nodes.size(), true);
+            for (tinygltf::Node const &Node : Nodes)
+            { // Each node is either a root or only one other node's child
+                for (int const ChildNodeIndex : Node.children)
+                {
+                    IsRootNode[ChildNodeIndex] = false;
+                    RootNodesCounter--;
+                }
+            }
+
+            std::vector<SizeT> RootNodesIndexes(RootNodesCounter);
+            SizeT              RootsCounter = 0;
+            for (SizeT NodeIndex = 0; NodeIndex < IsRootNode.size(); ++NodeIndex)
+            {
+                if (IsRootNode[NodeIndex])
+                {
+                    RootNodesIndexes[RootsCounter++] = NodeIndex;
+                }
+            }
+
+            return RootNodesIndexes;
+        }
 
         SElementFormat GetElementFormatFromAccessor(tinygltf::Accessor const &Accessor)
         {
@@ -280,7 +310,7 @@ namespace Corvus
             OutBufferReadParams.NumElements   = NumElements;
         }
 
-        FMatrix4 GetTransformMatrix(tinygltf::Model const &GLTFModel, tinygltf::Node const &Node)
+        FTransform GetNodeLocalTransform(tinygltf::Node const &Node)
         {
             FVector3 Translation{};
             if (!Node.translation.empty())
@@ -298,20 +328,17 @@ namespace Corvus
                 Scale.z = static_cast<float>(Node.scale[2]);
             }
 
-            FQuaternion Rotation = FQuaternion::Unit;
+            FQuaternion Quaternion = FQuaternion::Unit;
             if (!Node.rotation.empty())
             {
-                Rotation.x = static_cast<float>(Node.rotation[0]);
-                Rotation.y = static_cast<float>(Node.rotation[1]);
-                Rotation.z = static_cast<float>(Node.rotation[2]);
-                Rotation.w = static_cast<float>(Node.rotation[3]);
+                Quaternion.x = static_cast<float>(Node.rotation[0]);
+                Quaternion.y = static_cast<float>(Node.rotation[1]);
+                Quaternion.z = static_cast<float>(Node.rotation[2]);
+                Quaternion.w = static_cast<float>(Node.rotation[3]);
             }
+            FRotation Rotation{Quaternion};
 
-            FMatrix4 EyeMatrix       = FMatrix4{1.0f};
-            FMatrix4 TranslateMatrix = FMatrix::Translate(EyeMatrix, Translation);
-            FMatrix4 RotateMatrix    = FQuaternion::ToMat4(Rotation);
-            FMatrix4 ScaleMatrix     = FMatrix::Scale(EyeMatrix, Scale);
-            return TranslateMatrix * RotateMatrix * ScaleMatrix;
+            return FTransform{Translation, Scale, Rotation};
         }
 
         FIntVector4 ReadIntegerElement(UInt8 const *SrcData, SElementFormat const ElementFormat)
@@ -403,33 +430,6 @@ namespace Corvus
             }
         }
 
-        void TransformAttributeData(
-            FVector3 *SrcData, SizeT const NumElements, CString const &AttributeKey, FMatrix4 const &TransformMatrix
-        )
-        {
-            float WValue = 0.0f;
-            if (AttributeKey == "POSITION")
-            {
-                WValue = 1.0f;
-            }
-            else if (AttributeKey == "NORMAL")
-            {
-                WValue = 0.0f;
-            }
-            else
-            {
-                return;
-            }
-
-            for (SizeT Element = 0; Element < NumElements; ++Element)
-            {
-                FVector3 OldValue         = SrcData[Element];
-                FVector4 TransformedValue = FVector4{OldValue, WValue};
-                TransformedValue          = TransformMatrix * TransformedValue;
-                SrcData[Element]          = FVector3{TransformedValue};
-            }
-        }
-
         template<typename TReadElementReturnType>
         void ReadBufferData(
             SBufferReadParams BufferReadParams,
@@ -455,7 +455,6 @@ namespace Corvus
 
         bool GetAttributeData(
             tinygltf::Model const &GLTFModel,
-            FMatrix4 const        &TransformMatrix,
             CString const         &AttributeKey,
             UInt32 const           AttributeValue,
             std::vector<UInt8>    &OutAttributeData,
@@ -480,13 +479,6 @@ namespace Corvus
             else
             {
                 ReadBufferData(BufferReadParams, ReadFloatElement, WriteFloatElement);
-
-                TransformAttributeData(
-                    reinterpret_cast<FVector3 *>(BufferReadParams.DstData),
-                    BufferReadParams.NumElements,
-                    AttributeKey,
-                    TransformMatrix
-                );
             }
 
             OutAttributeData = std::move(AttributeData);
@@ -505,7 +497,6 @@ namespace Corvus
         CStaticMeshPrimitive ProcessPrimitive(
             tinygltf::Model const        &GLTFModel,
             tinygltf::Primitive const    &Primitive,
-            FMatrix4 const               &TransformMatrix,
             std::vector<CMaterial> const &Materials
         )
         {
@@ -534,7 +525,6 @@ namespace Corvus
                 UInt32             AttributeNumComponents;
                 if (!GetAttributeData(
                         GLTFModel,
-                        TransformMatrix,
                         AttributeKey,
                         AttributeValue,
                         AttributeData,
@@ -575,8 +565,7 @@ namespace Corvus
                 UInt32             IndexesNumComponents;
                 if (!GetAttributeData(
                         GLTFModel,
-                        TransformMatrix, // Not used here
-                        "",              // Not used here
+                        "", // Not used here
                         Primitive.indices,
                         IndexesData,
                         NumIndexes,
@@ -605,12 +594,12 @@ namespace Corvus
             std::vector<CMaterial> const &Materials
         )
         {
-            CStaticMesh StaticMesh;
+            FTransform  NodeLocalTransform = GetNodeLocalTransform(Node);
+            CStaticMesh StaticMesh(NodeLocalTransform);
 
-            FMatrix4 TransformMatrix = GetTransformMatrix(GLTFModel, Node);
             for (tinygltf::Primitive const &Primitive : Mesh.primitives)
             {
-                StaticMesh.AddPrimitive(ProcessPrimitive(GLTFModel, Primitive, TransformMatrix, Materials));
+                StaticMesh.AddPrimitive(ProcessPrimitive(GLTFModel, Primitive, Materials));
             }
 
             return StaticMesh;
@@ -622,6 +611,8 @@ namespace Corvus
             std::vector<CMaterial>  Materials = LoadMaterials(GLTFModel, Textures);
 
             CStaticModel StaticModel;
+
+            std::vector<SizeT> RootNodesIndexes = FindRootNodes(GLTFModel);
 
             for (tinygltf::Node const &Node : GLTFModel.nodes)
             {

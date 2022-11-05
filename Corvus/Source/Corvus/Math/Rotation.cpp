@@ -11,8 +11,13 @@ namespace Corvus
     {
     }
 
-    FRotation::FRotation(ERotationOrder const Order, FVector3 const &Degrees)
+    FRotation::FRotation(FVector3 const &Degrees, ERotationOrder const Order)
         : m_Degrees{Degrees}, m_RotationOrder{Order}
+    {
+    }
+
+    FRotation::FRotation(FQuaternion const &Quaternion, ERotationOrder const Order)
+        : m_Degrees{FQuaternion::ToEuler(Quaternion, Order)}, m_RotationOrder{Order}
     {
     }
 
