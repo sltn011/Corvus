@@ -11,14 +11,10 @@ namespace Corvus
     class CStaticMeshPrimitive
     {
     public:
-        CStaticMeshPrimitive(TOwn<CVertexArray> &&VertexArray);
+        CStaticMeshPrimitive(TOwn<CVertexArray> &&PrimitiveVertexArray);
 
-        TOwn<CVertexArray> const &GetVertexArray() const;
-
+        TOwn<CVertexArray>   VertexArray;
         TAssetRef<CMaterial> MaterialRef;
-
-    private:
-        TOwn<CVertexArray> m_VertexArray;
     };
 
 } // namespace Corvus

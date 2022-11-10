@@ -11,6 +11,8 @@ namespace Corvus
     class CGLTFModelLoader
     {
     public:
+        // Loads Static Mesh data from GLTF files
+        // GLTF file must contain only one scene
         static SStaticModelLoadedData LoadStaticModelFromFile(CString const &FilePath, bool bIsBinary);
     };
 

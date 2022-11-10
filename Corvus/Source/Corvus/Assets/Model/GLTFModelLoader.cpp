@@ -18,8 +18,6 @@
 
 #define TINYGLTF_IMPLEMENTATION
 #define TINYGLTF_NO_STB_IMAGE_WRITE
-#include "Corvus/Math/Transform.h"
-
 #include <tiny_gltf.h>
 
 namespace Corvus
@@ -45,31 +43,27 @@ namespace Corvus
             SizeT          NumElements = 0;
         };
 
-        std::vector<SizeT> FindRootNodes(tinygltf::Model const &GLTFModel)
+        std::vector<SizeT> GetRootNodesIndexes(tinygltf::Model const &GLTFModel)
         {
-            std::vector<tinygltf::Node> const &Nodes = GLTFModel.nodes;
+            tinygltf::Scene const &Scene = GLTFModel.scenes[0];
 
-            SizeT             RootNodesCounter = Nodes.size();
-            std::vector<bool> IsRootNode(Nodes.size(), true);
-            for (tinygltf::Node const &Node : Nodes)
-            { // Each node is either a root or only one other node's child
-                for (int const ChildNodeIndex : Node.children)
-                {
-                    IsRootNode[ChildNodeIndex] = false;
-                    RootNodesCounter--;
-                }
-            }
-
-            std::vector<SizeT> RootNodesIndexes(RootNodesCounter);
-            SizeT              RootsCounter = 0;
-            for (SizeT NodeIndex = 0; NodeIndex < IsRootNode.size(); ++NodeIndex)
+            std::vector<SizeT> RootNodesIndexes(Scene.nodes.size());
+            SizeT              Cnt = 0;
+            for (Int32 const Index : Scene.nodes)
             {
-                if (IsRootNode[NodeIndex])
-                {
-                    RootNodesIndexes[RootsCounter++] = NodeIndex;
-                }
+                RootNodesIndexes[Cnt++] = static_cast<SizeT>(Index);
             }
+            return RootNodesIndexes;
+        }
 
+        std::vector<SizeT> GetChildNodesIndexes(tinygltf::Node const &Node)
+        {
+            std::vector<SizeT> RootNodesIndexes(Node.children.size());
+            SizeT              Cnt = 0;
+            for (Int32 const Index : Node.children)
+            {
+                RootNodesIndexes[Cnt++] = static_cast<SizeT>(Index);
+            }
             return RootNodesIndexes;
         }
 
@@ -310,7 +304,7 @@ namespace Corvus
             OutBufferReadParams.NumElements   = NumElements;
         }
 
-        FTransform GetNodeLocalTransform(tinygltf::Node const &Node)
+        FMatrix4 GetNodeLocalTransformMatrix(tinygltf::Node const &Node)
         {
             FVector3 Translation{};
             if (!Node.translation.empty())
@@ -328,17 +322,20 @@ namespace Corvus
                 Scale.z = static_cast<float>(Node.scale[2]);
             }
 
-            FQuaternion Quaternion = FQuaternion::Unit;
+            FQuaternion Rotation = FQuaternion::Unit;
             if (!Node.rotation.empty())
             {
-                Quaternion.x = static_cast<float>(Node.rotation[0]);
-                Quaternion.y = static_cast<float>(Node.rotation[1]);
-                Quaternion.z = static_cast<float>(Node.rotation[2]);
-                Quaternion.w = static_cast<float>(Node.rotation[3]);
+                Rotation.x = static_cast<float>(Node.rotation[0]);
+                Rotation.y = static_cast<float>(Node.rotation[1]);
+                Rotation.z = static_cast<float>(Node.rotation[2]);
+                Rotation.w = static_cast<float>(Node.rotation[3]);
             }
-            FRotation Rotation{Quaternion};
 
-            return FTransform{Translation, Scale, Rotation};
+            FMatrix4 EyeMatrix       = FMatrix4{1.0f};
+            FMatrix4 TranslateMatrix = FMatrix::Translate(EyeMatrix, Translation);
+            FMatrix4 RotateMatrix    = FQuaternion::ToMat4(Rotation);
+            FMatrix4 ScaleMatrix     = FMatrix::Scale(EyeMatrix, Scale);
+            return TranslateMatrix * RotateMatrix * ScaleMatrix;
         }
 
         FIntVector4 ReadIntegerElement(UInt8 const *SrcData, SElementFormat const ElementFormat)
@@ -430,6 +427,33 @@ namespace Corvus
             }
         }
 
+        void TransformAttributeData(
+            FVector3 *SrcData, SizeT const NumElements, CString const &AttributeKey, FMatrix4 const &TransformMatrix
+        )
+        {
+            float WValue = 0.0f;
+            if (AttributeKey == "POSITION")
+            {
+                WValue = 1.0f;
+            }
+            else if (AttributeKey == "NORMAL")
+            {
+                WValue = 0.0f;
+            }
+            else
+            {
+                return;
+            }
+
+            for (SizeT Element = 0; Element < NumElements; ++Element)
+            {
+                FVector3 OldValue         = SrcData[Element];
+                FVector4 TransformedValue = FVector4{OldValue, WValue};
+                TransformedValue          = TransformMatrix * TransformedValue;
+                SrcData[Element]          = FVector3{TransformedValue};
+            }
+        }
+
         template<typename TReadElementReturnType>
         void ReadBufferData(
             SBufferReadParams BufferReadParams,
@@ -455,6 +479,7 @@ namespace Corvus
 
         bool GetAttributeData(
             tinygltf::Model const &GLTFModel,
+            FMatrix4 const        &TransformMatrix,
             CString const         &AttributeKey,
             UInt32 const           AttributeValue,
             std::vector<UInt8>    &OutAttributeData,
@@ -479,6 +504,13 @@ namespace Corvus
             else
             {
                 ReadBufferData(BufferReadParams, ReadFloatElement, WriteFloatElement);
+
+                TransformAttributeData(
+                    reinterpret_cast<FVector3 *>(BufferReadParams.DstData),
+                    BufferReadParams.NumElements,
+                    AttributeKey,
+                    TransformMatrix
+                );
             }
 
             OutAttributeData = std::move(AttributeData);
@@ -496,8 +528,9 @@ namespace Corvus
 
         CStaticMeshPrimitive ProcessPrimitive(
             tinygltf::Model const        &GLTFModel,
+            std::vector<CMaterial> const &Materials,
             tinygltf::Primitive const    &Primitive,
-            std::vector<CMaterial> const &Materials
+            FMatrix4 const               &TransformMatrix
         )
         {
             TOwn<CVertexArray> VertexArray = CVertexArray::Create();
@@ -525,6 +558,7 @@ namespace Corvus
                 UInt32             AttributeNumComponents;
                 if (!GetAttributeData(
                         GLTFModel,
+                        TransformMatrix,
                         AttributeKey,
                         AttributeValue,
                         AttributeData,
@@ -565,7 +599,8 @@ namespace Corvus
                 UInt32             IndexesNumComponents;
                 if (!GetAttributeData(
                         GLTFModel,
-                        "", // Not used here
+                        TransformMatrix, // Not used here
+                        "",              // Not used here
                         Primitive.indices,
                         IndexesData,
                         NumIndexes,
@@ -589,42 +624,63 @@ namespace Corvus
 
         CStaticMesh ProcessMesh(
             tinygltf::Model const        &GLTFModel,
+            std::vector<CMaterial> const &Materials,
             tinygltf::Node const         &Node,
             tinygltf::Mesh const         &Mesh,
-            std::vector<CMaterial> const &Materials
+            FMatrix4 const               &TransformMatrix
         )
         {
-            FTransform  NodeLocalTransform = GetNodeLocalTransform(Node);
-            CStaticMesh StaticMesh(NodeLocalTransform);
+            CStaticMesh StaticMesh;
 
             for (tinygltf::Primitive const &Primitive : Mesh.primitives)
             {
-                StaticMesh.AddPrimitive(ProcessPrimitive(GLTFModel, Primitive, Materials));
+                StaticMesh.AddPrimitive(ProcessPrimitive(GLTFModel, Materials, Primitive, TransformMatrix));
             }
 
             return StaticMesh;
         }
 
-        SStaticModelLoadedData ProcessModel(tinygltf::Model &GLTFModel)
+        void ProcessMeshNodesTree(
+            tinygltf::Model const        &GLTFModel,
+            std::vector<CMaterial> const &Materials,
+            CStaticModel                 &StaticModel,
+            tinygltf::Node const         &RootNode,
+            FMatrix4 const               &NodeTransformMatrix
+        )
+        {
+            Int32 MeshIndex = RootNode.mesh;
+            if (MeshIndex == -1)
+            {
+                CORVUS_CORE_WARN("Not-a-model node {} found in gltf model file and was skipped!", RootNode.name);
+                return;
+            }
+
+            tinygltf::Mesh const &Mesh = GLTFModel.meshes[MeshIndex];
+            StaticModel.AddMesh(ProcessMesh(GLTFModel, Materials, RootNode, Mesh, NodeTransformMatrix));
+
+            std::vector<SizeT> ChildNodesIndexes = GetChildNodesIndexes(RootNode);
+            for (SizeT const ChildNodeIndex : ChildNodesIndexes)
+            {
+                tinygltf::Node const &ChildNode          = GLTFModel.nodes[ChildNodeIndex];
+                FMatrix4 const &ChildNodeTransformMatrix = NodeTransformMatrix * GetNodeLocalTransformMatrix(ChildNode);
+                ProcessMeshNodesTree(GLTFModel, Materials, StaticModel, ChildNode, ChildNodeTransformMatrix);
+            }
+        }
+
+        SStaticModelLoadedData ProcessModel(tinygltf::Model const &GLTFModel)
         {
             std::vector<CTexture2D> Textures  = LoadTextures(GLTFModel);
             std::vector<CMaterial>  Materials = LoadMaterials(GLTFModel, Textures);
 
             CStaticModel StaticModel;
 
-            std::vector<SizeT> RootNodesIndexes = FindRootNodes(GLTFModel);
-
-            for (tinygltf::Node const &Node : GLTFModel.nodes)
+            std::vector<SizeT> const RootNodesIndexes = GetRootNodesIndexes(GLTFModel);
+            for (SizeT const RootNodeIndex : RootNodesIndexes)
             {
-                Int32 MeshIndex = Node.mesh;
-                if (MeshIndex == -1)
-                {
-                    CORVUS_CORE_WARN("Not-a-model node {} found in gltf model file and was skipped!", Node.name);
-                    continue;
-                }
-
-                tinygltf::Mesh const &Mesh = GLTFModel.meshes[Node.mesh];
-                StaticModel.AddMesh(ProcessMesh(GLTFModel, Node, Mesh, Materials));
+                tinygltf::Node const RootNode = GLTFModel.nodes[RootNodeIndex];
+                ProcessMeshNodesTree(
+                    GLTFModel, Materials, StaticModel, RootNode, GetNodeLocalTransformMatrix(RootNode)
+                );
             }
 
             SStaticModelLoadedData LoadedData;
@@ -669,6 +725,12 @@ namespace Corvus
         if (!bResult)
         {
             CORVUS_CORE_ERROR("Failed to load StaticModel from {}", FilePath);
+        }
+
+        if (GLTFModel.scenes.size() != 1)
+        {
+            CORVUS_ERROR("GLTF model file must contain only one scene!");
+            return {};
         }
 
         return ProcessModel(GLTFModel);

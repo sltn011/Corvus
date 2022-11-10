@@ -1,7 +1,7 @@
 #ifndef CORVUS_SOURCE_CORVUS_RENDERER_RENDERER_H
 #define CORVUS_SOURCE_CORVUS_RENDERER_RENDERER_H
 
-#include "Corvus/Core/Base.h"
+#include "Corvus/Math/Matrix.h"
 
 namespace Corvus
 {
@@ -9,6 +9,9 @@ namespace Corvus
     class CGraphicsAPI;
     class CShader;
     class CVertexArray;
+
+    class CStaticModel;
+    class CStaticMesh;
 
     class CRenderer
     {
@@ -30,7 +33,11 @@ namespace Corvus
         static void EnableBackfaceCulling(bool bIsCulledCCW = true);
         static void DisableBackfaceCulling();
 
-        static void Submit(CVertexArray &VAO, CShader &CShader);
+        static void Submit(CVertexArray &VAO, CShader &Shader);
+
+        static void SubmitStaticModel(
+            CStaticModel &StaticModel, FMatrix4 const &ModelTransformMatrix, FMatrix4 const &ProjectionViewMatrix
+        );
 
     private:
         static TOwn<CGraphicsAPI> s_GraphicsAPI;

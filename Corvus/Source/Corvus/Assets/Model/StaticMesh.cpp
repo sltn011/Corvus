@@ -4,9 +4,6 @@
 
 namespace Corvus
 {
-    CStaticMesh::CStaticMesh(FTransform const &Transform) : m_Transform{Transform}
-    {
-    }
 
     SizeT CStaticMesh::AddPrimitive(CStaticMeshPrimitive &&Primitive)
     {
@@ -27,16 +24,6 @@ namespace Corvus
             CORVUS_NO_ENTRY_FMT("Invalid StaticMeshPrimitive Index!");
         }
         return m_Primitives[PrimitiveIndex];
-    }
-
-    FTransform &CStaticMesh::GetTransform()
-    {
-        return m_Transform;
-    }
-
-    void CStaticMesh::SetTransform(FTransform const &Transform)
-    {
-        m_Transform = Transform;
     }
 
 } // namespace Corvus

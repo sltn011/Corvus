@@ -76,27 +76,9 @@ namespace Corvus
                 Camera.ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
             }
 
-            FMatrix4 ModelTransformMatrix = TestModelTransform.GetTransformMatrix();
-            for (CStaticMesh &Mesh : TestModel)
-            {
-                FMatrix4 MeshTransformMatrix = ModelTransformMatrix * Mesh.GetTransform().GetTransformMatrix();
-
-                for (CStaticMeshPrimitive &Primitive : Mesh)
-                {
-                    CMaterial *Material = Primitive.MaterialRef.GetRawPtr();
-                    CORVUS_ASSERT(Material != nullptr);
-
-                    TOwn<CShader> const &MaterialShader = Material->GetShader();
-                    CORVUS_ASSERT(MaterialShader != nullptr);
-
-                    MaterialShader->Bind();
-                    MaterialShader->SetMat4("u_Transform", MeshTransformMatrix);
-                    MaterialShader->SetMat4("u_ProjView", Camera.GetProjectionViewMatrix());
-                    Material->LoadInShader();
-
-                    CRenderer::Submit(*Primitive.GetVertexArray(), *MaterialShader);
-                }
-            }
+            CRenderer::SubmitStaticModel(
+                TestModel, TestModelTransform.GetTransformMatrix(), Camera.GetProjectionViewMatrix()
+            );
 
             CRenderer::EndScene();
         }
@@ -176,13 +158,10 @@ namespace Corvus
             }
 
             // Provide StaticMeshPrimitives with their materials
-            for (SizeT MeshIndex = 0; MeshIndex < TestModel.GetNumMeshes(); ++MeshIndex)
+            for (CStaticMesh &Mesh : TestModel)
             {
-                CStaticMesh &Mesh = TestModel.GetMesh(MeshIndex);
-                for (SizeT PrimitiveIndex = 0; PrimitiveIndex < Mesh.GetNumPrimitives(); ++PrimitiveIndex)
+                for (CStaticMeshPrimitive &Primitive : Mesh)
                 {
-                    CStaticMeshPrimitive &Primitive = Mesh.GetPrimitive(PrimitiveIndex);
-
                     FUUID MaterialUUID = Primitive.MaterialRef.GetUUID();
                     Primitive.MaterialRef.SetRawPtr(&MaterialsAssets.at(MaterialUUID));
                 }

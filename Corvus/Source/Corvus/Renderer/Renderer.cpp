@@ -2,6 +2,7 @@
 
 #include "Corvus/Renderer/Renderer.h"
 
+#include "Corvus/Assets/Model/StaticModel.h"
 #include "Corvus/Renderer/GraphicsAPI.h"
 #include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Shader.h"
@@ -70,11 +71,32 @@ namespace Corvus
         CORVUS_CORE_TRACE("Backface culling disabled");
     }
 
-    void CRenderer::Submit(CVertexArray &VAO, CShader &CShader)
+    void CRenderer::Submit(CVertexArray &VAO, CShader &Shader)
     {
-        CShader.Bind();
+        Shader.Bind();
         VAO.Bind();
         s_GraphicsAPI->DrawIndexed(VAO.GetIndexBuffer().GetNumIndices());
+    }
+
+    void CRenderer::SubmitStaticModel(
+        CStaticModel &StaticModel, FMatrix4 const &ModelTransformMatrix, FMatrix4 const &ProjectionViewMatrix
+    )
+    {
+        for (CStaticMesh &StaticMesh : StaticModel)
+        {
+            for (CStaticMeshPrimitive &Primitive : StaticMesh)
+            {
+                CMaterial           *Material       = Primitive.MaterialRef.GetRawPtr();
+                TOwn<CShader> const &MaterialShader = Material->GetShader();
+
+                MaterialShader->Bind();
+                MaterialShader->SetMat4("u_Transform", ModelTransformMatrix);
+                MaterialShader->SetMat4("u_ProjView", ProjectionViewMatrix);
+                Material->LoadInShader();
+
+                Submit(*Primitive.VertexArray, *MaterialShader);
+            }
+        }
     }
 
 } // namespace Corvus
