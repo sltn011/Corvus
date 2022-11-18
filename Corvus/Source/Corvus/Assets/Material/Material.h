@@ -22,6 +22,7 @@ namespace Corvus
         void UseTexture() { m_bUseTexture = true; }
         void UseOther() { m_bUseTexture = false; }
 
+    public:
         TAssetRef<CTexture2D> TextureRef;
         OtherT                Other = OtherT{};
 
@@ -45,6 +46,7 @@ namespace Corvus
 
         void CompileMaterialShader(CString const &BaseShaderFilePath);
 
+    public:
         CAlbedoMap    AlbedoMap;
         CNormalMap    NormalMap;
         CRoughnessMap RoughnessMap;

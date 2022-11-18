@@ -1,6 +1,7 @@
 #ifndef CORVUS_SOURCE_CORVUS_MEMORY_POOLABLE_H
 #define CORVUS_SOURCE_CORVUS_MEMORY_POOLABLE_H
 
+#include "Corvus/Components/ComponentType.h"
 #include "Corvus/Core/Assert.h"
 #include "Corvus/Memory/ApplicationPools.h"
 #include "Corvus/Memory/PoolIndex.h"
@@ -16,7 +17,7 @@ namespace Corvus
     template<typename T>
     class TPoolable;
 
-    constexpr SizeT CalculatePoolID(SizeT ElementSize)
+    constexpr SizeT RoundUpElementSize(SizeT ElementSize)
     {
         if (ElementSize == 1)
             return 1;
@@ -44,23 +45,38 @@ namespace Corvus
         }
     }
 
+    template<typename TComponentType>
+    constexpr SizeT CalculateComponentPoolID()
+    {
+        return static_cast<SizeT>(GetComponentType<TComponentType>());
+    }
+    constexpr SizeT CalculateEntityPoolID(SizeT ElementSize)
+    {
+        return RoundUpElementSize(ElementSize);
+    }
+    constexpr SizeT CalculateGeneralPoolID(SizeT ElementSize)
+    {
+        return RoundUpElementSize(ElementSize);
+    }
+
     // Use to create array of uninitialized TPoolable objects
     template<typename T>
     TPoolable<T> CreatePoolableArray(SizeT NumElements)
     {
-        static constexpr SizeT TypePoolID = CalculatePoolID(sizeof(T));
-
         if constexpr (std::is_base_of_v<CBaseDataComponent, T>)
         {
-            return TPoolable<T>{CApplicationPools::RequestComponent(TypePoolID, NumElements)};
+            static constexpr SizeT ComponentPoolID = CalculateComponentPoolID<T>();
+            return TPoolable<T>{CApplicationPools::RequestComponent(ComponentPoolID, NumElements)};
         }
         else if (std::is_base_of_v<CEntity, T>)
         {
-            return TPoolable<T>{CApplicationPools::RequestEntity(TypePoolID, NumElements)};
+            static constexpr SizeT EntityPoolID = CalculateEntityPoolID(sizeof(T));
+            return TPoolable<T>{CApplicationPools::RequestEntity(EntityPoolID, NumElements)};
         }
         else
         {
-            return TPoolable<T>{CApplicationPools::RequestGeneral(TypePoolID, NumElements)};
+            static constexpr SizeT GeneralPoolID = CalculateGeneralPoolID(sizeof(T));
+            return TPoolable<T>{CApplicationPools::RequestGeneral(GeneralPoolID, NumElements)};
         }
     }
 

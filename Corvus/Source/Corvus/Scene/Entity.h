@@ -9,15 +9,10 @@ namespace Corvus
     class CTransformComponent;
     class CStaticMeshComponent;
 
-    class CShader;
-    class FTransform;
-    class CVertexArray;
-
     class CEntity
     {
     public:
-        CEntity(TOwn<CVertexArray> const &VAO);
-        CEntity(TOwn<CVertexArray> const &VAO, FTransform const &Transform);
+        CEntity();
 
     public:
         TPoolable<CTransformComponent>  TransformComponent;

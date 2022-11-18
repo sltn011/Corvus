@@ -7,6 +7,12 @@ namespace Corvus
 
     CBaseDataComponent::CBaseDataComponent(CEntity *const Owner) : m_Owner{Owner}
     {
+        m_ComponentType = EComponentType::BaseData;
+    }
+
+    EComponentType CBaseDataComponent::GetComponentType() const
+    {
+        return m_ComponentType;
     }
 
     CEntity *CBaseDataComponent::GetOwner() const

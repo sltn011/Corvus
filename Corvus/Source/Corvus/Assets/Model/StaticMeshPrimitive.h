@@ -13,6 +13,7 @@ namespace Corvus
     public:
         CStaticMeshPrimitive(TOwn<CVertexArray> &&PrimitiveVertexArray);
 
+    public:
         TOwn<CVertexArray>   VertexArray;
         TAssetRef<CMaterial> MaterialRef;
     };

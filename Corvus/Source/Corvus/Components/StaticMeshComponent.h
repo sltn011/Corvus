@@ -1,25 +1,23 @@
 #ifndef CORVUS_SOURCE_CORVUS_COMPONENTS_STATICMESHCOMPONENT_H
 #define CORVUS_SOURCE_CORVUS_COMPONENTS_STATICMESHCOMPONENT_H
 
+#include "Corvus/Assets/AssetRef.h"
 #include "Corvus/Components/BaseSceneComponent.h"
 
 namespace Corvus
 {
 
-    class CShader;
-    class CVertexArray;
+    class CStaticModel;
 
     class CStaticMeshComponent : public CBaseSceneComponent
     {
     public:
         using Super = CBaseSceneComponent;
 
-        CStaticMeshComponent(CEntity *Owner, TOwn<CVertexArray> const &VAO);
+        CStaticMeshComponent(CEntity *Owner);
 
-        TOwn<CVertexArray> const &GetVertexArray() const;
-
-    private:
-        TOwn<CVertexArray> const &m_VAO;
+    public:
+        TAssetRef<CStaticModel> StaticModelRef;
     };
 
 } // namespace Corvus

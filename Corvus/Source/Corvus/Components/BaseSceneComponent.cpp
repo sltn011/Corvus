@@ -5,9 +5,14 @@
 namespace Corvus
 {
 
-    CBaseSceneComponent::CBaseSceneComponent(CEntity *const Owner, FTransform const &ComponentTransform)
-        : CBaseDataComponent{Owner}, m_Transform{ComponentTransform}
+    CBaseSceneComponent::CBaseSceneComponent(CEntity *Owner) : Super{Owner}
     {
+    }
+
+    CBaseSceneComponent::CBaseSceneComponent(CEntity *const Owner, FTransform const &ComponentTransform)
+        : Super{Owner}, m_Transform{ComponentTransform}
+    {
+        m_ComponentType = EComponentType::BaseScene;
     }
 
     FMatrix4 CBaseSceneComponent::GetTransformMatrix() const

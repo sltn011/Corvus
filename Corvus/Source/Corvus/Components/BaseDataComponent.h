@@ -1,6 +1,8 @@
 #ifndef CORVUS_SOURCE_CORVUS_COMPONENTS_BASEDATACOMPONENT_H
 #define CORVUS_SOURCE_CORVUS_COMPONENTS_BASEDATACOMPONENT_H
 
+#include "Corvus/Components/ComponentType.h"
+
 namespace Corvus
 {
 
@@ -13,7 +15,12 @@ namespace Corvus
     public:
         CBaseDataComponent(CEntity *Owner);
 
+        EComponentType GetComponentType() const;
+
         CEntity *GetOwner() const;
+
+    protected:
+        EComponentType m_ComponentType = EComponentType::BaseData;
 
     private:
         CEntity *m_Owner = nullptr;

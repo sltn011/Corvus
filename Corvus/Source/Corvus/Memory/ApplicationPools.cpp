@@ -30,7 +30,7 @@ namespace Corvus
     }
 
     CPoolID CApplicationPools::CreateGeneralPool(
-        SPoolDataFormat const DataFormat, EContainerGrowthCoeff PoolGrowthCoeff
+        SPoolDataFormat const DataFormat, EContainerGrowthCoeff const PoolGrowthCoeff
     )
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
@@ -44,12 +44,14 @@ namespace Corvus
     }
 
     CPoolID CApplicationPools::CreateComponentPool(
-        SPoolDataFormat const DataFormat, EContainerGrowthCoeff PoolGrowthCoeff
+        EComponentType const        ComponentType,
+        SPoolDataFormat const       DataFormat,
+        EContainerGrowthCoeff const PoolGrowthCoeff
     )
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
-        CPoolID const ID = CPoolID{EPoolType::Component, DataFormat.ElementSize};
+        CPoolID const ID = CPoolID{EPoolType::Component, static_cast<SizeT>(ComponentType)};
         if (s_ComponentPools.find(ID.GetIDInGroup()) == s_ComponentPools.end())
         {
             s_ComponentPools.emplace(ID.GetIDInGroup(), CPool{ID, DataFormat, PoolGrowthCoeff});
@@ -57,7 +59,9 @@ namespace Corvus
         return ID;
     }
 
-    CPoolID CApplicationPools::CreateEntityPool(SPoolDataFormat DataFormat, EContainerGrowthCoeff PoolGrowthCoeff)
+    CPoolID CApplicationPools::CreateEntityPool(
+        SPoolDataFormat const DataFormat, EContainerGrowthCoeff const PoolGrowthCoeff
+    )
     {
         CORVUS_CORE_ASSERT(DataFormat.ElementSize != 0);
 
@@ -69,90 +73,91 @@ namespace Corvus
         return ID;
     }
 
-    CPool &CApplicationPools::GetPool(CPoolID const ID)
+    CPool &CApplicationPools::GetPool(CPoolID PoolID)
     {
-        switch (ID.GetType())
+        switch (PoolID.GetType())
         {
         case EPoolType::General:
-            return GetGeneralPool(ID.GetIDInGroup());
+            return GetGeneralPool(PoolID.GetIDInGroup());
 
         case EPoolType::Component:
-            return GetComponentPool(ID.GetIDInGroup());
+            return GetComponentPool(PoolID.GetIDInGroup());
 
         case EPoolType::Entity:
-            return GetEntityPool(ID.GetIDInGroup());
+            return GetEntityPool(PoolID.GetIDInGroup());
 
         default:
             CORVUS_CORE_NO_ENTRY_FMT("Invalid CPool Type!");
         }
     }
 
-    CPool &CApplicationPools::GetGeneralPool(SizeT const PoolIDInGroup)
+    CPool &CApplicationPools::GetGeneralPool(SizeT const GeneralPoolID)
     {
-        CORVUS_CORE_ASSERT(PoolIDInGroup != 0);
+        CORVUS_CORE_ASSERT(GeneralPoolID != 0); // PoolID equals to size of element in Pool (rounded up)
 
-        auto It = s_GeneralPools.find(PoolIDInGroup);
+        auto It = s_GeneralPools.find(GeneralPoolID);
         if (It == s_GeneralPools.end())
         {
             SPoolDataFormat DataFormat;
-            DataFormat.ElementSize = PoolIDInGroup;
+            DataFormat.ElementSize = GeneralPoolID;
             DataFormat.NumElements = s_DefaultPoolSize;
             CreateGeneralPool(DataFormat, EContainerGrowthCoeff::Double);
-            It = s_GeneralPools.find(PoolIDInGroup);
+            It = s_GeneralPools.find(GeneralPoolID);
         }
         return It->second;
     }
 
-    CPool &CApplicationPools::GetComponentPool(SizeT const PoolIDInGroup)
+    CPool &CApplicationPools::GetComponentPool(SizeT const ComponentPoolID)
     {
-        CORVUS_CORE_ASSERT(PoolIDInGroup != 0);
+        EComponentType const ComponentType =
+            static_cast<EComponentType>(ComponentPoolID); // ComponentPoolID equal to EComponentType value
 
-        auto It = s_ComponentPools.find(PoolIDInGroup);
+        auto It = s_ComponentPools.find(ComponentPoolID);
         if (It == s_ComponentPools.end())
         {
             SPoolDataFormat DataFormat;
-            DataFormat.ElementSize = PoolIDInGroup;
+            DataFormat.ElementSize = GetComponentSize(ComponentType);
             DataFormat.NumElements = s_DefaultPoolSize;
-            CreateComponentPool(DataFormat, EContainerGrowthCoeff::Double);
-            It = s_ComponentPools.find(PoolIDInGroup);
+            CreateComponentPool(ComponentType, DataFormat, EContainerGrowthCoeff::Double);
+            It = s_ComponentPools.find(ComponentPoolID);
         }
         return It->second;
     }
 
-    CPool &CApplicationPools::GetEntityPool(SizeT PoolIDInGroup)
+    CPool &CApplicationPools::GetEntityPool(SizeT const EntityPoolID)
     {
-        CORVUS_CORE_ASSERT(PoolIDInGroup != 0);
+        CORVUS_CORE_ASSERT(EntityPoolID != 0); // EntityPoolID equals to size of element in Pool (rounded up)
 
-        auto It = s_EntityPools.find(PoolIDInGroup);
+        auto It = s_EntityPools.find(EntityPoolID);
         if (It == s_EntityPools.end())
         {
             SPoolDataFormat DataFormat;
-            DataFormat.ElementSize = PoolIDInGroup;
+            DataFormat.ElementSize = EntityPoolID;
             DataFormat.NumElements = s_DefaultPoolSize;
             CreateEntityPool(DataFormat, EContainerGrowthCoeff::Double);
-            It = s_EntityPools.find(PoolIDInGroup);
+            It = s_EntityPools.find(EntityPoolID);
         }
         return It->second;
     }
 
-    CPoolIndex CApplicationPools::Request(CPoolID const TargetPoolID, SizeT const NumElements)
+    CPoolIndex CApplicationPools::Request(CPoolID const PoolID, SizeT const NumElements)
     {
-        return GetPool(TargetPoolID).Request(NumElements);
+        return GetPool(PoolID).Request(NumElements);
     }
 
-    CPoolIndex CApplicationPools::RequestGeneral(SizeT const PoolIDInGroup, SizeT const NumElements)
+    CPoolIndex CApplicationPools::RequestGeneral(SizeT const GeneralPoolID, SizeT const NumElements)
     {
-        return GetGeneralPool(PoolIDInGroup).Request(NumElements);
+        return GetGeneralPool(GeneralPoolID).Request(NumElements);
     }
 
-    CPoolIndex CApplicationPools::RequestComponent(SizeT const PoolIDInGroup, SizeT const NumElements)
+    CPoolIndex CApplicationPools::RequestComponent(SizeT const ComponentPoolID, SizeT const NumElements)
     {
-        return GetComponentPool(PoolIDInGroup).Request(NumElements);
+        return GetComponentPool(ComponentPoolID).Request(NumElements);
     }
 
-    CPoolIndex CApplicationPools::RequestEntity(SizeT PoolIDInGroup, SizeT NumElements)
+    CPoolIndex CApplicationPools::RequestEntity(SizeT const EntityPoolID, SizeT const NumElements)
     {
-        return GetEntityPool(PoolIDInGroup).Request(NumElements);
+        return GetEntityPool(EntityPoolID).Request(NumElements);
     }
 
 } // namespace Corvus

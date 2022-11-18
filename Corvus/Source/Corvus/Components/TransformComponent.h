@@ -11,6 +11,7 @@ namespace Corvus
     public:
         using Super = CBaseSceneComponent;
 
+        CTransformComponent(CEntity *Owner);
         CTransformComponent(CEntity *Owner, FTransform const &ComponentTransform);
     };
 

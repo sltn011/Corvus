@@ -2,16 +2,14 @@
 
 #include "Corvus/Components/StaticMeshComponent.h"
 
+#include "Corvus/Assets/Model/StaticModel.h"
+
 namespace Corvus
 {
-    CStaticMeshComponent::CStaticMeshComponent(CEntity *Owner, TOwn<CVertexArray> const &VAO)
-        : CBaseSceneComponent{Owner, FTransform{}}, m_VAO{VAO}
-    {
-    }
 
-    TOwn<CVertexArray> const &CStaticMeshComponent::GetVertexArray() const
+    CStaticMeshComponent::CStaticMeshComponent(CEntity *Owner) : Super{Owner}
     {
-        return m_VAO;
+        m_ComponentType = EComponentType::StaticMesh;
     }
 
 } // namespace Corvus

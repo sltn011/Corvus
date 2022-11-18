@@ -17,12 +17,10 @@ namespace Corvus
     {
     public:
         CPoolID() = default;
-        CPoolID(EPoolType Type, SizeT IDInGroup);
+        constexpr CPoolID(EPoolType Type, SizeT IDInGroup) : m_Type{Type}, m_IDInGroup{IDInGroup} {}
 
-        EPoolType GetType() const;
-        SizeT     GetIDInGroup() const;
-
-        bool IsValid() const;
+        EPoolType GetType() const { return m_Type; }
+        SizeT     GetIDInGroup() const { return m_IDInGroup; }
 
     private:
         EPoolType m_Type      = EPoolType::General;

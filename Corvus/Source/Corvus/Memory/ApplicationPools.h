@@ -1,6 +1,7 @@
 #ifndef CORVUS_SOURCE_CORVUS_MEMORY_APPLICATIONPOOLS_H
 #define CORVUS_SOURCE_CORVUS_MEMORY_APPLICATIONPOOLS_H
 
+#include "Corvus/Components/ComponentType.h"
 #include "Corvus/Core/Base.h"
 #include "Corvus/Memory/Utils.h"
 
@@ -18,18 +19,20 @@ namespace Corvus
         static void Init();
 
         static CPoolID CreateGeneralPool(SPoolDataFormat DataFormat, EContainerGrowthCoeff PoolGrowthCoeff);
-        static CPoolID CreateComponentPool(SPoolDataFormat DataFormat, EContainerGrowthCoeff PoolGrowthCoeff);
+        static CPoolID CreateComponentPool(
+            EComponentType ComponentType, SPoolDataFormat DataFormat, EContainerGrowthCoeff PoolGrowthCoeff
+        );
         static CPoolID CreateEntityPool(SPoolDataFormat DataFormat, EContainerGrowthCoeff PoolGrowthCoeff);
 
-        static CPool &GetPool(CPoolID ID);
-        static CPool &GetGeneralPool(SizeT PoolIDInGroup);
-        static CPool &GetComponentPool(SizeT PoolIDInGroup);
-        static CPool &GetEntityPool(SizeT PoolIDInGroup);
+        static CPool &GetPool(CPoolID PoolID);
+        static CPool &GetGeneralPool(SizeT GeneralPoolID);
+        static CPool &GetComponentPool(SizeT ComponentPoolID);
+        static CPool &GetEntityPool(SizeT EntityPoolID);
 
-        static CPoolIndex Request(CPoolID TargetPoolID, SizeT NumElements);
-        static CPoolIndex RequestGeneral(SizeT PoolIDInGroup, SizeT NumElements);
-        static CPoolIndex RequestComponent(SizeT PoolIDInGroup, SizeT NumElements);
-        static CPoolIndex RequestEntity(SizeT PoolIDInGroup, SizeT NumElements);
+        static CPoolIndex Request(CPoolID PoolID, SizeT NumElements);
+        static CPoolIndex RequestGeneral(SizeT GeneralPoolID, SizeT NumElements);
+        static CPoolIndex RequestComponent(SizeT ComponentPoolID, SizeT NumElements);
+        static CPoolIndex RequestEntity(SizeT EntityPoolID, SizeT NumElements);
 
     private:
         static std::unordered_map<SizeT, CPool> s_GeneralPools;
