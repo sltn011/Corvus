@@ -12,6 +12,8 @@ namespace Corvus
     {
         TransformComponent  = ConstructPoolable<CTransformComponent>(this);
         StaticMeshComponent = ConstructPoolable<CStaticMeshComponent>(this);
+
+        TransformComponent->AddChild(StaticMeshComponent.Get());
     }
 
 } // namespace Corvus

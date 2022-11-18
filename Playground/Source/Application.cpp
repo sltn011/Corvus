@@ -4,6 +4,7 @@
 #include "Corvus/Assets/Model/ModelLoader.h"
 #include "Corvus/Assets/Model/StaticModel.h"
 #include "Corvus/Assets/Texture/Texture2D.h"
+#include "Corvus/Components/StaticMeshComponent.h"
 #include "Corvus/Components/TransformComponent.h"
 #include "Corvus/Math/Color.h"
 #include "Corvus/Renderer/Texture2DBuffer.h"
@@ -30,9 +31,8 @@ namespace Corvus
             InitCamera();
 
             LoadAssets();
+            PopulateScene();
             WireUpAssets();
-
-            TestModelTransform = FTransform{{5.0f, -1.5f, 0.0f}, {{0.0f, -45.0f, 0.0f}}};
         }
 
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
@@ -77,7 +77,9 @@ namespace Corvus
             }
 
             CRenderer::SubmitStaticModel(
-                TestModel, TestModelTransform.GetTransformMatrix(), Camera.GetProjectionViewMatrix()
+                *TestEntity->StaticMeshComponent->StaticModelRef.GetRawPtr(),
+                TestEntity->StaticMeshComponent->GetTransformMatrix(),
+                Camera.GetProjectionViewMatrix()
             );
 
             CRenderer::EndScene();
@@ -124,12 +126,19 @@ namespace Corvus
             Camera.SwitchPlayerControl(true, 1.0f);
         }
 
+        void PopulateScene()
+        {
+            TestEntity = ConstructPoolable<CEntity>();
+            TestEntity->TransformComponent->SetTransform(FTransform{{5.0f, -1.5f, 0.0f}, {{0.0f, -45.0f, 0.0f}}});
+            TestEntity->StaticMeshComponent->StaticModelRef.SetUUID(StaticModelsAssets.begin()->first);
+        }
+
         void LoadAssets()
         {
             SStaticModelLoadedData LoadedModelData = CModelLoader::LoadStaticModelFromFile("./Assets/Models/Shack.glb");
 
             // StaticModel
-            TestModel = std::move(LoadedModelData.StaticModel);
+            StaticModelsAssets.emplace(LoadedModelData.StaticModel.UUID, std::move(LoadedModelData.StaticModel));
 
             // Textures
             for (CTexture2D &Texture : LoadedModelData.Textures)
@@ -158,24 +167,31 @@ namespace Corvus
             }
 
             // Provide StaticMeshPrimitives with their materials
-            for (CStaticMesh &Mesh : TestModel)
+            for (auto &[StaticModelUUID, StaticModel] : StaticModelsAssets)
             {
-                for (CStaticMeshPrimitive &Primitive : Mesh)
+                for (CStaticMesh &Mesh : StaticModel)
                 {
-                    FUUID MaterialUUID = Primitive.MaterialRef.GetUUID();
-                    Primitive.MaterialRef.SetRawPtr(&MaterialsAssets.at(MaterialUUID));
+                    for (CStaticMeshPrimitive &Primitive : Mesh)
+                    {
+                        FUUID MaterialUUID = Primitive.MaterialRef.GetUUID();
+                        Primitive.MaterialRef.SetRawPtr(&MaterialsAssets.at(MaterialUUID));
+                    }
                 }
             }
+
+            // Provide Entities with their StaticModels
+            FUUID StaticModelUUID = TestEntity->StaticMeshComponent->StaticModelRef.GetUUID();
+            TestEntity->StaticMeshComponent->StaticModelRef.SetRawPtr(&StaticModelsAssets.at(StaticModelUUID));
         }
 
     protected:
         CPerspectiveCamera Camera;
 
-        CStaticModel TestModel;
-        FTransform   TestModelTransform;
+        TPoolable<CEntity> TestEntity;
 
-        std::unordered_map<FUUID, CTexture2D> TexturesAssets;
-        std::unordered_map<FUUID, CMaterial>  MaterialsAssets;
+        std::unordered_map<FUUID, CTexture2D>   TexturesAssets;
+        std::unordered_map<FUUID, CMaterial>    MaterialsAssets;
+        std::unordered_map<FUUID, CStaticModel> StaticModelsAssets;
 
         std::vector<TOwn<CShader>> TestShaders;
 

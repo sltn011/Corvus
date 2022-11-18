@@ -69,7 +69,7 @@ namespace Corvus
     {
         if (m_Parent)
         {
-            m_TransformMatrix = m_Parent->m_TransformMatrix * m_Transform.GetTransformMatrix();
+            m_TransformMatrix = m_Parent->GetTransformMatrix() * m_Transform.GetTransformMatrix();
         }
         else
         {

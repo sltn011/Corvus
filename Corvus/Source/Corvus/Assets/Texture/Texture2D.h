@@ -18,6 +18,7 @@ namespace Corvus
 
         void SetTextureBuffer(TOwn<CTexture2DBuffer> &&NewTexture2DBuffer);
 
+    public:
         FUUID UUID;
 
     private:
