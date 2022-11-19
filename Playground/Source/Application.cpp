@@ -40,8 +40,6 @@ namespace Corvus
             CRenderer::BeginScene();
             CRenderer::Clear();
 
-            CApplicationPools;
-
             if (bCameraMode)
             {
                 if (CInput::IsKeyPressed(Key::W))
