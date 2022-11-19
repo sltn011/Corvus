@@ -40,6 +40,8 @@ namespace Corvus
             CRenderer::BeginScene();
             CRenderer::Clear();
 
+            CApplicationPools;
+
             if (bCameraMode)
             {
                 if (CInput::IsKeyPressed(Key::W))
@@ -129,7 +131,8 @@ namespace Corvus
         void PopulateScene()
         {
             TestEntity = ConstructPoolable<CEntity>();
-            TestEntity->TransformComponent->SetTransform(FTransform{{5.0f, -1.5f, 0.0f}, {{0.0f, -45.0f, 0.0f}}});
+            TestEntity->TransformComponent->SetPosition(FVector3{5.0f, -1.5f, 0.0f});
+            TestEntity->TransformComponent->SetRotation(FRotation{{0.0f, -45.0f, 0.0f}});
             TestEntity->StaticMeshComponent->StaticModelRef.SetUUID(StaticModelsAssets.begin()->first);
         }
 

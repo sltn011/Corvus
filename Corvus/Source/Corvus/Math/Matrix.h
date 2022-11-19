@@ -14,6 +14,11 @@ using FMatrix4 = glm::mat4;
 
 namespace Corvus::FMatrix
 {
+    template<typename TMatrix>
+    inline TMatrix Identity()
+    {
+        return glm::identity<TMatrix>();
+    }
 
     inline FMatrix4 Translate(FMatrix4 const &FMatrix, FVector3 const &Vector)
     {

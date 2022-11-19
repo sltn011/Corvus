@@ -3,6 +3,7 @@
 
 #include "Corvus/Components/BaseDataComponent.h"
 #include "Corvus/Math/Transform.h"
+#include "Corvus/Math/TransformCache.h"
 #include "Corvus/Memory/Array.h"
 
 namespace Corvus
@@ -19,6 +20,21 @@ namespace Corvus
         CBaseSceneComponent(CEntity *Owner);
         CBaseSceneComponent(CEntity *Owner, FTransform const &ComponentTransform);
 
+        FVector3 GetPosition() const;
+        void     SetPosition(FVector3 const &Position);
+        void     AddPosition(FVector3 const &PositionOffset);
+
+        FRotation GetRotation() const;
+        void      SetRotation(FRotation const &Rotation);
+        void      AddRotation(FRotation const &RotationOffset);
+        void      AddRollRotation(float RollDegreesOffset);
+        void      AddYawRotation(float YawDegreesOffset);
+        void      AddPitchRotation(float PitchDegreesOffset);
+
+        FVector3 GetScale() const;
+        void     SetScale(FVector3 const &Scale);
+        void     AddScale(FVector3 const &ScaleOffset);
+
         FMatrix4 GetTransformMatrix() const;
 
         FTransform GetTransform() const;
@@ -32,11 +48,8 @@ namespace Corvus
         void                 ResetParent();
 
     private:
-        void RecalculateTransformMatrix() const;
-
-        FTransform       m_Transform;
-        mutable FMatrix4 m_TransformMatrix = FMatrix4(1.0f);
-        mutable bool     m_bIsDirty        = true;
+        FTransform      m_Transform;
+        FTransformCache m_TransformCache;
 
         TArray<CBaseSceneComponent *> m_Children;
         CBaseSceneComponent          *m_Parent = nullptr;

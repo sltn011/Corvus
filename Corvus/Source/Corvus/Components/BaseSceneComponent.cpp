@@ -15,14 +15,83 @@ namespace Corvus
         m_ComponentType = EComponentType::BaseScene;
     }
 
+    FVector3 CBaseSceneComponent::GetPosition() const
+    {
+        return m_Transform.GetPosition();
+    }
+
+    void CBaseSceneComponent::SetPosition(FVector3 const &Position)
+    {
+        m_Transform.SetPosition(Position);
+    }
+
+    void CBaseSceneComponent::AddPosition(FVector3 const &PositionOffset)
+    {
+        SetPosition(GetPosition() + PositionOffset);
+    }
+
+    FRotation CBaseSceneComponent::GetRotation() const
+    {
+        return m_Transform.GetRotation();
+    }
+
+    void CBaseSceneComponent::SetRotation(FRotation const &Rotation)
+    {
+        m_Transform.SetRotation(Rotation);
+    }
+
+    void CBaseSceneComponent::AddRotation(FRotation const &RotationOffset)
+    {
+        FRotation Rotation = GetRotation();
+        Rotation.AddRollDegrees(RotationOffset.GetRollDegrees());
+        Rotation.AddYawDegrees(RotationOffset.GetYawDegrees());
+        Rotation.AddPitchDegrees(RotationOffset.GetPitchDegrees());
+        SetRotation(Rotation);
+    }
+
+    void CBaseSceneComponent::AddRollRotation(float RollDegreesOffset)
+    {
+        FRotation RotationOffset{FVector3{RollDegreesOffset, 0.0f, 0.0f}};
+        AddRotation(RotationOffset);
+    }
+
+    void CBaseSceneComponent::AddYawRotation(float YawDegreesOffset)
+    {
+        FRotation RotationOffset{FVector3{0.0f, YawDegreesOffset, 0.0f}};
+        AddRotation(RotationOffset);
+    }
+
+    void CBaseSceneComponent::AddPitchRotation(float PitchDegreesOffset)
+    {
+        FRotation RotationOffset{FVector3{0.0f, 0.0f, PitchDegreesOffset}};
+        AddRotation(RotationOffset);
+    }
+
+    FVector3 CBaseSceneComponent::GetScale() const
+    {
+        return m_Transform.GetScale();
+    }
+
+    void CBaseSceneComponent::SetScale(FVector3 const &Scale)
+    {
+        m_Transform.SetScale(Scale);
+    }
+
+    void CBaseSceneComponent::AddScale(FVector3 const &ScaleOffset)
+    {
+        SetScale(GetScale() + ScaleOffset);
+    }
+
     FMatrix4 CBaseSceneComponent::GetTransformMatrix() const
     {
-        if (m_bIsDirty)
+        if (m_Parent)
         {
-            RecalculateTransformMatrix();
+            return m_TransformCache.GetTransformMatrix(m_Transform, m_Parent->GetTransformMatrix());
         }
-
-        return m_TransformMatrix;
+        else
+        {
+            return m_TransformCache.GetTransformMatrix(m_Transform);
+        }
     }
 
     FTransform CBaseSceneComponent::GetTransform() const
@@ -33,7 +102,7 @@ namespace Corvus
     void CBaseSceneComponent::SetTransform(FTransform const &Transform)
     {
         m_Transform = Transform;
-        m_bIsDirty  = true;
+        m_TransformCache.MakeDirty();
     }
 
     TArray<CBaseSceneComponent *> &CBaseSceneComponent::GetChildren()
@@ -56,31 +125,13 @@ namespace Corvus
 
     void CBaseSceneComponent::SetParent(CBaseSceneComponent *const Parent)
     {
-        m_Parent   = Parent;
-        m_bIsDirty = true;
+        m_Parent = Parent;
+        m_TransformCache.MakeDirty();
     }
 
     void CBaseSceneComponent::ResetParent()
     {
         SetParent(nullptr);
-    }
-
-    void CBaseSceneComponent::RecalculateTransformMatrix() const
-    {
-        if (m_Parent)
-        {
-            m_TransformMatrix = m_Parent->GetTransformMatrix() * m_Transform.GetTransformMatrix();
-        }
-        else
-        {
-            m_TransformMatrix = m_Transform.GetTransformMatrix();
-        }
-        m_bIsDirty = false;
-
-        for (SizeT i = 0; i < m_Children.GetSize(); ++i)
-        {
-            m_Children[i]->RecalculateTransformMatrix();
-        }
     }
 
 } // namespace Corvus
