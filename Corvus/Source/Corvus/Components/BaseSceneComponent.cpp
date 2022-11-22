@@ -123,15 +123,15 @@ namespace Corvus
         return m_Parent;
     }
 
+    void CBaseSceneComponent::ResetParent()
+    {
+        SetParent(nullptr);
+    }
+
     void CBaseSceneComponent::SetParent(CBaseSceneComponent *const Parent)
     {
         m_Parent = Parent;
         m_TransformCache.MakeDirty();
-    }
-
-    void CBaseSceneComponent::ResetParent()
-    {
-        SetParent(nullptr);
     }
 
 } // namespace Corvus

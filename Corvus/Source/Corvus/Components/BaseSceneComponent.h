@@ -44,8 +44,10 @@ namespace Corvus
         void                           AddChild(CBaseSceneComponent *const Child);
 
         CBaseSceneComponent *GetParent() const;
-        void                 SetParent(CBaseSceneComponent *const Parent);
         void                 ResetParent();
+
+    private:
+        void SetParent(CBaseSceneComponent *const Parent);
 
     private:
         FTransform      m_Transform;

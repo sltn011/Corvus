@@ -51,21 +51,50 @@ namespace Corvus
         T &At(SizeT Index)
         {
             CORVUS_CORE_ASSERT(Index < m_Size);
-            return m_Data.Get()[Index];
+            return operator[](Index);
         }
 
         T &At(SizeT Index) const
         {
             CORVUS_CORE_ASSERT(Index < m_Size);
-            return m_Data.Get()[Index];
+            return operator[](Index);
         }
 
-        T &operator[](SizeT Index) { return At(Index); }
-        T &operator[](SizeT Index) const { return At(Index); }
+        T &operator[](SizeT Index) { return m_Data.Get()[Index]; }
+        T &operator[](SizeT Index) const { return m_Data.Get()[Index]; }
 
         SizeT GetSize() const { return m_Size; }
 
         SizeT GetCapacity() const { return m_Capacity; }
+
+        SizeT Find(T const &Element) const
+        {
+            SizeT Index = 0;
+            for (; Index < m_Size; ++Index)
+            {
+                if (operator[](Index) == Element)
+                {
+                    return Index;
+                }
+            }
+            return Index;
+        }
+
+        void EraseAt(SizeT Index)
+        {
+            CORVUS_CORE_ASSERT(m_Size > 0 && Index < m_Size);
+            for (SizeT Current = Index; Current < m_Size - 1; ++Current)
+            {
+                std::swap(At(Current), At(Current + 1));
+            }
+            Resize(m_Size - 1);
+        }
+
+        void Resize(SizeT NewSize)
+        {
+            CORVUS_CORE_ASSERT_FMT(NewSize < m_Size, "Resize can only decrease size of TArray!");
+            m_Size = NewSize;
+        }
 
     private:
         void IncreaseCapacity()
