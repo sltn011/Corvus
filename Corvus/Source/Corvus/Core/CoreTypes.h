@@ -1,6 +1,7 @@
 #ifndef CORVUS_SOURCE_CORVUS_CORE_CORETYPES_H
 #define CORVUS_SOURCE_CORVUS_CORE_CORETYPES_H
 
+#include <cstddef>
 #include <cstdint>
 #include <string>
 #include <string_view>
@@ -15,7 +16,8 @@ using UInt16 = std::uint16_t;
 using UInt32 = std::uint32_t;
 using UInt64 = std::uint64_t;
 
-using SizeT = std::size_t;
+using SizeT    = std::size_t;
+using PtrDiffT = std::ptrdiff_t;
 
 using Char    = char;
 using CString = std::basic_string<Char>;
