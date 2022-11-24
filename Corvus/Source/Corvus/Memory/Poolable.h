@@ -125,6 +125,14 @@ namespace Corvus
         // Warning: Old pointers to pooled data can be invalidated
         void IncreaseArraySize(SizeT NewSize) { m_PoolIndex.IncreaseSize(NewSize); }
 
+        friend bool operator==(TPoolable<T> const &Lhs, TPoolable<T> const &Rhs)
+        {
+            return (!Lhs.IsValid() && !Rhs.IsValid()) ||
+                   (Lhs.Get() == Rhs.Get() && Lhs.GetNumElements() == Rhs.GetNumElements());
+        }
+
+        friend bool operator!=(TPoolable<T> const &Lhs, TPoolable<T> const &Rhs) { return !(Lhs == Rhs); }
+
     private:
         CPoolIndex m_PoolIndex;
     };

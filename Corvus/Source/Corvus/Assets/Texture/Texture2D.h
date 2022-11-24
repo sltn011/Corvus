@@ -2,6 +2,7 @@
 #define CORVUS_SOURCE_CORVUS_ASSETS_TEXTURE_TEXTURE2D_H
 
 #include "Corvus/Core/UUID.h"
+#include "Corvus/Renderer/Texture2DBuffer.h"
 
 namespace Corvus
 {

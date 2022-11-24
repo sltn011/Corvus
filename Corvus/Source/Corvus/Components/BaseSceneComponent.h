@@ -42,12 +42,13 @@ namespace Corvus
 
         TArray<CBaseSceneComponent *> &GetChildren();
         void                           AddChild(CBaseSceneComponent *const Child);
+        bool                           RemoveChild(CBaseSceneComponent *const Child);
 
         CBaseSceneComponent *GetParent() const;
-        void                 ResetParent();
 
     private:
         void SetParent(CBaseSceneComponent *const Parent);
+        void ResetParent();
 
     private:
         FTransform      m_Transform;

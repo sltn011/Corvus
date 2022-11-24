@@ -2,8 +2,6 @@
 
 #include "Corvus/Assets/Texture/Texture2D.h"
 
-#include "Corvus/Renderer/Texture2DBuffer.h"
-
 namespace Corvus
 {
 

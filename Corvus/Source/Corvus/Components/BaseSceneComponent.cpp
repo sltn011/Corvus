@@ -118,20 +118,31 @@ namespace Corvus
         Child->SetParent(this);
     }
 
+    bool CBaseSceneComponent::RemoveChild(CBaseSceneComponent *const Child)
+    {
+        TArray<CBaseSceneComponent *>::Iterator NewEndIt = std::remove(m_Children.Begin(), m_Children.End(), Child);
+        if (NewEndIt == m_Children.End())
+        {
+            return false;
+        }
+        m_Children.Erase(NewEndIt, m_Children.End());
+        return true;
+    }
+
     CBaseSceneComponent *CBaseSceneComponent::GetParent() const
     {
         return m_Parent;
-    }
-
-    void CBaseSceneComponent::ResetParent()
-    {
-        SetParent(nullptr);
     }
 
     void CBaseSceneComponent::SetParent(CBaseSceneComponent *const Parent)
     {
         m_Parent = Parent;
         m_TransformCache.MakeDirty();
+    }
+
+    void CBaseSceneComponent::ResetParent()
+    {
+        SetParent(nullptr);
     }
 
 } // namespace Corvus

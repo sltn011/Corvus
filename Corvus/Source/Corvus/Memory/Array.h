@@ -178,7 +178,8 @@ namespace Corvus
         };
 
     public:
-        TArray(SizeT InitialSize = 0, T const &DefaultValue = T{}) : m_Size{InitialSize}, m_Capacity{InitialSize}
+        TArray() = default;
+        TArray(SizeT InitialSize, T const &DefaultValue) : m_Size{InitialSize}, m_Capacity{InitialSize}
         {
             if (m_Capacity != 0)
             {
@@ -240,7 +241,7 @@ namespace Corvus
         void Erase(Iterator const &Iterator)
         {
             CORVUS_CORE_ASSERT_FMT(begin() <= Iterator && Iterator < end(), "Iterator out of range!");
-            std::copy(Iterator + 1, end(), Iterator);
+            std::move(Iterator + 1, end(), Iterator);
             m_Size--;
         }
 
@@ -250,7 +251,7 @@ namespace Corvus
                 begin() <= Begin && Begin <= end(), "Begin Iterator out of range!"
             ); // ok for Begin to be equal end()
             CORVUS_CORE_ASSERT_FMT(begin() <= End && End <= end(), "End Iterator out of range!");
-            std::copy(End, end(), Begin);
+            std::move(End, end(), Begin);
             m_Size -= End - Begin;
         }
 
@@ -260,9 +261,13 @@ namespace Corvus
             m_Size = NewSize;
         }
 
+        Iterator      Begin() { return begin(); }
+        ConstIterator Begin() const { return begin(); }
+        Iterator      End() { return end(); }
+        ConstIterator End() const { return end(); }
+
         Iterator      begin() { return m_Data.Get(); }
         ConstIterator begin() const { return m_Data.Get(); }
-
         Iterator      end() { return m_Data.Get() + m_Size; }
         ConstIterator end() const { return m_Data.Get() + m_Size; }
 
