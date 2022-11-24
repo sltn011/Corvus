@@ -13,6 +13,8 @@
         #define CORVUS_DEBUG_BREAK() __debugbreak()
     #endif
 #else
+    #define CORVUS_ENABLE_LOG
+    #define CORVUS_ENABLE_ASSERT
     #define CORVUS_DEBUG_BREAK()
 #endif
 

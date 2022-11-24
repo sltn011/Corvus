@@ -297,8 +297,10 @@ namespace Corvus
             {
                 CORVUS_DUMP(CodePart);
             }
+            CORVUS_DUMP("==================\n");
+            CORVUS_DUMP(LinkError);
+
             CORVUS_CORE_NO_ENTRY_FMT("OpenGLShader failed to link! {1}", LinkError);
-            return 0;
         }
 
         glDeleteShader(VertexShader);
@@ -324,8 +326,9 @@ namespace Corvus
             {
                 CORVUS_DUMP(CodePart);
             }
+            CORVUS_DUMP("==================\n");
+            CORVUS_DUMP(CompileError);
             CORVUS_CORE_NO_ENTRY_FMT("OpenGLShader failed to compile! {1}", CompileError);
-            return 0;
         }
 
         return Shader;
