@@ -7,6 +7,7 @@ namespace Corvus
     class FTimeDelta
     {
     public:
+        FTimeDelta() = default;
         FTimeDelta(float Seconds);
 
         float Seconds() const;
@@ -16,7 +17,7 @@ namespace Corvus
         float Minutes() const;
 
     private:
-        float m_DeltaSeconds;
+        float m_DeltaSeconds = 0.0f;
     };
 
 } // namespace Corvus

@@ -9,14 +9,23 @@
 #ifdef CORVUS_DEBUG
     #define CORVUS_ENABLE_LOG
     #define CORVUS_ENABLE_ASSERT
+    #define CORVUS_ENABLE_PROFILING
     #ifdef CORVUS_PLATFORM_WINDOWS
         #define CORVUS_DEBUG_BREAK() __debugbreak()
     #endif
 #else
+    #define CORVUS_ENABLE_LOG
+    #define CORVUS_ENABLE_ASSERT
     #define CORVUS_DEBUG_BREAK()
 #endif
 
-#define BIT(x) (1 << x)
+#define CORVUS_BIT(x) (1 << x)
+
+#define CORVUS_EVAL_IF_CONSTEXPR(cond, func, ...) \
+    if constexpr (cond)                           \
+    {                                             \
+        func(__VA_ARGS__);                        \
+    }
 
 namespace Corvus
 {

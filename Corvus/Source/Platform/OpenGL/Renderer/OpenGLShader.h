@@ -65,8 +65,8 @@ namespace Corvus
         );
         GLuint CreateShader(GLenum ShaderType, std::vector<char const *> const &ShaderCode) const;
 
-        bool IsShaderCompiledSuccessfully(GLuint CShader, CString &OutErrorMessage) const;
-        bool IsProgramLinkedSuccessfully(CString &OutErrorMessage) const;
+        bool IsShaderCompiledSuccessfully(GLuint Shader, CString &OutErrorMessage) const;
+        bool IsProgramLinkedSuccessfully(GLuint Program, CString &OutErrorMessage) const;
 
         GLint GetUniformLocation(CString const &Name);
 

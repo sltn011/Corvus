@@ -105,9 +105,17 @@ namespace Corvus
         RecalculateProjectionViewMatrix();
     }
 
-    void CCamera::SetViewportSize(float const Width, float const Height)
+    void CCamera::SetViewportSize(float Width, float Height)
     {
-        CORVUS_CORE_ASSERT(Width > 0 && Height > 0);
+        if (FMath::IsNearlyEqual(Width, 0.0f))
+        {
+            Width = Constants::SmallNum;
+        }
+        if (FMath::IsNearlyEqual(Height, 0.0f))
+        {
+            Height = Constants::SmallNum;
+        }
+
         m_Aspect = Width / Height;
         RecalculateProjectionMatrix();
         RecalculateProjectionViewMatrix();

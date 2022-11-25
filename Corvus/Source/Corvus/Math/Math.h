@@ -1,20 +1,33 @@
 #ifndef CORVUS_SOURCE_CORVUS_MATH_MATH_H
 #define CORVUS_SOURCE_CORVUS_MATH_MATH_H
 
+#include "Corvus/Math/Constants.h"
+
 #include <glm/glm.hpp>
 
 namespace Corvus::FMath
 {
     template<typename T>
-    inline constexpr T Min(T V1, T V2)
+    inline constexpr T Abs(T Value)
     {
-        return (V1 < V2 ? V1 : V2);
+        return glm::abs(Value);
+    }
+
+    inline constexpr bool IsNearlyEqual(float Value1, float Value2, float Epsilon = Constants::SmallNum)
+    {
+        return Abs(Value1 - Value2) < Epsilon;
     }
 
     template<typename T>
-    inline constexpr T Max(T V1, T V2)
+    inline constexpr T Min(T Value1, T Value2)
     {
-        return (V1 < V2 ? V2 : V1);
+        return (Value1 < Value2 ? Value1 : Value2);
+    }
+
+    template<typename T>
+    inline constexpr T Max(T Value1, T Value2)
+    {
+        return (Value1 < Value2 ? Value2 : Value1);
     }
 
     template<typename T>
