@@ -3,6 +3,7 @@
 #include "Corvus/Renderer/Renderer.h"
 
 #include "Corvus/Assets/Model/StaticModel.h"
+#include "Corvus/Profiling/FrameProfiler.h"
 #include "Corvus/Renderer/GraphicsAPI.h"
 #include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Shader.h"
@@ -75,7 +76,16 @@ namespace Corvus
     {
         Shader.Bind();
         VAO.Bind();
+
+        UInt64 Vertices  = VAO.GetIndexBuffer().GetNumIndices();
+        UInt64 Triangles = Vertices / 3;
+        UInt64 DrawCalls = 1;
+
         s_GraphicsAPI->DrawIndexed(VAO.GetIndexBuffer().GetNumIndices());
+
+        CORVUS_EVAL_IF_CONSTEXPR(
+            CFrameProfiler::IsEnabled, CFrameProfiler::RecordRenderCallData, {Vertices, Triangles, DrawCalls}
+        );
     }
 
     void CRenderer::SubmitStaticModel(
