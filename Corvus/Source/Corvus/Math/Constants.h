@@ -6,10 +6,10 @@
 namespace Corvus::Constants
 {
 
-    static inline constexpr float Pi = 3.14159265359f;
+    inline constexpr float Pi = 3.14159265359f;
 
-    static inline constexpr float SmallNum     = 0.001f;
-    static inline constexpr float VerySmallNum = 0.000001f;
+    inline constexpr float SmallNum     = 0.001f;
+    inline constexpr float VerySmallNum = 0.000001f;
 
 } // namespace Corvus::Constants
 

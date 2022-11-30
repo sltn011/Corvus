@@ -19,9 +19,9 @@ namespace Corvus
         static CFrameData PreviousFrameData;
 
 #ifdef CORVUS_ENABLE_PROFILING
-        static inline constexpr bool IsEnabled = true;
+        static constexpr bool IsEnabled = true;
 #else
-        static inline constexpr bool IsEnabled = false;
+        static constexpr bool IsEnabled = false;
 #endif
     };
 
