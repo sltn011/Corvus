@@ -8,40 +8,40 @@
 namespace Corvus::FMath
 {
     template<typename T>
-    inline constexpr T Abs(T Value)
+    constexpr T Abs(T Value)
     {
         return glm::abs(Value);
     }
 
-    inline constexpr bool IsNearlyEqual(float Value1, float Value2, float Epsilon = Constants::SmallNum)
+    constexpr bool IsNearlyEqual(float Value1, float Value2, float Epsilon = Constants::SmallNum)
     {
         return Abs(Value1 - Value2) < Epsilon;
     }
 
     template<typename T>
-    inline constexpr T Min(T Value1, T Value2)
+    constexpr T Min(T Value1, T Value2)
     {
         return (Value1 < Value2 ? Value1 : Value2);
     }
 
     template<typename T>
-    inline constexpr T Max(T Value1, T Value2)
+    constexpr T Max(T Value1, T Value2)
     {
         return (Value1 < Value2 ? Value2 : Value1);
     }
 
     template<typename T>
-    inline constexpr T Clamp(T Value, T Min, T Max)
+    constexpr T Clamp(T Value, T Min, T Max)
     {
         return glm::clamp(Value, Min, Max);
     }
 
-    inline constexpr float Radians(float Degrees)
+    constexpr float Radians(float Degrees)
     {
         return glm::radians(Degrees);
     }
 
-    inline constexpr float Degrees(float Radians)
+    constexpr float Degrees(float Radians)
     {
         return glm::degrees(Radians);
     }
