@@ -149,6 +149,7 @@ namespace Corvus
             TPoolable<CEntity> Entity = ConstructPoolable<CEntity>();
             Entity->TransformComponent->SetPosition(FVector3{5.0f, -1.5f, 0.0f});
             Entity->TransformComponent->SetRotation(FRotation{{0.0f, -45.0f, 0.0f}});
+            Entity->TransformComponent->SetScale(FVector3{0.01f});
             Entity->StaticMeshComponent->StaticModelRef.SetUUID(StaticModelsAssets.begin()->first);
 
             PlaygroundScene.AddEntity(std::move(Entity));
@@ -156,7 +157,8 @@ namespace Corvus
 
         void LoadAssets()
         {
-            SStaticModelLoadedData LoadedModelData = CModelLoader::LoadStaticModelFromFile("./Assets/Models/Shack.glb");
+            SStaticModelLoadedData LoadedModelData =
+                CModelLoader::LoadStaticModelFromFile("./Assets/Models/sponza.glb");
 
             // StaticModel
             StaticModelsAssets.emplace(LoadedModelData.StaticModel.UUID, std::move(LoadedModelData.StaticModel));
