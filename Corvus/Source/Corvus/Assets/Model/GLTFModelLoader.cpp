@@ -116,6 +116,20 @@ namespace Corvus
             return ElementFormat;
         }
 
+        STextureParameters ProcessNoTextureSampler()
+        {
+            STextureParameters TextureParameters;
+            TextureParameters.MinFiltering = ETextureFiltering::LinearMipMap_Linear;
+            TextureParameters.MagFiltering = ETextureFiltering::Linear;
+            TextureParameters.WrappingS    = ETextureWrapping::Repeat;
+            TextureParameters.WrappingT    = ETextureWrapping::Repeat;
+            TextureParameters.WrappingR    = ETextureWrapping::Repeat;
+
+            TextureParameters.bHasMipmaps              = true;
+            TextureParameters.bHasAnisotropicFiltering = true;
+            return TextureParameters;
+        }
+
         STextureParameters ProcessTextureSampler(tinygltf::Sampler const &Sampler)
         {
             static const std::unordered_map<int, ETextureFiltering> TextureFiltering{
@@ -145,6 +159,9 @@ namespace Corvus
             TextureParameters.WrappingS    = TextureWrapping.at(Sampler.wrapS);
             TextureParameters.WrappingT    = TextureWrapping.at(Sampler.wrapT);
             TextureParameters.WrappingR    = ETextureWrapping::Repeat; // no value in gltf
+
+            TextureParameters.bHasMipmaps              = true;
+            TextureParameters.bHasAnisotropicFiltering = true;
             return TextureParameters;
         }
 
@@ -196,7 +213,7 @@ namespace Corvus
                 }
                 else
                 {
-                    TextureParameters = ProcessTextureSampler(tinygltf::Sampler{});
+                    TextureParameters = ProcessNoTextureSampler();
                 }
 
                 Int32 ImageIndex = Texture.source;
