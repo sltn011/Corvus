@@ -72,6 +72,30 @@ namespace Corvus
         return FQuaternion::ToMat4(FQuaternion::AngleAxis(m_Degrees.z, FVector::Right));
     }
 
+    FVector3 FRotation::GetForwardVector() const
+    {
+        return FVector::Normalize(FVector3(GetRotationMatrix()[0]));
+    }
+
+    FVector3 FRotation::GetUpVector() const
+    {
+        return FVector::Normalize(FVector3(GetRotationMatrix()[1]));
+    }
+
+    FVector3 FRotation::GetRightVector() const
+    {
+        return FVector::Normalize(FVector3(GetRotationMatrix()[2]));
+    }
+
+    FMatrix3 FRotation::GetFURVectors() const
+    {
+        FMatrix3 FURVectors = FMatrix3(GetRotationMatrix());
+        FVector::Normalize(FURVectors[0]);
+        FVector::Normalize(FURVectors[1]);
+        FVector::Normalize(FURVectors[2]);
+        return FURVectors;
+    }
+
     void FRotation::AddRollDegrees(float const RollDegree)
     {
         m_Degrees.x += RollDegree;

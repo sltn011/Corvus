@@ -2,6 +2,7 @@
 
 #include "Corvus/Components/ComponentType.h"
 
+#include "Corvus/Camera/Components/CameraMovementComponent.h"
 #include "Corvus/Components/BaseDataComponent.h"
 #include "Corvus/Components/BaseSceneComponent.h"
 #include "Corvus/Components/StaticMeshComponent.h"
@@ -22,6 +23,8 @@ namespace Corvus
             return sizeof(CTransformComponent);
         case EComponentType::StaticMesh:
             return sizeof(CStaticMeshComponent);
+        case EComponentType::CameraMovement:
+            return sizeof(CCameraMovementComponent);
         default:
             CORVUS_CORE_NO_ENTRY_FMT("Invalid EComponentType");
         }

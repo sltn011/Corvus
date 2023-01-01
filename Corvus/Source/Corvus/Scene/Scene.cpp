@@ -30,15 +30,15 @@ namespace Corvus
 
     CCamera *CScene::GetPlayerCamera()
     {
-        return m_PlayerCamera.get();
+        return m_PlayerCamera.Get();
     }
 
     CCamera const *CScene::GetPlayerCamera() const
     {
-        return m_PlayerCamera.get();
+        return m_PlayerCamera.Get();
     }
 
-    void CScene::SetPlayerCamera(TOwn<CCamera> &&PlayerCamera)
+    void CScene::SetPlayerCamera(TPoolable<CCamera> &&PlayerCamera)
     {
         m_PlayerCamera = std::move(PlayerCamera);
     }

@@ -19,11 +19,11 @@ namespace Corvus
 
         CEntity *GetOwner() const;
 
-    protected:
-        EComponentType m_ComponentType = EComponentType::BaseData;
-
     private:
         CEntity *m_Owner = nullptr;
+
+    protected:
+        EComponentType m_ComponentType = EComponentType::BaseData;
     };
 
 } // namespace Corvus

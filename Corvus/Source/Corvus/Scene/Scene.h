@@ -20,10 +20,10 @@ namespace Corvus
 
         CCamera       *GetPlayerCamera();
         CCamera const *GetPlayerCamera() const;
-        void           SetPlayerCamera(TOwn<CCamera> &&PlayerCamera);
+        void           SetPlayerCamera(TPoolable<CCamera> &&PlayerCamera);
 
     private:
-        TOwn<CCamera>              m_PlayerCamera;
+        TPoolable<CCamera>         m_PlayerCamera;
         TArray<TPoolable<CEntity>> m_Entities;
     };
 

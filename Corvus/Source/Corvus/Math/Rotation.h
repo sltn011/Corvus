@@ -30,6 +30,11 @@ namespace Corvus
         FMatrix4 GetYawMatrix() const;
         FMatrix4 GetPitchMatrix() const;
 
+        FVector3 GetForwardVector() const;
+        FVector3 GetUpVector() const;
+        FVector3 GetRightVector() const;
+        FMatrix3 GetFURVectors() const;
+
         void AddRollDegrees(float RollDegree);
         void AddYawDegrees(float YawDegree);
         void AddPitchDegrees(float PitchDegree);

@@ -7,6 +7,7 @@ namespace Corvus
 
     CBaseSceneComponent::CBaseSceneComponent(CEntity *Owner) : Super{Owner}
     {
+        m_ComponentType = EComponentType::BaseScene;
     }
 
     CBaseSceneComponent::CBaseSceneComponent(CEntity *const Owner, FTransform const &ComponentTransform)

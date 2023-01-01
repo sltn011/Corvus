@@ -2,15 +2,18 @@
 #define CORVUS_SOURCE_CORVUS_CAMERA_CAMERA_H
 
 #include "Corvus/Math/Transform.h"
+#include "Corvus/Scene/Entity.h"
 
 namespace Corvus
 {
     class CCameraMovementComponent;
     class FTimeDelta;
 
-    class CCamera
+    class CCamera : public CEntity
     {
     public:
+        using Super = CEntity;
+
         enum class EMoveDirection
         {
             Forward,
@@ -32,14 +35,11 @@ namespace Corvus
         FTransform GetTransform() const;
         FRotation  GetRotation() const;
 
-        FVector3 GetForwardVector() const;
-        FVector3 GetUpVector() const;
-        FVector3 GetRightVector() const;
-        FMatrix3 GetFURVectors() const;
-
-        void SetMoveSpeed(float CameraMoveSpeed);
         void SetTransform(FTransform const &Transform);
         void SetRotation(FRotation const &Rotation);
+
+        float GetMoveSpeed() const;
+        void  SetMoveSpeed(float CameraMoveSpeed);
 
         void SetViewportSize(float Width, float Height);
         void SetClipPlanes(float NearClip, float FarClip);
@@ -53,10 +53,8 @@ namespace Corvus
         virtual void RecalculateProjectionViewMatrix() = 0;
 
     protected:
-        TOwn<CCameraMovementComponent> m_MovementComponent;
-        bool                           m_IsPlayerControlled = false;
-
-        FTransform m_Transform;
+        TPoolable<CCameraMovementComponent> m_MovementComponent;
+        bool                                m_IsPlayerControlled = false;
 
         FMatrix4 m_ViewMatrix           = FMatrix4(1.0f);
         FMatrix4 m_ProjectionMatrix     = FMatrix4(1.0f);

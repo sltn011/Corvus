@@ -122,6 +122,18 @@ namespace Corvus
                 CPerspectiveCamera *Camera  = static_cast<CPerspectiveCamera *>(PlaygroundScene.GetPlayerCamera());
                 Camera->SetViewportSize(static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight));
             }
+            else if (Event.GetEventType() == CEvent::EEventType::MouseScroll)
+            {
+                CMouseScrollEvent &MSEvent = CastEvent<CMouseScrollEvent>(Event);
+                if (bCameraMode)
+                {
+                    CCamera    *Camera         = static_cast<CCamera *>(PlaygroundScene.GetPlayerCamera());
+                    float const OldCameraSpeed = Camera->GetMoveSpeed();
+                    float const NewSpeed       = FMath::Max(OldCameraSpeed + MSEvent.OffsetY, 0.0f);
+                    Camera->SetMoveSpeed(NewSpeed);
+                    Event.SetHandled();
+                }
+            }
         }
 
         void CreateScene()
@@ -135,7 +147,7 @@ namespace Corvus
             UInt32 const WindowWidth  = CApplication::GetInstance().GetWindow().GetWindowWidth();
             UInt32 const WindowHeight = CApplication::GetInstance().GetWindow().GetWindowHeight();
 
-            TOwn<CPerspectiveCamera> Camera = MakeOwned<CPerspectiveCamera>();
+            TPoolable<CPerspectiveCamera> Camera = ConstructPoolable<CPerspectiveCamera>();
             Camera->SetViewportSize(static_cast<float>(WindowWidth), static_cast<float>(WindowHeight));
             Camera->SetFoVAngle(60.0f);
             Camera->SetClipPlanes(0.01f, 100.0f);

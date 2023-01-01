@@ -7,6 +7,7 @@ namespace Corvus
 
     CTransformComponent::CTransformComponent(CEntity *Owner) : Super{Owner}
     {
+        m_ComponentType = EComponentType::Transform;
     }
 
     CTransformComponent::CTransformComponent(CEntity *Owner, FTransform const &ComponentTransform)

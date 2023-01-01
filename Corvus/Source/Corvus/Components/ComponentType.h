@@ -9,6 +9,7 @@ namespace Corvus
     class CBaseSceneComponent;
     class CTransformComponent;
     class CStaticMeshComponent;
+    class CCameraMovementComponent;
 
     enum class EComponentType : UInt16
     {
@@ -16,6 +17,8 @@ namespace Corvus
         BaseScene,
         Transform,
         StaticMesh,
+
+        CameraMovement,
     };
 
     SizeT GetComponentSize(EComponentType Type);
@@ -45,6 +48,12 @@ namespace Corvus
     constexpr EComponentType GetComponentType<CStaticMeshComponent>()
     {
         return EComponentType::StaticMesh;
+    }
+
+    template<>
+    constexpr EComponentType GetComponentType<CCameraMovementComponent>()
+    {
+        return EComponentType::CameraMovement;
     }
 
 } // namespace Corvus
