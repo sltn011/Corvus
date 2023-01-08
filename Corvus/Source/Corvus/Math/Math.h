@@ -21,13 +21,13 @@ namespace Corvus::FMath
     template<typename T>
     constexpr T Min(T Value1, T Value2)
     {
-        return (Value1 < Value2 ? Value1 : Value2);
+        return glm::min(Value1, Value2);
     }
 
     template<typename T>
     constexpr T Max(T Value1, T Value2)
     {
-        return (Value1 < Value2 ? Value2 : Value1);
+        return glm::max(Value1, Value2);
     }
 
     template<typename T>
