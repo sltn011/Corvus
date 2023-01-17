@@ -7,6 +7,7 @@ namespace Corvus
 
     CBaseDataComponent::CBaseDataComponent(CEntity *const Owner) : m_Owner{Owner}
     {
+        CORVUS_ASSERT(m_Owner != nullptr);
         m_ComponentType = EComponentType::BaseData;
     }
 

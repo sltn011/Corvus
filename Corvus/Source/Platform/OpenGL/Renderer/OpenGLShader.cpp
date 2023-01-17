@@ -286,7 +286,7 @@ namespace Corvus
         glLinkProgram(Program);
 
         CString LinkError;
-        if (!IsProgramLinkedSuccessfully(LinkError))
+        if (!IsProgramLinkedSuccessfully(Program, LinkError))
         {
             for (char const *const CodePart : VertexShaderCode)
             {
@@ -298,7 +298,6 @@ namespace Corvus
                 CORVUS_DUMP(CodePart);
             }
             CORVUS_CORE_NO_ENTRY_FMT("OpenGLShader failed to link! {1}", LinkError);
-            return 0;
         }
 
         glDeleteShader(VertexShader);
@@ -325,21 +324,20 @@ namespace Corvus
                 CORVUS_DUMP(CodePart);
             }
             CORVUS_CORE_NO_ENTRY_FMT("OpenGLShader failed to compile! {1}", CompileError);
-            return 0;
         }
 
         return Shader;
     }
 
-    bool POpenGLShader::IsShaderCompiledSuccessfully(GLuint const CShader, CString &OutErrorMessage) const
+    bool POpenGLShader::IsShaderCompiledSuccessfully(GLuint const Shader, CString &OutErrorMessage) const
     {
         GLint CompileStatus;
-        glGetShaderiv(CShader, GL_COMPILE_STATUS, &CompileStatus);
+        glGetShaderiv(Shader, GL_COMPILE_STATUS, &CompileStatus);
         if (CompileStatus == GL_FALSE)
         {
             static constexpr GLsizei InfoLogSize = 255;
             char                     InfoLog[InfoLogSize];
-            glGetShaderInfoLog(CShader, InfoLogSize, nullptr, InfoLog);
+            glGetShaderInfoLog(Shader, InfoLogSize, nullptr, InfoLog);
             InfoLog[InfoLogSize - 1] = '\0';
             OutErrorMessage          = CString{InfoLog};
             return false;
@@ -347,15 +345,15 @@ namespace Corvus
         return true;
     }
 
-    bool POpenGLShader::IsProgramLinkedSuccessfully(CString &OutErrorMessage) const
+    bool POpenGLShader::IsProgramLinkedSuccessfully(GLuint const Program, CString &OutErrorMessage) const
     {
         GLint LinkStatus;
-        glGetProgramiv(m_ID, GL_LINK_STATUS, &LinkStatus);
+        glGetProgramiv(Program, GL_LINK_STATUS, &LinkStatus);
         if (LinkStatus == GL_FALSE)
         {
             static constexpr GLsizei InfoLogSize = 255;
             char                     InfoLog[InfoLogSize];
-            glGetProgramInfoLog(m_ID, InfoLogSize, nullptr, InfoLog);
+            glGetProgramInfoLog(Program, InfoLogSize, nullptr, InfoLog);
             InfoLog[InfoLogSize - 1] = '\0';
             OutErrorMessage          = CString{InfoLog};
             return false;

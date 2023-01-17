@@ -13,6 +13,11 @@ namespace Corvus
     {
     public:
         CEntity();
+        virtual ~CEntity()                  = default;
+        CEntity(CEntity const &)            = delete;
+        CEntity &operator=(CEntity const &) = delete;
+        CEntity(CEntity &&)                 = default;
+        CEntity &operator=(CEntity &&)      = default;
 
     public:
         TPoolable<CTransformComponent>  TransformComponent;

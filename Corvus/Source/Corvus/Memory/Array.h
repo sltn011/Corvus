@@ -183,7 +183,7 @@ namespace Corvus
         {
             if (m_Capacity != 0)
             {
-                m_Data = CreatePoolableArray<T>(m_Capacity);
+                m_Data = AllocatePoolableArray<T>(m_Capacity);
             }
             std::fill(begin(), end(), DefaultValue);
         }
@@ -276,7 +276,7 @@ namespace Corvus
         {
             if (m_Capacity == 0)
             {
-                m_Data     = CreatePoolableArray<T>(1);
+                m_Data     = AllocatePoolableArray<T>(1);
                 m_Capacity = 1;
                 return;
             }

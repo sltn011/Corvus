@@ -1,34 +1,47 @@
 #ifndef CORVUS_SOURCE_CORVUS_MATH_MATH_H
 #define CORVUS_SOURCE_CORVUS_MATH_MATH_H
 
+#include "Corvus/Math/Constants.h"
+
 #include <glm/glm.hpp>
 
 namespace Corvus::FMath
 {
     template<typename T>
-    inline constexpr T Min(T V1, T V2)
+    constexpr T Abs(T Value)
     {
-        return (V1 < V2 ? V1 : V2);
+        return glm::abs(Value);
+    }
+
+    constexpr bool IsNearlyEqual(float Value1, float Value2, float Epsilon = Constants::SmallNum)
+    {
+        return Abs(Value1 - Value2) < Epsilon;
     }
 
     template<typename T>
-    inline constexpr T Max(T V1, T V2)
+    constexpr T Min(T Value1, T Value2)
     {
-        return (V1 < V2 ? V2 : V1);
+        return glm::min(Value1, Value2);
     }
 
     template<typename T>
-    inline constexpr T Clamp(T Value, T Min, T Max)
+    constexpr T Max(T Value1, T Value2)
+    {
+        return glm::max(Value1, Value2);
+    }
+
+    template<typename T>
+    constexpr T Clamp(T Value, T Min, T Max)
     {
         return glm::clamp(Value, Min, Max);
     }
 
-    inline constexpr float Radians(float Degrees)
+    constexpr float Radians(float Degrees)
     {
         return glm::radians(Degrees);
     }
 
-    inline constexpr float Degrees(float Radians)
+    constexpr float Degrees(float Radians)
     {
         return glm::degrees(Radians);
     }

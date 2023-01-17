@@ -2,6 +2,8 @@
 
 #include "Corvus/Camera/OrthographicCamera.h"
 
+#include "Corvus/Components/TransformComponent.h"
+
 namespace Corvus
 {
     COrthographicCamera::COrthographicCamera()
@@ -46,11 +48,11 @@ namespace Corvus
 
     void COrthographicCamera::RecalculateViewMatrix()
     {
-        FVector3 const Position = m_Transform.GetPosition();
+        FVector3 const  Position = TransformComponent->GetPosition();
+        FRotation const Rotation = TransformComponent->GetRotation();
 
-        FMatrix3 const FURVectors    = GetFURVectors();
-        FVector3 const ForwardVector = FURVectors[0];
-        FVector3 const UpVector      = FURVectors[1];
+        FVector3 const ForwardVector = Rotation.GetForwardVector();
+        FVector3 const UpVector      = Rotation.GetUpVector();
 
         m_ViewMatrix = FMatrix::LookAt(Position, Position + ForwardVector, UpVector);
     }

@@ -3,6 +3,7 @@
 #include "Corvus/Camera/Camera.h"
 
 #include "Corvus/Camera/Components/CameraMovementComponent.h"
+#include "Corvus/Components/TransformComponent.h"
 #include "Corvus/Math/Math.h"
 #include "Corvus/Time/TimeDelta.h"
 
@@ -15,7 +16,7 @@ namespace Corvus
 
     CCamera::CCamera(FTransform const &Transform)
     {
-        m_Transform = Transform;
+        TransformComponent->SetTransform(Transform);
     }
 
     CCamera::~CCamera()
@@ -27,87 +28,95 @@ namespace Corvus
         m_IsPlayerControlled = IsPlayerControlled;
         if (m_IsPlayerControlled && !m_MovementComponent)
         {
-            m_MovementComponent = MakeOwned<CCameraMovementComponent>(this, CameraMoveSpeed);
+            m_MovementComponent = ConstructPoolable<CCameraMovementComponent>(this, CameraMoveSpeed);
         }
     }
 
     void CCamera::ProcessMovementInput(EMoveDirection const Direction, FTimeDelta const ElapsedTime)
     {
-        if (m_IsPlayerControlled)
+        if (!m_IsPlayerControlled)
         {
-            m_MovementComponent->ProcessMovementInput(Direction, ElapsedTime);
+            return;
         }
+
+        if (!m_MovementComponent)
+        {
+            CORVUS_WARN("CameraMovementComponent not created!");
+            return;
+        }
+
+        m_MovementComponent->ProcessMovementInput(Direction, ElapsedTime);
     }
 
     void CCamera::ProcessRotationInput(
         float const XOffset, float const YOffset, float const Sensitivity, FTimeDelta const ElapsedTime
     )
     {
-        if (m_IsPlayerControlled)
+        if (!m_MovementComponent)
         {
-            m_MovementComponent->ProcessRotationInput(XOffset, YOffset, Sensitivity, ElapsedTime);
+            CORVUS_WARN("CameraMovementComponent not created!");
+            return;
         }
-    }
 
-    void CCamera::SetMoveSpeed(float const CameraMoveSpeed)
-    {
-        if (m_MovementComponent)
-        {
-            m_MovementComponent->SetMovementSpeed(CameraMoveSpeed);
-        }
+        m_MovementComponent->ProcessRotationInput(XOffset, YOffset, Sensitivity, ElapsedTime);
     }
 
     FTransform CCamera::GetTransform() const
     {
-        return m_Transform;
+        return TransformComponent->GetTransform();
     }
 
     FRotation CCamera::GetRotation() const
     {
-        return m_Transform.GetRotation();
-    }
-
-    FVector3 CCamera::GetForwardVector() const
-    {
-        return FVector::Normalize(FVector3(m_Transform.GetRotationMatrix()[0]));
-    }
-
-    FVector3 CCamera::GetUpVector() const
-    {
-        return FVector::Normalize(FVector3(m_Transform.GetRotationMatrix()[1]));
-    }
-
-    FVector3 CCamera::GetRightVector() const
-    {
-        return FVector::Normalize(FVector3(m_Transform.GetRotationMatrix()[2]));
-    }
-
-    FMatrix3 CCamera::GetFURVectors() const
-    {
-        FMatrix3 FURVectors = FMatrix3(m_Transform.GetRotationMatrix());
-        FVector::Normalize(FURVectors[0]);
-        FVector::Normalize(FURVectors[1]);
-        FVector::Normalize(FURVectors[2]);
-        return FURVectors;
+        return TransformComponent->GetRotation();
     }
 
     void CCamera::SetTransform(FTransform const &Transform)
     {
-        m_Transform = Transform;
+        TransformComponent->SetTransform(Transform);
         RecalculateViewMatrix();
         RecalculateProjectionViewMatrix();
     }
 
     void CCamera::SetRotation(FRotation const &Rotation)
     {
-        m_Transform.SetRotation(Rotation);
+        TransformComponent->SetRotation(Rotation);
         RecalculateViewMatrix();
         RecalculateProjectionViewMatrix();
     }
 
-    void CCamera::SetViewportSize(float const Width, float const Height)
+    float CCamera::GetMoveSpeed() const
     {
-        CORVUS_CORE_ASSERT(Width > 0 && Height > 0);
+        if (!m_MovementComponent)
+        {
+            CORVUS_WARN("CameraMovementComponent not created!");
+            return 0;
+        }
+
+        return m_MovementComponent->GetMoveSpeed();
+    }
+
+    void CCamera::SetMoveSpeed(float const CameraMoveSpeed)
+    {
+        if (!m_MovementComponent)
+        {
+            CORVUS_WARN("CameraMovementComponent not created!");
+        }
+
+        m_MovementComponent->SetMoveSpeed(CameraMoveSpeed);
+    }
+
+    void CCamera::SetViewportSize(float Width, float Height)
+    {
+        if (FMath::IsNearlyEqual(Width, 0.0f))
+        {
+            Width = Constants::SmallNum;
+        }
+        if (FMath::IsNearlyEqual(Height, 0.0f))
+        {
+            Height = Constants::SmallNum;
+        }
+
         m_Aspect = Width / Height;
         RecalculateProjectionMatrix();
         RecalculateProjectionViewMatrix();

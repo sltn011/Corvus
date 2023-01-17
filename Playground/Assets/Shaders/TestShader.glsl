@@ -65,6 +65,10 @@ out vec4 FragColor;
 void main()
 {
 	vec4 Color = GetAlbedo(TextureCoord);
+	if (Color.a < 0.1)
+	{
+		discard;
+	}
 	FragColor = Color;
 }
 

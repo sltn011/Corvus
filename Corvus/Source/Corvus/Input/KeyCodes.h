@@ -166,12 +166,12 @@ namespace Corvus
         enum : EModifierCode
         {
             None     = 0,
-            Shift    = BIT(0),
-            Control  = BIT(1),
-            Alt      = BIT(2),
-            Super    = BIT(3),
-            CapsLock = BIT(4),
-            NumLock  = BIT(5)
+            Shift    = CORVUS_BIT(0),
+            Control  = CORVUS_BIT(1),
+            Alt      = CORVUS_BIT(2),
+            Super    = CORVUS_BIT(3),
+            CapsLock = CORVUS_BIT(4),
+            NumLock  = CORVUS_BIT(5)
         };
     } // namespace Modifier
 

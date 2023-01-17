@@ -34,11 +34,11 @@ namespace Corvus
         enum EEventCategory : UInt8
         {
             NoneCategory = 0,
-            Input        = BIT(0),
-            Application  = BIT(1),
-            Keyboard     = BIT(2),
-            Mouse        = BIT(3),
-            MouseButton  = BIT(4)
+            Input        = CORVUS_BIT(0),
+            Application  = CORVUS_BIT(1),
+            Keyboard     = CORVUS_BIT(2),
+            Mouse        = CORVUS_BIT(3),
+            MouseButton  = CORVUS_BIT(4)
         };
 
         enum class EEventType : UInt8

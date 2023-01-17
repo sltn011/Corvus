@@ -59,9 +59,9 @@ namespace Corvus
         return RoundUpElementSize(ElementSize);
     }
 
-    // Use to create array of uninitialized TPoolable objects
+    // Use to allocate array of uninitialized TPoolable objects
     template<typename T>
-    TPoolable<T> CreatePoolableArray(SizeT NumElements)
+    TPoolable<T> AllocatePoolableArray(SizeT NumElements)
     {
         if constexpr (std::is_base_of_v<CBaseDataComponent, T>)
         {
@@ -82,16 +82,16 @@ namespace Corvus
 
     // Use to create uninitialized TPoolable objects
     template<typename T>
-    TPoolable<T> CreatePoolable()
+    TPoolable<T> AllocatePoolable()
     {
-        return CreatePoolableArray<T>(1);
+        return AllocatePoolableArray<T>(1);
     }
 
     // Use to create single TPoolable objects and initialize it
     template<typename T, typename... Args>
     TPoolable<T> ConstructPoolable(Args &&...args)
     {
-        TPoolable<T> Object = CreatePoolable<T>();
+        TPoolable<T> Object = AllocatePoolable<T>();
         new (Object.Get()) T{std::forward<Args>(args)...};
         return Object;
     }
@@ -112,6 +112,24 @@ namespace Corvus
         TPoolable &operator=(TPoolable const &) = delete;
         TPoolable &operator=(TPoolable &&)      = default;
 
+        friend class TPoolable;
+
+        template<typename OtherT, std::enable_if_t<std::is_base_of_v<T, OtherT>, bool> = true>
+        TPoolable(TPoolable<OtherT> &&Rhs) noexcept
+        {
+            m_PoolIndex = std::move(Rhs.m_PoolIndex);
+        }
+
+        template<typename OtherT, std::enable_if_t<std::is_base_of_v<T, OtherT>, bool> = true>
+        TPoolable &operator=(TPoolable<OtherT> &&Rhs) noexcept
+        {
+            if (this != &Rhs)
+            {
+                std::swap(m_PoolIndex, Rhs.m_PoolIndex);
+            }
+            return *this;
+        }
+
         T *Get() const { return reinterpret_cast<T *>(m_PoolIndex.GetRaw()); }
 
         T *operator->() const { return Get(); }
@@ -124,6 +142,8 @@ namespace Corvus
 
         // Warning: Old pointers to pooled data can be invalidated
         void IncreaseArraySize(SizeT NewSize) { m_PoolIndex.IncreaseSize(NewSize); }
+
+        operator bool() const { return IsValid(); }
 
         friend bool operator==(TPoolable<T> const &Lhs, TPoolable<T> const &Rhs)
         {

@@ -7,6 +7,7 @@
 #include "Corvus/Core/CoreLayer.h"
 #include "Corvus/GUI/LayerGUI.h"
 #include "Corvus/Memory/ApplicationPools.h"
+#include "Corvus/Profiling/FrameProfiler.h"
 #include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Renderer.h"
 #include "Corvus/Renderer/Shader.h"
@@ -48,6 +49,8 @@ namespace Corvus
         FTimePoint TimePointOld;
         while (!m_Window->ShouldClose())
         {
+            CORVUS_EVAL_IF_CONSTEXPR(CFrameProfiler::IsEnabled, CFrameProfiler::StartFrame);
+
             FTimePoint const TimePointNew;
             FTimeDelta const ElapsedTime = TimePointNew - TimePointOld;
             TimePointOld                 = TimePointNew;
@@ -56,6 +59,9 @@ namespace Corvus
             RenderLayers();
 
             m_Window->OnUpdate();
+
+            CORVUS_EVAL_IF_CONSTEXPR(CFrameProfiler::IsEnabled, CFrameProfiler::RecordFrameProcessingTime, ElapsedTime);
+            CORVUS_EVAL_IF_CONSTEXPR(CFrameProfiler::IsEnabled, CFrameProfiler::StopFrame);
         }
     }
 

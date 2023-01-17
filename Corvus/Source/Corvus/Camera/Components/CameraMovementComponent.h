@@ -2,25 +2,28 @@
 #define CORVUS_SOURCE_CORVUS_CAMERA_COMPONENTS_CAMERAMOVEMENTCOMPONENT_H
 
 #include "Corvus/Camera/Camera.h"
+#include "Corvus/Components/BaseDataComponent.h"
 
 namespace Corvus
 {
 
     class FTimeDelta;
 
-    class CCameraMovementComponent
+    class CCameraMovementComponent : public CBaseDataComponent
     {
     public:
-        CCameraMovementComponent(CCamera *Owner, float MovementSpeed);
+        using Super = CBaseDataComponent;
 
-        void SetMovementSpeed(float MovementSpeed);
+        CCameraMovementComponent(CCamera *Owner, float MovementSpeed = 1.0f);
+
+        float GetMoveSpeed() const;
+        void  SetMoveSpeed(float MovementSpeed);
 
         void ProcessMovementInput(CCamera::EMoveDirection Direction, FTimeDelta ElapsedTime);
         void ProcessRotationInput(float XOffset, float YOffset, float Sensitivity, FTimeDelta ElapsedTime);
 
     private:
-        CCamera *m_Owner     = nullptr;
-        float    m_MoveSpeed = 1.0f;
+        float m_MoveSpeed = 1.0f;
     };
 
 } // namespace Corvus
