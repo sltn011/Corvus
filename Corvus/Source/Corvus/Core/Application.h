@@ -3,6 +3,7 @@
 
 #include "Corvus/Core/Base.h"
 #include "Corvus/Core/LayersStack.h"
+#include "Corvus/GUI/GUIController.h"
 #include "Corvus/Window/Window.h"
 
 namespace Corvus
@@ -32,16 +33,22 @@ namespace Corvus
         void RenderLayers();
         void OnEventReceived(CEvent &Event);
 
-        CWindow &GetWindow();
+        CWindow &GetWindow() { return *m_Window; };
+
+        CGUIController &GetGUIController() { return m_GUIController; };
 
         static CApplication &GetInstance() { return *s_ApplicationInstance; }
 
     private:
         void InitWindow();
+        void InitGUIController();
         void InitRenderer();
 
         TOwn<CWindow> m_Window;
-        CLayersStack  m_LayersStack;
+
+        CGUIController m_GUIController;
+
+        CLayersStack m_LayersStack;
 
         static CApplication *s_ApplicationInstance;
     };

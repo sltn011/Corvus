@@ -11,6 +11,16 @@ namespace Corvus
         return MakeOwned<PWindowsWindow>();
     }
 
+    UInt32 CWindow::GetWindowWidth() const
+    {
+        return GetWindowSize().x;
+    }
+
+    UInt32 CWindow::GetWindowHeight() const
+    {
+        return GetWindowSize().y;
+    }
+
     bool CWindow::IsVSyncEnabled() const
     {
         if (!m_bIsInitialized)
@@ -18,7 +28,7 @@ namespace Corvus
             return false;
         }
 
-        return m_WindowData.bVSyncEnabled;
+        return m_WindowData.WindowSettings.bVSyncEnabled;
     }
 
     bool CWindow::IsFullScreen() const
@@ -28,11 +38,7 @@ namespace Corvus
             return false;
         }
 
-        return m_WindowData.bFullScreen;
+        return m_WindowData.WindowSettings.bFullScreen;
     }
 
-    CGUIController &CWindow::GetGUIController()
-    {
-        return m_GUIController;
-    }
 } // namespace Corvus

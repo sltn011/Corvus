@@ -12,8 +12,6 @@
 
 namespace Corvus
 {
-    CGUIController *CGUIController::s_Instance = nullptr;
-
     CGUIController::CGUIController()
     {
     }
@@ -25,7 +23,7 @@ namespace Corvus
 
     void CGUIController::Init()
     {
-        CORVUS_ASSERT_FMT(!s_Instance, "Only one instance of GUI controller allowed!");
+        CORVUS_ASSERT_FMT(!bInitialized, "GUI Controller was already initialized!");
 
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -46,13 +44,13 @@ namespace Corvus
         ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow()), true);
         ImGui_ImplOpenGL3_Init("#version 460");
 
-        s_Instance = this;
+        bInitialized = true;
         CORVUS_CORE_TRACE("ImGui context created");
     }
 
     void CGUIController::Destroy()
     {
-        if (!s_Instance)
+        if (!bInitialized)
         {
             return;
         }
@@ -61,7 +59,7 @@ namespace Corvus
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
 
-        s_Instance = nullptr;
+        bInitialized = false;
         CORVUS_CORE_TRACE("ImGui context destroyed");
     }
 

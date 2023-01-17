@@ -7,6 +7,10 @@ using FIntVector2 = glm::ivec2;
 using FIntVector3 = glm::ivec3;
 using FIntVector4 = glm::ivec4;
 
+using FUIntVector2 = glm::uvec2;
+using FUIntVector3 = glm::uvec3;
+using FUIntVector4 = glm::uvec4;
+
 using FVector2 = glm::vec2;
 using FVector3 = glm::vec3;
 using FVector4 = glm::vec4;

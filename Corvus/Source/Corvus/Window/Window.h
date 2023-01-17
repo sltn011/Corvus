@@ -4,7 +4,7 @@
 #include "Corvus/Core/Base.h"
 #include "Corvus/Core/Delegate.h"
 #include "Corvus/Event/Event.h"
-#include "Corvus/GUI/GUIController.h"
+#include "Corvus/Math/Vector.h"
 #include "Corvus/Renderer/RenderingContext.h"
 
 struct GLFWwindow;
@@ -14,14 +14,24 @@ namespace Corvus
 
     CORVUS_DECLARE_MULTICAST_DELEGATE(COnEventDelegate, CEvent &);
 
-    struct SWindowData
+    struct SWindowSettings
     {
-        CString WindowName;
-        Int32   WindowWidth  = 0;
-        Int32   WindowHeight = 0;
-
         bool bVSyncEnabled = false;
         bool bFullScreen   = false;
+    };
+
+    struct SWindowData
+    {
+        CString         WindowName;
+        SWindowSettings WindowSettings;
+    };
+
+    struct SWindowInitInfo
+    {
+        CString         WindowName;
+        UInt32          WindowWidth  = 0;
+        UInt32          WindowHeight = 0;
+        SWindowSettings WindowSettings;
     };
 
     class CWindow
@@ -38,16 +48,19 @@ namespace Corvus
         CWindow(CWindow &&)                 = default;
         CWindow &operator=(CWindow &&)      = default;
 
-        virtual void Init(SWindowData const &Settings) = 0;
-        virtual void InitRenderingContext()            = 0;
-        virtual void InitGUIRenderingContext()         = 0;
+        virtual void Init(SWindowInitInfo const &InitInfo) = 0;
+        virtual void InitRenderingContext()                = 0;
 
         virtual void OnUpdate() = 0;
 
-        bool    IsInitialized() const { return m_bIsInitialized; }
-        UInt32  GetWindowWidth() const { return m_WindowData.WindowWidth; }
-        UInt32  GetWindowHeight() const { return m_WindowData.WindowHeight; }
+        bool IsInitialized() const { return m_bIsInitialized; }
+
         CString GetWindowName() const { return m_WindowData.WindowName; }
+
+        // In pixels
+        virtual FUIntVector2 GetWindowSize() const = 0;
+        UInt32               GetWindowWidth() const;
+        UInt32               GetWindowHeight() const;
 
         virtual bool ShouldClose() const = 0;
         virtual void SetShouldClose()    = 0;
@@ -60,8 +73,6 @@ namespace Corvus
 
         virtual void *GetRawWindow() = 0;
 
-        CGUIController &GetGUIController();
-
         COnEventDelegate OnEvent;
 
     protected:
@@ -69,7 +80,6 @@ namespace Corvus
         bool        m_bIsInitialized = false;
 
         TOwn<CRenderingContext> m_RenderingContext;
-        CGUIController          m_GUIController;
     };
 
 } // namespace Corvus

@@ -17,11 +17,13 @@ namespace Corvus
         PWindowsWindow(PWindowsWindow &&)                 = default;
         PWindowsWindow &operator=(PWindowsWindow &&)      = default;
 
-        virtual void Init(SWindowData const &Settings) override;
+        virtual void Init(SWindowInitInfo const &InitInfo) override;
 
         void Destroy();
 
         virtual void OnUpdate() override;
+
+        virtual FUIntVector2 GetWindowSize() const override;
 
         virtual bool ShouldClose() const override;
         virtual void SetShouldClose() override;
@@ -35,7 +37,6 @@ namespace Corvus
 
     protected:
         virtual void InitRenderingContext() override;
-        virtual void InitGUIRenderingContext() override;
 
         void SetupWindowEventsHandlers();
 

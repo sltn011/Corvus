@@ -38,10 +38,11 @@ namespace Corvus
         CApplicationPools::Init();
 
         InitWindow();
+        InitGUIController();
         InitRenderer();
 
         PushLayer(CLayer::Create<CCoreLayer>());
-        // PushLayer(Layer::Create<CLayerGUI>("GUI", true));
+        PushLayer(CLayer::Create<CLayerGUI>("GUI", true));
     }
 
     void CApplication::Run()
@@ -85,12 +86,12 @@ namespace Corvus
 
     void CApplication::RenderLayers()
     {
-        if (!m_Window->GetGUIController().IsInitialized())
+        if (!m_GUIController.IsInitialized())
         {
             return;
         }
 
-        m_Window->GetGUIController().BeginFrame();
+        m_GUIController.BeginFrame();
         for (auto It = m_LayersStack.Begin(); It != m_LayersStack.End(); ++It)
         {
             if (!(*It)->IsEnabled())
@@ -100,7 +101,7 @@ namespace Corvus
 
             (*It)->Render();
         }
-        m_Window->GetGUIController().EndFrame();
+        m_GUIController.EndFrame();
     }
 
     void CApplication::OnEventReceived(CEvent &Event)
@@ -115,22 +116,18 @@ namespace Corvus
         }
     }
 
-    CWindow &CApplication::GetWindow()
-    {
-        return *m_Window;
-    }
-
     void CApplication::InitWindow()
     {
-        SWindowData WindowSettings;
-        WindowSettings.WindowWidth   = 1600;
-        WindowSettings.WindowHeight  = 900;
-        WindowSettings.WindowName    = "TestWindow";
-        WindowSettings.bVSyncEnabled = true;
+        SWindowInitInfo WindowInitInfo{};
+        WindowInitInfo.WindowWidth                  = 1600;
+        WindowInitInfo.WindowHeight                 = 900;
+        WindowInitInfo.WindowName                   = "TestWindow";
+        WindowInitInfo.WindowSettings.bVSyncEnabled = true;
+        WindowInitInfo.WindowSettings.bFullScreen   = false;
 
         m_Window = CWindow::Create();
         CORVUS_CORE_ASSERT(m_Window);
-        m_Window->Init(WindowSettings);
+        m_Window->Init(WindowInitInfo);
         m_Window->OnEvent.BindObject(this, &CApplication::OnEventReceived);
 
         CORVUS_CORE_INFO(
@@ -141,9 +138,16 @@ namespace Corvus
         );
     }
 
+    void CApplication::InitGUIController()
+    {
+        m_GUIController.Init();
+        CORVUS_CORE_INFO("GUIController initialized");
+    }
+
     void CApplication::InitRenderer()
     {
         CRenderer::Init();
         CORVUS_CORE_INFO("Renderer initialized");
     }
+
 } // namespace Corvus
