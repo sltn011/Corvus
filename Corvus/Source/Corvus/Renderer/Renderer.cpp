@@ -19,10 +19,12 @@ namespace Corvus
     {
         s_GraphicsAPI = CGraphicsAPI::Create();
         s_GraphicsAPI->Init();
+        CORVUS_CORE_INFO("Renderer created");
     }
 
     void CRenderer::Destroy()
     {
+        CORVUS_CORE_INFO("Renderer destroyed");
     }
 
     void CRenderer::BeginScene()

@@ -141,13 +141,11 @@ namespace Corvus
     void CApplication::InitGUIController()
     {
         m_GUIController.Init();
-        CORVUS_CORE_INFO("GUIController initialized");
     }
 
     void CApplication::InitRenderer()
     {
         CRenderer::Init();
-        CORVUS_CORE_INFO("Renderer initialized");
     }
 
 } // namespace Corvus

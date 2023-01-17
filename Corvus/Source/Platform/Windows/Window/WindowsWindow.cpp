@@ -84,6 +84,7 @@ namespace Corvus
         }
 
         m_RenderingContext.reset();
+        CORVUS_CORE_INFO("Rendering context destroyed");
 
         glfwDestroyWindow(m_Window);
         m_Window         = nullptr;

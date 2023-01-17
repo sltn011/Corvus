@@ -46,6 +46,7 @@ namespace Corvus
 
         bInitialized = true;
         CORVUS_CORE_TRACE("ImGui context created");
+        CORVUS_CORE_INFO("GUIController created");
     }
 
     void CGUIController::Destroy()
@@ -61,6 +62,7 @@ namespace Corvus
 
         bInitialized = false;
         CORVUS_CORE_TRACE("ImGui context destroyed");
+        CORVUS_CORE_INFO("GUIController destroyed");
     }
 
     void CGUIController::BeginFrame()
