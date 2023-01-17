@@ -25,9 +25,9 @@ namespace Corvus
         }
         CORVUS_CORE_TRACE("GLAD initialized");
 
-        CORVUS_CORE_TRACE("Vendor: {0}", glGetString(GL_VENDOR));
-        CORVUS_CORE_TRACE("Renderer: {0}", glGetString(GL_RENDERER));
-        CORVUS_CORE_TRACE("Version: {0}", glGetString(GL_VERSION));
+        CORVUS_CORE_TRACE("Vendor: {0}", reinterpret_cast<char const *>(glGetString(GL_VENDOR)));
+        CORVUS_CORE_TRACE("Renderer: {0}", reinterpret_cast<char const *>(glGetString(GL_RENDERER)));
+        CORVUS_CORE_TRACE("Version: {0}", reinterpret_cast<char const *>(glGetString(GL_VERSION)));
 
         CORVUS_CORE_ASSERT_FMT(GLVersion.major >= 4 && GLVersion.minor >= 6, "OpenGL version 4.6 minimum required!");
     }
