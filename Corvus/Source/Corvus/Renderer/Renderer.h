@@ -40,7 +40,9 @@ namespace Corvus
         static void Submit(CVertexArray &VAO, CShader &Shader);
 
         static void SubmitStaticModel(
-            CStaticModel &StaticModel, FMatrix4 const &ModelTransformMatrix, FMatrix4 const &ProjectionViewMatrix
+            CStaticModel   &StaticModel,
+            FMatrix4 const &ModelTransformMatrix,
+            FMatrix4 const &ProjectionViewMatrix
         );
 
         static void SubmitFrameBuffer(CFrameBuffer const &FrameBuffer);

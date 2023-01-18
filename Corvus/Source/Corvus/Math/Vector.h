@@ -79,13 +79,14 @@ namespace Corvus::FVector
 
     constexpr bool IsNearlyEqual(FVector3 Vector1, FVector3 Vector2, float Epsilon = Constants::SmallNum)
     {
-        return (FMath::Abs(Vector1.x - Vector2.x) < Epsilon) && (FMath::Abs(Vector1.y - Vector2.y) < Epsilon) &&
-               (FMath::Abs(Vector1.z - Vector2.z) < Epsilon);
+        return (FMath::Abs(Vector1.x - Vector2.x) < Epsilon) &&
+               (FMath::Abs(Vector1.y - Vector2.y) < Epsilon) && (FMath::Abs(Vector1.z - Vector2.z) < Epsilon);
     }
 
     constexpr bool IsNearlyEqual(FVector4 Vector1, FVector4 Vector2, float Epsilon = Constants::SmallNum)
     {
-        return (FMath::Abs(Vector1.x - Vector2.x) < Epsilon) && (FMath::Abs(Vector1.y - Vector2.y) < Epsilon) &&
+        return (FMath::Abs(Vector1.x - Vector2.x) < Epsilon) &&
+               (FMath::Abs(Vector1.y - Vector2.y) < Epsilon) &&
                (FMath::Abs(Vector1.z - Vector2.z) < Epsilon) && (FMath::Abs(Vector1.w - Vector2.w) < Epsilon);
     }
 

@@ -30,8 +30,10 @@ namespace Corvus
 
         virtual void ViewportResize(UInt32 Width, UInt32 Height) = 0;
 
-        virtual void SetClearColor(FVector4 const &ClearColor)                                             = 0;
-        virtual void Clear(bool bColorBuffer = true, bool bDepthBuffer = true, bool bStencilBuffer = true) = 0;
+        virtual void SetClearColor(FVector4 const &ClearColor) = 0;
+        virtual void Clear(
+            bool bColorBuffer = true, bool bDepthBuffer = true, bool bStencilBuffer = true
+        ) = 0;
 
         virtual void EnableDepthTest()  = 0;
         virtual void DisableDepthTest() = 0;

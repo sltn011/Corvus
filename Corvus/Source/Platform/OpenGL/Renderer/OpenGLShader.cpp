@@ -14,7 +14,9 @@ namespace Corvus
 
         FTimePoint const ShaderCreationEnd;
         FTimeDelta const ShaderCreationTime = ShaderCreationEnd - ShaderCreationBegin;
-        CORVUS_CORE_TRACE("Created OpenGL Shader {0}, took {1}ms", FilePath, ShaderCreationTime.MilliSeconds());
+        CORVUS_CORE_TRACE(
+            "Created OpenGL Shader {0}, took {1}ms", FilePath, ShaderCreationTime.MilliSeconds()
+        );
     }
 
     POpenGLShader::POpenGLShader(CString const &FilePath, std::vector<char const *> const &Parameters)
@@ -27,7 +29,9 @@ namespace Corvus
 
         FTimePoint const ShaderCreationEnd;
         FTimeDelta const ShaderCreationTime = ShaderCreationEnd - ShaderCreationBegin;
-        CORVUS_CORE_TRACE("Created OpenGL Shader {0}, took {1}ms", FilePath, ShaderCreationTime.MilliSeconds());
+        CORVUS_CORE_TRACE(
+            "Created OpenGL Shader {0}, took {1}ms", FilePath, ShaderCreationTime.MilliSeconds()
+        );
     }
 
     POpenGLShader::POpenGLShader(
@@ -211,7 +215,10 @@ namespace Corvus
     }
 
     bool POpenGLShader::IsReadFileSuccessfull(
-        CString const &FilePath, CString &OutVersionString, CString &OutVertexShaderCode, CString &OutFragmentShaderCode
+        CString const &FilePath,
+        CString       &OutVersionString,
+        CString       &OutVertexShaderCode,
+        CString       &OutFragmentShaderCode
     )
     {
         std::ifstream CodeFile(FilePath);
@@ -306,7 +313,8 @@ namespace Corvus
         return Program;
     }
 
-    GLuint POpenGLShader::CreateShader(GLenum const ShaderType, std::vector<char const *> const &ShaderCode) const
+    GLuint POpenGLShader::CreateShader(GLenum const ShaderType, std::vector<char const *> const &ShaderCode)
+        const
     {
         CORVUS_CORE_ASSERT(ShaderCode.size() != 0);
 

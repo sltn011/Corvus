@@ -10,7 +10,9 @@
 namespace Corvus
 {
 
-    CImageData CImageDataLoader::LoadFromImageFile(CString const &FilePath, ELoadImageChannels const ChannelsToLoad)
+    CImageData CImageDataLoader::LoadFromImageFile(
+        CString const &FilePath, ELoadImageChannels const ChannelsToLoad
+    )
     {
         CORVUS_CORE_TRACE("Loading Image {}", FilePath);
         FTimePoint ImageLoadStart;
@@ -142,9 +144,10 @@ namespace Corvus
             return CImageData{};
         }
 
-        SizeT  ImageWidth    = static_cast<SizeT>(Width);
-        SizeT  ImageHeight   = static_cast<SizeT>(Height);
-        UInt8 *FormattedData = FormatImageData(ImageData, ImageWidth, ImageHeight, ChannelsToLoad, PixelFormat);
+        SizeT  ImageWidth  = static_cast<SizeT>(Width);
+        SizeT  ImageHeight = static_cast<SizeT>(Height);
+        UInt8 *FormattedData =
+            FormatImageData(ImageData, ImageWidth, ImageHeight, ChannelsToLoad, PixelFormat);
 
         SizeT DataBytes = ImageWidth * ImageHeight * PixelFormatElementSize(PixelFormat);
 
@@ -198,12 +201,13 @@ namespace Corvus
             return ImageData;
         }
 
-        UInt8 const *Source          = ImageData;
-        UInt8       *Destination     = ImageData;
-        SizeT const  Size            = ImageWidth * ImageHeight;
-        SizeT const  ComponentsInSrc = 3; // 1 and 2 channeled images are forced to load with 3 channels at first
-        SizeT const  ComponentsInDst = ChannelsToLoad == ELoadImageChannels::R ? 1 : 2; // 1 for R, 2 for RG
-        SizeT const  SizeOfComponent = PixelFormatComponentSize(PixelFormat);
+        UInt8 const *Source      = ImageData;
+        UInt8       *Destination = ImageData;
+        SizeT const  Size        = ImageWidth * ImageHeight;
+        SizeT const  ComponentsInSrc =
+            3; // 1 and 2 channeled images are forced to load with 3 channels at first
+        SizeT const ComponentsInDst = ChannelsToLoad == ELoadImageChannels::R ? 1 : 2; // 1 for R, 2 for RG
+        SizeT const SizeOfComponent = PixelFormatComponentSize(PixelFormat);
 
         SizeT const SrcStep = ComponentsInSrc * SizeOfComponent;
         SizeT const DstStep = ComponentsInDst * SizeOfComponent;

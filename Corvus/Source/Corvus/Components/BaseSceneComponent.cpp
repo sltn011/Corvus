@@ -121,7 +121,8 @@ namespace Corvus
 
     bool CBaseSceneComponent::RemoveChild(CBaseSceneComponent *const Child)
     {
-        TArray<CBaseSceneComponent *>::Iterator NewEndIt = std::remove(m_Children.Begin(), m_Children.End(), Child);
+        TArray<CBaseSceneComponent *>::Iterator NewEndIt =
+            std::remove(m_Children.Begin(), m_Children.End(), Child);
         if (NewEndIt == m_Children.End())
         {
             return false;

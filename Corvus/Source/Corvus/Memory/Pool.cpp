@@ -260,8 +260,8 @@ namespace Corvus
 
             SPoolDataFormat ChildDataFormat = m_DataFormat;
             ChildDataFormat.NumElements     = FMath::Max(ChildDataFormat.NumElements, RequestedAmount);
-            ChildDataFormat.NumElements     = static_cast<SizeT>(ChildDataFormat.NumElements * PoolGrowthCoeff);
-            ChildDataFormat.NumElements     = FMath::Max(ChildDataFormat.NumElements, RequestedAmount);
+            ChildDataFormat.NumElements = static_cast<SizeT>(ChildDataFormat.NumElements * PoolGrowthCoeff);
+            ChildDataFormat.NumElements = FMath::Max(ChildDataFormat.NumElements, RequestedAmount);
             CreateChildPool(ChildDataFormat);
 
             CORVUS_CORE_TRACE(
@@ -306,7 +306,8 @@ namespace Corvus
 
         SizeT const TablePageAfterID = SlotAfterID / 8;
         UInt8 const PageSlotAfterID  = SlotAfterID % 8;
-        SizeT const FreeSlotsAfter = CountBlockSize(TablePageAfterID, PageSlotAfterID, m_DataFormat.NumElements, true);
+        SizeT const FreeSlotsAfter =
+            CountBlockSize(TablePageAfterID, PageSlotAfterID, m_DataFormat.NumElements, true);
 
         if (IndexBlockSize + FreeSlotsAfter >= NewSize)
         {

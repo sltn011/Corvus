@@ -18,7 +18,9 @@ namespace Corvus
         glClearColor(ClearColor.r, ClearColor.g, ClearColor.b, ClearColor.a);
     }
 
-    void POpenGLGraphicsAPI::Clear(bool const bColorBuffer, bool const bDepthBuffer, bool const bStencilBuffer)
+    void POpenGLGraphicsAPI::Clear(
+        bool const bColorBuffer, bool const bDepthBuffer, bool const bStencilBuffer
+    )
     {
         glClear(
             (bColorBuffer ? GL_COLOR_BUFFER_BIT : 0) | (bDepthBuffer ? GL_DEPTH_BUFFER_BIT : 0) |

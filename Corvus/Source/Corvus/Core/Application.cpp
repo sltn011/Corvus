@@ -61,7 +61,9 @@ namespace Corvus
 
             m_Window->OnUpdate();
 
-            CORVUS_EVAL_IF_CONSTEXPR(CFrameProfiler::IsEnabled, CFrameProfiler::RecordFrameProcessingTime, ElapsedTime);
+            CORVUS_EVAL_IF_CONSTEXPR(
+                CFrameProfiler::IsEnabled, CFrameProfiler::RecordFrameProcessingTime, ElapsedTime
+            );
             CORVUS_EVAL_IF_CONSTEXPR(CFrameProfiler::IsEnabled, CFrameProfiler::StopFrame);
         }
     }

@@ -101,13 +101,15 @@ namespace Corvus
             {
                 CBufferLayoutElement &Element = Layout[j];
 
-                GLint const     NumComponents    = static_cast<GLint>(Element.GetNumComponents());
-                GLenum const    Type             = POpenGLVertexBuffer::BufferLayoutTypeToGLType(Element.GetType());
+                GLint const     NumComponents = static_cast<GLint>(Element.GetNumComponents());
+                GLenum const    Type = POpenGLVertexBuffer::BufferLayoutTypeToGLType(Element.GetType());
                 GLboolean const bShouldNormalize = Element.ShouldNormalize() ? GL_TRUE : GL_FALSE;
 
                 glEnableVertexArrayAttrib(m_VAO, VertexAttribute);
                 glVertexArrayAttribBinding(m_VAO, VertexAttribute, BindingPoint);
-                glVertexArrayAttribFormat(m_VAO, VertexAttribute, NumComponents, Type, bShouldNormalize, Offset);
+                glVertexArrayAttribFormat(
+                    m_VAO, VertexAttribute, NumComponents, Type, bShouldNormalize, Offset
+                );
 
                 VertexAttribute++;
                 Offset += static_cast<GLuint>(Element.GetSize());

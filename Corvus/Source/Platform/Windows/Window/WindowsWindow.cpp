@@ -24,7 +24,9 @@ namespace Corvus
     void PWindowsWindow::Init(SWindowInitInfo const &InitInfo)
     {
         CORVUS_CORE_ASSERT_FMT(
-            !m_bIsInitialized, "Can not re-initialize already created window \"{0}\"!", m_WindowData.WindowName
+            !m_bIsInitialized,
+            "Can not re-initialize already created window \"{0}\"!",
+            m_WindowData.WindowName
         );
 
         if (s_WindowsCount == 0)
@@ -157,7 +159,9 @@ namespace Corvus
 
         if (bValue)
         {
-            glfwSetWindowMonitor(m_Window, glfwGetPrimaryMonitor(), 0, 0, WindowWidth, WindowHeight, GLFW_DONT_CARE);
+            glfwSetWindowMonitor(
+                m_Window, glfwGetPrimaryMonitor(), 0, 0, WindowWidth, WindowHeight, GLFW_DONT_CARE
+            );
         }
         else
         {
@@ -227,8 +231,11 @@ namespace Corvus
 
         glfwSetKeyCallback(
             m_Window,
-            [](GLFWwindow *const Caller, int const RawKey, int const RawScancode, int const RawAction, int const RawMods
-            )
+            [](GLFWwindow *const Caller,
+               int const         RawKey,
+               int const         RawScancode,
+               int const         RawAction,
+               int const         RawMods)
             {
                 CWindow const *const Owner = static_cast<CWindow *>(glfwGetWindowUserPointer(Caller));
 

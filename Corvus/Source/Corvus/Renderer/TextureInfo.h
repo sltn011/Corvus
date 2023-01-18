@@ -498,7 +498,10 @@ namespace Corvus
             return GetImpl()->GetPixelSizedFormatImpl(PixelFormat);
         }
 
-        UInt32 GetPixelType(EPixelFormat const PixelFormat) const { return GetImpl()->GetPixelTypeImpl(PixelFormat); }
+        UInt32 GetPixelType(EPixelFormat const PixelFormat) const
+        {
+            return GetImpl()->GetPixelTypeImpl(PixelFormat);
+        }
 
         UInt32 GetTextureWrapping(ETextureWrapping const TextureWrapping) const
         {

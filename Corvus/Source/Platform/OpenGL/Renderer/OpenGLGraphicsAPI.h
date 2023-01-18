@@ -18,7 +18,8 @@ namespace Corvus
         virtual void ViewportResize(UInt32 Width, UInt32 Height) override;
 
         virtual void SetClearColor(FVector4 const &ClearColor) override;
-        virtual void Clear(bool bColorBuffer = true, bool bDepthBuffer = true, bool bStencilBuffer = true) override;
+        virtual void Clear(bool bColorBuffer = true, bool bDepthBuffer = true, bool bStencilBuffer = true)
+            override;
 
         virtual void EnableDepthTest() override;
         virtual void DisableDepthTest() override;

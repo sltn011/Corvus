@@ -13,7 +13,8 @@ namespace Corvus
 
     FTimeDelta FTimePoint::operator-(FTimePoint const &Rhs) const
     {
-        return FTimeDelta{std::chrono::duration_cast<std::chrono::duration<float>>(m_Value - Rhs.m_Value).count()};
+        return FTimeDelta{
+            std::chrono::duration_cast<std::chrono::duration<float>>(m_Value - Rhs.m_Value).count()};
     }
 
 } // namespace Corvus

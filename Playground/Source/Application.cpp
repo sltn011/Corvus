@@ -39,9 +39,11 @@ namespace Corvus
 
             SImageFormat       ScreenQuadFormat{ScreenSize.x, ScreenSize.y, EPixelFormat::RGBA8};
             STextureParameters ScreenQuadParameters{};
-            TestFrameBufferAttachment[0] = CTexture2DBuffer::CreateEmpty(ScreenQuadFormat, ScreenQuadParameters);
+            TestFrameBufferAttachment[0] =
+                CTexture2DBuffer::CreateEmpty(ScreenQuadFormat, ScreenQuadParameters);
 
-            TestFrameBuffer = CFrameBuffer::Create(ScreenSize.x, ScreenSize.y, std::move(TestFrameBufferAttachment));
+            TestFrameBuffer =
+                CFrameBuffer::Create(ScreenSize.x, ScreenSize.y, std::move(TestFrameBufferAttachment));
         }
 
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
@@ -138,8 +140,11 @@ namespace Corvus
             else if (Event.GetEventType() == CEvent::EEventType::WindowResize)
             {
                 CWindowResizeEvent &WREvent = CastEvent<CWindowResizeEvent>(Event);
-                CPerspectiveCamera *Camera  = static_cast<CPerspectiveCamera *>(PlaygroundScene.GetPlayerCamera());
-                Camera->SetViewportSize(static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight));
+                CPerspectiveCamera *Camera =
+                    static_cast<CPerspectiveCamera *>(PlaygroundScene.GetPlayerCamera());
+                Camera->SetViewportSize(
+                    static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight)
+                );
             }
             else if (Event.GetEventType() == CEvent::EEventType::MouseScroll)
             {
@@ -192,7 +197,9 @@ namespace Corvus
                 CModelLoader::LoadStaticModelFromFile("./Assets/Models/sponza.glb");
 
             // StaticModel
-            StaticModelsAssets.emplace(LoadedModelData.StaticModel.UUID, std::move(LoadedModelData.StaticModel));
+            StaticModelsAssets.emplace(
+                LoadedModelData.StaticModel.UUID, std::move(LoadedModelData.StaticModel)
+            );
 
             // Textures
             for (CTexture2D &Texture : LoadedModelData.Textures)
@@ -237,7 +244,8 @@ namespace Corvus
             for (TPoolable<CEntity> const &Entity : PlaygroundScene.GetEntities())
             {
                 FUUID StaticModelUUID = Entity->StaticMeshComponent->StaticModelRef.GetUUID();
-                Entity->StaticMeshComponent->StaticModelRef.SetRawPtr(&StaticModelsAssets.at(StaticModelUUID));
+                Entity->StaticMeshComponent->StaticModelRef.SetRawPtr(&StaticModelsAssets.at(StaticModelUUID)
+                );
             }
         }
 

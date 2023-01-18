@@ -38,7 +38,10 @@ namespace Corvus
             CEvent::EEventCategory::Input | CEvent::EEventCategory::Mouse, CEvent::EEventType::MouseScroll
         );
 
-        CMouseScrollEvent(float OffsetXValue, float OffsetYValue) : OffsetX{OffsetXValue}, OffsetY{OffsetYValue} {}
+        CMouseScrollEvent(float OffsetXValue, float OffsetYValue)
+            : OffsetX{OffsetXValue}, OffsetY{OffsetYValue}
+        {
+        }
 
         virtual CString ToString() const override
         {
@@ -55,7 +58,8 @@ namespace Corvus
     {
     public:
         CORVUS_EVENT_GENERATED_BODY(
-            CEvent::EEventCategory::Input | CEvent::EEventCategory::Mouse | CEvent::EEventCategory::MouseButton,
+            CEvent::EEventCategory::Input | CEvent::EEventCategory::Mouse |
+                CEvent::EEventCategory::MouseButton,
             CEvent::EEventType::MouseButtonPress
         );
 
@@ -79,7 +83,8 @@ namespace Corvus
     {
     public:
         CORVUS_EVENT_GENERATED_BODY(
-            CEvent::EEventCategory::Input | CEvent::EEventCategory::Mouse | CEvent::EEventCategory::MouseButton,
+            CEvent::EEventCategory::Input | CEvent::EEventCategory::Mouse |
+                CEvent::EEventCategory::MouseButton,
             CEvent::EEventType::MouseButtonRelease
         );
 

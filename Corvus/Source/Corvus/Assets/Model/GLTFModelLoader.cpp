@@ -194,7 +194,9 @@ namespace Corvus
             }
 
             // TODO: sRGB check?
-            return CImageDataLoader::LoadFromMemory(Image.image.data(), Image.width, Image.height, PixelFormat, true);
+            return CImageDataLoader::LoadFromMemory(
+                Image.image.data(), Image.width, Image.height, PixelFormat, true
+            );
         }
 
         std::vector<CTexture2D> LoadTextures(tinygltf::Model const &GLTFModel)
@@ -226,7 +228,9 @@ namespace Corvus
             return Textures;
         }
 
-        std::vector<CMaterial> LoadMaterials(tinygltf::Model const &GLTFModel, std::vector<CTexture2D> const &Textures)
+        std::vector<CMaterial> LoadMaterials(
+            tinygltf::Model const &GLTFModel, std::vector<CTexture2D> const &Textures
+        )
         {
             std::vector<CMaterial> Materials(GLTFModel.materials.size());
 
@@ -238,7 +242,8 @@ namespace Corvus
                 // Albedo
                 if (MaterialInfo.pbrMetallicRoughness.baseColorTexture.index == -1) // Vertex color
                 {
-                    std::vector<double> const &VertexColorData = MaterialInfo.pbrMetallicRoughness.baseColorFactor;
+                    std::vector<double> const &VertexColorData =
+                        MaterialInfo.pbrMetallicRoughness.baseColorFactor;
 
                     FVector4 VertexColor{};
                     VertexColor.r = static_cast<float>(VertexColorData[0]);
@@ -307,9 +312,10 @@ namespace Corvus
             SizeT SrcStride          = BufferViewStride == 0 ? SrcElementSize : BufferViewStride;
             SizeT SrcDataStartOffset = BufferViewOffset + AccessorOffset;
 
-            SizeT DstElementSize = ElementFormat.NumComponents * 4; // Types used in buffers are int or float(4 byte)
-            SizeT DstStride      = DstElementSize;
-            SizeT DstDataBytes   = NumElements * DstElementSize;
+            SizeT DstElementSize =
+                ElementFormat.NumComponents * 4; // Types used in buffers are int or float(4 byte)
+            SizeT DstStride    = DstElementSize;
+            SizeT DstDataBytes = NumElements * DstElementSize;
 
             OutDstBuffer.resize(DstDataBytes);
 
@@ -445,7 +451,10 @@ namespace Corvus
         }
 
         void TransformAttributeData(
-            FVector3 *SrcData, SizeT const NumElements, CString const &AttributeKey, FMatrix4 const &TransformMatrix
+            FVector3       *SrcData,
+            SizeT const     NumElements,
+            CString const  &AttributeKey,
+            FMatrix4 const &TransformMatrix
         )
         {
             float WValue = 0.0f;
@@ -475,7 +484,8 @@ namespace Corvus
         void ReadBufferData(
             SBufferReadParams BufferReadParams,
             TReadElementReturnType (*ReadElementFunction)(UInt8 const *SrcData, SElementFormat ElementFormat),
-            void (*WriteElementFunction)(TReadElementReturnType const &SrcData, SizeT NumComponents, UInt8 *DstData)
+            void (*WriteElementFunction
+            )(TReadElementReturnType const &SrcData, SizeT NumComponents, UInt8 *DstData)
         )
         {
             SizeT SrcOffset = 0;
@@ -512,7 +522,9 @@ namespace Corvus
 
             std::vector<UInt8> AttributeData;
             SBufferReadParams  BufferReadParams;
-            FillBufferReadParams(&Accessor, BufferView, Buffer, ElementFormat, AttributeData, BufferReadParams);
+            FillBufferReadParams(
+                &Accessor, BufferView, Buffer, ElementFormat, AttributeData, BufferReadParams
+            );
 
             if (ElementFormat.bIsInteger)
             {
@@ -668,7 +680,9 @@ namespace Corvus
             Int32 MeshIndex = RootNode.mesh;
             if (MeshIndex == -1)
             {
-                CORVUS_CORE_WARN("Not-a-model node {} found in gltf model file and was skipped!", RootNode.name);
+                CORVUS_CORE_WARN(
+                    "Not-a-model node {} found in gltf model file and was skipped!", RootNode.name
+                );
                 return;
             }
 
@@ -678,8 +692,9 @@ namespace Corvus
             std::vector<SizeT> ChildNodesIndexes = GetChildNodesIndexes(RootNode);
             for (SizeT const ChildNodeIndex : ChildNodesIndexes)
             {
-                tinygltf::Node const &ChildNode          = GLTFModel.nodes[ChildNodeIndex];
-                FMatrix4 const &ChildNodeTransformMatrix = NodeTransformMatrix * GetNodeLocalTransformMatrix(ChildNode);
+                tinygltf::Node const &ChildNode = GLTFModel.nodes[ChildNodeIndex];
+                FMatrix4 const       &ChildNodeTransformMatrix =
+                    NodeTransformMatrix * GetNodeLocalTransformMatrix(ChildNode);
                 ProcessMeshNodesTree(GLTFModel, Materials, StaticModel, ChildNode, ChildNodeTransformMatrix);
             }
         }

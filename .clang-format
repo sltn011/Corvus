@@ -29,7 +29,7 @@ BreakBeforeTernaryOperators: 'true'
 BreakConstructorInitializers: BeforeColon
 BreakInheritanceList: AfterColon
 BreakStringLiterals: 'true'
-ColumnLimit: '120'
+ColumnLimit: '110'
 CompactNamespaces: 'false'
 ConstructorInitializerAllOnOneLineOrOnePerLine: 'true'
 Cpp11BracedListStyle: 'true'

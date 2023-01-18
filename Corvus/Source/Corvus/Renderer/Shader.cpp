@@ -26,7 +26,9 @@ namespace Corvus
         return ShaderCreation(FilePath);
     }
 
-    TOwn<CShader> CShader::CreateFromFile(CString const &FilePath, std::vector<char const *> const &Parameters)
+    TOwn<CShader> CShader::CreateFromFile(
+        CString const &FilePath, std::vector<char const *> const &Parameters
+    )
     {
         return ShaderCreation(FilePath, Parameters);
     }

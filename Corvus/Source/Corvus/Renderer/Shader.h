@@ -20,7 +20,8 @@ namespace Corvus
         );
 
         static [[nodiscard]] TOwn<CShader> CreateFromMemory(
-            std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+            std::vector<char const *> const &VertexShaderCode,
+            std::vector<char const *> const &FragmentShaderCode
         );
 
         virtual ~CShader()                  = default;
@@ -32,7 +33,8 @@ namespace Corvus
         virtual bool Recompile(CString const &FilePath)                                              = 0;
         virtual bool Recompile(CString const &FilePath, std::vector<char const *> const &Parameters) = 0;
         virtual bool Recompile(
-            std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+            std::vector<char const *> const &VertexShaderCode,
+            std::vector<char const *> const &FragmentShaderCode
         ) = 0;
 
         virtual void Bind()   = 0;

@@ -5,7 +5,8 @@
 namespace Corvus
 {
 
-    CTexture2D::CTexture2D(TOwn<CTexture2DBuffer> &&Texture2DBuffer) : m_TextureBuffer{std::move(Texture2DBuffer)}
+    CTexture2D::CTexture2D(TOwn<CTexture2DBuffer> &&Texture2DBuffer)
+        : m_TextureBuffer{std::move(Texture2DBuffer)}
     {
     }
 

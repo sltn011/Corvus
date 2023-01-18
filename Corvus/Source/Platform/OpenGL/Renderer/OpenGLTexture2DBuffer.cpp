@@ -10,7 +10,9 @@
 namespace Corvus
 {
 
-    POpenGLTexture2DBuffer::POpenGLTexture2DBuffer(CImageData const &Image, STextureParameters const &TextureParameters)
+    POpenGLTexture2DBuffer::POpenGLTexture2DBuffer(
+        CImageData const &Image, STextureParameters const &TextureParameters
+    )
     {
         Create(Image.GetImageFormat(), Image.GetImageRawData(), TextureParameters);
     }

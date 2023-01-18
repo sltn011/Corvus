@@ -8,7 +8,8 @@ namespace Corvus
     {
     }
 
-    FTransform::FTransform(FVector3 const &Position) : m_Position{Position}, m_Scale{FVector::OneVec}, m_Rotation{}
+    FTransform::FTransform(FVector3 const &Position)
+        : m_Position{Position}, m_Scale{FVector::OneVec}, m_Rotation{}
     {
     }
 

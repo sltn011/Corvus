@@ -20,9 +20,15 @@ namespace Corvus
     class CImageDataLoader
     {
     public:
-        static [[nodiscard]] CImageData LoadFromImageFile(CString const &FilePath, ELoadImageChannels ChannelsToLoad);
+        static [[nodiscard]] CImageData LoadFromImageFile(
+            CString const &FilePath, ELoadImageChannels ChannelsToLoad
+        );
         static [[nodiscard]] CImageData LoadFromMemory(
-            UInt8 const *ImageData, SizeT ImageWidth, SizeT ImageHeight, EPixelFormat PixelFormat, bool bIsSRGB
+            UInt8 const *ImageData,
+            SizeT        ImageWidth,
+            SizeT        ImageHeight,
+            EPixelFormat PixelFormat,
+            bool         bIsSRGB
         );
 
     private:

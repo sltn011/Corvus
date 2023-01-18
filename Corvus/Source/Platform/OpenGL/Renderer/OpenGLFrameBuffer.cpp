@@ -27,7 +27,8 @@ namespace Corvus
             m_ColorAttachments.end(),
             [&](TOwn<CTexture2DBuffer> const &ColorAttachment) mutable
             {
-                POpenGLTexture2DBuffer *OpenGLTexture = static_cast<POpenGLTexture2DBuffer *>(ColorAttachment.get());
+                POpenGLTexture2DBuffer *OpenGLTexture =
+                    static_cast<POpenGLTexture2DBuffer *>(ColorAttachment.get());
 
                 GLenum const Unit = GL_COLOR_ATTACHMENT0 + ColorAttachmentIndex;
                 glNamedFramebufferTexture(m_FBO, Unit, OpenGLTexture->GetID(), 0);

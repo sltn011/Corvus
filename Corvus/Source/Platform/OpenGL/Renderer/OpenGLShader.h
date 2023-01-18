@@ -16,7 +16,8 @@ namespace Corvus
         POpenGLShader(CString const &FilePath);
         POpenGLShader(CString const &FilePath, std::vector<char const *> const &Parameters);
         POpenGLShader(
-            std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+            std::vector<char const *> const &VertexShaderCode,
+            std::vector<char const *> const &FragmentShaderCode
         );
 
         ~POpenGLShader();
@@ -29,7 +30,8 @@ namespace Corvus
         virtual bool Recompile(CString const &FilePath) override;
         virtual bool Recompile(CString const &FilePath, std::vector<char const *> const &Parameters) override;
         virtual bool Recompile(
-            std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+            std::vector<char const *> const &VertexShaderCode,
+            std::vector<char const *> const &FragmentShaderCode
         ) override;
 
         virtual void Bind() override;
@@ -50,7 +52,8 @@ namespace Corvus
     private:
         GLuint CreateFromFile(CString const &FilePath, std::vector<char const *> const &Parameters);
         GLuint CreateFromMemory(
-            std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+            std::vector<char const *> const &VertexShaderCode,
+            std::vector<char const *> const &FragmentShaderCode
         );
 
         bool IsReadFileSuccessfull(
@@ -61,7 +64,8 @@ namespace Corvus
         );
 
         GLuint CreateProgram(
-            std::vector<char const *> const &VertexShaderCode, std::vector<char const *> const &FragmentShaderCode
+            std::vector<char const *> const &VertexShaderCode,
+            std::vector<char const *> const &FragmentShaderCode
         );
         GLuint CreateShader(GLenum ShaderType, std::vector<char const *> const &ShaderCode) const;
 

@@ -76,7 +76,10 @@ namespace Corvus
             }
             friend Iterator operator-(difference_type const Delta, Iterator const &It) { return It - Delta; }
 
-            friend difference_type operator-(Iterator const &Lhs, Iterator const &Rhs) { return Lhs.m_Ptr - Rhs.m_Ptr; }
+            friend difference_type operator-(Iterator const &Lhs, Iterator const &Rhs)
+            {
+                return Lhs.m_Ptr - Rhs.m_Ptr;
+            }
 
             reference operator[](difference_type const Index) { return *(*this + Index); }
 
@@ -85,7 +88,10 @@ namespace Corvus
             friend bool operator<=(Iterator const &Lhs, Iterator const &Rhs) { return !(Lhs > Rhs); }
             friend bool operator>=(Iterator const &Lhs, Iterator const &Rhs) { return !(Lhs < Rhs); }
 
-            friend bool operator==(Iterator const &Lhs, Iterator const &Rhs) { return Lhs.m_Ptr == Rhs.m_Ptr; }
+            friend bool operator==(Iterator const &Lhs, Iterator const &Rhs)
+            {
+                return Lhs.m_Ptr == Rhs.m_Ptr;
+            }
             friend bool operator!=(Iterator const &Lhs, Iterator const &Rhs) { return !(Lhs == Rhs); }
 
         private:
@@ -141,7 +147,10 @@ namespace Corvus
                 ConstIterator New = It;
                 return New += Delta;
             }
-            friend ConstIterator operator+(difference_type const Delta, ConstIterator const &It) { return It + Delta; }
+            friend ConstIterator operator+(difference_type const Delta, ConstIterator const &It)
+            {
+                return It + Delta;
+            }
 
             ConstIterator &operator-=(difference_type const Delta)
             {
@@ -153,7 +162,10 @@ namespace Corvus
                 ConstIterator New = It;
                 return New -= Delta;
             }
-            friend ConstIterator operator-(difference_type const Delta, ConstIterator const &It) { return It - Delta; }
+            friend ConstIterator operator-(difference_type const Delta, ConstIterator const &It)
+            {
+                return It - Delta;
+            }
 
             friend difference_type operator-(ConstIterator const &Lhs, ConstIterator const &Rhs)
             {
@@ -162,16 +174,28 @@ namespace Corvus
 
             reference operator[](difference_type const Index) { return *(*this + Index); }
 
-            friend bool operator<(ConstIterator const &Lhs, ConstIterator const &Rhs) { return Rhs - Lhs > 0; }
+            friend bool operator<(ConstIterator const &Lhs, ConstIterator const &Rhs)
+            {
+                return Rhs - Lhs > 0;
+            }
             friend bool operator>(ConstIterator const &Lhs, ConstIterator const &Rhs) { return Rhs < Lhs; }
-            friend bool operator<=(ConstIterator const &Lhs, ConstIterator const &Rhs) { return !(Lhs > Rhs); }
-            friend bool operator>=(ConstIterator const &Lhs, ConstIterator const &Rhs) { return !(Lhs < Rhs); }
+            friend bool operator<=(ConstIterator const &Lhs, ConstIterator const &Rhs)
+            {
+                return !(Lhs > Rhs);
+            }
+            friend bool operator>=(ConstIterator const &Lhs, ConstIterator const &Rhs)
+            {
+                return !(Lhs < Rhs);
+            }
 
             friend bool operator==(ConstIterator const &Lhs, ConstIterator const &Rhs)
             {
                 return Lhs.m_Ptr == Rhs.m_Ptr;
             }
-            friend bool operator!=(ConstIterator const &Lhs, ConstIterator const &Rhs) { return !(Lhs == Rhs); }
+            friend bool operator!=(ConstIterator const &Lhs, ConstIterator const &Rhs)
+            {
+                return !(Lhs == Rhs);
+            }
 
         private:
             pointer m_Ptr;

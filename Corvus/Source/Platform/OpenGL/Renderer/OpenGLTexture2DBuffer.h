@@ -41,7 +41,9 @@ namespace Corvus
 
     private:
         void Create(
-            SImageFormat const &ImageFormat, UInt8 const *ImageData, STextureParameters const &TextureParameters
+            SImageFormat const       &ImageFormat,
+            UInt8 const              *ImageData,
+            STextureParameters const &TextureParameters
         );
 
         static GLsizei CalculateNumberOfLevels(GLsizei Width, GLsizei Height);

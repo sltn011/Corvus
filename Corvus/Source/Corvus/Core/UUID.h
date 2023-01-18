@@ -34,7 +34,10 @@ namespace std
     template<>
     struct hash<::Corvus::FUUID>
     {
-        inline size_t operator()(::Corvus::FUUID const &UUID) const noexcept { return hash<UInt64>{}(UUID.m_Value); }
+        inline size_t operator()(::Corvus::FUUID const &UUID) const noexcept
+        {
+            return hash<UInt64>{}(UUID.m_Value);
+        }
     };
 
 } // namespace std
