@@ -8,6 +8,13 @@ namespace Corvus
 
     class CImageDataLoader;
 
+    struct SImageFormat
+    {
+        SizeT        ImageWidth  = 0;
+        SizeT        ImageHeight = 0;
+        EPixelFormat PixelFormat = EPixelFormat::RGBA8;
+    };
+
     class CImageData
     {
     private:
@@ -16,20 +23,12 @@ namespace Corvus
         CImageData() = default;
 
     public:
-        SizeT        GetImageWidth() const { return m_ImageWidth; }
-        SizeT        GetImageHeight() const { return m_ImageHeight; }
+        SImageFormat GetImageFormat() const { return m_ImageFormat; }
         UInt8 const *GetImageRawData() const { return m_ImageRawData.data(); }
-        EPixelFormat GetPixelFormat() const { return m_PixelFormat; }
-        bool         IsSRGB() const { return m_bIsSRGB; }
-
-        void SetIsSRGB(bool bValue) { m_bIsSRGB = bValue; }
 
     private:
-        SizeT              m_ImageWidth  = 0;
-        SizeT              m_ImageHeight = 0;
+        SImageFormat       m_ImageFormat;
         std::vector<UInt8> m_ImageRawData;
-        EPixelFormat       m_PixelFormat = EPixelFormat::RGBA8;
-        bool               m_bIsSRGB     = false;
     };
 
 } // namespace Corvus

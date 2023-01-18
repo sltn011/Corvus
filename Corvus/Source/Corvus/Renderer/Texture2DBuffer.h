@@ -1,12 +1,11 @@
 #ifndef CORVUS_SOURCE_CORVUS_RENDERER_TEXTURE2DBUFFER_H
 #define CORVUS_SOURCE_CORVUS_RENDERER_TEXTURE2DBUFFER_H
 
+#include "Corvus/Assets/Texture/ImageData.h"
 #include "Corvus/Renderer/TextureBuffer.h"
 
 namespace Corvus
 {
-
-    class CImageData;
 
     class CTexture2DBuffer : public CTextureBuffer
     {
@@ -16,6 +15,10 @@ namespace Corvus
     public:
         static [[nodiscard]] TOwn<CTexture2DBuffer> Create(
             CImageData const &Image, STextureParameters const &TextureParameters
+        );
+
+        static [[nodiscard]] TOwn<CTexture2DBuffer> CreateEmpty(
+            SImageFormat const &ImageFormat, STextureParameters const &TextureParameters
         );
 
         virtual ~CTexture2DBuffer();

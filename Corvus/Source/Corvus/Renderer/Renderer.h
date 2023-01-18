@@ -6,6 +6,7 @@
 namespace Corvus
 {
 
+    class CFrameBuffer;
     class CGraphicsAPI;
     class CShader;
     class CVertexArray;
@@ -33,14 +34,25 @@ namespace Corvus
         static void EnableBackfaceCulling(bool bIsCulledCCW = true);
         static void DisableBackfaceCulling();
 
+        static void SetDefaultRenderTarget();
+        static void SetRenderTarget(CFrameBuffer const &Target);
+
         static void Submit(CVertexArray &VAO, CShader &Shader);
 
         static void SubmitStaticModel(
             CStaticModel &StaticModel, FMatrix4 const &ModelTransformMatrix, FMatrix4 const &ProjectionViewMatrix
         );
 
+        static void SubmitFrameBuffer(CFrameBuffer const &FrameBuffer);
+
+    private:
+        static void InitScreenQuad();
+
     private:
         static TOwn<CGraphicsAPI> s_GraphicsAPI;
+
+        static TOwn<CVertexArray> s_ScreenQuad;
+        static TOwn<CShader>      s_RenderScreenQuadShader;
     };
 
 } // namespace Corvus

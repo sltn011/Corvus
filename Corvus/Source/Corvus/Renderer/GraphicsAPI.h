@@ -39,6 +39,8 @@ namespace Corvus
         virtual void EnableBackfaceCulling(bool bIsCulledCCW) = 0;
         virtual void DisableBackfaceCulling()                 = 0;
 
+        virtual void SetDefaultRenderTarget() = 0;
+
         virtual void DrawIndexed(UInt32 NumIndices) = 0;
 
     private:

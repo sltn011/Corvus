@@ -14,12 +14,15 @@ namespace Corvus
         using Super = CTexture2DBuffer;
 
         POpenGLTexture2DBuffer(CImageData const &Image, STextureParameters const &TextureParameters);
+        POpenGLTexture2DBuffer(SImageFormat const &ImageFormat, STextureParameters const &TextureParameters);
         virtual ~POpenGLTexture2DBuffer();
 
         POpenGLTexture2DBuffer(POpenGLTexture2DBuffer const &) = delete;
         POpenGLTexture2DBuffer(POpenGLTexture2DBuffer &&Rhs) noexcept;
         POpenGLTexture2DBuffer &operator=(POpenGLTexture2DBuffer const &) = delete;
         POpenGLTexture2DBuffer &operator=(POpenGLTexture2DBuffer &&Rhs) noexcept;
+
+        GLuint GetID() const { return m_TextureID; }
 
         virtual void BindUnit(UInt32 Unit) override;
         virtual void LoadInShader(CShader &Shader, CString const &Name, UInt32 Unit) override;
@@ -37,6 +40,10 @@ namespace Corvus
         virtual void DisableAnisotropicFiltering() override;
 
     private:
+        void Create(
+            SImageFormat const &ImageFormat, UInt8 const *ImageData, STextureParameters const &TextureParameters
+        );
+
         static GLsizei CalculateNumberOfLevels(GLsizei Width, GLsizei Height);
 
         GLuint m_TextureID = 0;

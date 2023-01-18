@@ -6,6 +6,7 @@
 #include "Corvus/Assets/Texture/Texture2D.h"
 #include "Corvus/Components/StaticMeshComponent.h"
 #include "Corvus/Components/TransformComponent.h"
+#include "Corvus/Renderer/FrameBuffer.h"
 #include "Corvus/Scene/Entity.h"
 #include "Corvus/Scene/Scene.h"
 
@@ -31,6 +32,16 @@ namespace Corvus
             LoadAssets();
             CreateScene();
             WireUpAssets();
+
+            FUIntVector2 ScreenSize = CApplication::GetInstance().GetWindow().GetWindowSize();
+
+            std::vector<TOwn<CTexture2DBuffer>> TestFrameBufferAttachment(1);
+
+            SImageFormat       ScreenQuadFormat{ScreenSize.x, ScreenSize.y, EPixelFormat::RGBA8};
+            STextureParameters ScreenQuadParameters{};
+            TestFrameBufferAttachment[0] = CTexture2DBuffer::CreateEmpty(ScreenQuadFormat, ScreenQuadParameters);
+
+            TestFrameBuffer = CFrameBuffer::Create(ScreenSize.x, ScreenSize.y, std::move(TestFrameBufferAttachment));
         }
 
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
@@ -80,6 +91,10 @@ namespace Corvus
                 Camera->ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
             }
 
+            // Render to FrameBuffer
+            CRenderer::SetRenderTarget(*TestFrameBuffer);
+            CRenderer::Clear();
+
             for (TPoolable<CEntity> const &Entity : PlaygroundScene.GetEntities())
             {
                 CRenderer::SubmitStaticModel(
@@ -88,6 +103,10 @@ namespace Corvus
                     Camera->GetProjectionViewMatrix()
                 );
             }
+
+            // Back to Window FrameBuffer
+            CRenderer::SetDefaultRenderTarget();
+            CRenderer::SubmitFrameBuffer(*TestFrameBuffer);
 
             CRenderer::EndScene();
         }
@@ -228,6 +247,8 @@ namespace Corvus
         std::unordered_map<FUUID, CTexture2D>   TexturesAssets;
         std::unordered_map<FUUID, CMaterial>    MaterialsAssets;
         std::unordered_map<FUUID, CStaticModel> StaticModelsAssets;
+
+        TOwn<CFrameBuffer> TestFrameBuffer;
 
         bool     bCameraMode = false;
         FVector2 CursorPos;

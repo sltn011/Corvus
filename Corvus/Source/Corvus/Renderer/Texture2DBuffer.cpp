@@ -2,7 +2,6 @@
 
 #include "Corvus/Renderer/Texture2DBuffer.h"
 
-#include "Corvus/Assets/Texture/ImageData.h"
 #include "Platform/OpenGL/Renderer/OpenGLTexture2DBuffer.h"
 
 namespace Corvus
@@ -23,6 +22,21 @@ namespace Corvus
         {
         case CGraphicsAPI::EAPI::OpenGL:
             return MakeOwned<POpenGLTexture2DBuffer>(Image, TextureParameters);
+
+        default:
+            CORVUS_NO_ENTRY_FMT("Undefined Graphics API!");
+        }
+        return nullptr;
+    }
+
+    TOwn<CTexture2DBuffer> CTexture2DBuffer::CreateEmpty(
+        SImageFormat const &ImageFormat, STextureParameters const &TextureParameters
+    )
+    {
+        switch (CGraphicsAPI::GetAPI())
+        {
+        case CGraphicsAPI::EAPI::OpenGL:
+            return MakeOwned<POpenGLTexture2DBuffer>(ImageFormat, TextureParameters);
 
         default:
             CORVUS_NO_ENTRY_FMT("Undefined Graphics API!");

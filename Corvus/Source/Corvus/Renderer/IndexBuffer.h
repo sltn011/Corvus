@@ -28,7 +28,7 @@ namespace Corvus
         UInt32 GetNumIndices() const;
 
     protected:
-        UInt32 m_NumIndices;
+        UInt32 m_NumIndices = 0;
     };
 
 } // namespace Corvus

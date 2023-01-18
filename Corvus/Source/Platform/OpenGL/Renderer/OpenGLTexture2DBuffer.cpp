@@ -12,55 +12,14 @@ namespace Corvus
 
     POpenGLTexture2DBuffer::POpenGLTexture2DBuffer(CImageData const &Image, STextureParameters const &TextureParameters)
     {
-        glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
+        Create(Image.GetImageFormat(), Image.GetImageRawData(), TextureParameters);
+    }
 
-        EPixelFormat PixelFormat   = Image.GetPixelFormat();
-        GLsizei      TextureWidth  = static_cast<GLsizei>(Image.GetImageWidth());
-        GLsizei      TextureHeight = static_cast<GLsizei>(Image.GetImageHeight());
-
-        // Allocate immutable storage
-        glTextureStorage2D(
-            m_TextureID,
-            TextureParameters.bHasMipmaps ? CalculateNumberOfLevels(TextureWidth, TextureHeight) : 1,
-            static_cast<GLenum>(POpenGLTextureInfo{}.GetPixelSizedFormat(PixelFormat)),
-            TextureWidth,
-            TextureHeight
-        );
-
-        // Fill data
-        glTextureSubImage2D(
-            m_TextureID,
-            0,
-            0,
-            0,
-            TextureWidth,
-            TextureHeight,
-            static_cast<GLenum>(POpenGLTextureInfo{}.GetPixelBaseFormat(PixelFormat)),
-            static_cast<GLenum>(POpenGLTextureInfo{}.GetPixelType(PixelFormat)),
-            Image.GetImageRawData()
-        );
-
-        m_Info.DataFormat.TextureWidth  = Image.GetImageWidth();
-        m_Info.DataFormat.TextureHeight = Image.GetImageHeight();
-        m_Info.DataFormat.PixelFormat   = Image.GetPixelFormat();
-        m_Info.bIsSRGB                  = Image.IsSRGB();
-
-        SetWrappingS(TextureParameters.WrappingS);
-        SetWrappingT(TextureParameters.WrappingT);
-        SetWrappingR(TextureParameters.WrappingR);
-
-        SetMinFiltering(TextureParameters.MinFiltering);
-        SetMagFiltering(TextureParameters.MagFiltering);
-
-        if (TextureParameters.bHasMipmaps)
-        {
-            GenerateMipmaps();
-        }
-
-        if (TextureParameters.bHasAnisotropicFiltering)
-        {
-            EnableAnisotropicFiltering();
-        }
+    POpenGLTexture2DBuffer::POpenGLTexture2DBuffer(
+        SImageFormat const &ImageFormat, STextureParameters const &TextureParameters
+    )
+    {
+        Create(ImageFormat, nullptr, TextureParameters);
     }
 
     POpenGLTexture2DBuffer::~POpenGLTexture2DBuffer()
@@ -162,6 +121,63 @@ namespace Corvus
 
         glTextureParameterf(m_TextureID, GL_TEXTURE_MAX_ANISOTROPY, 1.0f);
         m_Info.Parameters.bHasAnisotropicFiltering = false;
+    }
+
+    void POpenGLTexture2DBuffer::Create(
+        SImageFormat const &ImageFormat, UInt8 const *ImageData, STextureParameters const &TextureParameters
+    )
+    {
+        glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
+
+        EPixelFormat PixelFormat   = ImageFormat.PixelFormat;
+        GLsizei      TextureWidth  = static_cast<GLsizei>(ImageFormat.ImageWidth);
+        GLsizei      TextureHeight = static_cast<GLsizei>(ImageFormat.ImageHeight);
+
+        // Allocate immutable storage
+        glTextureStorage2D(
+            m_TextureID,
+            TextureParameters.bHasMipmaps ? CalculateNumberOfLevels(TextureWidth, TextureHeight) : 1,
+            static_cast<GLenum>(POpenGLTextureInfo{}.GetPixelSizedFormat(PixelFormat)),
+            TextureWidth,
+            TextureHeight
+        );
+
+        // Fill data
+        if (ImageData)
+        {
+            glTextureSubImage2D(
+                m_TextureID,
+                0,
+                0,
+                0,
+                TextureWidth,
+                TextureHeight,
+                static_cast<GLenum>(POpenGLTextureInfo{}.GetPixelBaseFormat(PixelFormat)),
+                static_cast<GLenum>(POpenGLTextureInfo{}.GetPixelType(PixelFormat)),
+                ImageData
+            );
+        }
+
+        m_Info.DataFormat.TextureWidth  = ImageFormat.ImageWidth;
+        m_Info.DataFormat.TextureHeight = ImageFormat.ImageHeight;
+        m_Info.DataFormat.PixelFormat   = ImageFormat.PixelFormat;
+
+        SetWrappingS(TextureParameters.WrappingS);
+        SetWrappingT(TextureParameters.WrappingT);
+        SetWrappingR(TextureParameters.WrappingR);
+
+        SetMinFiltering(TextureParameters.MinFiltering);
+        SetMagFiltering(TextureParameters.MagFiltering);
+
+        if (TextureParameters.bHasMipmaps)
+        {
+            GenerateMipmaps();
+        }
+
+        if (TextureParameters.bHasAnisotropicFiltering)
+        {
+            EnableAnisotropicFiltering();
+        }
     }
 
     GLsizei POpenGLTexture2DBuffer::CalculateNumberOfLevels(GLsizei const Width, GLsizei const Height)

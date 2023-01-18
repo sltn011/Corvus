@@ -539,7 +539,6 @@ namespace Corvus
         ETextureType       Type;
         STextureDataFormat DataFormat;
         STextureParameters Parameters;
-        bool               bIsSRGB = false;
     };
 
 } // namespace Corvus

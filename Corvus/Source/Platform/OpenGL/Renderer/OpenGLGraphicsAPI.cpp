@@ -47,6 +47,11 @@ namespace Corvus
         glDisable(GL_CULL_FACE);
     }
 
+    void POpenGLGraphicsAPI::SetDefaultRenderTarget()
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
     void POpenGLGraphicsAPI::DrawIndexed(UInt32 NumIndices)
     {
         glDrawElements(GL_TRIANGLES, NumIndices, GL_UNSIGNED_INT, nullptr);
