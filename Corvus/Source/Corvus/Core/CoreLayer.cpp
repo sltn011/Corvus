@@ -44,7 +44,7 @@ namespace Corvus
         }
     }
 
-    void CCoreLayer::Render()
+    void CCoreLayer::OnGUIRender()
     {
     }
 

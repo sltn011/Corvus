@@ -26,6 +26,7 @@ project "CorvusEditor"
 	includedirs
 	{
 		"%{wks.location}/Corvus/Source",
+		"%{wks.location}/Corvus/Dependencies/imgui/Source",
 		"%{wks.location}/Corvus/Dependencies/spdlog/include",
 		"%{wks.location}/Corvus/Dependencies/glm"
 	}
@@ -49,6 +50,11 @@ project "CorvusEditor"
 		symbols "On"
 		
 	filter { "configurations:Release" }
+		defines
+		{
+			"CORVUS_RELEASE"
+		}
+		
 		flags
 		{
 			"MultiProcessorCompile"

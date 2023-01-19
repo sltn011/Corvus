@@ -49,6 +49,11 @@ project "Playground"
 		symbols "On"
 		
 	filter { "configurations:Release" }
+		defines
+		{
+			"CORVUS_RELEASE"
+		}
+		
 		flags
 		{
 			"MultiProcessorCompile"

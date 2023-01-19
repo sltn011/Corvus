@@ -1,5 +1,7 @@
 #include <Corvus.h>
 
+#include <imgui.h>
+
 namespace Corvus
 {
 
@@ -13,13 +15,38 @@ namespace Corvus
     class CEditorAppLayer : public CLayer
     {
     public:
-        CEditorAppLayer() : CLayer{"Corvus Editor Layer", true} {}
+        CEditorAppLayer() : CLayer{"Corvus Editor Layer", true} { m_bRunning = true; }
 
-        virtual void OnUpdate(FTimeDelta const ElapsedTime) {}
+        virtual void OnUpdate(FTimeDelta const ElapsedTime)
+        {
+            CRenderer::BeginScene();
 
-        virtual void OnEvent(CEvent &Event) {}
+            CRenderer::SetClearColor({0.2f, 0.2f, 0.8f, 1.0f});
+            CRenderer::Clear();
+
+            if (!m_bRunning)
+            {
+                CApplication::GetInstance().GetWindow().SetShouldClose();
+            }
+        }
+
+        virtual void OnEvent(CEvent &Event) { return; }
+
+        virtual void OnGUIRender() override
+        {
+            ImGui::Begin("Corvus Editor", &m_bRunning);
+
+            ImGui::Text("Test Text");
+            if (ImGui::Button("Click me!"))
+            {
+                CORVUS_INFO("Button clicked!");
+            }
+
+            ImGui::End();
+        }
 
     private:
+        bool m_bRunning = false;
     };
 
     CApplication *CreateApplication()

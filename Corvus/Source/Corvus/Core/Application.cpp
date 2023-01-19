@@ -101,7 +101,7 @@ namespace Corvus
                 continue;
             }
 
-            (*It)->Render();
+            (*It)->OnGUIRender();
         }
         m_GUIController.EndFrame();
     }

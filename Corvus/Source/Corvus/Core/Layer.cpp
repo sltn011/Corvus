@@ -45,7 +45,7 @@ namespace Corvus
     {
     }
 
-    void CLayer::Render()
+    void CLayer::OnGUIRender()
     {
     }
 
