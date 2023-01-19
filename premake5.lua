@@ -17,6 +17,7 @@ workspace "Corvus"
 outputpath = "%{cfg.buildcfg}-%{cfg.architecture}"
 	
 include "Corvus"
+include "CorvusEditor"
 include "Playground"
 
 
