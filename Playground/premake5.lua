@@ -27,7 +27,6 @@ project "Playground"
 	{
 		"%{wks.location}/Corvus/Source",
 		"%{wks.location}/Corvus/Dependencies/spdlog/include",
-		"%{wks.location}/Corvus/Dependencies/GLFW/Source/include",
 		"%{wks.location}/Corvus/Dependencies/glm"
 	}
 	
