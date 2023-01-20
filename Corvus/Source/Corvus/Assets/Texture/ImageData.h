@@ -8,13 +8,6 @@ namespace Corvus
 
     class CImageDataLoader;
 
-    struct SImageFormat
-    {
-        SizeT        ImageWidth  = 0;
-        SizeT        ImageHeight = 0;
-        EPixelFormat PixelFormat = EPixelFormat::RGBA8;
-    };
-
     class CImageData
     {
     private:
@@ -23,11 +16,11 @@ namespace Corvus
         CImageData() = default;
 
     public:
-        SImageFormat GetImageFormat() const { return m_ImageFormat; }
-        UInt8 const *GetImageRawData() const { return m_ImageRawData.data(); }
+        STextureDataFormat GetImageFormat() const { return m_ImageFormat; }
+        UInt8 const       *GetImageRawData() const { return m_ImageRawData.data(); }
 
     private:
-        SImageFormat       m_ImageFormat;
+        STextureDataFormat m_ImageFormat;
         std::vector<UInt8> m_ImageRawData;
     };
 

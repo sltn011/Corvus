@@ -14,7 +14,9 @@ namespace Corvus
         using Super = CTexture2DBuffer;
 
         POpenGLTexture2DBuffer(CImageData const &Image, STextureParameters const &TextureParameters);
-        POpenGLTexture2DBuffer(SImageFormat const &ImageFormat, STextureParameters const &TextureParameters);
+        POpenGLTexture2DBuffer(
+            STextureDataFormat const &TextureFormat, STextureParameters const &TextureParameters
+        );
         virtual ~POpenGLTexture2DBuffer();
 
         POpenGLTexture2DBuffer(POpenGLTexture2DBuffer const &) = delete;
@@ -24,7 +26,7 @@ namespace Corvus
 
         GLuint GetID() const { return m_TextureID; }
 
-        virtual void *GetTextureID() const override { return reinterpret_cast<void *>(GetID()); }
+        virtual void *GetTextureID() const override;
 
         virtual void BindUnit(UInt32 Unit) override;
         virtual void LoadInShader(CShader &Shader, CString const &Name, UInt32 Unit) override;
@@ -43,7 +45,7 @@ namespace Corvus
 
     private:
         void Create(
-            SImageFormat const       &ImageFormat,
+            STextureDataFormat const &ImageFormat,
             UInt8 const              *ImageData,
             STextureParameters const &TextureParameters
         );

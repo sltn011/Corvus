@@ -57,9 +57,9 @@ namespace Corvus
         CImageData Image;
         Image.m_ImageRawData.resize(DataBytes);
         std::memcpy(Image.m_ImageRawData.data(), ImageData, DataBytes);
-        Image.m_ImageFormat.ImageWidth  = ImageWidth;
-        Image.m_ImageFormat.ImageHeight = ImageHeight;
-        Image.m_ImageFormat.PixelFormat = PixelFormat;
+        Image.m_ImageFormat.TextureWidth  = ImageWidth;
+        Image.m_ImageFormat.TextureHeight = ImageHeight;
+        Image.m_ImageFormat.PixelFormat   = PixelFormat;
         return Image;
     }
 
@@ -154,9 +154,9 @@ namespace Corvus
         CImageData Image;
         Image.m_ImageRawData.resize(DataBytes);
         std::memcpy(Image.m_ImageRawData.data(), FormattedData, DataBytes);
-        Image.m_ImageFormat.ImageWidth  = ImageWidth;
-        Image.m_ImageFormat.ImageHeight = ImageHeight;
-        Image.m_ImageFormat.PixelFormat = PixelFormat;
+        Image.m_ImageFormat.TextureWidth  = ImageWidth;
+        Image.m_ImageFormat.TextureHeight = ImageHeight;
+        Image.m_ImageFormat.PixelFormat   = PixelFormat;
 
         stbi_image_free(ImageData);
 

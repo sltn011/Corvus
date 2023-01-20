@@ -20,6 +20,8 @@ namespace Corvus
         CTextureBuffer(CTextureBuffer &&)                 = default;
         CTextureBuffer &operator=(CTextureBuffer &&)      = default;
 
+        STextureInfo GetTextureInfo() const { return m_Info; }
+
         virtual void *GetTextureID() const = 0;
 
         virtual void BindUnit(UInt32 Unit)                                           = 0;

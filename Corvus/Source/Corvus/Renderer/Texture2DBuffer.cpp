@@ -30,13 +30,13 @@ namespace Corvus
     }
 
     TOwn<CTexture2DBuffer> CTexture2DBuffer::CreateEmpty(
-        SImageFormat const &ImageFormat, STextureParameters const &TextureParameters
+        STextureDataFormat const &TextureFormat, STextureParameters const &TextureParameters
     )
     {
         switch (CGraphicsAPI::GetAPI())
         {
         case CGraphicsAPI::EAPI::OpenGL:
-            return MakeOwned<POpenGLTexture2DBuffer>(ImageFormat, TextureParameters);
+            return MakeOwned<POpenGLTexture2DBuffer>(TextureFormat, TextureParameters);
 
         default:
             CORVUS_NO_ENTRY_FMT("Undefined Graphics API!");

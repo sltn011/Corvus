@@ -18,10 +18,10 @@ namespace Corvus
     }
 
     POpenGLTexture2DBuffer::POpenGLTexture2DBuffer(
-        SImageFormat const &ImageFormat, STextureParameters const &TextureParameters
+        STextureDataFormat const &TextureFormat, STextureParameters const &TextureParameters
     )
     {
-        Create(ImageFormat, nullptr, TextureParameters);
+        Create(TextureFormat, nullptr, TextureParameters);
     }
 
     POpenGLTexture2DBuffer::~POpenGLTexture2DBuffer()
@@ -42,6 +42,12 @@ namespace Corvus
             std::swap(m_TextureID, Rhs.m_TextureID);
         }
         return *this;
+    }
+
+    void *POpenGLTexture2DBuffer::GetTextureID() const
+    {
+        PtrDiffT Val = GetID();
+        return reinterpret_cast<void *>(Val);
     }
 
     void POpenGLTexture2DBuffer::BindUnit(UInt32 Unit)
@@ -126,14 +132,16 @@ namespace Corvus
     }
 
     void POpenGLTexture2DBuffer::Create(
-        SImageFormat const &ImageFormat, UInt8 const *ImageData, STextureParameters const &TextureParameters
+        STextureDataFormat const &ImageFormat,
+        UInt8 const              *ImageData,
+        STextureParameters const &TextureParameters
     )
     {
         glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
 
         EPixelFormat PixelFormat   = ImageFormat.PixelFormat;
-        GLsizei      TextureWidth  = static_cast<GLsizei>(ImageFormat.ImageWidth);
-        GLsizei      TextureHeight = static_cast<GLsizei>(ImageFormat.ImageHeight);
+        GLsizei      TextureWidth  = static_cast<GLsizei>(ImageFormat.TextureWidth);
+        GLsizei      TextureHeight = static_cast<GLsizei>(ImageFormat.TextureHeight);
 
         // Allocate immutable storage
         glTextureStorage2D(
@@ -160,8 +168,8 @@ namespace Corvus
             );
         }
 
-        m_Info.DataFormat.TextureWidth  = ImageFormat.ImageWidth;
-        m_Info.DataFormat.TextureHeight = ImageFormat.ImageHeight;
+        m_Info.DataFormat.TextureWidth  = ImageFormat.TextureWidth;
+        m_Info.DataFormat.TextureHeight = ImageFormat.TextureHeight;
         m_Info.DataFormat.PixelFormat   = ImageFormat.PixelFormat;
 
         SetWrappingS(TextureParameters.WrappingS);

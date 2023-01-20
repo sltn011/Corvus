@@ -39,7 +39,7 @@ namespace Corvus
 
             std::vector<TOwn<CTexture2DBuffer>> TestFrameBufferAttachment(1);
 
-            SImageFormat       ScreenQuadFormat{ScreenSize.x, ScreenSize.y, EPixelFormat::RGBA8};
+            STextureDataFormat ScreenQuadFormat{ScreenSize.x, ScreenSize.y, EPixelFormat::RGBA8};
             STextureParameters ScreenQuadParameters{};
             TestFrameBufferAttachment[0] =
                 CTexture2DBuffer::CreateEmpty(ScreenQuadFormat, ScreenQuadParameters);
@@ -127,6 +127,8 @@ namespace Corvus
                             ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
                             ImGuiWindowFlags_NoDocking;
 
+            ImGuiWindowFlags panel_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
+
             ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
             ImGui::Begin("Corvus Editor", nullptr, window_flags);
@@ -142,7 +144,17 @@ namespace Corvus
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 
             FUIntVector2 ViewportSize = SceneFrameBuffer->GetSize();
-            ImGui::Begin("Viewport");
+            ImGui::Begin("Viewport", nullptr, panel_flags);
+            ImVec2       RegionSize = ImGui::GetContentRegionAvail();
+            FUIntVector2 NewViewportSize{
+                static_cast<UInt32>(RegionSize.x), static_cast<UInt32>(RegionSize.y)};
+            if (ViewportSize != NewViewportSize)
+            {
+                SceneFrameBuffer->Resize(NewViewportSize.x, NewViewportSize.y);
+                CRenderer::ViewportResize(NewViewportSize.x, NewViewportSize.y);
+                Scene.GetPlayerCamera()->SetViewportSize(NewViewportSize.x, NewViewportSize.y);
+                ViewportSize = NewViewportSize;
+            }
             ImGui::Image(
                 SceneFrameBuffer->GetAttachment(0).GetTextureID(),
                 {static_cast<float>(ViewportSize.x), static_cast<float>(ViewportSize.y)},
@@ -151,17 +163,17 @@ namespace Corvus
             );
             ImGui::End();
 
-            ImGui::Begin("Scene");
+            ImGui::Begin("Scene", nullptr, panel_flags);
             ImGui::Text("Aboba");
             ImGui::End();
 
-            ImGui::Begin("Parameters");
+            ImGui::Begin("Parameters", nullptr, panel_flags);
             ImGui::Text("Position");
             ImGui::Text("Rotation");
             ImGui::Text("Scale");
             ImGui::End();
 
-            ImGui::Begin("Assets");
+            ImGui::Begin("Assets", nullptr, panel_flags);
             ImGui::Text("Models");
             ImGui::End();
 
@@ -325,6 +337,8 @@ namespace Corvus
 
         bool     bCameraMode = false;
         FVector2 CursorPos;
+
+        FUIntVector2 ViewportSize{};
     };
 
     CApplication *CreateApplication()

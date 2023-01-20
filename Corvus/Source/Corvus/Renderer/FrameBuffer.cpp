@@ -32,6 +32,24 @@ namespace Corvus
     void CFrameBuffer::Resize(UInt32 NewWidth, UInt32 NewHeight)
     {
         CORVUS_CORE_ASSERT(NewWidth != 0 && NewHeight != 0);
+
+        std::for_each(
+            m_Attachments.begin(),
+            m_Attachments.end(),
+            [&](TOwn<CTexture2DBuffer> &Attachment)
+            {
+                STextureInfo AttachmentInfo = Attachment->GetTextureInfo();
+
+                STextureDataFormat NewAttachmentFormat = AttachmentInfo.DataFormat;
+                NewAttachmentFormat.TextureWidth       = NewWidth;
+                NewAttachmentFormat.TextureHeight      = NewHeight;
+
+                STextureParameters NewAttachmentParameters = AttachmentInfo.Parameters;
+
+                Attachment = CTexture2DBuffer::CreateEmpty(NewAttachmentFormat, NewAttachmentParameters);
+            }
+        );
+
         m_FrameBufferSize = FUIntVector2{NewWidth, NewHeight};
     }
 

@@ -18,7 +18,7 @@ namespace Corvus
         );
 
         static [[nodiscard]] TOwn<CTexture2DBuffer> CreateEmpty(
-            SImageFormat const &ImageFormat, STextureParameters const &TextureParameters
+            STextureDataFormat const &TextureFormat, STextureParameters const &TextureParameters
         );
 
         virtual ~CTexture2DBuffer();
