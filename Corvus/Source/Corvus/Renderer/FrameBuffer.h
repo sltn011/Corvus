@@ -2,6 +2,7 @@
 #define CORVUS_SOURCE_CORVUS_RENDERER_FRAMEBUFFER_H
 
 #include "Corvus/Core/Base.h"
+#include "Corvus/Math/Vector.h"
 
 #include <vector>
 
@@ -14,7 +15,7 @@ namespace Corvus
     class CFrameBuffer
     {
     protected:
-        CFrameBuffer() = default;
+        CFrameBuffer(UInt32 Width, UInt32 Height, std::vector<TOwn<CTexture2DBuffer>> &&Attachments);
 
     public:
         static [[nodiscard]] TOwn<CFrameBuffer> Create(
@@ -27,10 +28,19 @@ namespace Corvus
         CFrameBuffer(CFrameBuffer &&)                 = default;
         CFrameBuffer &operator=(CFrameBuffer &&)      = default;
 
+        FUIntVector2 GetSize() const { return m_FrameBufferSize; }
+        virtual void Resize(UInt32 NewWidth, UInt32 NewHeight);
+
         virtual void SetRenderTarget() const = 0;
         virtual void LoadInShader(
             CShader &Shader, std::vector<CString> const &AttachmentsNames, UInt32 FirstAttachmentUnit
         ) const = 0;
+
+        CTexture2DBuffer &GetAttachment(SizeT AttachmentIndex) const;
+
+    protected:
+        FUIntVector2                        m_FrameBufferSize{};
+        std::vector<TOwn<CTexture2DBuffer>> m_Attachments;
     };
 
 } // namespace Corvus

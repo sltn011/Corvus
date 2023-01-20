@@ -3,13 +3,13 @@
 
 #include "Corvus/Math/Math.h"
 
-using FIntVector2 = glm::ivec2;
-using FIntVector3 = glm::ivec3;
-using FIntVector4 = glm::ivec4;
+using FIntVector2 = glm::vec<2, Int32>;
+using FIntVector3 = glm::vec<3, Int32>;
+using FIntVector4 = glm::vec<4, Int32>;
 
-using FUIntVector2 = glm::uvec2;
-using FUIntVector3 = glm::uvec3;
-using FUIntVector4 = glm::uvec4;
+using FUIntVector2 = glm::vec<2, UInt32>;
+using FUIntVector3 = glm::vec<3, UInt32>;
+using FUIntVector4 = glm::vec<4, UInt32>;
 
 using FVector2 = glm::vec2;
 using FVector3 = glm::vec3;

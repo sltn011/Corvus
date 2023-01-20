@@ -24,6 +24,8 @@ namespace Corvus
 
         GLuint GetID() const { return m_TextureID; }
 
+        virtual void *GetTextureID() const override { return reinterpret_cast<void *>(GetID()); }
+
         virtual void BindUnit(UInt32 Unit) override;
         virtual void LoadInShader(CShader &Shader, CString const &Name, UInt32 Unit) override;
 

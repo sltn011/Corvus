@@ -23,16 +23,21 @@ namespace Corvus
         POpenGLFrameBuffer &operator=(POpenGLFrameBuffer const &) = delete;
         POpenGLFrameBuffer &operator=(POpenGLFrameBuffer &&Rhs) noexcept;
 
+        virtual void Resize(UInt32 NewWidth, UInt32 NewHeight) override;
+
         virtual void SetRenderTarget() const override;
         virtual void LoadInShader(
             CShader &Shader, std::vector<CString> const &AttachmentsNames, UInt32 FirstAttachmentUnit
         ) const override;
 
     private:
+        void CreateOpenGLFrameBuffer(UInt32 Width, UInt32 Height);
+        void DestroyOpenGLFrameBuffer();
+
+    private:
         GLuint m_FBO = 0;
 
-        std::vector<TOwn<CTexture2DBuffer>> m_ColorAttachments;
-        TOwn<POpenGLRenderBuffer>           m_DepthStencilAttachment;
+        TOwn<POpenGLRenderBuffer> m_DepthStencilAttachment;
     };
 
 } // namespace Corvus

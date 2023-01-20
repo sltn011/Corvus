@@ -6,7 +6,6 @@
 #include "Corvus/Assets/Texture/Texture2D.h"
 #include "Corvus/Components/StaticMeshComponent.h"
 #include "Corvus/Components/TransformComponent.h"
-#include "Corvus/Renderer/FrameBuffer.h"
 #include "Corvus/Scene/Entity.h"
 #include "Corvus/Scene/Scene.h"
 
@@ -32,83 +31,16 @@ namespace Corvus
             LoadAssets();
             CreateScene();
             WireUpAssets();
-
-            FUIntVector2 ScreenSize = CApplication::GetInstance().GetWindow().GetWindowSize();
-
-            std::vector<TOwn<CTexture2DBuffer>> TestFrameBufferAttachment(1);
-
-            SImageFormat       ScreenQuadFormat{ScreenSize.x, ScreenSize.y, EPixelFormat::RGBA8};
-            STextureParameters ScreenQuadParameters{};
-            TestFrameBufferAttachment[0] =
-                CTexture2DBuffer::CreateEmpty(ScreenQuadFormat, ScreenQuadParameters);
-
-            TestFrameBuffer =
-                CFrameBuffer::Create(ScreenSize.x, ScreenSize.y, std::move(TestFrameBufferAttachment));
         }
 
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
         {
             CRenderer::BeginScene();
+
+            UpdateCamera(ElapsedTime);
+
             CRenderer::Clear();
-
-            CCamera *Camera = PlaygroundScene.GetPlayerCamera();
-            if (!Camera)
-            {
-                CORVUS_NO_ENTRY_FMT("No Player Camera added to Playground Scene!");
-            }
-
-            if (bCameraMode)
-            {
-                if (CInput::IsKeyPressed(Key::W))
-                {
-                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Forward, ElapsedTime);
-                }
-                if (CInput::IsKeyPressed(Key::A))
-                {
-                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Left, ElapsedTime);
-                }
-                if (CInput::IsKeyPressed(Key::S))
-                {
-                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Backward, ElapsedTime);
-                }
-                if (CInput::IsKeyPressed(Key::D))
-                {
-                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Right, ElapsedTime);
-                }
-                if (CInput::IsKeyPressed(Key::Space))
-                {
-                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Up, ElapsedTime);
-                }
-                if (CInput::IsKeyPressed(Key::LeftShift))
-                {
-                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Down, ElapsedTime);
-                }
-            }
-
-            FVector2 const NewPos = CInput::GetCursorPos();
-            FVector2 const Delta  = NewPos - CursorPos;
-            CursorPos             = NewPos;
-            if (bCameraMode)
-            {
-                Camera->ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
-            }
-
-            // Render to FrameBuffer
-            CRenderer::SetRenderTarget(*TestFrameBuffer);
-            CRenderer::Clear();
-
-            for (TPoolable<CEntity> const &Entity : PlaygroundScene.GetEntities())
-            {
-                CRenderer::SubmitStaticModel(
-                    *Entity->StaticMeshComponent->StaticModelRef.GetRawPtr(),
-                    Entity->StaticMeshComponent->GetTransformMatrix(),
-                    Camera->GetProjectionViewMatrix()
-                );
-            }
-
-            // Back to Window FrameBuffer
-            CRenderer::SetDefaultRenderTarget();
-            CRenderer::SubmitFrameBuffer(*TestFrameBuffer);
+            RenderScene(ElapsedTime);
 
             CRenderer::EndScene();
         }
@@ -140,8 +72,7 @@ namespace Corvus
             else if (Event.GetEventType() == CEvent::EEventType::WindowResize)
             {
                 CWindowResizeEvent &WREvent = CastEvent<CWindowResizeEvent>(Event);
-                CPerspectiveCamera *Camera =
-                    static_cast<CPerspectiveCamera *>(PlaygroundScene.GetPlayerCamera());
+                CPerspectiveCamera *Camera  = static_cast<CPerspectiveCamera *>(Scene.GetPlayerCamera());
                 Camera->SetViewportSize(
                     static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight)
                 );
@@ -151,7 +82,7 @@ namespace Corvus
                 CMouseScrollEvent &MSEvent = CastEvent<CMouseScrollEvent>(Event);
                 if (bCameraMode)
                 {
-                    CCamera    *Camera         = static_cast<CCamera *>(PlaygroundScene.GetPlayerCamera());
+                    CCamera    *Camera         = static_cast<CCamera *>(Scene.GetPlayerCamera());
                     float const OldCameraSpeed = Camera->GetMoveSpeed();
                     float const NewSpeed       = FMath::Max(OldCameraSpeed + MSEvent.OffsetY, 0.0f);
                     Camera->SetMoveSpeed(NewSpeed);
@@ -177,7 +108,7 @@ namespace Corvus
             Camera->SetClipPlanes(0.01f, 100.0f);
             Camera->SwitchPlayerControl(true, 1.0f);
 
-            PlaygroundScene.SetPlayerCamera(std::move(Camera));
+            Scene.SetPlayerCamera(std::move(Camera));
         }
 
         void PopulateScene()
@@ -188,7 +119,7 @@ namespace Corvus
             Entity->TransformComponent->SetScale(FVector3{0.01f});
             Entity->StaticMeshComponent->StaticModelRef.SetUUID(StaticModelsAssets.begin()->first);
 
-            PlaygroundScene.AddEntity(std::move(Entity));
+            Scene.AddEntity(std::move(Entity));
         }
 
         void LoadAssets()
@@ -241,7 +172,7 @@ namespace Corvus
             }
 
             // Provide Entities with their StaticModels
-            for (TPoolable<CEntity> const &Entity : PlaygroundScene.GetEntities())
+            for (TPoolable<CEntity> const &Entity : Scene.GetEntities())
             {
                 FUUID StaticModelUUID = Entity->StaticMeshComponent->StaticModelRef.GetUUID();
                 Entity->StaticMeshComponent->StaticModelRef.SetRawPtr(&StaticModelsAssets.at(StaticModelUUID)
@@ -249,14 +180,69 @@ namespace Corvus
             }
         }
 
+        void UpdateCamera(FTimeDelta const ElapsedTime)
+        {
+            CCamera *Camera = Scene.GetPlayerCamera();
+            if (!Camera)
+            {
+                CORVUS_NO_ENTRY_FMT("No Player Camera added to Playground Scene!");
+            }
+
+            if (bCameraMode)
+            {
+                if (CInput::IsKeyPressed(Key::W))
+                {
+                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Forward, ElapsedTime);
+                }
+                if (CInput::IsKeyPressed(Key::A))
+                {
+                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Left, ElapsedTime);
+                }
+                if (CInput::IsKeyPressed(Key::S))
+                {
+                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Backward, ElapsedTime);
+                }
+                if (CInput::IsKeyPressed(Key::D))
+                {
+                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Right, ElapsedTime);
+                }
+                if (CInput::IsKeyPressed(Key::Space))
+                {
+                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Up, ElapsedTime);
+                }
+                if (CInput::IsKeyPressed(Key::LeftShift))
+                {
+                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Down, ElapsedTime);
+                }
+            }
+
+            FVector2 const NewPos = CInput::GetCursorPos();
+            FVector2 const Delta  = NewPos - CursorPos;
+            CursorPos             = NewPos;
+            if (bCameraMode)
+            {
+                Camera->ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
+            }
+        }
+
+        void RenderScene(FTimeDelta const ElapsedTime)
+        {
+            for (TPoolable<CEntity> const &Entity : Scene.GetEntities())
+            {
+                CRenderer::SubmitStaticModel(
+                    *Entity->StaticMeshComponent->StaticModelRef.GetRawPtr(),
+                    Entity->StaticMeshComponent->GetTransformMatrix(),
+                    Scene.GetPlayerCamera()->GetProjectionViewMatrix()
+                );
+            }
+        }
+
     private:
-        CScene PlaygroundScene;
+        CScene Scene;
 
         std::unordered_map<FUUID, CTexture2D>   TexturesAssets;
         std::unordered_map<FUUID, CMaterial>    MaterialsAssets;
         std::unordered_map<FUUID, CStaticModel> StaticModelsAssets;
-
-        TOwn<CFrameBuffer> TestFrameBuffer;
 
         bool     bCameraMode = false;
         FVector2 CursorPos;

@@ -12,65 +12,41 @@ namespace Corvus
     POpenGLFrameBuffer::POpenGLFrameBuffer(
         UInt32 Width, UInt32 Height, std::vector<TOwn<CTexture2DBuffer>> &&Attachments
     )
+        : Super{Width, Height, std::move(Attachments)}
     {
-        CORVUS_CORE_ASSERT(Width != 0 && Height != 0);
-
-        glCreateFramebuffers(1, &m_FBO);
-
-        m_ColorAttachments = std::move(Attachments);
-
-        std::vector<GLenum> ColorAttachmentsUnits(m_ColorAttachments.size());
-
-        UInt32 ColorAttachmentIndex = 0;
-        std::for_each(
-            m_ColorAttachments.begin(),
-            m_ColorAttachments.end(),
-            [&](TOwn<CTexture2DBuffer> const &ColorAttachment) mutable
-            {
-                POpenGLTexture2DBuffer *OpenGLTexture =
-                    static_cast<POpenGLTexture2DBuffer *>(ColorAttachment.get());
-
-                GLenum const Unit = GL_COLOR_ATTACHMENT0 + ColorAttachmentIndex;
-                glNamedFramebufferTexture(m_FBO, Unit, OpenGLTexture->GetID(), 0);
-                ColorAttachmentsUnits[ColorAttachmentIndex] = Unit;
-                ColorAttachmentIndex++;
-            }
-        );
-
-        glNamedFramebufferDrawBuffers(
-            m_FBO, static_cast<GLsizei>(ColorAttachmentsUnits.size()), ColorAttachmentsUnits.data()
-        );
-
-        m_DepthStencilAttachment = MakeOwned<POpenGLRenderBuffer>(Width, Height, GL_DEPTH24_STENCIL8);
-        glNamedFramebufferRenderbuffer(
-            m_FBO, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthStencilAttachment->GetID()
-        );
-
-        GLenum FrameBufferCompleteness = glCheckNamedFramebufferStatus(m_FBO, GL_FRAMEBUFFER);
-        CORVUS_CORE_ASSERT(FrameBufferCompleteness == GL_FRAMEBUFFER_COMPLETE);
+        CreateOpenGLFrameBuffer(Width, Height);
     }
 
     POpenGLFrameBuffer::~POpenGLFrameBuffer()
     {
-        glDeleteFramebuffers(1, &m_FBO);
+        DestroyOpenGLFrameBuffer();
     }
 
     POpenGLFrameBuffer::POpenGLFrameBuffer(POpenGLFrameBuffer &&Rhs) noexcept
-        : m_FBO{std::exchange(Rhs.m_FBO, 0)},
-          m_ColorAttachments{std::move(Rhs.m_ColorAttachments)},
+        : Super{std::move(Rhs)},
+          m_FBO{std::exchange(Rhs.m_FBO, 0)},
           m_DepthStencilAttachment{std::move(Rhs.m_DepthStencilAttachment)}
     {
     }
 
     POpenGLFrameBuffer &POpenGLFrameBuffer::operator=(POpenGLFrameBuffer &&Rhs) noexcept
     {
+        Super::operator=(std::move(Rhs));
+
         if (this != &Rhs)
         {
             std::swap(m_FBO, Rhs.m_FBO);
-            std::swap(m_ColorAttachments, Rhs.m_ColorAttachments);
             std::swap(m_DepthStencilAttachment, Rhs.m_DepthStencilAttachment);
         }
         return *this;
+    }
+
+    void POpenGLFrameBuffer::Resize(UInt32 NewWidth, UInt32 NewHeight)
+    {
+        Super::Resize(NewWidth, NewHeight);
+
+        DestroyOpenGLFrameBuffer();
+        CreateOpenGLFrameBuffer(NewWidth, NewHeight);
     }
 
     void POpenGLFrameBuffer::SetRenderTarget() const
@@ -85,18 +61,58 @@ namespace Corvus
         SizeT  AttachmentIndex = 0;
         UInt32 Unit            = FirstAttachmentUnit;
 
-        CORVUS_CORE_ASSERT(m_ColorAttachments.size() == AttachmentsNames.size());
+        CORVUS_CORE_ASSERT(m_Attachments.size() == AttachmentsNames.size());
         std::for_each(
-            m_ColorAttachments.begin(),
-            m_ColorAttachments.end(),
-            [&](TOwn<CTexture2DBuffer> const &ColorAttachment)
+            m_Attachments.begin(),
+            m_Attachments.end(),
+            [&](TOwn<CTexture2DBuffer> const &Attachment)
             {
-                ColorAttachment->BindUnit(Unit);
-                ColorAttachment->LoadInShader(Shader, AttachmentsNames[AttachmentIndex], Unit);
+                Attachment->BindUnit(Unit);
+                Attachment->LoadInShader(Shader, AttachmentsNames[AttachmentIndex], Unit);
                 AttachmentIndex++;
                 Unit++;
             }
         );
+    }
+
+    void POpenGLFrameBuffer::CreateOpenGLFrameBuffer(UInt32 Width, UInt32 Height)
+    {
+        glCreateFramebuffers(1, &m_FBO);
+
+        std::vector<GLenum> AttachmentsUnits(m_Attachments.size());
+
+        UInt32 AttachmentIndex = 0;
+        std::for_each(
+            m_Attachments.begin(),
+            m_Attachments.end(),
+            [&](TOwn<CTexture2DBuffer> const &Attachment) mutable
+            {
+                POpenGLTexture2DBuffer *OpenGLTexture =
+                    static_cast<POpenGLTexture2DBuffer *>(Attachment.get());
+
+                GLenum const Unit = GL_COLOR_ATTACHMENT0 + AttachmentIndex;
+                glNamedFramebufferTexture(m_FBO, Unit, OpenGLTexture->GetID(), 0);
+                AttachmentsUnits[AttachmentIndex] = Unit;
+                AttachmentIndex++;
+            }
+        );
+
+        glNamedFramebufferDrawBuffers(
+            m_FBO, static_cast<GLsizei>(AttachmentsUnits.size()), AttachmentsUnits.data()
+        );
+
+        m_DepthStencilAttachment = MakeOwned<POpenGLRenderBuffer>(Width, Height, GL_DEPTH24_STENCIL8);
+        glNamedFramebufferRenderbuffer(
+            m_FBO, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthStencilAttachment->GetID()
+        );
+
+        GLenum FrameBufferCompleteness = glCheckNamedFramebufferStatus(m_FBO, GL_FRAMEBUFFER);
+        CORVUS_CORE_ASSERT(FrameBufferCompleteness == GL_FRAMEBUFFER_COMPLETE);
+    }
+
+    void POpenGLFrameBuffer::DestroyOpenGLFrameBuffer()
+    {
+        glDeleteFramebuffers(1, &m_FBO);
     }
 
 } // namespace Corvus
