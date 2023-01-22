@@ -67,7 +67,7 @@ namespace Corvus
             TimePointOld                 = TimePointNew;
 
             UpdateLayers(ElapsedTime);
-            RenderLayers();
+            RenderLayers(ElapsedTime);
 
             m_Window->OnUpdate();
 
@@ -96,7 +96,7 @@ namespace Corvus
         }
     }
 
-    void CApplication::RenderLayers()
+    void CApplication::RenderLayers(FTimeDelta ElapsedTime)
     {
         if (!m_GUIController.IsInitialized())
         {
@@ -111,7 +111,7 @@ namespace Corvus
                 continue;
             }
 
-            (*It)->OnGUIRender();
+            (*It)->OnGUIRender(ElapsedTime);
         }
         m_GUIController.EndFrame();
     }

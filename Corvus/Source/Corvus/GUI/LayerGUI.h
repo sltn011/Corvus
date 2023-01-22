@@ -13,7 +13,7 @@ namespace Corvus
 
         CLayerGUI(CString LayerName, bool bEnabled);
 
-        virtual void OnGUIRender() override;
+        virtual void OnGUIRender(FTimeDelta ElapsedTime) override;
 
     private:
         static UInt8 s_NumImGUIInstances;

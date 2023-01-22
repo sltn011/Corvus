@@ -45,7 +45,7 @@ namespace Corvus
     {
     }
 
-    void CLayer::OnGUIRender()
+    void CLayer::OnGUIRender(FTimeDelta ElapsedTime)
     {
     }
 

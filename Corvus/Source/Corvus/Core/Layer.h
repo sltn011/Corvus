@@ -36,7 +36,7 @@ namespace Corvus
         virtual void OnUpdate(FTimeDelta ElapsedTime);
         virtual void OnEvent(CEvent &Event);
 
-        virtual void OnGUIRender();
+        virtual void OnGUIRender(FTimeDelta ElapsedTime);
 
     protected:
         CString m_LayerName;

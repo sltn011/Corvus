@@ -39,7 +39,7 @@ namespace Corvus
         [[nodiscard]] TOwn<CLayer> PopLayer();
 
         void UpdateLayers(FTimeDelta ElapsedTime);
-        void RenderLayers();
+        void RenderLayers(FTimeDelta ElapsedTime);
         void OnEventReceived(CEvent &Event);
 
         CWindow &GetWindow() { return *m_Window; };

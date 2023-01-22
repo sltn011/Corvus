@@ -44,7 +44,7 @@ namespace Corvus
         }
     }
 
-    void CCoreLayer::OnGUIRender()
+    void CCoreLayer::OnGUIRender(FTimeDelta ElapsedTime)
     {
     }
 

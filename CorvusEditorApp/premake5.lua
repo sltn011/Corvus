@@ -1,6 +1,6 @@
 --premake5.lua
 
-project "Playground"
+project "CorvusEditorApp"
     language "C++"
     cppdialect "C++17"
     kind "ConsoleApp"
@@ -16,7 +16,7 @@ project "Playground"
     }
     vpaths 
     { 
-        ["../Playground/Source/*"] = 
+        ["../CorvusEditorApp/Source/*"] = 
         { 
             "Source/**.cpp",
             "Source/**.h" 
@@ -26,13 +26,16 @@ project "Playground"
     includedirs
     {
         "%{wks.location}/Corvus/Source",
+        "%{wks.location}/CorvusEditor/Source",
+        "%{wks.location}/Corvus/Dependencies/imgui/Source",
         "%{wks.location}/Corvus/Dependencies/spdlog/include",
         "%{wks.location}/Corvus/Dependencies/glm"
     }
     
     links
     {
-        "Corvus"
+        "Corvus",
+        "CorvusEditor"
     }
     
     filter { "configurations:Debug" }

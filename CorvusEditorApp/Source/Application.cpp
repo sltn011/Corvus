@@ -10,7 +10,12 @@
 #include "Corvus/Scene/Entity.h"
 #include "Corvus/Scene/Scene.h"
 
-#include <imgui.h>
+// GUI
+#include "CorvusEditor/GUI/AssetsPanel.h"
+#include "CorvusEditor/GUI/Dockspace.h"
+#include "CorvusEditor/GUI/ParametersPanel.h"
+#include "CorvusEditor/GUI/ScenePanel.h"
+#include "CorvusEditor/GUI/ViewportPanel.h"
 
 namespace Corvus
 {
@@ -29,6 +34,8 @@ namespace Corvus
     public:
         CEditorAppLayer() : CLayer{"Corvus Editor Layer", true}
         {
+            CreateEditorGUI();
+
             CRenderer::EnableDepthTest();
             CRenderer::EnableBackfaceCulling();
             CRenderer::SetClearColor({0.6f, 0.8f, 1.0f, 1.0f});
@@ -37,17 +44,7 @@ namespace Corvus
             CreateScene();
             WireUpAssets();
 
-            ViewportSize = CApplication::GetInstance().GetWindow().GetWindowSize();
-
-            std::vector<TOwn<CTexture2DBuffer>> TestFrameBufferAttachment(1);
-
-            STextureDataFormat ScreenQuadFormat{ViewportSize.x, ViewportSize.y, EPixelFormat::RGBA8};
-            STextureParameters ScreenQuadParameters{};
-            TestFrameBufferAttachment[0] =
-                CTexture2DBuffer::CreateEmpty(ScreenQuadFormat, ScreenQuadParameters);
-
-            SceneFrameBuffer =
-                CFrameBuffer::Create(ViewportSize.x, ViewportSize.y, std::move(TestFrameBufferAttachment));
+            CreateSceneFramebuffer();
         }
 
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
@@ -127,9 +124,11 @@ namespace Corvus
             }
         }
 
-        virtual void OnGUIRender() override
+        virtual void OnGUIRender(FTimeDelta const ElapsedTime) override
         {
-            ImGuiWindowFlags     window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+            Dockspace.Render(ElapsedTime);
+
+            /*ImGuiWindowFlags     window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
             const ImGuiViewport *viewport     = ImGui::GetMainViewport();
             ImGui::SetNextWindowPos(viewport->WorkPos);
             ImGui::SetNextWindowSize(viewport->WorkSize);
@@ -188,7 +187,15 @@ namespace Corvus
             ImGui::Text("Models");
             ImGui::End();
 
-            ImGui::End();
+            ImGui::End();*/
+        }
+
+        void CreateEditorGUI()
+        {
+            Dockspace.AddPanel(GUI::CPanel::Create<GUI::CAssetsPanel>());
+            Dockspace.AddPanel(GUI::CPanel::Create<GUI::CParametersPanel>());
+            Dockspace.AddPanel(GUI::CPanel::Create<GUI::CScenePanel>());
+            Dockspace.AddPanel(GUI::CPanel::Create<GUI::CViewportPanel>());
         }
 
         void CreateScene()
@@ -337,7 +344,24 @@ namespace Corvus
             }
         }
 
+        void CreateSceneFramebuffer()
+        {
+            ViewportSize = CApplication::GetInstance().GetWindow().GetWindowSize();
+
+            std::vector<TOwn<CTexture2DBuffer>> TestFrameBufferAttachment(1);
+
+            STextureDataFormat ScreenQuadFormat{ViewportSize.x, ViewportSize.y, EPixelFormat::RGBA8};
+            STextureParameters ScreenQuadParameters{};
+            TestFrameBufferAttachment[0] =
+                CTexture2DBuffer::CreateEmpty(ScreenQuadFormat, ScreenQuadParameters);
+
+            SceneFrameBuffer =
+                CFrameBuffer::Create(ViewportSize.x, ViewportSize.y, std::move(TestFrameBufferAttachment));
+        }
+
     private:
+        GUI::CDockspace Dockspace;
+
         CScene Scene;
 
         std::unordered_map<FUUID, CTexture2D>   TexturesAssets;

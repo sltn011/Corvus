@@ -18,6 +18,7 @@ outputpath = "%{cfg.buildcfg}-%{cfg.architecture}"
 	
 include "Corvus"
 include "CorvusEditor"
+include "CorvusEditorApp"
 include "Playground"
 
 
