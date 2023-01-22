@@ -18,7 +18,9 @@ namespace Corvus
     class CEditorApp : public CApplication
     {
     public:
-        CEditorApp() {}
+        using Super = CApplication;
+
+        CEditorApp(SApplicationCreateInfo const &ApplicationCreateInfo) : Super{ApplicationCreateInfo} {}
         ~CEditorApp() {}
     };
 
@@ -72,8 +74,9 @@ namespace Corvus
 
             // Back to Window FrameBuffer
             CRenderer::SetDefaultRenderTarget();
-            CRenderer::Clear();
-            CRenderer::SubmitFrameBuffer(*SceneFrameBuffer);
+
+            // CRenderer::Clear();
+            // CRenderer::SubmitFrameBuffer(*SceneFrameBuffer);
 
             CRenderer::EndScene();
         }
@@ -352,7 +355,13 @@ namespace Corvus
 
     CApplication *CreateApplication()
     {
-        CEditorApp *App = new CEditorApp;
+        SApplicationCreateInfo ApplicationCreateInfo{};
+        ApplicationCreateInfo.ApplicationName         = "Corvus Editor";
+        ApplicationCreateInfo.ApplicationVersion      = "v0.0.1";
+        ApplicationCreateInfo.ApplicationWindowWidth  = 1600;
+        ApplicationCreateInfo.ApplicationWindowHeight = 900;
+
+        CEditorApp *App = new CEditorApp(ApplicationCreateInfo);
         App->PushLayer(CLayer::Create<CEditorAppLayer>());
         return App;
     }

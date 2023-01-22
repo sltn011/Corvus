@@ -15,7 +15,9 @@ namespace Corvus
     class CPlayground : public CApplication
     {
     public:
-        CPlayground() {}
+        using Super = CApplication;
+
+        CPlayground(SApplicationCreateInfo const &ApplicationCreateInfo) : Super{ApplicationCreateInfo} {}
         ~CPlayground() {}
     };
 
@@ -250,7 +252,13 @@ namespace Corvus
 
     CApplication *CreateApplication()
     {
-        CPlayground *App = new CPlayground;
+        SApplicationCreateInfo ApplicationCreateInfo{};
+        ApplicationCreateInfo.ApplicationName         = "Playground";
+        ApplicationCreateInfo.ApplicationVersion      = "";
+        ApplicationCreateInfo.ApplicationWindowWidth  = 1600;
+        ApplicationCreateInfo.ApplicationWindowHeight = 900;
+
+        CPlayground *App = new CPlayground(ApplicationCreateInfo);
         App->PushLayer(CLayer::Create<CApplicationLayer>());
         return App;
     }

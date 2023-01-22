@@ -10,6 +10,15 @@ namespace Corvus
 {
     class CApplication;
 
+    struct SApplicationCreateInfo
+    {
+        CString ApplicationName;
+        CString ApplicationVersion;
+
+        UInt32 ApplicationWindowWidth;
+        UInt32 ApplicationWindowHeight;
+    };
+
     // To be defined by Client
     CApplication *CreateApplication();
     bool          DestroyApplication(CApplication *App);
@@ -20,10 +29,10 @@ namespace Corvus
     class CApplication
     {
     public:
-        CApplication();
+        CApplication(SApplicationCreateInfo const &ApplicationCreateInfo);
         virtual ~CApplication();
 
-        void Init();
+        void Init(SApplicationCreateInfo const &ApplicationCreateInfo);
         void Run();
 
         void                       PushLayer(TOwn<CLayer> &&NewLayer);
@@ -40,7 +49,7 @@ namespace Corvus
         static CApplication &GetInstance() { return *s_ApplicationInstance; }
 
     private:
-        void InitWindow();
+        void InitWindow(SWindowInitInfo const &WindowInitInfo);
         void InitGUIController();
         void InitRenderer();
 

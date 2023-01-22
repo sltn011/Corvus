@@ -20,25 +20,35 @@ namespace Corvus
 {
     CApplication *CApplication::s_ApplicationInstance = nullptr;
 
-    CApplication::CApplication()
+    CApplication::CApplication(SApplicationCreateInfo const &ApplicationCreateInfo)
     {
         CORVUS_CORE_ASSERT_FMT(!s_ApplicationInstance, "Only one instance of application is allowed!");
 
         s_ApplicationInstance = this;
 
-        Init();
+        Init(ApplicationCreateInfo);
     }
 
     CApplication::~CApplication()
     {
     }
 
-    void CApplication::Init()
+    void CApplication::Init(SApplicationCreateInfo const &ApplicationCreateInfo)
     {
         CApplicationPools::Init();
 
-        InitWindow();
+        SWindowInitInfo WindowInitInfo{};
+        WindowInitInfo.WindowName =
+            ApplicationCreateInfo.ApplicationName + " " + ApplicationCreateInfo.ApplicationVersion;
+        WindowInitInfo.WindowWidth                  = ApplicationCreateInfo.ApplicationWindowWidth;
+        WindowInitInfo.WindowHeight                 = ApplicationCreateInfo.ApplicationWindowHeight;
+        WindowInitInfo.WindowSettings.bFullScreen   = false;
+        WindowInitInfo.WindowSettings.bVSyncEnabled = true;
+
+        InitWindow(WindowInitInfo);
+
         InitGUIController();
+
         InitRenderer();
 
         PushLayer(CLayer::Create<CCoreLayer>());
@@ -118,15 +128,8 @@ namespace Corvus
         }
     }
 
-    void CApplication::InitWindow()
+    void CApplication::InitWindow(SWindowInitInfo const &WindowInitInfo)
     {
-        SWindowInitInfo WindowInitInfo{};
-        WindowInitInfo.WindowWidth                  = 1600;
-        WindowInitInfo.WindowHeight                 = 900;
-        WindowInitInfo.WindowName                   = "TestWindow";
-        WindowInitInfo.WindowSettings.bVSyncEnabled = true;
-        WindowInitInfo.WindowSettings.bFullScreen   = false;
-
         m_Window = CWindow::Create();
         CORVUS_CORE_ASSERT(m_Window);
         m_Window->Init(WindowInitInfo);
