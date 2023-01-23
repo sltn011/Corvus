@@ -29,13 +29,13 @@ namespace Corvus
         ~CEditorApp() {}
     };
 
+    CORVUS_DECLARE_MULTICAST_DELEGATE(COnSceneFrameBufferChange, CFrameBuffer const *);
+
     class CEditorAppLayer : public CLayer
     {
     public:
         CEditorAppLayer() : CLayer{"Corvus Editor Layer", true}
         {
-            CreateEditorGUI();
-
             CRenderer::EnableDepthTest();
             CRenderer::EnableBackfaceCulling();
             CRenderer::SetClearColor({0.6f, 0.8f, 1.0f, 1.0f});
@@ -45,21 +45,27 @@ namespace Corvus
             WireUpAssets();
 
             CreateSceneFramebuffer();
+
+            CreateEditorGUI();
         }
 
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
         {
             CRenderer::BeginScene();
 
-            if (bViewportUpdated)
+            if (bRequestViewportResize)
             {
+                ViewportSize = RequestedViewportSize;
+
                 SceneFrameBuffer->Resize(ViewportSize.x, ViewportSize.y);
                 CRenderer::ViewportResize(ViewportSize.x, ViewportSize.y);
                 Scene.GetPlayerCamera()->SetViewportSize(
                     static_cast<float>(ViewportSize.x), static_cast<float>(ViewportSize.y)
                 );
 
-                bViewportUpdated = false;
+                bRequestViewportResize = false;
+
+                OnSceneFrameBufferChange.Broadcast(SceneFrameBuffer.get());
             }
 
             UpdateCamera(ElapsedTime);
@@ -128,34 +134,7 @@ namespace Corvus
         {
             Dockspace.Render(ElapsedTime);
 
-            /*ImGuiWindowFlags     window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-            const ImGuiViewport *viewport     = ImGui::GetMainViewport();
-            ImGui::SetNextWindowPos(viewport->WorkPos);
-            ImGui::SetNextWindowSize(viewport->WorkSize);
-            ImGui::SetNextWindowViewport(viewport->ID);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-            window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
-                            ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-                            ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
-                            ImGuiWindowFlags_NoDocking;
-
-            ImGuiWindowFlags panel_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
-
-            ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
-            ImGui::Begin("Corvus Editor", nullptr, window_flags);
-            ImGui::PopStyleVar(2);
-
-            ImGui::BeginMainMenuBar();
-            ImGui::MenuItem("Menu Item 1");
-            ImGui::MenuItem("Menu Item 2");
-            ImGui::MenuItem("Menu Item 3");
-            ImGui::EndMainMenuBar();
-
-            ImGuiID dockspace_id = ImGui::GetID("EditorDockSpace");
-            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-
+            /*
             ImGui::Begin("Viewport", nullptr, panel_flags);
             ImVec2 RegionSize = ImGui::GetContentRegionAvail();
             ImGui::Image(
@@ -172,30 +151,7 @@ namespace Corvus
                 bViewportUpdated = true;
             }
             ImGui::End();
-
-            ImGui::Begin("Scene", nullptr, panel_flags);
-            ImGui::Text("Aboba");
-            ImGui::End();
-
-            ImGui::Begin("Parameters", nullptr, panel_flags);
-            ImGui::Text("Position");
-            ImGui::Text("Rotation");
-            ImGui::Text("Scale");
-            ImGui::End();
-
-            ImGui::Begin("Assets", nullptr, panel_flags);
-            ImGui::Text("Models");
-            ImGui::End();
-
-            ImGui::End();*/
-        }
-
-        void CreateEditorGUI()
-        {
-            Dockspace.AddPanel(GUI::CPanel::Create<GUI::CAssetsPanel>());
-            Dockspace.AddPanel(GUI::CPanel::Create<GUI::CParametersPanel>());
-            Dockspace.AddPanel(GUI::CPanel::Create<GUI::CScenePanel>());
-            Dockspace.AddPanel(GUI::CPanel::Create<GUI::CViewportPanel>());
+            */
         }
 
         void CreateScene()
@@ -359,6 +315,32 @@ namespace Corvus
                 CFrameBuffer::Create(ViewportSize.x, ViewportSize.y, std::move(TestFrameBufferAttachment));
         }
 
+        void CreateEditorGUI()
+        {
+            Dockspace.AddPanel(GUI::CPanel::Create<GUI::CAssetsPanel>());
+            Dockspace.AddPanel(GUI::CPanel::Create<GUI::CParametersPanel>());
+            Dockspace.AddPanel(GUI::CPanel::Create<GUI::CScenePanel>());
+
+            TOwn<GUI::CViewportPanel> ViewportPanel =
+                GUI::CPanel::Create<GUI::CViewportPanel>(SceneFrameBuffer.get());
+
+            ViewportPanel->OnViewportPanelResize.BindObject(
+                this, &CEditorAppLayer::RequestSceneFramebufferResize
+            );
+
+            OnSceneFrameBufferChange.BindObject(
+                ViewportPanel.get(), &GUI::CViewportPanel::SetViewportFramebuffer
+            );
+
+            Dockspace.AddPanel(std::move(ViewportPanel));
+        }
+
+        void RequestSceneFramebufferResize(FUIntVector2 NewSize)
+        {
+            RequestedViewportSize  = NewSize;
+            bRequestViewportResize = true;
+        }
+
     private:
         GUI::CDockspace Dockspace;
 
@@ -368,13 +350,15 @@ namespace Corvus
         std::unordered_map<FUUID, CMaterial>    MaterialsAssets;
         std::unordered_map<FUUID, CStaticModel> StaticModelsAssets;
 
-        TOwn<CFrameBuffer> SceneFrameBuffer;
+        TOwn<CFrameBuffer>        SceneFrameBuffer;
+        COnSceneFrameBufferChange OnSceneFrameBufferChange;
+
+        FUIntVector2 ViewportSize{};
+        FUIntVector2 RequestedViewportSize{};
+        bool         bRequestViewportResize = false;
 
         bool     bCameraMode = false;
         FVector2 CursorPos;
-
-        FUIntVector2 ViewportSize{};
-        bool         bViewportUpdated = false;
     };
 
     CApplication *CreateApplication()

@@ -2,26 +2,45 @@
 
 #include "CorvusEditor/GUI/ViewportPanel.h"
 
+#include "Corvus/Renderer/FrameBuffer.h"
+#include "Corvus/Renderer/Texture2DBuffer.h"
+
 namespace Corvus::GUI
 {
+
+    CViewportPanel::CViewportPanel(CFrameBuffer const *ViewportFrameBufferPtr)
+    {
+        SetViewportFramebuffer(ViewportFrameBufferPtr);
+    }
 
     void CViewportPanel::Render(FTimeDelta ElapsedTime, EPanelFlags PanelFlags)
     {
         ImGui::Begin("Viewport", nullptr, RawValue(PanelFlags));
-        /*ImVec2 RegionSize = ImGui::GetContentRegionAvail();
+
+        ImVec2       RegionSize = ImGui::GetContentRegionAvail();
+        FUIntVector2 ViewportSize{static_cast<UInt32>(RegionSize.x), static_cast<UInt32>(RegionSize.y)};
+
+        FUIntVector2 FramebufferSize = m_ViewportFrameBufferPtr->GetSize();
+
         ImGui::Image(
-            SceneFrameBuffer->GetAttachment(0).GetTextureID(),
-            {static_cast<float>(ViewportSize.x), static_cast<float>(ViewportSize.y)},
+            m_ViewportFrameBufferPtr->GetAttachment(0).GetTextureID(),
+            {static_cast<float>(FramebufferSize.x), static_cast<float>(FramebufferSize.y)},
             {0.0f, 1.0f},
             {1.0f, 0.0f}
         );
-        FUIntVector2 NewViewportSize{static_cast<UInt32>(RegionSize.x), static_cast<UInt32>(RegionSize.y)};
-        if (ViewportSize != NewViewportSize)
+
+        if (FramebufferSize != ViewportSize)
         {
-            ViewportSize     = NewViewportSize;
-            bViewportUpdated = true;
-        }*/
+            OnViewportPanelResize.Broadcast(ViewportSize);
+        }
+
         ImGui::End();
+    }
+
+    void CViewportPanel::SetViewportFramebuffer(CFrameBuffer const *ViewportFrameBufferPtr)
+    {
+        CORVUS_CORE_ASSERT(ViewportFrameBufferPtr != nullptr);
+        m_ViewportFrameBufferPtr = ViewportFrameBufferPtr;
     }
 
 } // namespace Corvus::GUI

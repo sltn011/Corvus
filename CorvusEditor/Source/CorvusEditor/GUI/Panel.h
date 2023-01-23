@@ -15,7 +15,7 @@ namespace Corvus::GUI
 
     public:
         template<typename PanelType, typename... Args>
-        static [[nodiscard]] TOwn<CPanel> Create(Args &&...args)
+        static [[nodiscard]] TOwn<PanelType> Create(Args &&...args)
         {
             return MakeOwned<PanelType>(std::forward<Args>(args)...);
         }
