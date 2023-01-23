@@ -27,6 +27,7 @@ project "CorvusEditorApp"
     {
         "%{wks.location}/Corvus/Source",
         "%{wks.location}/CorvusEditor/Source",
+        "%{wks.location}/CorvusEditorApp/Source",
         "%{wks.location}/Corvus/Dependencies/imgui/Source",
         "%{wks.location}/Corvus/Dependencies/spdlog/include",
         "%{wks.location}/Corvus/Dependencies/glm"
