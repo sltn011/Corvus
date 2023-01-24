@@ -6,7 +6,7 @@
 
 #include <imgui.h>
 
-namespace Corvus::GUI
+namespace Corvus
 {
     SizeT CDockspace::AddPanel(TOwn<CPanel> &&Panel)
     {
@@ -65,4 +65,4 @@ namespace Corvus::GUI
         ImGui::End();
     }
 
-} // namespace Corvus::GUI
+} // namespace Corvus

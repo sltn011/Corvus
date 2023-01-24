@@ -5,7 +5,7 @@
 
 #include <imgui.h>
 
-namespace Corvus::GUI
+namespace Corvus
 {
 #define CORVUSEDITOR_GENERATED_ENUM_OPS(EnumClass)                                     \
                                                                                        \
@@ -105,6 +105,6 @@ namespace Corvus::GUI
     CORVUSEDITOR_GENERATED_ENUM_OPS(EPanelFlags);
     CORVUSEDITOR_GENERATED_ENUM_OPS(EEditorWindowFlags);
 
-} // namespace Corvus::GUI
+} // namespace Corvus
 
 #endif // !CORVUSEDITOR_SOURCE_CORVUSEDITOR_SOURCE_GUI_FLAGS_H

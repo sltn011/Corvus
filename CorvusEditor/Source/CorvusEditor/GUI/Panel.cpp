@@ -2,7 +2,7 @@
 
 #include "CorvusEditor/GUI/Panel.h"
 
-namespace Corvus::GUI
+namespace Corvus
 {
 
 }

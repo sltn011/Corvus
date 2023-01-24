@@ -4,7 +4,7 @@
 #include "Corvus/Core/Base.h"
 #include "Corvus/Time/TimeDelta.h"
 
-namespace Corvus::GUI
+namespace Corvus
 {
     enum class EPanelFlags : UInt32;
 
@@ -30,6 +30,6 @@ namespace Corvus::GUI
         virtual void Render(FTimeDelta ElapsedTime, EPanelFlags PanelFlags) = 0;
     };
 
-} // namespace Corvus::GUI
+} // namespace Corvus
 
 #endif // !CORVUSEDITOR_SOURCE_CORVUSEDITOR_SOURCE_GUI_PANEL_H

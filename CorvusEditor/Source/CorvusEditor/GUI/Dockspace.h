@@ -6,7 +6,7 @@
 
 #include <vector>
 
-namespace Corvus::GUI
+namespace Corvus
 {
 
     class CPanel;
@@ -26,6 +26,6 @@ namespace Corvus::GUI
         std::vector<TOwn<CPanel>> m_Panels;
     };
 
-} // namespace Corvus::GUI
+} // namespace Corvus
 
 #endif // !CORVUSEDITOR_SOURCE_CORVUSEDITOR_SOURCE_GUI_DOCKSPACE_H

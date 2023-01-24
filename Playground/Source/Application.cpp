@@ -9,6 +9,8 @@
 #include "Corvus/Scene/Entity.h"
 #include "Corvus/Scene/Scene.h"
 
+#include <imgui.h>
+
 namespace Corvus
 {
 
@@ -92,6 +94,8 @@ namespace Corvus
                 }
             }
         }
+
+        virtual void OnGUIRender(FTimeDelta ElapsedTime) override { ImGui::ShowDemoWindow(); }
 
         void CreateScene()
         {

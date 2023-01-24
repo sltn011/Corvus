@@ -2,7 +2,7 @@
 
 #include "CorvusEditor/GUI/AssetsPanel.h"
 
-namespace Corvus::GUI
+namespace Corvus
 
 {
     void CAssetsPanel::Render(FTimeDelta ElapsedTime, EPanelFlags PanelFlags)
@@ -12,4 +12,4 @@ namespace Corvus::GUI
         ImGui::End();
     }
 
-} // namespace Corvus::GUI
+} // namespace Corvus

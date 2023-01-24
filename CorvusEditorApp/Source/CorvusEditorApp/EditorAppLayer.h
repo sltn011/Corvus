@@ -21,6 +21,7 @@ namespace Corvus
     class CMaterial;
 
     CORVUS_DECLARE_MULTICAST_DELEGATE(COnSceneFrameBufferChange, CFrameBuffer const *);
+    CORVUS_DECLARE_MULTICAST_DELEGATE(COnSceneChange, CScene const *);
 
     class CEditorAppLayer : public CLayer
     {
@@ -50,9 +51,10 @@ namespace Corvus
         void RequestSceneFramebufferResize(FUIntVector2 NewSize);
 
     private:
-        GUI::CDockspace Dockspace;
+        CDockspace Dockspace;
 
-        CScene Scene;
+        CScene         Scene;
+        COnSceneChange OnSceneChange;
 
         std::unordered_map<FUUID, CTexture2D>   TexturesAssets;
         std::unordered_map<FUUID, CMaterial>    MaterialsAssets;

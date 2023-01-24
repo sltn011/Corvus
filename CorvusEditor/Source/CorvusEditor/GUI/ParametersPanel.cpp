@@ -2,7 +2,7 @@
 
 #include "CorvusEditor/GUI/ParametersPanel.h"
 
-namespace Corvus::GUI
+namespace Corvus
 {
 
     void CParametersPanel::Render(FTimeDelta ElapsedTime, EPanelFlags PanelFlags)
@@ -14,4 +14,4 @@ namespace Corvus::GUI
         ImGui::End();
     }
 
-} // namespace Corvus::GUI
+} // namespace Corvus

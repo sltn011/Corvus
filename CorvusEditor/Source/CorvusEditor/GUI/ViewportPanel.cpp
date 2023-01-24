@@ -5,7 +5,7 @@
 #include "Corvus/Renderer/FrameBuffer.h"
 #include "Corvus/Renderer/Texture2DBuffer.h"
 
-namespace Corvus::GUI
+namespace Corvus
 {
 
     CViewportPanel::CViewportPanel(CFrameBuffer const *ViewportFrameBufferPtr)
@@ -43,4 +43,4 @@ namespace Corvus::GUI
         m_ViewportFrameBufferPtr = ViewportFrameBufferPtr;
     }
 
-} // namespace Corvus::GUI
+} // namespace Corvus

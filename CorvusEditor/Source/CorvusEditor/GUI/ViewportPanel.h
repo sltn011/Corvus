@@ -7,11 +7,8 @@
 
 namespace Corvus
 {
-    class CFrameBuffer;
-}
 
-namespace Corvus::GUI
-{
+    class CFrameBuffer;
 
     CORVUS_DECLARE_MULTICAST_DELEGATE(COnViewportPanelResize, FUIntVector2);
 
@@ -33,6 +30,6 @@ namespace Corvus::GUI
         CFrameBuffer const *m_ViewportFrameBufferPtr;
     };
 
-} // namespace Corvus::GUI
+} // namespace Corvus
 
 #endif // !CORVUSEDITOR_SOURCE_CORVUSEDITOR_SOURCE_GUI_VIEWPORTPANEL_H

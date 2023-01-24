@@ -307,21 +307,19 @@ namespace Corvus
 
     void CEditorAppLayer::CreateEditorGUI()
     {
-        Dockspace.AddPanel(GUI::CPanel::Create<GUI::CAssetsPanel>());
-        Dockspace.AddPanel(GUI::CPanel::Create<GUI::CParametersPanel>());
-        Dockspace.AddPanel(GUI::CPanel::Create<GUI::CScenePanel>());
+        Dockspace.AddPanel(CPanel::Create<CAssetsPanel>());
 
-        TOwn<GUI::CViewportPanel> ViewportPanel =
-            GUI::CPanel::Create<GUI::CViewportPanel>(SceneFrameBuffer.get());
+        Dockspace.AddPanel(CPanel::Create<CParametersPanel>());
 
+        TOwn<CScenePanel> ScenePanel = CPanel::Create<CScenePanel>(&Scene);
+        OnSceneChange.BindObject(ScenePanel.get(), &CScenePanel::SetScene);
+        Dockspace.AddPanel(std::move(ScenePanel));
+
+        TOwn<CViewportPanel> ViewportPanel = CPanel::Create<CViewportPanel>(SceneFrameBuffer.get());
         ViewportPanel->OnViewportPanelResize.BindObject(
             this, &CEditorAppLayer::RequestSceneFramebufferResize
         );
-
-        OnSceneFrameBufferChange.BindObject(
-            ViewportPanel.get(), &GUI::CViewportPanel::SetViewportFramebuffer
-        );
-
+        OnSceneFrameBufferChange.BindObject(ViewportPanel.get(), &CViewportPanel::SetViewportFramebuffer);
         Dockspace.AddPanel(std::move(ViewportPanel));
     }
 
