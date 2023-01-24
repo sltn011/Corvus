@@ -312,7 +312,11 @@ namespace Corvus
         Dockspace.AddPanel(CPanel::Create<CParametersPanel>());
 
         TOwn<CScenePanel> ScenePanel = CPanel::Create<CScenePanel>(&Scene);
+        ScenePanel->OnScenePanelSelectedEntityChange.BindObject(
+            this, &CEditorAppLayer::BroadcastEntitySelection
+        );
         OnSceneChange.BindObject(ScenePanel.get(), &CScenePanel::SetScene);
+        OnEntitySelected.BindObject(ScenePanel.get(), &CScenePanel::SetSelectedEntity);
         Dockspace.AddPanel(std::move(ScenePanel));
 
         TOwn<CViewportPanel> ViewportPanel = CPanel::Create<CViewportPanel>(SceneFrameBuffer.get());
@@ -327,6 +331,25 @@ namespace Corvus
     {
         RequestedViewportSize  = NewSize;
         bRequestViewportResize = true;
+    }
+
+    void CEditorAppLayer::BroadcastEntitySelection(CEntity const *SelectedEntityPtr) const
+    {
+        if (SelectedEntityPtr == nullptr) // for resetting selections
+        {
+            OnEntitySelected.Broadcast(nullptr);
+        }
+
+        TArray<TPoolable<CEntity>> const &Entities = Scene.GetEntities();
+        for (SizeT EntityIndex = 0; EntityIndex < Entities.GetSize(); ++EntityIndex)
+        {
+            CEntity *EntityPtr = Entities[EntityIndex].Get();
+            if (EntityPtr == SelectedEntityPtr)
+            {
+                OnEntitySelected.Broadcast(EntityPtr);
+                return;
+            }
+        }
     }
 
 } // namespace Corvus

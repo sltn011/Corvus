@@ -23,7 +23,6 @@ namespace Corvus
 
         void SetScene(CScene const *ScenePtr);
 
-    private:
         void SetSelectedEntity(CEntity const *SelectedEntityPtr);
 
     public:

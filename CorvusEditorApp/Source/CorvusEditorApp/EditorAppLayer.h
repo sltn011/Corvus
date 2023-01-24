@@ -22,6 +22,7 @@ namespace Corvus
 
     CORVUS_DECLARE_MULTICAST_DELEGATE(COnSceneFrameBufferChange, CFrameBuffer const *);
     CORVUS_DECLARE_MULTICAST_DELEGATE(COnSceneChange, CScene const *);
+    CORVUS_DECLARE_MULTICAST_DELEGATE(COnEntitySelected, CEntity *);
 
     class CEditorAppLayer : public CLayer
     {
@@ -50,11 +51,15 @@ namespace Corvus
 
         void RequestSceneFramebufferResize(FUIntVector2 NewSize);
 
+        void BroadcastEntitySelection(CEntity const *SelectedEntityPtr) const;
+
     private:
         CDockspace Dockspace;
 
         CScene         Scene;
         COnSceneChange OnSceneChange;
+
+        COnEntitySelected OnEntitySelected;
 
         std::unordered_map<FUUID, CTexture2D>   TexturesAssets;
         std::unordered_map<FUUID, CMaterial>    MaterialsAssets;
