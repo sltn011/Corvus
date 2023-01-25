@@ -103,7 +103,7 @@ namespace Corvus
     void CBaseSceneComponent::SetTransform(FTransform const &Transform)
     {
         m_Transform = Transform;
-        m_TransformCache.MakeDirty();
+        MakeTransformTreeDirty();
     }
 
     TArray<CBaseSceneComponent *> &CBaseSceneComponent::GetChildren()
@@ -139,12 +139,21 @@ namespace Corvus
     void CBaseSceneComponent::SetParent(CBaseSceneComponent *const Parent)
     {
         m_Parent = Parent;
-        m_TransformCache.MakeDirty();
+        MakeTransformTreeDirty();
     }
 
     void CBaseSceneComponent::ResetParent()
     {
         SetParent(nullptr);
+    }
+
+    void CBaseSceneComponent::MakeTransformTreeDirty()
+    {
+        m_TransformCache.MakeDirty();
+        for (CBaseSceneComponent *Child : m_Children)
+        {
+            Child->MakeTransformTreeDirty();
+        }
     }
 
 } // namespace Corvus

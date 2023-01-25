@@ -6,12 +6,19 @@
 namespace Corvus
 {
 
+    class CEntity;
+
     class CParametersPanel : public CPanel
     {
     public:
         using Super = CPanel;
 
         virtual void Render(FTimeDelta ElapsedTime, EPanelFlags PanelFlags) override;
+
+        void SetSelectedEntity(CEntity *SelectedEntityPtr);
+
+    private:
+        CEntity *m_SelectedEntity;
     };
 
 } // namespace Corvus

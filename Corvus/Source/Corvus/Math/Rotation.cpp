@@ -96,6 +96,11 @@ namespace Corvus
         return FURVectors;
     }
 
+    void FRotation::AddDegrees(FVector3 Degrees)
+    {
+        m_Degrees += Degrees;
+    }
+
     void FRotation::AddRollDegrees(float const RollDegree)
     {
         m_Degrees.x += RollDegree;
@@ -111,6 +116,11 @@ namespace Corvus
         m_Degrees.z += PitchDegree;
     }
 
+    FVector3 FRotation::GetDegrees() const
+    {
+        return m_Degrees;
+    }
+
     float FRotation::GetRollDegrees() const
     {
         return m_Degrees.x;
@@ -124,6 +134,11 @@ namespace Corvus
     float FRotation::GetPitchDegrees() const
     {
         return m_Degrees.z;
+    }
+
+    void FRotation::SetDegrees(FVector3 Degrees)
+    {
+        m_Degrees = Degrees;
     }
 
     void FRotation::SetRollDegrees(float const RollDegree)

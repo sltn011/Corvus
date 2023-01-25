@@ -127,25 +127,6 @@ namespace Corvus
     void CEditorAppLayer::OnGUIRender(FTimeDelta const ElapsedTime)
     {
         Dockspace.Render(ElapsedTime);
-
-        /*
-        ImGui::Begin("Viewport", nullptr, panel_flags);
-        ImVec2 RegionSize = ImGui::GetContentRegionAvail();
-        ImGui::Image(
-            SceneFrameBuffer->GetAttachment(0).GetTextureID(),
-            {static_cast<float>(ViewportSize.x), static_cast<float>(ViewportSize.y)},
-            {0.0f, 1.0f},
-            {1.0f, 0.0f}
-        );
-        FUIntVector2 NewViewportSize{
-            static_cast<UInt32>(RegionSize.x), static_cast<UInt32>(RegionSize.y)};
-        if (ViewportSize != NewViewportSize)
-        {
-            ViewportSize     = NewViewportSize;
-            bViewportUpdated = true;
-        }
-        ImGui::End();
-        */
     }
 
     void CEditorAppLayer::CreateScene()
@@ -285,7 +266,7 @@ namespace Corvus
         {
             CRenderer::SubmitStaticModel(
                 *Entity->StaticMeshComponent->StaticModelRef.GetRawPtr(),
-                Entity->StaticMeshComponent->GetTransformMatrix(),
+                Entity->TransformComponent->GetTransformMatrix(),
                 Scene.GetPlayerCamera()->GetProjectionViewMatrix()
             );
         }
@@ -309,7 +290,9 @@ namespace Corvus
     {
         Dockspace.AddPanel(CPanel::Create<CAssetsPanel>());
 
-        Dockspace.AddPanel(CPanel::Create<CParametersPanel>());
+        TOwn<CParametersPanel> ParametersPanel = CPanel::Create<CParametersPanel>();
+        OnEntitySelected.BindObject(ParametersPanel.get(), &CParametersPanel::SetSelectedEntity);
+        Dockspace.AddPanel(std::move(ParametersPanel));
 
         TOwn<CScenePanel> ScenePanel = CPanel::Create<CScenePanel>(&Scene);
         ScenePanel->OnScenePanelSelectedEntityChange.BindObject(

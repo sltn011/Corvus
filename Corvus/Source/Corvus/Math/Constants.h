@@ -1,7 +1,7 @@
 #ifndef CORVUS_SOURCE_CORVUS_MATH_CONSTANTS_H
 #define CORVUS_SOURCE_CORVUS_MATH_CONSTANTS_H
 
-#include "Corvus/Math/Vector.h"
+#include "Corvus/Core/Base.h"
 
 namespace Corvus::Constants
 {

@@ -50,6 +50,8 @@ namespace Corvus
         void SetParent(CBaseSceneComponent *const Parent);
         void ResetParent();
 
+        void MakeTransformTreeDirty();
+
     private:
         FTransform      m_Transform;
         FTransformCache m_TransformCache;
