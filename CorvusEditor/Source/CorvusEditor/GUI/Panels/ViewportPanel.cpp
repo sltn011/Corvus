@@ -1,6 +1,6 @@
 #include "CorvusEditorPCH.h"
 
-#include "CorvusEditor/GUI/ViewportPanel.h"
+#include "CorvusEditor/GUI/Panels/ViewportPanel.h"
 
 #include "Corvus/Renderer/FrameBuffer.h"
 #include "Corvus/Renderer/Texture2DBuffer.h"

@@ -1,6 +1,6 @@
 #include "CorvusEditorPCH.h"
 
-#include "CorvusEditor/GUI/ParametersPanel.h"
+#include "CorvusEditor/GUI/Panels/ParametersPanel.h"
 
 #include "Corvus/Components/TransformComponent.h"
 #include "Corvus/Scene/Entity.h"

@@ -31,7 +31,7 @@ namespace Corvus
         ) const override;
 
     private:
-        void CreateOpenGLFrameBuffer(UInt32 Width, UInt32 Height);
+        void CreateOpenGLFrameBuffer();
         void DestroyOpenGLFrameBuffer();
 
     private:

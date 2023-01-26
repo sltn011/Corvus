@@ -2,7 +2,7 @@
 
 #include "CorvusEditor/GUI/Dockspace.h"
 
-#include "CorvusEditor/GUI/Panel.h"
+#include "CorvusEditor/GUI/Panels/Panel.h"
 
 #include <imgui.h>
 

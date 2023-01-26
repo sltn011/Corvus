@@ -14,7 +14,7 @@ namespace Corvus
     )
         : Super{Width, Height, std::move(Attachments)}
     {
-        CreateOpenGLFrameBuffer(Width, Height);
+        CreateOpenGLFrameBuffer();
     }
 
     POpenGLFrameBuffer::~POpenGLFrameBuffer()
@@ -46,7 +46,7 @@ namespace Corvus
         Super::Resize(NewWidth, NewHeight);
 
         DestroyOpenGLFrameBuffer();
-        CreateOpenGLFrameBuffer(NewWidth, NewHeight);
+        CreateOpenGLFrameBuffer();
     }
 
     void POpenGLFrameBuffer::SetRenderTarget() const
@@ -75,7 +75,7 @@ namespace Corvus
         );
     }
 
-    void POpenGLFrameBuffer::CreateOpenGLFrameBuffer(UInt32 Width, UInt32 Height)
+    void POpenGLFrameBuffer::CreateOpenGLFrameBuffer()
     {
         glCreateFramebuffers(1, &m_FBO);
 
@@ -101,7 +101,8 @@ namespace Corvus
             m_FBO, static_cast<GLsizei>(AttachmentsUnits.size()), AttachmentsUnits.data()
         );
 
-        m_DepthStencilAttachment = MakeOwned<POpenGLRenderBuffer>(Width, Height, GL_DEPTH24_STENCIL8);
+        m_DepthStencilAttachment =
+            MakeOwned<POpenGLRenderBuffer>(m_FrameBufferSize.x, m_FrameBufferSize.y, GL_DEPTH24_STENCIL8);
         glNamedFramebufferRenderbuffer(
             m_FBO, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthStencilAttachment->GetID()
         );

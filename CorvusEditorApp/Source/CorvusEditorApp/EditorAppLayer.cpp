@@ -20,10 +20,10 @@
 #include "Corvus/Scene/Entity.h"
 
 // GUI
-#include "CorvusEditor/GUI/AssetsPanel.h"
-#include "CorvusEditor/GUI/ParametersPanel.h"
-#include "CorvusEditor/GUI/ScenePanel.h"
-#include "CorvusEditor/GUI/ViewportPanel.h"
+#include "CorvusEditor/GUI/Panels/AssetsPanel.h"
+#include "CorvusEditor/GUI/Panels/ParametersPanel.h"
+#include "CorvusEditor/GUI/Panels/ScenePanel.h"
+#include "CorvusEditor/GUI/Panels/ViewportPanel.h"
 
 namespace Corvus
 {
@@ -105,10 +105,13 @@ namespace Corvus
         else if (Event.GetEventType() == CEvent::EEventType::WindowResize)
         {
             CWindowResizeEvent &WREvent = CastEvent<CWindowResizeEvent>(Event);
-            CPerspectiveCamera *Camera  = static_cast<CPerspectiveCamera *>(Scene.GetPlayerCamera());
-            Camera->SetViewportSize(
-                static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight)
-            );
+            FUIntVector2        NewSize = {
+                static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight)};
+            RequestSceneFramebufferResize(NewSize);
+            // CPerspectiveCamera *Camera  = static_cast<CPerspectiveCamera *>(Scene.GetPlayerCamera());
+            // Camera->SetViewportSize(
+            //     static_cast<float>(ViewportSize.x), static_cast<float>(ViewportSize.x)
+            //);
         }
         else if (Event.GetEventType() == CEvent::EEventType::MouseScroll)
         {

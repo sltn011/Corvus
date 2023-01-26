@@ -1,6 +1,6 @@
 #include "CorvusEditorPCH.h"
 
-#include "CorvusEditor/GUI/ScenePanel.h"
+#include "CorvusEditor/GUI/Panels/ScenePanel.h"
 
 #include "Corvus/Scene/Entity.h"
 #include "Corvus/Scene/Scene.h"

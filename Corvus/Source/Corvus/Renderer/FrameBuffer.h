@@ -39,6 +39,9 @@ namespace Corvus
         CTexture2DBuffer &GetAttachment(SizeT AttachmentIndex) const;
 
     protected:
+        void ClampFramebufferSize(UInt32 &Width, UInt32 &Height) const;
+
+    protected:
         FUIntVector2                        m_FrameBufferSize{};
         std::vector<TOwn<CTexture2DBuffer>> m_Attachments;
     };

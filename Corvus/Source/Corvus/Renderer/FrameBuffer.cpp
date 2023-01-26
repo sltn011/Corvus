@@ -12,6 +12,7 @@ namespace Corvus
         : m_FrameBufferSize{Width, Height}, m_Attachments{std::move(Attachments)}
     {
         CORVUS_CORE_ASSERT(Width != 0 && Height != 0);
+        // No ClampFramebufferSize here
     }
 
     TOwn<CFrameBuffer> CFrameBuffer::Create(
@@ -31,7 +32,7 @@ namespace Corvus
 
     void CFrameBuffer::Resize(UInt32 NewWidth, UInt32 NewHeight)
     {
-        CORVUS_CORE_ASSERT(NewWidth != 0 && NewHeight != 0);
+        ClampFramebufferSize(NewWidth, NewHeight);
 
         std::for_each(
             m_Attachments.begin(),
@@ -57,6 +58,22 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT(AttachmentIndex < m_Attachments.size());
         return *m_Attachments[AttachmentIndex];
+    }
+
+    void CFrameBuffer::ClampFramebufferSize(UInt32 &Width, UInt32 &Height) const
+    {
+        // ImGui can sometimes give negative or zero values for framebuffer sizes
+        // Set these values to 1 here
+        Int32 SignedWidth  = static_cast<Int32>(Width);
+        Int32 SignedHeight = static_cast<Int32>(Height);
+        if (SignedWidth <= 0)
+        {
+            Width = 1;
+        }
+        if (SignedHeight <= 0)
+        {
+            Height = 1;
+        }
     }
 
 } // namespace Corvus

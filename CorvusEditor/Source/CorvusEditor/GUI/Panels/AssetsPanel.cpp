@@ -1,6 +1,6 @@
 #include "CorvusEditorPCH.h"
 
-#include "CorvusEditor/GUI/AssetsPanel.h"
+#include "CorvusEditor/GUI/Panels/AssetsPanel.h"
 
 namespace Corvus
 
