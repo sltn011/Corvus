@@ -46,6 +46,13 @@ namespace Corvus
     {
         return std::make_shared<T>(std::forward<Args>(args)...);
     }
+
+    template<typename T, std::enable_if_t<std::is_enum_v<T>, bool> = true>
+    inline constexpr std::underlying_type_t<T> EnumRawValue(T EnumValue)
+    {
+        return static_cast<std::underlying_type_t<T>>(EnumValue);
+    }
+
 } // namespace Corvus
 
 #include "Corvus/Core/Assert.h"

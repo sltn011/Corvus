@@ -7,6 +7,14 @@ using FIntVector2 = glm::vec<2, Int32>;
 using FIntVector3 = glm::vec<3, Int32>;
 using FIntVector4 = glm::vec<4, Int32>;
 
+using FByteVector2 = glm::vec<2, Int8>;
+using FByteVector3 = glm::vec<3, Int8>;
+using FByteVector4 = glm::vec<4, Int8>;
+
+using FUByteVector2 = glm::vec<2, UInt8>;
+using FUByteVector3 = glm::vec<3, UInt8>;
+using FUByteVector4 = glm::vec<4, UInt8>;
+
 using FUIntVector2 = glm::vec<2, UInt32>;
 using FUIntVector3 = glm::vec<3, UInt32>;
 using FUIntVector4 = glm::vec<4, UInt32>;

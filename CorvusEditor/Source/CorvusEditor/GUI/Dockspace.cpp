@@ -43,7 +43,7 @@ namespace Corvus
 
         static constexpr EDockspaceFlags DockspaceFlags = EDockspaceFlags::None;
 
-        ImGui::Begin("Corvus Editor", nullptr, RawValue(WindowFlags));
+        ImGui::Begin("Corvus Editor", nullptr, EnumRawValue(WindowFlags));
         ImGui::PopStyleVar(2);
 
         ImGui::BeginMainMenuBar();
@@ -53,7 +53,7 @@ namespace Corvus
         ImGui::EndMainMenuBar();
 
         ImGuiID DockspaceID = ImGui::GetID("EditorDockSpace");
-        ImGui::DockSpace(DockspaceID, ImVec2(0.0f, 0.0f), RawValue(DockspaceFlags));
+        ImGui::DockSpace(DockspaceID, ImVec2(0.0f, 0.0f), EnumRawValue(DockspaceFlags));
 
         static constexpr EPanelFlags PanelFlags = EPanelFlags::NoCollapse;
 

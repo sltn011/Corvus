@@ -15,7 +15,7 @@ namespace Corvus
 
     void CViewportPanel::Render(FTimeDelta ElapsedTime, EPanelFlags PanelFlags)
     {
-        ImGui::Begin("Viewport", nullptr, RawValue(PanelFlags));
+        ImGui::Begin("Viewport", nullptr, EnumRawValue(PanelFlags));
 
         ImVec2       RegionSize = ImGui::GetContentRegionAvail();
         FUIntVector2 ViewportSize{static_cast<UInt32>(RegionSize.x), static_cast<UInt32>(RegionSize.y)};

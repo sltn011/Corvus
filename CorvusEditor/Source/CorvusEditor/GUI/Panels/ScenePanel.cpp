@@ -15,7 +15,7 @@ namespace Corvus
 
     void CScenePanel::Render(FTimeDelta ElapsedTime, EPanelFlags PanelFlags)
     {
-        ImGui::Begin("Scene", nullptr, RawValue(PanelFlags));
+        ImGui::Begin("Scene", nullptr, EnumRawValue(PanelFlags));
 
         TArray<TPoolable<CEntity>> const &Entities = m_Scene->GetEntities();
 

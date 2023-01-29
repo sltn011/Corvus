@@ -7,7 +7,7 @@ namespace Corvus
 {
     void CAssetsPanel::Render(FTimeDelta ElapsedTime, EPanelFlags PanelFlags)
     {
-        ImGui::Begin("Assets", nullptr, RawValue(PanelFlags));
+        ImGui::Begin("Assets", nullptr, EnumRawValue(PanelFlags));
         ImGui::Text("Models");
         ImGui::End();
     }
