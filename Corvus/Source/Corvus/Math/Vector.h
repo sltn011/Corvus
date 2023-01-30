@@ -98,9 +98,9 @@ namespace Corvus::FVector
                (FMath::Abs(Vector1.z - Vector2.z) < Epsilon) && (FMath::Abs(Vector1.w - Vector2.w) < Epsilon);
     }
 
-    inline constexpr FVector3 Forward = FVector3{1.0f, 0.0f, 0.0f};
+    inline constexpr FVector3 Forward = FVector3{0.0f, 0.0f, -1.0f};
     inline constexpr FVector3 Up      = FVector3{0.0f, 1.0f, 0.0f};
-    inline constexpr FVector3 Right   = FVector3{0.0f, 0.0f, 1.0f};
+    inline constexpr FVector3 Right   = FVector3{1.0f, 0.0f, 0.0f};
 
     inline constexpr FVector3 ZeroVec = FVector3{0.0f, 0.0f, 0.0f};
     inline constexpr FVector3 OneVec  = FVector3{1.0f, 1.0f, 1.0f};

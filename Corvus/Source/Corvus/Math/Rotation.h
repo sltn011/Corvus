@@ -26,9 +26,9 @@ namespace Corvus
         FRotation(FQuaternion const &Quaternion, ERotationOrder Order = ERotationOrder::YXZ);
 
         FMatrix4 GetRotationMatrix() const;
-        FMatrix4 GetRollMatrix() const;
-        FMatrix4 GetYawMatrix() const;
         FMatrix4 GetPitchMatrix() const;
+        FMatrix4 GetYawMatrix() const;
+        FMatrix4 GetRollMatrix() const;
 
         FVector3 GetForwardVector() const;
         FVector3 GetUpVector() const;
@@ -36,25 +36,25 @@ namespace Corvus
         FMatrix3 GetFURVectors() const;
 
         void AddDegrees(FVector3 Degrees);
-        void AddRollDegrees(float RollDegree);
-        void AddYawDegrees(float YawDegree);
         void AddPitchDegrees(float PitchDegree);
+        void AddYawDegrees(float YawDegree);
+        void AddRollDegrees(float RollDegree);
 
         FVector3 GetDegrees() const;
-        float    GetRollDegrees() const;
-        float    GetYawDegrees() const;
         float    GetPitchDegrees() const;
+        float    GetYawDegrees() const;
+        float    GetRollDegrees() const;
 
         void SetDegrees(FVector3 Degrees);
-        void SetRollDegrees(float RollDegree);
-        void SetYawDegrees(float YawDegree);
         void SetPitchDegrees(float PitchDegree);
+        void SetYawDegrees(float YawDegree);
+        void SetRollDegrees(float RollDegree);
 
         ERotationOrder GetRotationOrder() const;
         void           SetRotationOrder(ERotationOrder Order);
 
     private:
-        FVector3       m_Degrees; // Roll, Yaw, Pitch
+        FVector3       m_Degrees; // Pitch, Yaw, Roll
         ERotationOrder m_RotationOrder;
     };
 

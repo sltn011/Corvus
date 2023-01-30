@@ -156,8 +156,8 @@ namespace Corvus
     void CEditorAppLayer::PopulateScene()
     {
         TPoolable<CEntity> Entity = ConstructPoolable<CEntity>();
-        Entity->TransformComponent->SetPosition(FVector3{5.0f, -1.5f, 0.0f});
-        Entity->TransformComponent->SetRotation(FRotation{{0.0f, -45.0f, 0.0f}});
+        Entity->TransformComponent->SetPosition(FVector3{0.0f, -1.5f, -5.0f});
+        Entity->TransformComponent->SetRotation(FRotation{{0.0f, 45.0f, 0.0f}});
         Entity->TransformComponent->SetScale(FVector3{1.0f});
         Entity->StaticMeshComponent->StaticModelRef.SetUUID(StaticModelsAssets.begin()->first);
 
