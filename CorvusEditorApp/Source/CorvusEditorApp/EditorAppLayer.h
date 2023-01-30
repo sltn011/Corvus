@@ -23,6 +23,7 @@ namespace Corvus
     CORVUS_DECLARE_MULTICAST_DELEGATE(COnSceneFrameBufferChange, CFrameBuffer const *);
     CORVUS_DECLARE_MULTICAST_DELEGATE(COnSceneChange, CScene const *);
     CORVUS_DECLARE_MULTICAST_DELEGATE(COnEntitySelected, CEntity *);
+    CORVUS_DECLARE_MULTICAST_DELEGATE(COnCurrentCameraChange, CCamera *);
 
     class CEditorAppLayer : public CLayer
     {
@@ -56,8 +57,9 @@ namespace Corvus
     private:
         CDockspace Dockspace;
 
-        CScene         Scene;
-        COnSceneChange OnSceneChange;
+        CScene                 Scene;
+        COnSceneChange         OnSceneChange;
+        COnCurrentCameraChange OnCurrentCameraChange;
 
         COnEntitySelected OnEntitySelected;
 

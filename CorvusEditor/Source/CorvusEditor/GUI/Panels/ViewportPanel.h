@@ -5,10 +5,13 @@
 #include "Corvus/Math/Vector.h"
 #include "CorvusEditor/GUI/Panels/Panel.h"
 
+#include <vector>
+
 namespace Corvus
 {
 
     class CFrameBuffer;
+    class COverlay;
 
     CORVUS_DECLARE_MULTICAST_DELEGATE(COnViewportPanelResize, FUIntVector2);
 
@@ -23,11 +26,15 @@ namespace Corvus
 
         void SetViewportFramebuffer(CFrameBuffer const *ViewportFrameBufferPtr);
 
+        void AddOverlay(TOwn<COverlay> &&Overlay);
+
     public:
         COnViewportPanelResize OnViewportPanelResize;
 
     private:
         CFrameBuffer const *m_ViewportFrameBufferPtr;
+
+        std::vector<TOwn<COverlay>> m_Overlays;
     };
 
 } // namespace Corvus

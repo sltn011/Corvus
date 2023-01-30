@@ -20,6 +20,7 @@
 #include "Corvus/Scene/Entity.h"
 
 // GUI
+#include "CorvusEditor/GUI/Overlays/GizmoOverlay.h"
 #include "CorvusEditor/GUI/Panels/AssetsPanel.h"
 #include "CorvusEditor/GUI/Panels/ParametersPanel.h"
 #include "CorvusEditor/GUI/Panels/ScenePanel.h"
@@ -310,6 +311,12 @@ namespace Corvus
             this, &CEditorAppLayer::RequestSceneFramebufferResize
         );
         OnSceneFrameBufferChange.BindObject(ViewportPanel.get(), &CViewportPanel::SetViewportFramebuffer);
+
+        TOwn<CGizmoOverlay> GizmoOverlay = COverlay::Create<CGizmoOverlay>(Scene.GetPlayerCamera());
+        OnEntitySelected.BindObject(GizmoOverlay.get(), &CGizmoOverlay::SetSelectedEntity);
+        OnCurrentCameraChange.BindObject(GizmoOverlay.get(), &CGizmoOverlay::SetCurrentCamera);
+        ViewportPanel->AddOverlay(std::move(GizmoOverlay));
+
         Dockspace.AddPanel(std::move(ViewportPanel));
     }
 

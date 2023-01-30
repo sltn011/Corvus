@@ -4,6 +4,7 @@
 
 #include "Corvus/Renderer/FrameBuffer.h"
 #include "Corvus/Renderer/Texture2DBuffer.h"
+#include "CorvusEditor/GUI/Overlays/Overlay.h"
 
 namespace Corvus
 {
@@ -29,6 +30,15 @@ namespace Corvus
             {1.0f, 0.0f}
         );
 
+        std::for_each(
+            m_Overlays.begin(),
+            m_Overlays.end(),
+            [ElapsedTime](TOwn<COverlay> &Overlay)
+            {
+                Overlay->Render(ElapsedTime);
+            }
+        );
+
         if (FramebufferSize != ViewportSize)
         {
             OnViewportPanelResize.Broadcast(ViewportSize);
@@ -41,6 +51,12 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT(ViewportFrameBufferPtr != nullptr);
         m_ViewportFrameBufferPtr = ViewportFrameBufferPtr;
+    }
+
+    void CViewportPanel::AddOverlay(TOwn<COverlay> &&Overlay)
+    {
+        Overlay->ParentPanel = this;
+        m_Overlays.emplace_back(std::move(Overlay));
     }
 
 } // namespace Corvus
