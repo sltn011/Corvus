@@ -31,6 +31,7 @@ project "CorvusEditor"
         "%{wks.location}/Corvus/Source",
         "%{wks.location}/CorvusEditor/Source",
         "%{wks.location}/Corvus/Dependencies/imgui/Source",
+        "%{wks.location}/Corvus/Dependencies/ImGuizmo/Source",
         "%{wks.location}/Corvus/Dependencies/spdlog/include",
         "%{wks.location}/Corvus/Dependencies/glm"
     }

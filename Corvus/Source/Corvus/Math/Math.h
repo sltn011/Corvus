@@ -96,6 +96,11 @@ namespace Corvus::FMath
         return ATan2(X, Y);
     }
 
+    inline float Sqrt(float Val)
+    {
+        return glm::sqrt(Val);
+    }
+
 } // namespace Corvus::FMath
 
 #endif //! CORVUS_SOURCE_CORVUS_MATH_MATH_H

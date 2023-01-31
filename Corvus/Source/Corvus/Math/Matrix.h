@@ -57,6 +57,12 @@ namespace Corvus::FMatrix
     }
 
     template<typename TMatrix>
+    inline float *ValuePtr(TMatrix &FMatrix)
+    {
+        return glm::value_ptr(FMatrix);
+    }
+
+    template<typename TMatrix>
     inline float const *ValuePtr(TMatrix const &FMatrix)
     {
         return glm::value_ptr(FMatrix);

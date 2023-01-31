@@ -18,13 +18,13 @@ namespace Corvus
 
         virtual void Render(FTimeDelta ElapsedTime) override;
 
-        void SetCurrentCamera(CCamera const *CurrentCamera);
+        void SetCurrentCamera(CCamera *CurrentCamera);
 
         void SetSelectedEntity(CEntity *SelectedEntity);
 
     private:
-        CCamera const *m_CurrentCamera  = nullptr;
-        CEntity       *m_SelectedEntity = nullptr;
+        CCamera *m_CurrentCamera  = nullptr;
+        CEntity *m_SelectedEntity = nullptr;
     };
 
 } // namespace Corvus

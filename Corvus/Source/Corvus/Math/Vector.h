@@ -3,6 +3,8 @@
 
 #include "Corvus/Math/Math.h"
 
+#include <type_traits>
+
 using FIntVector2 = glm::vec<2, Int32>;
 using FIntVector3 = glm::vec<3, Int32>;
 using FIntVector4 = glm::vec<4, Int32>;
@@ -39,7 +41,7 @@ namespace Corvus::FVector
     }
 
     template<typename TVector>
-    inline TVector Length(TVector const &Vector)
+    inline std::remove_reference_t<decltype(std::declval<TVector>()[0])> Length(TVector const &Vector)
     {
         return glm::length(Vector);
     }

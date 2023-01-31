@@ -11,3 +11,6 @@
 [submodule "Corvus/Dependencies/glm"]
 	path = Corvus/Dependencies/glm
 	url = https://github.com/g-truc/glm
+[submodule "Corvus/Dependencies/ImGuizmo/Source"]
+	path = Corvus/Dependencies/ImGuizmo/Source
+	url = https://github.com/CedricGuillemet/ImGuizmo.git

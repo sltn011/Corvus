@@ -36,6 +36,7 @@ project "Corvus"
         "Dependencies/GLFW/Source/include",
         "Dependencies/GLAD/Source/include",
         "Dependencies/imgui/Source",
+        "Dependencies/ImGuizmo/Source",
         "Dependencies/glm",
         "Dependencies/stb",
         "Dependencies/json",
@@ -46,7 +47,8 @@ project "Corvus"
     {
         "GLFW",
         "GLAD",
-        "imgui"
+        "imgui",
+        "ImGuizmo"
     }
     
     defines

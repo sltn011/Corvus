@@ -26,5 +26,6 @@ group "Dependencies"
 	include "Corvus/Dependencies/GLFW"
 	include "Corvus/Dependencies/GLAD"
 	include "Corvus/Dependencies/imgui"
+	include "Corvus/Dependencies/ImGuizmo"
 group ""
 	

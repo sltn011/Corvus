@@ -8,7 +8,10 @@
 #include <GLFW/glfw3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
+// clang-format off
 #include <imgui.h>
+#include <ImGuizmo.h> // must be included after imgui.h
+// clang-format on
 
 namespace Corvus
 {
@@ -70,6 +73,8 @@ namespace Corvus
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+        ImGuizmo::BeginFrame();
     }
 
     void CGUIController::EndFrame()
