@@ -2,16 +2,30 @@
 
 #include "CorvusEditor/GUI/Panels/AssetsPanel.h"
 
-#include <filesystem>
-
 namespace Corvus
 {
-    void RenderEntry(std::filesystem::directory_entry const &Entry);
-    void RenderFolderEntry(std::filesystem::directory_entry const &Folder);
-    void RenderFileEntry(std::filesystem::directory_entry const &File);
+
+    CAssetsPanel::CAssetsPanel(
+        std::filesystem::path AssetsDirectoryPath, std::filesystem::path ApplicationDirectory
+    )
+        : m_AssetsDirectoryPath{std::move(AssetsDirectoryPath)},
+          m_ApplicationDirectory{std::move(ApplicationDirectory)}
+    {
+        if (!std::filesystem::exists(m_AssetsDirectoryPath))
+        {
+            std::filesystem::create_directories(m_AssetsDirectoryPath);
+        }
+
+        if (!std::filesystem::exists(m_ApplicationDirectory))
+        {
+            CORVUS_CORE_CRITICAL("Specified Application Directory does not exist!");
+        }
+    }
 
     void CAssetsPanel::Render(FTimeDelta ElapsedTime, EPanelFlags PanelFlags)
     {
+        std::filesystem::current_path(m_AssetsDirectoryPath);
+
         if (ImGui::Begin("Assets", nullptr, EnumRawValue(PanelFlags)))
         {
             static constexpr EEditorTableFlags AssetsDirectoryTreeFlags =
@@ -33,9 +47,11 @@ namespace Corvus
             }
         }
         ImGui::End();
+
+        std::filesystem::current_path(m_ApplicationDirectory);
     }
 
-    void RenderEntry(std::filesystem::directory_entry const &Entry)
+    void CAssetsPanel::RenderEntry(std::filesystem::directory_entry const &Entry)
     {
         if (Entry.is_directory())
         {
@@ -49,7 +65,7 @@ namespace Corvus
         }
     }
 
-    void RenderFolderEntry(std::filesystem::directory_entry const &Folder)
+    void CAssetsPanel::RenderFolderEntry(std::filesystem::directory_entry const &Folder)
     {
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
@@ -79,14 +95,18 @@ namespace Corvus
         }
     }
 
-    void RenderFileEntry(std::filesystem::directory_entry const &File)
+    void CAssetsPanel::RenderFileEntry(std::filesystem::directory_entry const &File)
     {
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
 
         std::filesystem::path FilePath = File.path();
 
-        ImGui::Text(FilePath.filename().string().c_str());
+        ImGui::Selectable(FilePath.filename().string().c_str());
+        if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+        {
+            CORVUS_WARN("Clicked!");
+        }
         ImGui::TableNextColumn();
         ImGui::Text("File");
     }
