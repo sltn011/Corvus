@@ -15,24 +15,24 @@ namespace Corvus
 
     void CScenePanel::Render(FTimeDelta ElapsedTime, EPanelFlags PanelFlags)
     {
-        ImGui::Begin("Scene", nullptr, EnumRawValue(PanelFlags));
+        if (ImGui::Begin("Scene", nullptr, EnumRawValue(PanelFlags)))
+        {
+            TArray<TPoolable<CEntity>> const &Entities = m_Scene->GetEntities();
 
-        TArray<TPoolable<CEntity>> const &Entities = m_Scene->GetEntities();
-
-        SizeT EntityIndex = 0;
-        std::for_each(
-            Entities.Begin(),
-            Entities.End(),
-            [&](TPoolable<CEntity> const &Entity)
-            {
-                CString EntityName = "Entity " + std::to_string(EntityIndex);
-                if (ImGui::Selectable(EntityName.c_str(), Entity.Get() == m_SelectedEntity))
+            SizeT EntityIndex = 0;
+            std::for_each(
+                Entities.Begin(),
+                Entities.End(),
+                [&](TPoolable<CEntity> const &Entity)
                 {
-                    SetSelectedEntity(Entity.Get());
+                    CString EntityName = "Entity " + std::to_string(EntityIndex);
+                    if (ImGui::Selectable(EntityName.c_str(), Entity.Get() == m_SelectedEntity))
+                    {
+                        SetSelectedEntity(Entity.Get());
+                    }
                 }
-            }
-        );
-
+            );
+        }
         ImGui::End();
     }
 

@@ -16,34 +16,34 @@ namespace Corvus
 
     void CViewportPanel::Render(FTimeDelta ElapsedTime, EPanelFlags PanelFlags)
     {
-        ImGui::Begin("Viewport", nullptr, EnumRawValue(PanelFlags));
-
-        ImVec2       RegionSize = ImGui::GetContentRegionAvail();
-        FUIntVector2 ViewportSize{static_cast<UInt32>(RegionSize.x), static_cast<UInt32>(RegionSize.y)};
-
-        FUIntVector2 FramebufferSize = m_ViewportFrameBufferPtr->GetSize();
-
-        ImGui::Image(
-            m_ViewportFrameBufferPtr->GetAttachment(0).GetTextureID(),
-            {static_cast<float>(FramebufferSize.x), static_cast<float>(FramebufferSize.y)},
-            {0.0f, 1.0f},
-            {1.0f, 0.0f}
-        );
-
-        std::for_each(
-            m_Overlays.begin(),
-            m_Overlays.end(),
-            [ElapsedTime](TOwn<COverlay> &Overlay)
-            {
-                Overlay->Render(ElapsedTime);
-            }
-        );
-
-        if (FramebufferSize != ViewportSize)
+        if (ImGui::Begin("Viewport", nullptr, EnumRawValue(PanelFlags)))
         {
-            OnViewportPanelResize.Broadcast(ViewportSize);
-        }
+            ImVec2       RegionSize = ImGui::GetContentRegionAvail();
+            FUIntVector2 ViewportSize{static_cast<UInt32>(RegionSize.x), static_cast<UInt32>(RegionSize.y)};
 
+            FUIntVector2 FramebufferSize = m_ViewportFrameBufferPtr->GetSize();
+
+            ImGui::Image(
+                m_ViewportFrameBufferPtr->GetAttachment(0).GetTextureID(),
+                {static_cast<float>(FramebufferSize.x), static_cast<float>(FramebufferSize.y)},
+                {0.0f, 1.0f},
+                {1.0f, 0.0f}
+            );
+
+            std::for_each(
+                m_Overlays.begin(),
+                m_Overlays.end(),
+                [ElapsedTime](TOwn<COverlay> &Overlay)
+                {
+                    Overlay->Render(ElapsedTime);
+                }
+            );
+
+            if (FramebufferSize != ViewportSize)
+            {
+                OnViewportPanelResize.Broadcast(ViewportSize);
+            }
+        }
         ImGui::End();
     }
 
