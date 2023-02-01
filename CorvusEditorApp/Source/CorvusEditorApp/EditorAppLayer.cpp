@@ -168,7 +168,7 @@ namespace Corvus
     void CEditorAppLayer::LoadAssets()
     {
         SStaticModelLoadedData LoadedModelData =
-            CModelLoader::LoadStaticModelFromFile("./Assets/Models/Shack.glb");
+            CModelLoader::LoadStaticModelFromFile("./Resources/Models/Shack.glb");
 
         // StaticModel
         StaticModelsAssets.emplace(LoadedModelData.StaticModel.UUID, std::move(LoadedModelData.StaticModel));
@@ -182,7 +182,7 @@ namespace Corvus
         // Materials
         for (CMaterial &Material : LoadedModelData.Materials)
         {
-            Material.CompileMaterialShader("./Assets/Shaders/TestShader.glsl");
+            Material.CompileMaterialShader("./Resources/Shaders/TestShader.glsl");
             MaterialsAssets.emplace(Material.UUID, std::move(Material));
         }
     }
