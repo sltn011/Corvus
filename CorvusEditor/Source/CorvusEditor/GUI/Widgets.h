@@ -53,7 +53,10 @@ namespace Corvus::Widgets
     {
         bool bUsed = false;
         ImGui::Text(Label);
-        ImGui::BeginTable(Label, 2 * 2, EnumRawValue(EEditorTableFlags::SizingFixedFit));
+        if (!ImGui::BeginTable(Label, 2 * 2, EnumRawValue(EEditorTableFlags::SizingFixedFit)))
+        {
+            return bUsed;
+        }
         ImGui::TableNextRow();
         bUsed |= DrawVecComponent("X", Vector.x, 0, {128, 0, 0}, 1, DragStep, bClamped, MinMax.x, MinMax.y);
         bUsed |= DrawVecComponent("Y", Vector.y, 2, {0, 128, 0}, 3, DragStep, bClamped, MinMax.x, MinMax.y);
@@ -71,7 +74,10 @@ namespace Corvus::Widgets
     {
         bool bUsed = false;
         ImGui::Text(Label);
-        ImGui::BeginTable(Label, 3 * 2, EnumRawValue(EEditorTableFlags::SizingFixedFit));
+        if (!ImGui::BeginTable(Label, 3 * 2, EnumRawValue(EEditorTableFlags::SizingFixedFit)))
+        {
+            return bUsed;
+        }
         ImGui::TableNextRow();
         bUsed |= DrawVecComponent("X", Vector.x, 0, {128, 0, 0}, 1, DragStep, bClamped, MinMax.x, MinMax.y);
         bUsed |= DrawVecComponent("Y", Vector.y, 2, {0, 128, 0}, 3, DragStep, bClamped, MinMax.x, MinMax.y);
@@ -90,7 +96,10 @@ namespace Corvus::Widgets
     {
         bool bUsed = false;
         ImGui::Text(Label);
-        ImGui::BeginTable(Label, 4 * 2, EnumRawValue(EEditorTableFlags::SizingFixedFit));
+        if (!ImGui::BeginTable(Label, 4 * 2, EnumRawValue(EEditorTableFlags::SizingFixedFit)))
+        {
+            return bUsed;
+        }
         ImGui::TableNextRow();
         bUsed |= DrawVecComponent(" X", Vector.x, 0, {128, 0, 0}, 1, DragStep, bClamped, MinMax.x, MinMax.y);
         bUsed |= DrawVecComponent("Y", Vector.y, 2, {0, 128, 0}, 3, DragStep, bClamped, MinMax.x, MinMax.y);
