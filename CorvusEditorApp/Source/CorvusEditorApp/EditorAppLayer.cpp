@@ -23,6 +23,7 @@
 #include "CorvusEditor/GUI/Overlays/GizmoOverlay.h"
 #include "CorvusEditor/GUI/Panels/AssetsPanel.h"
 #include "CorvusEditor/GUI/Panels/ParametersPanel.h"
+#include "CorvusEditor/GUI/Panels/ProfilingPanel.h"
 #include "CorvusEditor/GUI/Panels/ScenePanel.h"
 #include "CorvusEditor/GUI/Panels/ViewportPanel.h"
 
@@ -318,6 +319,9 @@ namespace Corvus
         ViewportPanel->AddOverlay(std::move(GizmoOverlay));
 
         Dockspace.AddPanel(std::move(ViewportPanel));
+
+        TOwn<CProfilingPanel> ProfilingPanel = CPanel::Create<CProfilingPanel>();
+        Dockspace.AddPanel(std::move(ProfilingPanel));
     }
 
     void CEditorAppLayer::RequestSceneFramebufferResize(FUIntVector2 NewSize)
