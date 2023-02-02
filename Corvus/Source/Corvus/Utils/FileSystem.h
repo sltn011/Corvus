@@ -19,6 +19,10 @@ namespace Corvus
 
         static CString GetCurrentPath();
         static void    SetCurrentPath(CString const &Path);
+
+        static CString GetParentPath();
+
+        static CString::value_type GetPathSeparator();
     };
 
 } // namespace Corvus

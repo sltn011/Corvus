@@ -35,13 +35,27 @@ namespace Corvus
 
     CString FFileSystem::GetCurrentPath()
     {
-        return std::filesystem::current_path().string();
+        return std::filesystem::canonical(std::filesystem::current_path()).string();
     }
 
     void FFileSystem::SetCurrentPath(CString const &Path)
     {
         CORVUS_CORE_ASSERT(DirectoryExists(Path));
         std::filesystem::current_path(Path);
+    }
+
+    CString FFileSystem::GetParentPath()
+    {
+        return std::filesystem::current_path().parent_path().string();
+    }
+
+    CString::value_type FFileSystem::GetPathSeparator()
+    {
+        if (std::filesystem::path::preferred_separator == L'\\')
+        {
+            return '\\';
+        }
+        return '/';
     }
 
 } // namespace Corvus

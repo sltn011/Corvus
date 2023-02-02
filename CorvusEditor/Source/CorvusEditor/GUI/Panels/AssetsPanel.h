@@ -4,6 +4,8 @@
 #include "Corvus/Utils/FileSystem.h"
 #include "CorvusEditor/GUI/Panels/Panel.h"
 
+#include <filesystem>
+
 namespace Corvus
 {
 
@@ -20,8 +22,17 @@ namespace Corvus
         virtual void Render(FTimeDelta ElapsedTime, EPanelFlags PanelFlags) override;
 
     private:
+        void RenderEntry(std::filesystem::directory_entry const &Entry);
+        void RenderDirectoryEntry(std::filesystem::directory_entry const &Directory);
+        void RenderFileEntry(std::filesystem::directory_entry const &File);
+        void RenderParentDirectory();
+
+    private:
         CString m_AssetsDirectoryPath;
         CString m_ApplicationDirectory;
+
+        CString m_CurrentSelectedDirectory;
+        Int32   m_CurrentDepth = 0;
     };
 
 } // namespace Corvus

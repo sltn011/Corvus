@@ -6,9 +6,6 @@
 
 namespace Corvus
 {
-    void RenderEntry(std::filesystem::directory_entry const &Entry);
-    void RenderDirectoryEntry(std::filesystem::directory_entry const &Directory);
-    void RenderFileEntry(std::filesystem::directory_entry const &File);
 
     CAssetsPanel::CAssetsPanel(CString AssetsDirectoryPath, CString ApplicationDirectory)
         : m_AssetsDirectoryPath{std::move(AssetsDirectoryPath)},
@@ -25,14 +22,22 @@ namespace Corvus
                 "Specified Application Directory {} does not exist!", m_ApplicationDirectory
             );
         }
+
+        m_CurrentSelectedDirectory = m_AssetsDirectoryPath;
     }
 
     void CAssetsPanel::Render(FTimeDelta ElapsedTime, EPanelFlags PanelFlags)
     {
-        FFileSystem::SetCurrentPath(m_AssetsDirectoryPath);
+        FFileSystem::SetCurrentPath(m_CurrentSelectedDirectory);
 
         if (ImGui::Begin("Assets", nullptr, EnumRawValue(PanelFlags)))
         {
+            ImGui::Text(
+                "Current Directory: %c%s", FFileSystem::GetPathSeparator(), m_CurrentSelectedDirectory.c_str()
+            );
+
+            ImGui::NewLine();
+
             static constexpr EEditorTableFlags AssetsDirectoryTreeFlags =
                 EEditorTableFlags::Resizable | EEditorTableFlags::RowBg | EEditorTableFlags::NoBordersInBody;
 
@@ -42,12 +47,17 @@ namespace Corvus
                 ImGui::TableSetupColumn("Type");
                 ImGui::TableHeadersRow();
 
-                std::filesystem::path               CurrentDirectory = std::filesystem::current_path();
-                std::filesystem::directory_iterator DirectoryIterator{CurrentDirectory};
-                for (std::filesystem::directory_entry const &Entry : DirectoryIterator)
+                if (m_CurrentDepth != 0)
                 {
-                    RenderEntry(Entry);
+                    RenderParentDirectory();
                 }
+
+                std::filesystem::directory_iterator DirectoryIterator{FFileSystem::GetCurrentPath()};
+                for (std::filesystem::directory_entry const &SubEntry : DirectoryIterator)
+                {
+                    RenderEntry(SubEntry);
+                }
+
                 ImGui::EndTable();
             }
         }
@@ -56,7 +66,7 @@ namespace Corvus
         FFileSystem::SetCurrentPath(m_ApplicationDirectory);
     }
 
-    void RenderEntry(std::filesystem::directory_entry const &Entry)
+    void CAssetsPanel::RenderEntry(std::filesystem::directory_entry const &Entry)
     {
         if (Entry.is_directory())
         {
@@ -70,7 +80,7 @@ namespace Corvus
         }
     }
 
-    void RenderDirectoryEntry(std::filesystem::directory_entry const &Directory)
+    void CAssetsPanel::RenderDirectoryEntry(std::filesystem::directory_entry const &Directory)
     {
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
@@ -78,42 +88,53 @@ namespace Corvus
         std::filesystem::path DirectoryPath = Directory.path();
 
         CString PathStr   = DirectoryPath.string();
-        SizeT   Delimiter = PathStr.find_last_of(std::filesystem::path::preferred_separator);
-        if (Delimiter != CString::npos)
+        SizeT   Delimiter = PathStr.find_last_of(FFileSystem::GetPathSeparator());
+        CORVUS_CORE_ASSERT(Delimiter != CString::npos);
+
+        CString FolderName = PathStr.substr(Delimiter);
+        ImGui::Selectable(FolderName.c_str());
+        bool bSelected = ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0);
+        ImGui::TableNextColumn();
+        ImGui::Text("Directory");
+        if (bSelected)
         {
-            bool bOpen = ImGui::TreeNode(PathStr.substr(Delimiter + 1).c_str());
-            ImGui::TableNextColumn();
-            ImGui::Text("Directory");
-            if (bOpen)
-            {
-                std::filesystem::directory_iterator DirectoryIterator{DirectoryPath};
-                for (std::filesystem::directory_entry const &SubEntry : DirectoryIterator)
-                {
-                    RenderEntry(SubEntry);
-                }
-                ImGui::TreePop();
-            }
-        }
-        else
-        {
-            CORVUS_CORE_WARN("Unknown directory found while rendering Assets tree!");
+            m_CurrentSelectedDirectory += FolderName;
+            m_CurrentDepth++;
         }
     }
 
-    void RenderFileEntry(std::filesystem::directory_entry const &File)
+    void CAssetsPanel::RenderFileEntry(std::filesystem::directory_entry const &File)
     {
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
 
         std::filesystem::path FilePath = File.path();
 
-        ImGui::Selectable(FilePath.filename().string().c_str());
-        if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
-        {
-            CORVUS_WARN("Clicked!");
-        }
+        ImGui::Text(FilePath.filename().string().c_str());
         ImGui::TableNextColumn();
         ImGui::Text("File");
+    }
+
+    void CAssetsPanel::RenderParentDirectory()
+    {
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
+
+        CString ParentShortName = CString{FFileSystem::GetPathSeparator()} + CString{".."};
+
+        ImGui::Selectable(ParentShortName.c_str());
+        bool bSelected = ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0);
+        ImGui::TableNextColumn();
+        ImGui::Text("Directory");
+        if (bSelected)
+        {
+            SizeT LastDelimiter = m_CurrentSelectedDirectory.find_last_of(FFileSystem::GetPathSeparator());
+            CORVUS_CORE_ASSERT(LastDelimiter != CString::npos);
+
+            m_CurrentSelectedDirectory = m_CurrentSelectedDirectory.substr(0, LastDelimiter);
+            m_CurrentDepth--;
+            CORVUS_CORE_ASSERT(m_CurrentDepth >= 0);
+        }
     }
 
 } // namespace Corvus
