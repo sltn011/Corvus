@@ -23,13 +23,18 @@ namespace Corvus
 
     TOwn<CShader> CShader::CreateFromFile(CString const &FilePath)
     {
-        return ShaderCreation(FilePath);
+        return CreateFromFile(FilePath, {});
     }
 
     TOwn<CShader> CShader::CreateFromFile(
         CString const &FilePath, std::vector<char const *> const &Parameters
     )
     {
+        if (!FFileSystem::FileExists(FilePath))
+        {
+            CORVUS_CORE_ERROR("Shader file {} not found!", FilePath);
+            return {};
+        }
         return ShaderCreation(FilePath, Parameters);
     }
 

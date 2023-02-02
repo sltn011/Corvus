@@ -13,7 +13,6 @@ namespace Corvus
     public:
         using Super = CShader;
 
-        POpenGLShader(CString const &FilePath);
         POpenGLShader(CString const &FilePath, std::vector<char const *> const &Parameters);
         POpenGLShader(
             std::vector<char const *> const &VertexShaderCode,

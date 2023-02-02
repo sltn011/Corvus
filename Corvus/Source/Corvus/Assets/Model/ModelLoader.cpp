@@ -16,27 +16,28 @@ namespace Corvus
         CORVUS_CORE_TRACE("Loading StaticMesh {}", FilePath);
         FTimePoint ModelLoadStart;
 
-        SizeT FormatPrefixIndex = FilePath.find_last_of('.');
-        if (FormatPrefixIndex == CString::npos)
+        if (!FFileSystem::FileExists(FilePath))
         {
-            CORVUS_CORE_ERROR("Invalid file path passed to ModelLoader: {}", FilePath);
-            return SStaticModelLoadedData();
+            CORVUS_CORE_ERROR("StaticModel file {} not found!", FilePath);
+            return {};
         }
 
-        CString const Format = FilePath.substr(FormatPrefixIndex + 1);
-
         SStaticModelLoadedData LoadedData;
-        if (Format == "gltf") // glTF
+        if (FFileSystem::IsFileExtensionEqual(FilePath, ".gltf")) // glTF
         {
             LoadedData = CGLTFModelLoader::LoadStaticModelFromFile(FilePath, false);
         }
-        else if (Format == "glb") // Binary glTF
+        else if (FFileSystem::IsFileExtensionEqual(FilePath, ".glb")) // Binary glTF
         {
             LoadedData = CGLTFModelLoader::LoadStaticModelFromFile(FilePath, true);
         }
         else
         {
-            CORVUS_CORE_ERROR("Unknown file format \"{}\" passed to ModelLoader: {}", Format, FilePath);
+            CORVUS_CORE_ERROR(
+                "Unknown file format \"{}\" passed to ModelLoader: {}",
+                FFileSystem::GetFileExtension(FilePath),
+                FilePath
+            );
             return LoadedData;
         }
 

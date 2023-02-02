@@ -2,29 +2,34 @@
 
 #include "CorvusEditor/GUI/Panels/AssetsPanel.h"
 
+#include <filesystem>
+
 namespace Corvus
 {
+    void RenderEntry(std::filesystem::directory_entry const &Entry);
+    void RenderDirectoryEntry(std::filesystem::directory_entry const &Directory);
+    void RenderFileEntry(std::filesystem::directory_entry const &File);
 
-    CAssetsPanel::CAssetsPanel(
-        std::filesystem::path AssetsDirectoryPath, std::filesystem::path ApplicationDirectory
-    )
+    CAssetsPanel::CAssetsPanel(CString AssetsDirectoryPath, CString ApplicationDirectory)
         : m_AssetsDirectoryPath{std::move(AssetsDirectoryPath)},
           m_ApplicationDirectory{std::move(ApplicationDirectory)}
     {
-        if (!std::filesystem::exists(m_AssetsDirectoryPath))
+        if (!FFileSystem::DirectoryExists(m_AssetsDirectoryPath))
         {
-            std::filesystem::create_directories(m_AssetsDirectoryPath);
+            FFileSystem::CreateNewDirectory(m_AssetsDirectoryPath);
         }
 
-        if (!std::filesystem::exists(m_ApplicationDirectory))
+        if (!FFileSystem::DirectoryExists(m_ApplicationDirectory))
         {
-            CORVUS_CORE_CRITICAL("Specified Application Directory does not exist!");
+            CORVUS_CORE_NO_ENTRY_FMT(
+                "Specified Application Directory {} does not exist!", m_ApplicationDirectory
+            );
         }
     }
 
     void CAssetsPanel::Render(FTimeDelta ElapsedTime, EPanelFlags PanelFlags)
     {
-        std::filesystem::current_path(m_AssetsDirectoryPath);
+        FFileSystem::SetCurrentPath(m_AssetsDirectoryPath);
 
         if (ImGui::Begin("Assets", nullptr, EnumRawValue(PanelFlags)))
         {
@@ -48,14 +53,14 @@ namespace Corvus
         }
         ImGui::End();
 
-        std::filesystem::current_path(m_ApplicationDirectory);
+        FFileSystem::SetCurrentPath(m_ApplicationDirectory);
     }
 
-    void CAssetsPanel::RenderEntry(std::filesystem::directory_entry const &Entry)
+    void RenderEntry(std::filesystem::directory_entry const &Entry)
     {
         if (Entry.is_directory())
         {
-            RenderFolderEntry(Entry);
+            RenderDirectoryEntry(Entry);
             return;
         }
         if (Entry.is_regular_file())
@@ -65,23 +70,23 @@ namespace Corvus
         }
     }
 
-    void CAssetsPanel::RenderFolderEntry(std::filesystem::directory_entry const &Folder)
+    void RenderDirectoryEntry(std::filesystem::directory_entry const &Directory)
     {
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
 
-        std::filesystem::path FolderPath = Folder.path();
+        std::filesystem::path DirectoryPath = Directory.path();
 
-        CString PathStr   = FolderPath.string();
+        CString PathStr   = DirectoryPath.string();
         SizeT   Delimiter = PathStr.find_last_of(std::filesystem::path::preferred_separator);
         if (Delimiter != CString::npos)
         {
             bool bOpen = ImGui::TreeNode(PathStr.substr(Delimiter + 1).c_str());
             ImGui::TableNextColumn();
-            ImGui::Text("Folder");
+            ImGui::Text("Directory");
             if (bOpen)
             {
-                std::filesystem::directory_iterator DirectoryIterator{FolderPath};
+                std::filesystem::directory_iterator DirectoryIterator{DirectoryPath};
                 for (std::filesystem::directory_entry const &SubEntry : DirectoryIterator)
                 {
                     RenderEntry(SubEntry);
@@ -91,11 +96,11 @@ namespace Corvus
         }
         else
         {
-            CORVUS_CORE_WARN("Unknown folder found while rendering Assets tree!");
+            CORVUS_CORE_WARN("Unknown directory found while rendering Assets tree!");
         }
     }
 
-    void CAssetsPanel::RenderFileEntry(std::filesystem::directory_entry const &File)
+    void RenderFileEntry(std::filesystem::directory_entry const &File)
     {
         ImGui::TableNextRow();
         ImGui::TableNextColumn();

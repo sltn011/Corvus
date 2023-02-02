@@ -21,6 +21,7 @@
 #include "Corvus/Renderer/GraphicsAPI.h"
 #include "Corvus/Time/TimeDelta.h"
 #include "Corvus/Time/TimePoint.h"
+#include "Corvus/Utils/FileSystem.h"
 
 #include <array>
 #include <fstream>

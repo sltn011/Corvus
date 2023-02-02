@@ -17,6 +17,12 @@ namespace Corvus
         CORVUS_CORE_TRACE("Loading Image {}", FilePath);
         FTimePoint ImageLoadStart;
 
+        if (!FFileSystem::FileExists(FilePath))
+        {
+            CORVUS_CORE_ERROR("Image file {} not found!", FilePath);
+            return {};
+        }
+
         // Handle Don'tCare value of loaded channels
         ELoadImageChannels RealChannelsToLoad = CalculateChannelsToLoad(ChannelsToLoad);
 

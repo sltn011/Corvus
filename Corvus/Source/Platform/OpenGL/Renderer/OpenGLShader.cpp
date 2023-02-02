@@ -4,20 +4,6 @@
 
 namespace Corvus
 {
-    POpenGLShader::POpenGLShader(CString const &FilePath)
-    {
-        CORVUS_CORE_TRACE("Creating OpenGL Shader {}", FilePath);
-        FTimePoint const ShaderCreationBegin;
-
-        m_ID = CreateFromFile(FilePath, {}); // Empty parameters array
-        CORVUS_CORE_ASSERT_FMT(m_ID != 0, "Failed to create OpenGL Shader from file {}", FilePath);
-
-        FTimePoint const ShaderCreationEnd;
-        FTimeDelta const ShaderCreationTime = ShaderCreationEnd - ShaderCreationBegin;
-        CORVUS_CORE_TRACE(
-            "Created OpenGL Shader {0}, took {1}ms", FilePath, ShaderCreationTime.MilliSeconds()
-        );
-    }
 
     POpenGLShader::POpenGLShader(CString const &FilePath, std::vector<char const *> const &Parameters)
     {
@@ -221,6 +207,12 @@ namespace Corvus
         CString       &OutFragmentShaderCode
     )
     {
+        if (!FFileSystem::FileExists(FilePath))
+        {
+            CORVUS_CORE_ERROR("Shader file {} not found!", FilePath);
+            return false;
+        }
+
         std::ifstream CodeFile(FilePath);
         if (!CodeFile.is_open())
         {
