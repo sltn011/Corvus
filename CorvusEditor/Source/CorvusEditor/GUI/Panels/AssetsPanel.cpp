@@ -32,38 +32,83 @@ namespace Corvus
 
         if (ImGui::Begin("Assets", nullptr, EnumRawValue(PanelFlags)))
         {
+            RenderControlButtons();
+
+            ImGui::NewLine();
+
             ImGui::Text(
                 "Current Directory: %c%s", FFileSystem::GetPathSeparator(), m_CurrentSelectedDirectory.c_str()
             );
 
-            ImGui::NewLine();
-
-            static constexpr EEditorTableFlags AssetsDirectoryTreeFlags =
-                EEditorTableFlags::Resizable | EEditorTableFlags::RowBg | EEditorTableFlags::NoBordersInBody;
-
-            if (ImGui::BeginTable("AssetsDirectoryTree", 2, EnumRawValue(AssetsDirectoryTreeFlags)))
-            {
-                ImGui::TableSetupColumn("Name");
-                ImGui::TableSetupColumn("Type");
-                ImGui::TableHeadersRow();
-
-                if (m_CurrentDepth != 0)
-                {
-                    RenderParentDirectory();
-                }
-
-                std::filesystem::directory_iterator DirectoryIterator{FFileSystem::GetCurrentPath()};
-                for (std::filesystem::directory_entry const &SubEntry : DirectoryIterator)
-                {
-                    RenderEntry(SubEntry);
-                }
-
-                ImGui::EndTable();
-            }
+            RenderAssetsTable();
         }
         ImGui::End();
 
         FFileSystem::SetCurrentPath(m_ApplicationDirectory);
+    }
+
+    void CAssetsPanel::RenderControlButtons()
+    {
+        // Create Directory
+        if (ImGui::Button("Create Directory"))
+        {
+            ImGui::OpenPopup("Create Directory Popup");
+        }
+        if (ImGui::BeginPopup("Create Directory Popup"))
+        {
+            ImGui::Text("New Directory Name:");
+            static constexpr SizeT DirNameSize = 64;
+            static char            NewDirNameBuf[DirNameSize]{};
+            ImGui::InputText("##New Directory Name", NewDirNameBuf, DirNameSize);
+            if (ImGui::Button("Create"))
+            {
+                if (NewDirNameBuf[0] != '\0')
+                {
+                    FFileSystem::CreateNewDirectory(NewDirNameBuf);
+                    NewDirNameBuf[0] = '\0';
+                    ImGui::CloseCurrentPopup();
+                }
+            }
+            ImGui::EndPopup();
+        }
+    }
+
+    void CAssetsPanel::RenderAssetsTable()
+    {
+        static constexpr EEditorTableFlags AssetsDirectoryTreeFlags =
+            EEditorTableFlags::Resizable | EEditorTableFlags::RowBg | EEditorTableFlags::NoBordersInBody;
+
+        if (ImGui::BeginTable("AssetsDirectoryTree", 2, EnumRawValue(AssetsDirectoryTreeFlags)))
+        {
+            ImGui::TableSetupColumn("Name");
+            ImGui::TableSetupColumn("Type");
+            ImGui::TableHeadersRow();
+
+            if (m_CurrentDepth != 0)
+            {
+                RenderParentDirectory();
+            }
+
+            std::filesystem::directory_iterator DirectoryIterator{FFileSystem::GetCurrentPath()};
+            for (std::filesystem::directory_entry const &Entry : DirectoryIterator)
+            {
+                if (Entry.is_directory())
+                {
+                    RenderDirectoryEntry(Entry);
+                }
+            }
+
+            DirectoryIterator = std::filesystem::directory_iterator{FFileSystem::GetCurrentPath()};
+            for (std::filesystem::directory_entry const &Entry : DirectoryIterator)
+            {
+                if (Entry.is_regular_file())
+                {
+                    RenderFileEntry(Entry);
+                }
+            }
+
+            ImGui::EndTable();
+        }
     }
 
     void CAssetsPanel::RenderEntry(std::filesystem::directory_entry const &Entry)

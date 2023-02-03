@@ -22,6 +22,8 @@ namespace Corvus
         virtual void Render(FTimeDelta ElapsedTime, EPanelFlags PanelFlags) override;
 
     private:
+        void RenderControlButtons();
+        void RenderAssetsTable();
         void RenderEntry(std::filesystem::directory_entry const &Entry);
         void RenderDirectoryEntry(std::filesystem::directory_entry const &Directory);
         void RenderFileEntry(std::filesystem::directory_entry const &File);
