@@ -64,6 +64,39 @@ namespace Corvus
         }
     }
 
+    CMaterial::CMaterial() : Super{EAssetType::Material}
+    {
+    }
+
+    SAssetInfo CMaterial::GetAssetInfo() const
+    {
+        SAssetInfo AssetInfo{};
+        AssetInfo.Type = AssetType;
+        AssetInfo.UUID = UUID;
+
+        AssetInfo.SourceType = SourceType;
+        AssetInfo.Source     = Source;
+
+        if (AlbedoMap.IsTexture())
+        {
+            AssetInfo.References.push_back(AlbedoMap.TextureRef.GetUUID());
+        }
+        if (NormalMap.IsTexture())
+        {
+            AssetInfo.References.push_back(NormalMap.TextureRef.GetUUID());
+        }
+        if (RoughnessMap.IsTexture())
+        {
+            AssetInfo.References.push_back(RoughnessMap.TextureRef.GetUUID());
+        }
+        if (MetallicMap.IsTexture())
+        {
+            AssetInfo.References.push_back(MetallicMap.TextureRef.GetUUID());
+        }
+
+        return AssetInfo;
+    }
+
     TOwn<CShader> const &CMaterial::GetShader() const
     {
         return m_MaterialShader;

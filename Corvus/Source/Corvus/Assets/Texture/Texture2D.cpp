@@ -5,9 +5,23 @@
 namespace Corvus
 {
 
-    CTexture2D::CTexture2D(TOwn<CTexture2DBuffer> &&Texture2DBuffer)
-        : m_TextureBuffer{std::move(Texture2DBuffer)}
+    CTexture2D::CTexture2D() : Super{EAssetType::Texture2D}
     {
+    }
+
+    CTexture2D::CTexture2D(TOwn<CTexture2DBuffer> &&Texture2DBuffer)
+        : Super{EAssetType::Texture2D}, m_TextureBuffer{std::move(Texture2DBuffer)}
+    {
+    }
+
+    SAssetInfo CTexture2D::GetAssetInfo() const
+    {
+        SAssetInfo AssetInfo{};
+        AssetInfo.Type       = AssetType;
+        AssetInfo.UUID       = UUID;
+        AssetInfo.SourceType = SourceType;
+        AssetInfo.Source     = Source;
+        return AssetInfo;
     }
 
     TOwn<CTexture2DBuffer> const &CTexture2D::GetTextureBuffer() const

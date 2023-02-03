@@ -16,6 +16,8 @@ namespace Corvus
         FUUID();
         FUUID(UInt64 UUID);
 
+        CString ToString() const;
+
         bool operator==(FUUID const &Rhs) const { return m_Value == Rhs.m_Value; }
         bool operator!=(FUUID const &Rhs) const { return m_Value != Rhs.m_Value; }
         bool operator<(FUUID const &Rhs) const { return m_Value < Rhs.m_Value; }

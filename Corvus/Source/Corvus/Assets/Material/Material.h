@@ -1,6 +1,7 @@
 #ifndef CORVUS_SOURCE_CORVUS_ASSETS_MATERIAL_MATERIAL_H
 #define CORVUS_SOURCE_CORVUS_ASSETS_MATERIAL_MATERIAL_H
 
+#include "Corvus/Assets/Asset.h"
 #include "Corvus/Assets/AssetRef.h"
 #include "Corvus/Math/Vector.h"
 
@@ -35,10 +36,14 @@ namespace Corvus
     using CRoughnessMap = TMaterialTexParam<float>;
     using CMetallicMap  = TMaterialTexParam<float>;
 
-    class CMaterial
+    class CMaterial : public CAsset
     {
     public:
-        CMaterial() = default;
+        using Super = CAsset;
+
+        CMaterial();
+
+        virtual SAssetInfo GetAssetInfo() const override;
 
         TOwn<CShader> const &GetShader() const;
 
@@ -51,8 +56,6 @@ namespace Corvus
         CNormalMap    NormalMap;
         CRoughnessMap RoughnessMap;
         CMetallicMap  MetallicMap;
-
-        FUUID UUID;
 
     private:
         TOwn<CShader> m_MaterialShader;

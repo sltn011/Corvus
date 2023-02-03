@@ -41,6 +41,21 @@ namespace Corvus
             return LoadedData;
         }
 
+        LoadedData.StaticModel.SourceType = EAssetSourceType::FromFile;
+        LoadedData.StaticModel.Source     = FilePath;
+
+        for (CTexture2D &Texture : LoadedData.Textures)
+        {
+            Texture.SourceType = EAssetSourceType::ChildAsset;
+            Texture.Source     = LoadedData.StaticModel.UUID.ToString();
+        }
+
+        for (CMaterial &Material : LoadedData.Materials)
+        {
+            Material.SourceType = EAssetSourceType::ChildAsset;
+            Material.Source     = LoadedData.StaticModel.UUID.ToString();
+        }
+
         FTimePoint ModelLoadEnd;
         FTimeDelta ModelLoadTime = ModelLoadEnd - ModelLoadStart;
         CORVUS_CORE_TRACE("Loaded Model {0} in {1}ms", FilePath, ModelLoadTime.MilliSeconds());
