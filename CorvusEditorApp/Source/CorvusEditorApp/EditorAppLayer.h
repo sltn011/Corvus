@@ -1,6 +1,7 @@
 #ifndef CORVUSEDITORAPP_SOURCE_EDITORAPPLAYER_H
 #define CORVUSEDITORAPP_SOURCE_EDITORAPPLAYER_H
 
+#include "Corvus/Assets/AssetDrawer.h"
 #include "Corvus/Core/Base.h"
 #include "Corvus/Core/Delegate.h"
 #include "Corvus/Core/Layer.h"
@@ -54,28 +55,28 @@ namespace Corvus
 
         void BroadcastEntitySelection(CEntity const *SelectedEntityPtr) const;
 
-    private:
-        CDockspace Dockspace;
-
-        CScene                 Scene;
+    public:
         COnSceneChange         OnSceneChange;
         COnCurrentCameraChange OnCurrentCameraChange;
 
-        COnEntitySelected OnEntitySelected;
-
-        std::unordered_map<FUUID, CTexture2D>   TexturesAssets;
-        std::unordered_map<FUUID, CMaterial>    MaterialsAssets;
-        std::unordered_map<FUUID, CStaticModel> StaticModelsAssets;
-
-        TOwn<CFrameBuffer>        SceneFrameBuffer;
         COnSceneFrameBufferChange OnSceneFrameBufferChange;
 
-        FUIntVector2 ViewportSize{};
-        FUIntVector2 RequestedViewportSize{};
-        bool         bRequestViewportResize = false;
+        COnEntitySelected OnEntitySelected;
 
-        bool     bCameraMode = false;
-        FVector2 CursorPos;
+    private:
+        CDockspace m_Dockspace;
+
+        CScene m_Scene;
+
+        CAssetDrawer m_AssetDrawer;
+
+        TOwn<CFrameBuffer> m_SceneFrameBuffer;
+        FUIntVector2       m_ViewportSize{};
+        FUIntVector2       m_RequestedViewportSize{};
+        bool               m_bRequestViewportResize = false;
+
+        bool     m_bCameraMode = false;
+        FVector2 m_CursorPos;
     };
 
 } // namespace Corvus

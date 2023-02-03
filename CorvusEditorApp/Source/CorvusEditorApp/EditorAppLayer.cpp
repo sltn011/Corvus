@@ -49,25 +49,25 @@ namespace Corvus
     {
         CRenderer::BeginScene();
 
-        if (bRequestViewportResize)
+        if (m_bRequestViewportResize)
         {
-            ViewportSize = RequestedViewportSize;
+            m_ViewportSize = m_RequestedViewportSize;
 
-            SceneFrameBuffer->Resize(ViewportSize.x, ViewportSize.y);
-            CRenderer::ViewportResize(ViewportSize.x, ViewportSize.y);
-            Scene.GetPlayerCamera()->SetViewportSize(
-                static_cast<float>(ViewportSize.x), static_cast<float>(ViewportSize.y)
+            m_SceneFrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
+            CRenderer::ViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+            m_Scene.GetPlayerCamera()->SetViewportSize(
+                static_cast<float>(m_ViewportSize.x), static_cast<float>(m_ViewportSize.y)
             );
 
-            bRequestViewportResize = false;
+            m_bRequestViewportResize = false;
 
-            OnSceneFrameBufferChange.Broadcast(SceneFrameBuffer.get());
+            OnSceneFrameBufferChange.Broadcast(m_SceneFrameBuffer.get());
         }
 
         UpdateCamera(ElapsedTime);
 
         // Render to FrameBuffer
-        CRenderer::SetRenderTarget(*SceneFrameBuffer);
+        CRenderer::SetRenderTarget(*m_SceneFrameBuffer);
         CRenderer::Clear();
         RenderScene(ElapsedTime);
 
@@ -87,8 +87,8 @@ namespace Corvus
             CMouseButtonPressEvent &MBPEvent = CastEvent<CMouseButtonPressEvent>(Event);
             if (MBPEvent.Button == Mouse::ButtonRight)
             {
-                bCameraMode = true;
-                CInput::SetCursorEnabled(!bCameraMode);
+                m_bCameraMode = true;
+                CInput::SetCursorEnabled(!m_bCameraMode);
 
                 Event.SetHandled();
             }
@@ -98,8 +98,8 @@ namespace Corvus
             CMouseButtonReleaseEvent &MBREvent = CastEvent<CMouseButtonReleaseEvent>(Event);
             if (MBREvent.Button == Mouse::ButtonRight)
             {
-                bCameraMode = false;
-                CInput::SetCursorEnabled(!bCameraMode);
+                m_bCameraMode = false;
+                CInput::SetCursorEnabled(!m_bCameraMode);
 
                 Event.SetHandled();
             }
@@ -114,9 +114,9 @@ namespace Corvus
         else if (Event.GetEventType() == CEvent::EEventType::MouseScroll)
         {
             CMouseScrollEvent &MSEvent = CastEvent<CMouseScrollEvent>(Event);
-            if (bCameraMode)
+            if (m_bCameraMode)
             {
-                CCamera    *Camera         = static_cast<CCamera *>(Scene.GetPlayerCamera());
+                CCamera    *Camera         = static_cast<CCamera *>(m_Scene.GetPlayerCamera());
                 float const OldCameraSpeed = Camera->GetMoveSpeed();
                 float const NewSpeed       = FMath::Max(OldCameraSpeed + MSEvent.OffsetY, 0.0f);
                 Camera->SetMoveSpeed(NewSpeed);
@@ -127,7 +127,7 @@ namespace Corvus
 
     void CEditorAppLayer::OnGUIRender(FTimeDelta const ElapsedTime)
     {
-        Dockspace.Render(ElapsedTime);
+        m_Dockspace.Render(ElapsedTime);
     }
 
     void CEditorAppLayer::CreateScene()
@@ -147,7 +147,7 @@ namespace Corvus
         Camera->SetClipPlanes(0.01f, 100.0f);
         Camera->SwitchPlayerControl(true, 1.0f);
 
-        Scene.SetPlayerCamera(std::move(Camera));
+        m_Scene.SetPlayerCamera(std::move(Camera));
     }
 
     void CEditorAppLayer::PopulateScene()
@@ -156,9 +156,9 @@ namespace Corvus
         Entity->TransformComponent->SetPosition(FVector3{0.0f, -1.5f, -5.0f});
         Entity->TransformComponent->SetRotation(FRotation{{0.0f, 45.0f, 0.0f}});
         Entity->TransformComponent->SetScale(FVector3{1.0f});
-        Entity->StaticMeshComponent->StaticModelRef.SetUUID(StaticModelsAssets.begin()->first);
+        Entity->StaticMeshComponent->StaticModelRef.SetUUID(m_AssetDrawer.StaticModelsAssets.begin()->first);
 
-        Scene.AddEntity(std::move(Entity));
+        m_Scene.AddEntity(std::move(Entity));
     }
 
     void CEditorAppLayer::LoadAssets()
@@ -167,64 +167,68 @@ namespace Corvus
             CModelLoader::LoadStaticModelFromFile("Resources/Models/Shack.glb");
 
         // StaticModel
-        StaticModelsAssets.emplace(LoadedModelData.StaticModel.UUID, std::move(LoadedModelData.StaticModel));
+        m_AssetDrawer.StaticModelsAssets.emplace(
+            LoadedModelData.StaticModel.UUID, std::move(LoadedModelData.StaticModel)
+        );
 
         // Textures
         for (CTexture2D &Texture : LoadedModelData.Textures)
         {
-            TexturesAssets.emplace(Texture.UUID, std::move(Texture));
+            m_AssetDrawer.TexturesAssets.emplace(Texture.UUID, std::move(Texture));
         }
 
         // Materials
         for (CMaterial &Material : LoadedModelData.Materials)
         {
             Material.CompileMaterialShader("Resources/Shaders/TestShader.glsl");
-            MaterialsAssets.emplace(Material.UUID, std::move(Material));
+            m_AssetDrawer.MaterialsAssets.emplace(Material.UUID, std::move(Material));
         }
     }
 
     void CEditorAppLayer::WireUpAssets()
     {
         // Provide materials with their textures
-        for (auto &[MaterialUUID, Material] : MaterialsAssets)
+        for (auto &[MaterialUUID, Material] : m_AssetDrawer.MaterialsAssets)
         {
             if (Material.AlbedoMap.IsTexture())
             {
                 FUUID AlbedoUUID = Material.AlbedoMap.TextureRef.GetUUID();
-                Material.AlbedoMap.TextureRef.SetRawPtr(&TexturesAssets.at(AlbedoUUID));
+                Material.AlbedoMap.TextureRef.SetRawPtr(&m_AssetDrawer.TexturesAssets.at(AlbedoUUID));
             }
         }
 
         // Provide StaticMeshPrimitives with their materials
-        for (auto &[StaticModelUUID, StaticModel] : StaticModelsAssets)
+        for (auto &[StaticModelUUID, StaticModel] : m_AssetDrawer.StaticModelsAssets)
         {
             for (CStaticMesh &Mesh : StaticModel)
             {
                 for (CStaticMeshPrimitive &Primitive : Mesh)
                 {
                     FUUID MaterialUUID = Primitive.MaterialRef.GetUUID();
-                    Primitive.MaterialRef.SetRawPtr(&MaterialsAssets.at(MaterialUUID));
+                    Primitive.MaterialRef.SetRawPtr(&m_AssetDrawer.MaterialsAssets.at(MaterialUUID));
                 }
             }
         }
 
         // Provide Entities with their StaticModels
-        for (TPoolable<CEntity> const &Entity : Scene.GetEntities())
+        for (TPoolable<CEntity> const &Entity : m_Scene.GetEntities())
         {
             FUUID StaticModelUUID = Entity->StaticMeshComponent->StaticModelRef.GetUUID();
-            Entity->StaticMeshComponent->StaticModelRef.SetRawPtr(&StaticModelsAssets.at(StaticModelUUID));
+            Entity->StaticMeshComponent->StaticModelRef.SetRawPtr(
+                &m_AssetDrawer.StaticModelsAssets.at(StaticModelUUID)
+            );
         }
     }
 
     void CEditorAppLayer::UpdateCamera(FTimeDelta const ElapsedTime)
     {
-        CCamera *Camera = Scene.GetPlayerCamera();
+        CCamera *Camera = m_Scene.GetPlayerCamera();
         if (!Camera)
         {
             CORVUS_NO_ENTRY_FMT("No Player Camera added to Scene!");
         }
 
-        if (bCameraMode)
+        if (m_bCameraMode)
         {
             if (CInput::IsKeyPressed(Key::W))
             {
@@ -253,9 +257,9 @@ namespace Corvus
         }
 
         FVector2 const NewPos = CInput::GetCursorPos();
-        FVector2 const Delta  = NewPos - CursorPos;
-        CursorPos             = NewPos;
-        if (bCameraMode)
+        FVector2 const Delta  = NewPos - m_CursorPos;
+        m_CursorPos           = NewPos;
+        if (m_bCameraMode)
         {
             Camera->ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
         }
@@ -263,67 +267,67 @@ namespace Corvus
 
     void CEditorAppLayer::RenderScene(FTimeDelta const ElapsedTime)
     {
-        for (TPoolable<CEntity> const &Entity : Scene.GetEntities())
+        for (TPoolable<CEntity> const &Entity : m_Scene.GetEntities())
         {
             CRenderer::SubmitStaticModel(
                 *Entity->StaticMeshComponent->StaticModelRef.GetRawPtr(),
                 Entity->TransformComponent->GetTransformMatrix(),
-                Scene.GetPlayerCamera()->GetProjectionViewMatrix()
+                m_Scene.GetPlayerCamera()->GetProjectionViewMatrix()
             );
         }
     }
 
     void CEditorAppLayer::CreateSceneFramebuffer()
     {
-        ViewportSize = CApplication::GetInstance().GetWindow().GetWindowSize();
+        m_ViewportSize = CApplication::GetInstance().GetWindow().GetWindowSize();
 
         std::vector<TOwn<CTexture2DBuffer>> TestFrameBufferAttachment(1);
 
-        STextureDataFormat ScreenQuadFormat{ViewportSize.x, ViewportSize.y, EPixelFormat::RGBA8};
+        STextureDataFormat ScreenQuadFormat{m_ViewportSize.x, m_ViewportSize.y, EPixelFormat::RGBA8};
         STextureParameters ScreenQuadParameters{};
         TestFrameBufferAttachment[0] = CTexture2DBuffer::CreateEmpty(ScreenQuadFormat, ScreenQuadParameters);
 
-        SceneFrameBuffer =
-            CFrameBuffer::Create(ViewportSize.x, ViewportSize.y, std::move(TestFrameBufferAttachment));
+        m_SceneFrameBuffer =
+            CFrameBuffer::Create(m_ViewportSize.x, m_ViewportSize.y, std::move(TestFrameBufferAttachment));
     }
 
     void CEditorAppLayer::CreateEditorGUI()
     {
-        Dockspace.AddPanel(CPanel::Create<CAssetsPanel>());
+        m_Dockspace.AddPanel(CPanel::Create<CAssetsPanel>());
 
         TOwn<CParametersPanel> ParametersPanel = CPanel::Create<CParametersPanel>();
         OnEntitySelected.BindObject(ParametersPanel.get(), &CParametersPanel::SetSelectedEntity);
-        Dockspace.AddPanel(std::move(ParametersPanel));
+        m_Dockspace.AddPanel(std::move(ParametersPanel));
 
-        TOwn<CScenePanel> ScenePanel = CPanel::Create<CScenePanel>(&Scene);
+        TOwn<CScenePanel> ScenePanel = CPanel::Create<CScenePanel>(&m_Scene);
         ScenePanel->OnScenePanelSelectedEntityChange.BindObject(
             this, &CEditorAppLayer::BroadcastEntitySelection
         );
         OnSceneChange.BindObject(ScenePanel.get(), &CScenePanel::SetScene);
         OnEntitySelected.BindObject(ScenePanel.get(), &CScenePanel::SetSelectedEntity);
-        Dockspace.AddPanel(std::move(ScenePanel));
+        m_Dockspace.AddPanel(std::move(ScenePanel));
 
-        TOwn<CViewportPanel> ViewportPanel = CPanel::Create<CViewportPanel>(SceneFrameBuffer.get());
+        TOwn<CViewportPanel> ViewportPanel = CPanel::Create<CViewportPanel>(m_SceneFrameBuffer.get());
         ViewportPanel->OnViewportPanelResize.BindObject(
             this, &CEditorAppLayer::RequestSceneFramebufferResize
         );
         OnSceneFrameBufferChange.BindObject(ViewportPanel.get(), &CViewportPanel::SetViewportFramebuffer);
 
-        TOwn<CGizmoOverlay> GizmoOverlay = COverlay::Create<CGizmoOverlay>(Scene.GetPlayerCamera());
+        TOwn<CGizmoOverlay> GizmoOverlay = COverlay::Create<CGizmoOverlay>(m_Scene.GetPlayerCamera());
         OnEntitySelected.BindObject(GizmoOverlay.get(), &CGizmoOverlay::SetSelectedEntity);
         OnCurrentCameraChange.BindObject(GizmoOverlay.get(), &CGizmoOverlay::SetCurrentCamera);
         ViewportPanel->AddOverlay(std::move(GizmoOverlay));
 
-        Dockspace.AddPanel(std::move(ViewportPanel));
+        m_Dockspace.AddPanel(std::move(ViewportPanel));
 
         TOwn<CProfilingPanel> ProfilingPanel = CPanel::Create<CProfilingPanel>();
-        Dockspace.AddPanel(std::move(ProfilingPanel));
+        m_Dockspace.AddPanel(std::move(ProfilingPanel));
     }
 
     void CEditorAppLayer::RequestSceneFramebufferResize(FUIntVector2 NewSize)
     {
-        RequestedViewportSize  = NewSize;
-        bRequestViewportResize = true;
+        m_RequestedViewportSize  = NewSize;
+        m_bRequestViewportResize = true;
     }
 
     void CEditorAppLayer::BroadcastEntitySelection(CEntity const *SelectedEntityPtr) const
@@ -333,7 +337,7 @@ namespace Corvus
             OnEntitySelected.Broadcast(nullptr);
         }
 
-        TArray<TPoolable<CEntity>> const &Entities = Scene.GetEntities();
+        TArray<TPoolable<CEntity>> const &Entities = m_Scene.GetEntities();
         for (SizeT EntityIndex = 0; EntityIndex < Entities.GetSize(); ++EntityIndex)
         {
             CEntity *EntityPtr = Entities[EntityIndex].Get();
