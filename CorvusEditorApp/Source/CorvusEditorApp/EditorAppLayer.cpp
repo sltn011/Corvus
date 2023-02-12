@@ -3,6 +3,7 @@
 #include "Corvus/Assets/Material/Material.h"
 #include "Corvus/Assets/Model/ModelLoader.h"
 #include "Corvus/Assets/Model/StaticModel.h"
+#include "Corvus/Assets/Serializer/AssetSerializer.h"
 #include "Corvus/Assets/Texture/Texture2D.h"
 #include "Corvus/Camera/Camera.h"
 #include "Corvus/Camera/PerspectiveCamera.h"
@@ -182,6 +183,21 @@ namespace Corvus
         {
             Material.CompileMaterialShader("Resources/Shaders/TestShader.glsl");
             m_AssetDrawer.MaterialsAssets.emplace(Material.UUID, std::move(Material));
+        }
+
+        for (auto const &[UUID, Model] : m_AssetDrawer.StaticModelsAssets)
+        {
+            CAssetSerializer::Serialize(Model, CString{"Assets/Models"});
+        }
+
+        for (auto const &[UUID, Texture] : m_AssetDrawer.TexturesAssets)
+        {
+            CAssetSerializer::Serialize(Texture, CString{"Assets/Textures"});
+        }
+
+        for (auto const &[UUID, Material] : m_AssetDrawer.MaterialsAssets)
+        {
+            CAssetSerializer::Serialize(Material, CString{"Assets/Materials"});
         }
     }
 

@@ -12,9 +12,9 @@ namespace Corvus
     SAssetInfo CStaticModel::GetAssetInfo() const
     {
         SAssetInfo AssetInfo{};
-        AssetInfo.Type = AssetType;
-        AssetInfo.UUID = UUID;
-
+        AssetInfo.Type       = AssetType;
+        AssetInfo.UUID       = UUID;
+        AssetInfo.Name       = AssetName;
         AssetInfo.SourceType = SourceType;
         AssetInfo.Source     = Source;
 

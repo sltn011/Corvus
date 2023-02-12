@@ -223,6 +223,8 @@ namespace Corvus
                 CImageData Image = ProcessImage(GLTFModel.images[ImageIndex]);
 
                 Textures[i] = CTexture2D{CTexture2DBuffer::Create(Image, TextureParameters)};
+                Textures[i].AssetName =
+                    !Texture.name.empty() ? Texture.name : GLTFModel.images[ImageIndex].name;
             }
 
             return Textures;
@@ -238,6 +240,8 @@ namespace Corvus
             {
                 tinygltf::Material const &MaterialInfo = GLTFModel.materials[i];
                 CMaterial                &Material     = Materials[i];
+
+                Material.AssetName = MaterialInfo.name;
 
                 // Albedo
                 if (MaterialInfo.pbrMetallicRoughness.baseColorTexture.index == -1) // Vertex color

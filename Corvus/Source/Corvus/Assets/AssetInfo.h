@@ -24,6 +24,7 @@ namespace Corvus
     {
         EAssetType         Type;
         FUUID              UUID;
+        CString            Name;
         EAssetSourceType   SourceType;
         CString            Source;
         std::vector<FUUID> References;

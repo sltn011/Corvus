@@ -19,6 +19,8 @@ namespace Corvus
         FUUID      UUID;
         EAssetType AssetType;
 
+        CString AssetName;
+
         EAssetSourceType SourceType = EAssetSourceType::UNDEFINED;
         CString          Source;
     };

@@ -41,6 +41,7 @@ namespace Corvus
             return LoadedData;
         }
 
+        LoadedData.StaticModel.AssetName  = FFileSystem::GetFileName(FilePath);
         LoadedData.StaticModel.SourceType = EAssetSourceType::FromFile;
         LoadedData.StaticModel.Source     = FilePath;
 

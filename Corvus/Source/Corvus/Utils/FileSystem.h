@@ -14,6 +14,10 @@ namespace Corvus
 
         static void CreateNewDirectory(CString const &DirectoryPath);
 
+        static CString CombinePaths(CString const &Lhs, CString const &Rhs);
+
+        static CString GetFileName(CString const &FilePath);
+
         static CString GetFileExtension(CString const &FilePath);
         static bool    IsFileExtensionEqual(CString const &FilePath, CString const &Extension);
 

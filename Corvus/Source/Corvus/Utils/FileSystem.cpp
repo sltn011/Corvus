@@ -21,6 +21,20 @@ namespace Corvus
         std::filesystem::create_directories(DirectoryPath);
     }
 
+    CString FFileSystem::CombinePaths(CString const &Lhs, CString const &Rhs)
+    {
+        std::filesystem::path LhsPath{Lhs};
+        std::filesystem::path RhsPath{Rhs};
+        return std::filesystem::path{LhsPath / RhsPath}.string();
+    }
+
+    CString FFileSystem::GetFileName(CString const &FilePath)
+    {
+        CORVUS_CORE_ASSERT(FileExists(FilePath));
+
+        return std::filesystem::path{FilePath}.stem().string();
+    }
+
     CString FFileSystem::GetFileExtension(CString const &FilePath)
     {
         CORVUS_CORE_ASSERT(FileExists(FilePath));

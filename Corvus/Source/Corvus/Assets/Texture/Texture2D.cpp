@@ -19,6 +19,7 @@ namespace Corvus
         SAssetInfo AssetInfo{};
         AssetInfo.Type       = AssetType;
         AssetInfo.UUID       = UUID;
+        AssetInfo.Name       = AssetName;
         AssetInfo.SourceType = SourceType;
         AssetInfo.Source     = Source;
         return AssetInfo;
