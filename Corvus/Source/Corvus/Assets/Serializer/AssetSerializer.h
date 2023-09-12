@@ -14,13 +14,24 @@ namespace Corvus
     {
     public:
         template<typename TAssetType, std::enable_if_t<std::is_base_of_v<CAsset, TAssetType>, bool> = true>
-        static void Serialize(TAssetType const &Asset, CString const &AssetDirectoryPath = "")
+        static bool Serialize(TAssetType const &Asset, CString const &AssetDirectoryPath)
         {
-            SerializeImpl(Asset.GetAssetInfo(), AssetDirectoryPath);
+            return SerializeImpl(Asset.GetAssetInfo(), AssetDirectoryPath);
+        }
+
+        template<typename TAssetType, std::enable_if_t<std::is_base_of_v<CAsset, TAssetType>, bool> = true>
+        static bool Deserialize(
+            CString const &AssetFileName, CString const &AssetDirectoryPath, SAssetInfo &OutAssetInfo
+        )
+        {
+            return DeserializeImpl(AssetFileName, AssetDirectoryPath, OutAssetInfo);
         }
 
     private:
-        static void SerializeImpl(SAssetInfo const &AssetInfo, CString const &AssetFilePath);
+        static bool SerializeImpl(SAssetInfo const &AssetInfo, CString const &AssetFilePath);
+        static bool DeserializeImpl(
+            CString const &AssetFileName, CString const &AssetDirectoryPath, SAssetInfo &OutAssetInfo
+        );
     };
 
 } // namespace Corvus

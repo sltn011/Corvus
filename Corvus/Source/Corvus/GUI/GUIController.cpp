@@ -36,12 +36,12 @@ namespace Corvus
         // IO.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
         IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   // Enable Docking
         IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
-        // IO.ConfigViewportsNoAutoMerge = true;
-        // IO.ConfigViewportsNoTaskBarIcon = true;
+                                                            // IO.ConfigViewportsNoAutoMerge = true;
+                                                            // IO.ConfigViewportsNoTaskBarIcon = true;
 
         // Setup Dear ImGui style
-        ImGui::StyleColorsDark();
-        // ImGui::StyleColorsClassic();
+        // ImGui::StyleColorsDark();
+        ImGui::StyleColorsLight();
 
         CApplication &App = CApplication::GetInstance();
         ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(App.GetWindow().GetRawWindow()), true);

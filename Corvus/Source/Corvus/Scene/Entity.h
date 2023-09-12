@@ -1,6 +1,8 @@
 #ifndef CORVUS_SOURCE_CORVUS_SCENE_ENTITY_H
 #define CORVUS_SOURCE_CORVUS_SCENE_ENTITY_H
 
+#include "Corvus/Components/StaticMeshComponent.h"
+#include "Corvus/Components/TransformComponent.h"
 #include "Corvus/Memory/Poolable.h"
 
 namespace Corvus

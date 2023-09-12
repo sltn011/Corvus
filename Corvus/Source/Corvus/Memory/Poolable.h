@@ -107,6 +107,14 @@ namespace Corvus
         TPoolable() = default;
         TPoolable(CPoolIndex &&Index) : m_PoolIndex{std::move(Index)} {}
 
+        ~TPoolable()
+        {
+            if (IsValid())
+            {
+                Get()->~T();
+            }
+        }
+
         TPoolable(TPoolable const &)            = delete;
         TPoolable(TPoolable &&)                 = default;
         TPoolable &operator=(TPoolable const &) = delete;

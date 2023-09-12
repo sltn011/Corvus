@@ -9,12 +9,12 @@
 namespace Corvus
 {
 
-    void CAssetSerializer::SerializeImpl(SAssetInfo const &AssetInfo, CString const &AssetDirectoryPath)
+    bool CAssetSerializer::SerializeImpl(SAssetInfo const &AssetInfo, CString const &AssetDirectoryPath)
     {
         if (!FFileSystem::DirectoryExists(AssetDirectoryPath))
         {
             CORVUS_ERROR("Asset directory path {} does not exist!", AssetDirectoryPath);
-            return;
+            return false;
         }
 
         nlohmann::json AssetJSON;
@@ -44,6 +44,14 @@ namespace Corvus
         AssetFile << std::setw(4) << AssetJSON;
 
         CORVUS_TRACE("Asset {} serialized to {}", AssetInfo.Name, AssetFilePath);
+        return true;
+    }
+
+    bool CAssetSerializer::DeserializeImpl(
+        CString const &AssetFileName, CString const &AssetDirectoryPath, SAssetInfo &OutAssetInfo
+    )
+    {
+        return false;
     }
 
 } // namespace Corvus

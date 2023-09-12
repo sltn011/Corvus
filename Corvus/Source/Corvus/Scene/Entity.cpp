@@ -2,9 +2,6 @@
 
 #include "Corvus/Scene/Entity.h"
 
-#include "Corvus/Components/StaticMeshComponent.h"
-#include "Corvus/Components/TransformComponent.h"
-
 namespace Corvus
 {
 
