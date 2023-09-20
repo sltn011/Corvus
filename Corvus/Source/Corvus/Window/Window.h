@@ -5,7 +5,9 @@
 #include "Corvus/Core/Delegate.h"
 #include "Corvus/Event/Event.h"
 #include "Corvus/GUI/GUIController.h"
-#include "Corvus/Renderer/RenderingContext.h"
+#include "Corvus/Renderer/Old/RenderingContext.h"
+
+#include <vulkan/vulkan.h>
 
 struct GLFWwindow;
 
@@ -49,6 +51,8 @@ namespace Corvus
         UInt32  GetWindowHeight() const { return m_WindowData.WindowHeight; }
         CString GetWindowName() const { return m_WindowData.WindowName; }
 
+        virtual std::pair<UInt32, UInt32> GetFramebufferSize() const = 0;
+
         virtual bool ShouldClose() const = 0;
         virtual void SetShouldClose()    = 0;
 
@@ -58,7 +62,13 @@ namespace Corvus
         bool         IsFullScreen() const;
         virtual void SetFullScreen(bool bValue) = 0;
 
+        virtual void AwaitNextEvent() const = 0;
+
         virtual void *GetRawWindow() = 0;
+
+        virtual std::vector<char const *> GetRequiredExtensions() = 0;
+
+        virtual VkSurfaceKHR CreateVulkanSurfaceHandler() const = 0;
 
         CGUIController &GetGUIController();
 

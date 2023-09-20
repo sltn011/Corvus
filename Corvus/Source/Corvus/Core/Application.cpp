@@ -31,6 +31,7 @@ namespace Corvus
 
     CApplication::~CApplication()
     {
+        s_ApplicationInstance = nullptr;
     }
 
     void CApplication::Init()

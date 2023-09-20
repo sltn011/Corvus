@@ -1,46 +1,60 @@
 #ifndef CORVUS_SOURCE_CORVUS_RENDERER_RENDERER_H
 #define CORVUS_SOURCE_CORVUS_RENDERER_RENDERER_H
 
-#include "Corvus/Math/Matrix.h"
+#include "Corvus/Core/Base.h"
+#include "Corvus/Renderer/VulkanDevice.h"
+#include "Corvus/Renderer/VulkanInstance.h"
+#include "Corvus/Renderer/VulkanPhysicalDevice.h"
+#include "Corvus/Renderer/VulkanQueues.h"
+#include "Corvus/Renderer/VulkanSurface.h"
+#include "Corvus/Renderer/VulkanSwapchain.h"
+
+#ifdef CORVUS_DEBUG
+    #include "Corvus/Renderer/VulkanDebugCallback.h"
+#endif // CORVUS_DEBUG
 
 namespace Corvus
 {
 
-    class CGraphicsAPI;
-    class CShader;
-    class CVertexArray;
-
-    class CStaticModel;
-    class CStaticMesh;
-
     class CRenderer
     {
     public:
-        static void Init();
-        static void Destroy();
+        void Create();
+        void Destroy();
 
-        static void BeginScene();
-        static void EndScene();
+        ~CRenderer();
 
-        static void ViewportResize(UInt32 Width, UInt32 Height);
+        CRenderer(CRenderer const &)            = delete;
+        CRenderer(CRenderer &&)                 = delete;
+        CRenderer &operator=(CRenderer const &) = delete;
+        CRenderer &operator=(CRenderer &&)      = delete;
 
-        static void SetClearColor(FVector4 const &ClearColor);
-        static void Clear(bool bColorBuffer = true, bool bDepthBuffer = true, bool bStencilBuffer = true);
+        static CRenderer &GetInstance();
 
-        static void EnableDepthTest();
-        static void DisableDepthTest();
+        CVulkanInstance       &VulkanInstance();
+        CVulkanSurface        &VulkanSurface();
+        CVulkanPhysicalDevice &VulkanPhysicalDevice();
+        CVulkanDevice         &VulkanDevice();
+        CVulkanQueues         &Queues();
+        CVulkanSwapchain      &Swapchain();
 
-        static void EnableBackfaceCulling(bool bIsCulledCCW = true);
-        static void DisableBackfaceCulling();
-
-        static void Submit(CVertexArray &VAO, CShader &Shader);
-
-        static void SubmitStaticModel(
-            CStaticModel &StaticModel, FMatrix4 const &ModelTransformMatrix, FMatrix4 const &ProjectionViewMatrix
-        );
+#ifdef CORVUS_DEBUG
+        CVulkanDebugCallback &GetVulkanDebugCallback();
+#endif
 
     private:
-        static TOwn<CGraphicsAPI> s_GraphicsAPI;
+        static CRenderer *s_Instance;
+
+        CVulkanInstance       m_VulkanInstance;
+        CVulkanSurface        m_VulkanSurface;
+        CVulkanPhysicalDevice m_PhysicalDevice;
+        CVulkanDevice         m_Device;
+        CVulkanQueues         m_Queues;
+        CVulkanSwapchain      m_Swapchain;
+
+#ifdef CORVUS_DEBUG
+        CVulkanDebugCallback m_DebugCallback;
+#endif // CORVUS_DEBUG
     };
 
 } // namespace Corvus

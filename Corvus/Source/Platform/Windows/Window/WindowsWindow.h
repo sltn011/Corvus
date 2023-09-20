@@ -23,13 +23,21 @@ namespace Corvus
 
         virtual void OnUpdate() override;
 
+        virtual std::pair<UInt32, UInt32> GetFramebufferSize() const override;
+
         virtual bool ShouldClose() const override;
         virtual void SetShouldClose() override;
 
         virtual void SetVSyncEnabled(bool bValue) override;
         virtual void SetFullScreen(bool bValue) override;
 
+        virtual void AwaitNextEvent() const override;
+
         virtual void *GetRawWindow() override;
+
+        virtual std::vector<char const *> GetRequiredExtensions() override;
+
+        virtual VkSurfaceKHR CreateVulkanSurfaceHandler() const override;
 
         static void WindowErrorCallback(int ErrorCode, char const *Description);
 

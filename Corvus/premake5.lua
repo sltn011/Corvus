@@ -32,6 +32,7 @@ project "Corvus"
 	includedirs
 	{
 		"Source",
+		"%{vulkanSDKpath}/Include",
 		"Dependencies/spdlog/include",
 		"Dependencies/GLFW/Source/include",
 		"Dependencies/GLAD/Source/include",
@@ -42,8 +43,14 @@ project "Corvus"
 		"Dependencies/tiny"
 	}
 	
+	libdirs
+	{
+		"%{vulkanSDKpath}/Lib"
+	}
+	
 	links
 	{
+		"vulkan-1",
 		"GLFW",
 		"GLAD",
 		"imgui"

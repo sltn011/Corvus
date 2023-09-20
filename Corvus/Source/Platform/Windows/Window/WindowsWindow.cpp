@@ -5,6 +5,7 @@
 #include "Corvus/Event/ApplicationEvent.h"
 #include "Corvus/Event/KeyboardEvent.h"
 #include "Corvus/Event/MouseEvent.h"
+#include "Corvus/Renderer/Renderer.h"
 
 #include <GLFW/glfw3.h>
 
@@ -106,6 +107,13 @@ namespace Corvus
         m_RenderingContext->SwapBuffers();
     }
 
+    std::pair<UInt32, UInt32> PWindowsWindow::GetFramebufferSize() const
+    {
+        std::pair<Int32, Int32> FramebufferSize;
+        glfwGetFramebufferSize(m_Window, &FramebufferSize.first, &FramebufferSize.second);
+        return std::pair<UInt32, UInt32>{static_cast<UInt32>(FramebufferSize.first), static_cast<UInt32>(FramebufferSize.second)};
+    }
+
     bool PWindowsWindow::ShouldClose() const
     {
         return glfwWindowShouldClose(m_Window);
@@ -177,9 +185,39 @@ namespace Corvus
         CORVUS_CORE_TRACE("Window \"{0}\" FullScreen {1}", m_WindowData.WindowName, bValue ? "On" : "Off");
     }
 
+    void PWindowsWindow::AwaitNextEvent() const
+    {
+        glfwWaitEvents();
+    }
+
     void *PWindowsWindow::GetRawWindow()
     {
         return m_Window;
+    }
+
+    std::vector<char const *> PWindowsWindow::GetRequiredExtensions()
+    {
+        UInt32                  NumExtensions;
+        char const              **Extensions = glfwGetRequiredInstanceExtensions(&NumExtensions);
+        std::vector<char const *> RequiredExtensionsVec(NumExtensions);
+        for (UInt32 i = 0; i < NumExtensions; ++i)
+        {
+            RequiredExtensionsVec[i] = Extensions[i];
+        }
+        return RequiredExtensionsVec;
+    }
+
+    VkSurfaceKHR PWindowsWindow::CreateVulkanSurfaceHandler() const
+    {
+        VkSurfaceKHR SurfaceHandler = VK_NULL_HANDLE;
+        if (glfwCreateWindowSurface(
+                CRenderer::GetInstance().VulkanInstance().Handler(), m_Window, nullptr, &SurfaceHandler
+            ) != VK_SUCCESS)
+        {
+            CORVUS_CRITICAL("Failed to create VkSurface!");
+            exit(1);
+        }
+        CORVUS_TRACE("Created VkSurface successfully");
     }
 
     void PWindowsWindow::WindowErrorCallback(int const ErrorCode, char const *const Description)
