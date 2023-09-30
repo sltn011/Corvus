@@ -10,7 +10,7 @@ struct CVulkanQueueFamilyIndices
     std::optional<UInt32> GraphicsFamily;
     std::optional<UInt32> PresentationFamily;
 
-    bool IsComplete() const;
+    bool IsComplete() const { return GraphicsFamily.has_value() && PresentationFamily.has_value(); }
 };
 
 #endif // !CORVUS_SOURCE_CORVUS_RENDERER_VULKANQUEUEFAMILYINDICES_H

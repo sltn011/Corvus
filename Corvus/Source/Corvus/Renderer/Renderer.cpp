@@ -15,7 +15,7 @@ namespace Corvus
         CreateInstance(CApplication::GetInstance().GetWindow().GetWindowName(), VK_API_VERSION_1_3);
 
 #ifdef CORVUS_DEBUG
-        m_DebugCallback.Create();
+        CreateDebugCallback();
 #endif // CORVUS_DEBUG
 
         CreateSurface();
@@ -37,6 +37,10 @@ namespace Corvus
         DestroyDevice();
 
         DestroySurface();
+
+#ifdef CORVUS_DEBUG
+        DestroyDebugCallback();
+#endif // CORVUS_DEBUG
 
         DestroyInstance();
 
