@@ -1,7 +1,5 @@
 #include "CorvusPCH.h"
 
-#include "Corvus/Renderer/VulkanSurface.h"
-
 #include "Corvus/Core/Application.h"
 #include "Corvus/Renderer/Renderer.h"
 

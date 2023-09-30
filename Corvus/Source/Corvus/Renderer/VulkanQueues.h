@@ -11,8 +11,8 @@ namespace Corvus
     class CVulkanQueues
     {
     public:
-        VkQueue m_GraphicsQueueHandler     = VK_NULL_HANDLE;
-        VkQueue m_PresentationQueueHandler = VK_NULL_HANDLE;
+        VkQueue m_GraphicsQueue     = VK_NULL_HANDLE;
+        VkQueue m_PresentationQueue = VK_NULL_HANDLE;
     };
 
 } // namespace Corvus

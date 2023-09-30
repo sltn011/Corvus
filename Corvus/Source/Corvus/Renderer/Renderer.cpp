@@ -6,6 +6,8 @@
 
 namespace Corvus
 {
+    CRenderer *CRenderer::s_RendererInstance = nullptr;
+
     void CRenderer::Create()
     {
         CORVUS_ASSERT_FMT(s_RendererInstance == nullptr, "Only one instance of Renderer allowed");
@@ -21,16 +23,29 @@ namespace Corvus
         CreateSurface();
 
         SelectPhysicalDevice();
-        CreateDevice(m_PhysicalDevice);
+        CreateDevice();
         RetrieveQueues();
 
         CreateSwapchain();
         RetrieveSwapchainImages();
         CreateSwapchainImageViews();
+
+        CreateRenderPass();
+        CreatePipelineLayout();
+        CreatePipeline();
+
+        CreateCommandPools();
+        AllocateCommandBuffers();
     }
 
     void CRenderer::Destroy()
     {
+        DestroyCommandPools();
+
+        DestroyPipeline();
+        DestroyPipelineLayout();
+        DestroyRenderPass();
+
         DestroySwapchainImageViews();
         DestroySwapchain();
 

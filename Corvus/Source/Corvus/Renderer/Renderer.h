@@ -112,7 +112,7 @@ namespace Corvus
 
     private:
         // VkDevice
-        void CreateDevice(VkPhysicalDevice const &PhysicalDevice);
+        void CreateDevice();
         void DestroyDevice();
 
         std::vector<char const *> GetRequiredDeviceExtensions() const;
@@ -138,7 +138,52 @@ namespace Corvus
         void DestroySwapchainImageViews();
 
     private:
-        static CRenderer *s_RendererInstance;
+        // VkRenderPass
+        void CreateRenderPass();
+        void DestroyRenderPass();
+
+    private:
+        // VkShaderModule
+        std::vector<char> ReadSPIRVByteCode(std::filesystem::path const &FilePath) const;
+
+        VkShaderModule CreateShaderModule(std::vector<char> const &SPIRVByteCode) const;
+        void           DestroyShaderModule(VkShaderModule &ShaderModule) const;
+
+    private:
+        // VkPipeline
+        void CreatePipeline();
+        void DestroyPipeline();
+
+    private:
+        // VkPipelineLayout
+        void CreatePipelineLayout();
+        void DestroyPipelineLayout();
+
+    private:
+        // VkCommandPool
+        void CreateCommandPools();
+        void DestroyCommandPools();
+
+    private:
+        // VkCommandBuffer
+        void AllocateCommandBuffers();
+
+    private:
+        // VkBuffer
+        void CreateBuffer(
+            VkBuffer             &Buffer,
+            VkDeviceMemory       &BufferMemory,
+            VkBufferUsageFlags    Usage,
+            VkDeviceSize          Size,
+            VkMemoryPropertyFlags Properties
+        );
+        void DestroyBuffer(VkBuffer &Buffer, VkDeviceMemory &BufferMemory);
+
+        void TransferBufferData(VkBuffer Source, VkBuffer Destination, VkDeviceSize Size);
+
+    private:
+        static CRenderer       *s_RendererInstance;
+        static constexpr UInt32 s_FramesInFlight = 2;
 
         VkInstance m_Instance = VK_NULL_HANDLE;
 
@@ -159,6 +204,16 @@ namespace Corvus
         VkFormat                 m_SwapchainImageFormat;
         std::vector<VkImage>     m_SwapchainImages;
         std::vector<VkImageView> m_SwapchainImageViews;
+
+        VkRenderPass m_RenderPass = VK_NULL_HANDLE;
+
+        VkPipeline       m_Pipeline       = VK_NULL_HANDLE;
+        VkPipelineLayout m_PipelineLayout = VK_NULL_HANDLE;
+
+        VkCommandPool m_CommandPool         = VK_NULL_HANDLE;
+        VkCommandPool m_TransferCommandPool = VK_NULL_HANDLE;
+
+        std::array<VkCommandBuffer, s_FramesInFlight> m_CommandBuffers{VK_NULL_HANDLE};
     };
 
 } // namespace Corvus

@@ -8,8 +8,10 @@
 namespace Corvus
 {
 
-    void CRenderer::CreateDevice(VkPhysicalDevice const &PhysicalDevice)
+    void CRenderer::CreateDevice()
     {
+        CORVUS_ASSERT_FMT(m_Device == VK_NULL_HANDLE, "Vulkan Device was already created!");
+
         m_QueueFamilyIndices = GetMostSuitableQueueFamilyIndices();
 
         // clang-format off
@@ -50,7 +52,7 @@ namespace Corvus
         DeviceCreateInfo.enabledLayerCount       = static_cast<UInt32>(ValidationLayers.size());
         DeviceCreateInfo.ppEnabledLayerNames     = ValidationLayers.data();
 
-        if (vkCreateDevice(PhysicalDevice, &DeviceCreateInfo, nullptr, &m_Device) != VK_SUCCESS)
+        if (vkCreateDevice(m_PhysicalDevice, &DeviceCreateInfo, nullptr, &m_Device) != VK_SUCCESS)
         {
             CORVUS_CRITICAL("Failed to create Vulkan Device!");
         }
@@ -102,11 +104,9 @@ namespace Corvus
     void CRenderer::RetrieveQueues()
     {
         UInt32 QueueIndex = 0;
+        vkGetDeviceQueue(m_Device, m_QueueFamilyIndices.GraphicsFamily.value(), QueueIndex, &m_Queues.m_GraphicsQueue);
         vkGetDeviceQueue(
-            m_Device, m_QueueFamilyIndices.GraphicsFamily.value(), QueueIndex, &m_Queues.m_GraphicsQueueHandler
-        );
-        vkGetDeviceQueue(
-            m_Device, m_QueueFamilyIndices.PresentationFamily.value(), QueueIndex, &m_Queues.m_PresentationQueueHandler
+            m_Device, m_QueueFamilyIndices.PresentationFamily.value(), QueueIndex, &m_Queues.m_PresentationQueue
         );
 
         CORVUS_TRACE("Retrieved Queues from Vulkan Device");

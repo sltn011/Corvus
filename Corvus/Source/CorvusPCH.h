@@ -21,6 +21,7 @@
 #include "Corvus/Time/TimePoint.h"
 
 #include <array>
+#include <filesystem>
 #include <fstream>
 #include <memory>
 #include <sstream>
