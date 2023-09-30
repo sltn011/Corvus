@@ -8,79 +8,44 @@ namespace Corvus
 {
     void CRenderer::Create()
     {
-        CORVUS_ASSERT_FMT(s_Instance == nullptr, "Only one instance of Renderer allowed");
+        CORVUS_ASSERT_FMT(s_RendererInstance == nullptr, "Only one instance of Renderer allowed");
 
-        s_Instance = this;
+        s_RendererInstance = this;
 
-        m_VulkanInstance.Create(CApplication::GetInstance().GetWindow().GetWindowName(), VK_API_VERSION_1_3);
+        CreateInstance(CApplication::GetInstance().GetWindow().GetWindowName(), VK_API_VERSION_1_3);
 
 #ifdef CORVUS_DEBUG
         m_DebugCallback.Create();
 #endif // CORVUS_DEBUG
 
-        m_VulkanSurface.Create();
-        m_PhysicalDevice.SelectPhysicalDevice();
-        m_Device.Create(m_PhysicalDevice);
-        m_Queues = m_Device.RetrieveQueues();
-        m_Swapchain.Create();
+        CreateSurface();
+
+        SelectPhysicalDevice();
+        CreateDevice(m_PhysicalDevice);
+        RetrieveQueues();
+
+        CreateSwapchain();
+        RetrieveSwapchainImages();
+        CreateSwapchainImageViews();
     }
 
     void CRenderer::Destroy()
     {
-        m_Swapchain.Destroy();
-        m_Device.Destroy();
-        m_VulkanSurface.Destroy();
-        m_VulkanInstance.Destroy();
+        DestroySwapchainImageViews();
+        DestroySwapchain();
 
-        s_Instance = nullptr;
+        DestroyDevice();
+
+        DestroySurface();
+
+        DestroyInstance();
+
+        s_RendererInstance = nullptr;
     }
 
     CRenderer::~CRenderer()
     {
-        CORVUS_ASSERT_FMT(s_Instance == nullptr, "Renderer was not destroyed properly!");
+        CORVUS_ASSERT_FMT(s_RendererInstance == nullptr, "Renderer was not destroyed properly!");
     }
-
-    CRenderer &CRenderer::GetInstance()
-    {
-        CORVUS_ASSERT(s_Instance != nullptr);
-        return *s_Instance;
-    }
-
-    CVulkanInstance &CRenderer::VulkanInstance()
-    {
-        return m_VulkanInstance;
-    }
-
-    CVulkanSurface &CRenderer::VulkanSurface()
-    {
-        return m_VulkanSurface;
-    }
-
-    CVulkanPhysicalDevice &CRenderer::VulkanPhysicalDevice()
-    {
-        return m_PhysicalDevice;
-    }
-
-    CVulkanDevice &CRenderer::VulkanDevice()
-    {
-        return m_Device;
-    }
-
-    CVulkanQueues &CRenderer::Queues()
-    {
-        return m_Queues;
-    }
-
-    CVulkanSwapchain &CRenderer::Swapchain()
-    {
-        return m_Swapchain;
-    }
-
-#ifdef CORVUS_DEBUG
-    CVulkanDebugCallback &CRenderer::GetVulkanDebugCallback()
-    {
-        return m_DebugCallback;
-    }
-#endif // CORVUS_DEBUG
 
 } // namespace Corvus

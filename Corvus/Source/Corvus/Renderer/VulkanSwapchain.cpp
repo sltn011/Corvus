@@ -1,34 +1,27 @@
 #include "CorvusPCH.h"
 
-#include "Corvus/Renderer/VulkanSwapchain.h"
-#include "Corvus/Renderer/Renderer.h"
 #include "Corvus/Core/Application.h"
+#include "Corvus/Renderer/Renderer.h"
+#include "Corvus/Renderer/VulkanSwapchainSupportDetails.h"
 
 namespace Corvus
 {
 
-    CVulkanSwapchain::~CVulkanSwapchain()
+    void CRenderer::CreateSwapchain()
     {
-        CORVUS_ASSERT_FMT(m_Handler == VK_NULL_HANDLE, "Vulkan Swapchain was not properly destroyed!");
-    }
-
-    void CVulkanSwapchain::Create()
-    {
-        CRenderer &Renderer = CRenderer::GetInstance();
-
         CVulkanSwapchainSupportDetails SupportDetails = GetSwapchainSupportDetails();
 
-        UInt32 const           ImagesCount   = SelectImagesCount(SupportDetails);
+        UInt32 const             ImagesCount = SelectImagesCount(SupportDetails);
         VkExtent2D const         Extent      = SelectExtent(SupportDetails);
         VkSurfaceFormatKHR const Format      = SelectSurfaceFormat(SupportDetails);
         VkPresentModeKHR const   PresentMode = SelectPresentationMode(SupportDetails);
 
-        m_Extent      = Extent;
-        m_ImageFormat = Format.format;
+        m_SwapchainExtent      = Extent;
+        m_SwapchainImageFormat = Format.format;
 
         VkSwapchainCreateInfoKHR CreateInfo{};
         CreateInfo.sType            = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-        CreateInfo.surface          = Renderer.VulkanSurface().Handler();
+        CreateInfo.surface          = m_Surface;
         CreateInfo.minImageCount    = ImagesCount;
         CreateInfo.imageExtent      = Extent;
         CreateInfo.imageFormat      = Format.format;
@@ -37,13 +30,10 @@ namespace Corvus
         CreateInfo.imageArrayLayers = 1; // Unless it's a stereoscopic 3D app
         CreateInfo.imageUsage       = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-        CVulkanQueueFamilyIndices const &QueueFamilyIndices = Renderer.Queues().QueueFamilyIndices();
-
         UInt32 QueueFamilyIndicesArray[] = {
-            QueueFamilyIndices.GraphicsFamily.value(), QueueFamilyIndices.PresentationFamily.value()};
+            m_QueueFamilyIndices.GraphicsFamily.value(), m_QueueFamilyIndices.PresentationFamily.value()};
 
-        if (QueueFamilyIndices.GraphicsFamily.value() !=
-            QueueFamilyIndices.PresentationFamily.value())
+        if (m_QueueFamilyIndices.GraphicsFamily.value() != m_QueueFamilyIndices.PresentationFamily.value())
         {
             CreateInfo.imageSharingMode      = VK_SHARING_MODE_CONCURRENT;
             CreateInfo.queueFamilyIndexCount = 2;
@@ -62,91 +52,106 @@ namespace Corvus
         CreateInfo.clipped        = VK_TRUE;                                             // Ignore obstructed pixels
         CreateInfo.oldSwapchain   = VK_NULL_HANDLE;
 
-        if (vkCreateSwapchainKHR(Renderer.VulkanDevice().Handler(), &CreateInfo, nullptr, &m_Handler) !=
-            VK_SUCCESS)
+        if (vkCreateSwapchainKHR(m_Device, &CreateInfo, nullptr, &m_Swapchain) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to create VkSwapchain!");
-            exit(1);
+            CORVUS_CRITICAL("Failed to create Vulkan Swapchain!");
         }
-        CORVUS_TRACE("Created VkSwapchain successfully");
+        CORVUS_TRACE("Created Vulkan Swapchain successfully");
     }
 
-    void CVulkanSwapchain::Destroy()
+    void CRenderer::DestroySwapchain()
     {
-        if (m_Handler)
+        if (m_Swapchain)
         {
-            vkDestroySwapchainKHR(CRenderer::GetInstance().VulkanDevice().Handler(), m_Handler, nullptr);
-            m_Handler = VK_NULL_HANDLE;
+            vkDestroySwapchainKHR(m_Device, m_Swapchain, nullptr);
+            m_Swapchain = VK_NULL_HANDLE;
             CORVUS_TRACE("Vulkan Swapchain destroyed");
         }
     }
 
-    CVulkanSwapchain::CVulkanSwapchain(CVulkanSwapchain &&Rhs) noexcept
-        : m_Handler{std::exchange(Rhs.m_Handler, VK_NULL_HANDLE)},
-          m_Extent{std::move(Rhs.m_Extent)},
-          m_ImageFormat{std::move(Rhs.m_ImageFormat)}
-    {
-    }
-
-    CVulkanSwapchain &CVulkanSwapchain::operator=(CVulkanSwapchain &&Rhs) noexcept
-    {
-        if (this != &Rhs)
-        {
-            m_Handler            = std::exchange(Rhs.m_Handler, VK_NULL_HANDLE);
-            m_Extent             = std::move(Rhs.m_Extent);
-            m_ImageFormat        = std::move(Rhs.m_ImageFormat);
-        }
-        return *this;
-    }
-
-    VkSwapchainKHR CVulkanSwapchain::Handler() const
-    {
-        return m_Handler;
-    }
-
-    CVulkanSwapchainSupportDetails CVulkanSwapchain::GetSwapchainSupportDetails() const
+    CVulkanSwapchainSupportDetails CRenderer::GetSwapchainSupportDetails() const
     {
         CVulkanSwapchainSupportDetails SupportDetails;
 
-        CRenderer &Renderer = CRenderer::GetInstance();
-        CVulkanPhysicalDevice &PhysicalDevice = Renderer.VulkanPhysicalDevice();
-        CVulkanSurface        &Surface        = Renderer.VulkanSurface();
-
-        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-            PhysicalDevice.Handler(),
-            Surface.Handler(),
-            &SupportDetails.SurfaceCapabilities
-        );
+        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_PhysicalDevice, m_Surface, &SupportDetails.SurfaceCapabilities);
 
         UInt32 NumSurfaceFormats = 0;
-        vkGetPhysicalDeviceSurfaceFormatsKHR(PhysicalDevice.Handler(), Surface.Handler(), &NumSurfaceFormats, nullptr);
+        vkGetPhysicalDeviceSurfaceFormatsKHR(m_PhysicalDevice, m_Surface, &NumSurfaceFormats, nullptr);
         if (NumSurfaceFormats != 0)
         {
             SupportDetails.SurfaceFormats.resize(NumSurfaceFormats);
             vkGetPhysicalDeviceSurfaceFormatsKHR(
-                PhysicalDevice.Handler(), Surface.Handler(), &NumSurfaceFormats, SupportDetails.SurfaceFormats.data()
+                m_PhysicalDevice, m_Surface, &NumSurfaceFormats, SupportDetails.SurfaceFormats.data()
             );
         }
 
         UInt32 NumPresentationModes = 0;
-        vkGetPhysicalDeviceSurfacePresentModesKHR(
-            PhysicalDevice.Handler(), Surface.Handler(), &NumPresentationModes, nullptr
-        );
+        vkGetPhysicalDeviceSurfacePresentModesKHR(m_PhysicalDevice, m_Surface, &NumPresentationModes, nullptr);
         if (NumPresentationModes != 0)
         {
             SupportDetails.PresentationMode.resize(NumPresentationModes);
             vkGetPhysicalDeviceSurfacePresentModesKHR(
-                PhysicalDevice.Handler(),
-                Surface.Handler(),
-                &NumPresentationModes,
-                SupportDetails.PresentationMode.data()
+                m_PhysicalDevice, m_Surface, &NumPresentationModes, SupportDetails.PresentationMode.data()
             );
         }
 
         return SupportDetails;
     }
 
-    UInt32 CVulkanSwapchain::SelectImagesCount(CVulkanSwapchainSupportDetails const &SwapchainSupportDetails) const
+    void CRenderer::RetrieveSwapchainImages()
+    {
+        uint32_t SwapchainImagesCount = 0;
+        vkGetSwapchainImagesKHR(m_Device, m_Swapchain, &SwapchainImagesCount, nullptr);
+
+        m_SwapchainImages.resize(SwapchainImagesCount);
+        vkGetSwapchainImagesKHR(m_Device, m_Swapchain, &SwapchainImagesCount, m_SwapchainImages.data());
+
+        CORVUS_TRACE("Retrieved Vulkan Images from Vulkan Swapchain");
+    }
+
+    void CRenderer::CreateSwapchainImageViews()
+    {
+        m_SwapchainImageViews.resize(m_SwapchainImages.size());
+        for (UInt32 i = 0; i < m_SwapchainImageViews.size(); ++i)
+        {
+            VkImageViewCreateInfo CreateInfo{};
+            CreateInfo.sType    = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+            CreateInfo.image    = m_SwapchainImages[i];
+            CreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+            CreateInfo.format   = m_SwapchainImageFormat;
+
+            CreateInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY; // Default mapping
+            CreateInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+            CreateInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+            CreateInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+
+            CreateInfo.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+            CreateInfo.subresourceRange.baseMipLevel   = 0;
+            CreateInfo.subresourceRange.levelCount     = 1;
+            CreateInfo.subresourceRange.baseArrayLayer = 0;
+            CreateInfo.subresourceRange.layerCount     = 1;
+
+            if (vkCreateImageView(m_Device, &CreateInfo, nullptr, &m_SwapchainImageViews[i]) != VK_SUCCESS)
+            {
+                CORVUS_CRITICAL("Failed to create Vulkan Image View!");
+            }
+        }
+
+        CORVUS_TRACE("Swapchain Image Views created");
+    }
+
+    void CRenderer::DestroySwapchainImageViews()
+    {
+        for (VkImageView ImageView : m_SwapchainImageViews)
+        {
+            vkDestroyImageView(m_Device, ImageView, nullptr);
+        }
+        m_SwapchainImageViews.clear();
+
+        CORVUS_TRACE("Swapchain Image Views destroyed");
+    }
+
+    UInt32 CRenderer::SelectImagesCount(CVulkanSwapchainSupportDetails const &SwapchainSupportDetails) const
     {
         VkSurfaceCapabilitiesKHR Capabilities = SwapchainSupportDetails.SurfaceCapabilities;
 
@@ -160,7 +165,7 @@ namespace Corvus
         return ImagesCount;
     }
 
-    VkExtent2D CVulkanSwapchain::SelectExtent(CVulkanSwapchainSupportDetails const &SwapchainSupportDetails) const
+    VkExtent2D CRenderer::SelectExtent(CVulkanSwapchainSupportDetails const &SwapchainSupportDetails) const
     {
         VkSurfaceCapabilitiesKHR Capabilities = SwapchainSupportDetails.SurfaceCapabilities;
 
@@ -176,13 +181,13 @@ namespace Corvus
         VkExtent2D Extent = {WindowBufferPixelsSize.first, WindowBufferPixelsSize.second};
 
         Extent.width = std::clamp(Extent.width, Capabilities.minImageExtent.width, Capabilities.maxImageExtent.width);
-        Extent.height = std::clamp(Extent.height, Capabilities.minImageExtent.height, Capabilities.maxImageExtent.height);
+        Extent.height =
+            std::clamp(Extent.height, Capabilities.minImageExtent.height, Capabilities.maxImageExtent.height);
 
         return Extent;
     }
 
-    VkSurfaceFormatKHR CVulkanSwapchain::SelectSurfaceFormat(
-        CVulkanSwapchainSupportDetails const &SwapchainSupportDetails
+    VkSurfaceFormatKHR CRenderer::SelectSurfaceFormat(CVulkanSwapchainSupportDetails const &SwapchainSupportDetails
     ) const
     {
         for (VkSurfaceFormatKHR const &Format : SwapchainSupportDetails.SurfaceFormats)
@@ -195,8 +200,7 @@ namespace Corvus
         return SwapchainSupportDetails.SurfaceFormats[0];
     }
 
-    VkPresentModeKHR CVulkanSwapchain::SelectPresentationMode(
-        CVulkanSwapchainSupportDetails const &SwapchainSupportDetails
+    VkPresentModeKHR CRenderer::SelectPresentationMode(CVulkanSwapchainSupportDetails const &SwapchainSupportDetails
     ) const
     {
         for (VkPresentModeKHR const &Mode : SwapchainSupportDetails.PresentationMode)

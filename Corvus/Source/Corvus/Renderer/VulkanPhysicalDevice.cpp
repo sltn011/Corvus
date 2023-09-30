@@ -1,68 +1,60 @@
 #include "CorvusPCH.h"
 
-#include "Corvus/Renderer/VulkanPhysicalDevice.h"
-
 #include "Corvus/Renderer/Renderer.h"
 
 namespace Corvus
 {
-    void CVulkanPhysicalDevice::SelectPhysicalDevice()
+    void CRenderer::SelectPhysicalDevice()
     {
         std::vector<VkPhysicalDevice> const PhysicalDevices = GetPhysicalDevices();
-        m_Handler                                           = GetMostSuitablePhysicalDevice(PhysicalDevices);
+        m_PhysicalDevice                                    = GetMostSuitablePhysicalDevice(PhysicalDevices);
     }
 
-    VkPhysicalDevice CVulkanPhysicalDevice::Handler() const
+    CVulkanQueueFamilyIndices CRenderer::GetMostSuitableQueueFamilyIndices() const
     {
-        return m_Handler;
-    }
-
-    CVulkanQueueFamilyIndices CVulkanPhysicalDevice::GetMostSuitableQueueFamilyIndices() const
-    {
-        std::vector<VkQueueFamilyProperties> QueueFamiliesProperties = GetQueueFamilyProperties(m_Handler);
+        std::vector<VkQueueFamilyProperties> QueueFamiliesProperties = GetQueueFamilyProperties(m_PhysicalDevice);
 
         CVulkanQueueFamilyIndices FamilyIndices{};
-        FamilyIndices.GraphicsFamily =
-            GetMostSuitableQueueFamily(m_Handler, QueueFamiliesProperties, &GetGraphicsQueueFamilySuitability);
-        FamilyIndices.PresentationFamily =
-            GetMostSuitableQueueFamily(m_Handler, QueueFamiliesProperties, &GetPresentationQueueFamilySuitability);
+        FamilyIndices.GraphicsFamily = GetMostSuitableQueueFamily(
+            m_PhysicalDevice, QueueFamiliesProperties, &CRenderer::GetGraphicsQueueFamilySuitability
+        );
+        FamilyIndices.PresentationFamily = GetMostSuitableQueueFamily(
+            m_PhysicalDevice, QueueFamiliesProperties, &CRenderer::GetPresentationQueueFamilySuitability
+        );
         return FamilyIndices;
     }
 
-    std::vector<VkPhysicalDevice> CVulkanPhysicalDevice::GetPhysicalDevices() const
+    std::vector<VkPhysicalDevice> CRenderer::GetPhysicalDevices() const
     {
-        VkInstance InstanceHandler = CRenderer::GetInstance().VulkanInstance().Handler();
-
         UInt32 NumPhysicalDevices = 0;
-        vkEnumeratePhysicalDevices(InstanceHandler, &NumPhysicalDevices, nullptr);
+        vkEnumeratePhysicalDevices(m_Instance, &NumPhysicalDevices, nullptr);
 
         if (NumPhysicalDevices == 0)
         {
             CORVUS_CRITICAL("No Vulkan PhysicalDevice found!");
-            exit(1);
         }
 
         std::vector<VkPhysicalDevice> PhysicalDevices(NumPhysicalDevices);
-        vkEnumeratePhysicalDevices(InstanceHandler, &NumPhysicalDevices, PhysicalDevices.data());
+        vkEnumeratePhysicalDevices(m_Instance, &NumPhysicalDevices, PhysicalDevices.data());
 
         return PhysicalDevices;
     }
 
-    VkPhysicalDeviceProperties CVulkanPhysicalDevice::GetPhysicalDeviceProperties(VkPhysicalDevice PhysicalDevice) const
+    VkPhysicalDeviceProperties CRenderer::GetPhysicalDeviceProperties(VkPhysicalDevice PhysicalDevice) const
     {
         VkPhysicalDeviceProperties PhysicalDeviceProperties{};
         vkGetPhysicalDeviceProperties(PhysicalDevice, &PhysicalDeviceProperties);
         return PhysicalDeviceProperties;
     }
 
-    VkPhysicalDeviceFeatures CVulkanPhysicalDevice::GetPhysicalDeviceFeatures(VkPhysicalDevice PhysicalDevice) const
+    VkPhysicalDeviceFeatures CRenderer::GetPhysicalDeviceFeatures(VkPhysicalDevice PhysicalDevice) const
     {
         VkPhysicalDeviceFeatures PhysicalDeviceFeatures{};
         vkGetPhysicalDeviceFeatures(PhysicalDevice, &PhysicalDeviceFeatures);
         return PhysicalDeviceFeatures;
     }
 
-    std::vector<char const *> CVulkanPhysicalDevice::GetPhysicalDeviceRequiredExtensions() const
+    std::vector<char const *> CRenderer::GetPhysicalDeviceRequiredExtensions() const
     {
         // clang-format off
         std::vector<char const *> DeviceExtensions
@@ -73,8 +65,7 @@ namespace Corvus
         return DeviceExtensions;
     }
 
-    std::vector<VkExtensionProperties> CVulkanPhysicalDevice::GetPhysicalDeviceSupportedExtensions(
-        VkPhysicalDevice PhysicalDevice
+    std::vector<VkExtensionProperties> CRenderer::GetPhysicalDeviceSupportedExtensions(VkPhysicalDevice PhysicalDevice
     ) const
     {
         UInt32 NumSupportedExtensions;
@@ -88,12 +79,11 @@ namespace Corvus
         return SupportedExtensions;
     }
 
-    VkPhysicalDevice CVulkanPhysicalDevice::GetMostSuitablePhysicalDevice(
-        std::vector<VkPhysicalDevice> const &PhysicalDevices
+    VkPhysicalDevice CRenderer::GetMostSuitablePhysicalDevice(std::vector<VkPhysicalDevice> const &PhysicalDevices
     ) const
     {
         VkPhysicalDevice MostSuitableDevice      = VK_NULL_HANDLE;
-        UInt32         HighestSuitabilityScore = 0;
+        UInt32           HighestSuitabilityScore = 0;
 
         for (VkPhysicalDevice const PhysicalDevice : PhysicalDevices)
         {
@@ -114,18 +104,17 @@ namespace Corvus
         if (MostSuitableDevice == VK_NULL_HANDLE)
         {
             CORVUS_CRITICAL("No suitable Vulkan PhysicalDevice found!");
-            exit(1);
         }
 
         return MostSuitableDevice;
     }
 
-    bool CVulkanPhysicalDevice::IsPhysicalDeviceSuitable(VkPhysicalDevice PhysicalDevice) const
+    bool CRenderer::IsPhysicalDeviceSuitable(VkPhysicalDevice PhysicalDevice) const
     {
         return false;
     }
 
-    bool CVulkanPhysicalDevice::IsPhysicalDeviceExtensionSupportComplete(VkPhysicalDevice PhysicalDevice) const
+    bool CRenderer::IsPhysicalDeviceExtensionSupportComplete(VkPhysicalDevice PhysicalDevice) const
     {
         std::vector<char const *>          RequiredExtensions  = GetPhysicalDeviceRequiredExtensions();
         std::vector<VkExtensionProperties> SupportedExtensions = GetPhysicalDeviceSupportedExtensions(PhysicalDevice);
@@ -150,7 +139,7 @@ namespace Corvus
         return true;
     }
 
-    UInt32 CVulkanPhysicalDevice::GetPhysicalDeviceSuitability(VkPhysicalDevice PhysicalDevice) const
+    UInt32 CRenderer::GetPhysicalDeviceSuitability(VkPhysicalDevice PhysicalDevice) const
     {
         UInt32 Score = 0;
 
@@ -186,8 +175,7 @@ namespace Corvus
         return Score;
     }
 
-    std::vector<VkQueueFamilyProperties> CVulkanPhysicalDevice::GetQueueFamilyProperties(VkPhysicalDevice PhysicalDevice
-    ) const
+    std::vector<VkQueueFamilyProperties> CRenderer::GetQueueFamilyProperties(VkPhysicalDevice PhysicalDevice) const
     {
         UInt32 NumQueueFamilyProperties = 0;
         vkGetPhysicalDeviceQueueFamilyProperties(PhysicalDevice, &NumQueueFamilyProperties, nullptr);
@@ -199,7 +187,7 @@ namespace Corvus
         return QueueFamilyProperties;
     }
 
-    std::optional<UInt32> CVulkanPhysicalDevice::GetMostSuitableQueueFamily(
+    std::optional<UInt32> CRenderer::GetMostSuitableQueueFamily(
         VkPhysicalDevice                            PhysicalDevice,
         std::vector<VkQueueFamilyProperties> const &QueueFamiliesProperties,
         QueueFamilySuitabilityFunc                  SuitabilityFunction
@@ -211,7 +199,8 @@ namespace Corvus
         UInt32 FamilyIndex = 0;
         for (VkQueueFamilyProperties const &QueueFamilyProperties : QueueFamiliesProperties)
         {
-            UInt32 QueueFamilySuitability = SuitabilityFunction(PhysicalDevice, QueueFamilyProperties, FamilyIndex);
+            UInt32 QueueFamilySuitability =
+                (*s_RendererInstance.*SuitabilityFunction)(PhysicalDevice, QueueFamilyProperties, FamilyIndex);
             if (QueueFamilySuitability > HighestSuitabilityScore)
             {
                 QueueFamilyIndex        = FamilyIndex;
@@ -223,11 +212,11 @@ namespace Corvus
         return QueueFamilyIndex;
     }
 
-    UInt32 CVulkanPhysicalDevice::GetGraphicsQueueFamilySuitability(
+    UInt32 CRenderer::GetGraphicsQueueFamilySuitability(
         VkPhysicalDevice PhysicalDevice, VkQueueFamilyProperties const &QueueFamilyProperties, UInt32 QueueFamilyIndex
     )
     {
-        UInt32           Score      = 0;
+        UInt32             Score      = 0;
         VkQueueFlags const QueueFlags = QueueFamilyProperties.queueFlags;
 
         if (!(QueueFlags & VK_QUEUE_GRAPHICS_BIT))
@@ -249,7 +238,7 @@ namespace Corvus
         }
 
         VkBool32 bPresentationSupported = false;
-        vkGetPhysicalDeviceSurfaceSupportKHR(PhysicalDevice, QueueFamilyIndex, m_VkSurface, &bPresentationSupported);
+        vkGetPhysicalDeviceSurfaceSupportKHR(PhysicalDevice, QueueFamilyIndex, m_Surface, &bPresentationSupported);
         if (bPresentationSupported)
         {
             Score += 100;
@@ -259,15 +248,15 @@ namespace Corvus
         return Score;
     }
 
-    UInt32 CVulkanPhysicalDevice::GetPresentationQueueFamilySuitability(
+    UInt32 CRenderer::GetPresentationQueueFamilySuitability(
         VkPhysicalDevice PhysicalDevice, VkQueueFamilyProperties const &QueueFamilyProperties, UInt32 QueueFamilyIndex
     )
     {
-        UInt32           Score      = 0;
+        UInt32             Score      = 0;
         VkQueueFlags const QueueFlags = QueueFamilyProperties.queueFlags;
 
         VkBool32 bPresentationSupported = false;
-        vkGetPhysicalDeviceSurfaceSupportKHR(PhysicalDevice, QueueFamilyIndex, m_VkSurface, &bPresentationSupported);
+        vkGetPhysicalDeviceSurfaceSupportKHR(PhysicalDevice, QueueFamilyIndex, m_Surface, &bPresentationSupported);
         if (!bPresentationSupported)
         {
             return 0;

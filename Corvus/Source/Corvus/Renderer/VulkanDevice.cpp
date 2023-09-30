@@ -1,8 +1,6 @@
 #include "CorvusPCH.h"
 
-#include "Corvus/Renderer/VulkanDevice.h"
-
-#include "Corvus/Renderer/VulkanInstance.h"
+#include "Corvus/Renderer/Renderer.h"
 #include "Corvus/Renderer/VulkanQueues.h"
 
 #include <unordered_set>
@@ -10,14 +8,9 @@
 namespace Corvus
 {
 
-    CVulkanDevice::~CVulkanDevice()
+    void CRenderer::CreateDevice(VkPhysicalDevice const &PhysicalDevice)
     {
-        CORVUS_ASSERT_FMT(m_Handler == VK_NULL_HANDLE, "Vulkan Device was not properly destroyed!");
-    }
-
-    void CVulkanDevice::Create(CVulkanPhysicalDevice const &PhysicalDevice)
-    {
-        m_QueueFamilyIndices = PhysicalDevice.GetMostSuitableQueueFamilyIndices();
+        m_QueueFamilyIndices = GetMostSuitableQueueFamilyIndices();
 
         // clang-format off
         std::unordered_set<UInt32> QueueFamilyIndices{
@@ -28,7 +21,7 @@ namespace Corvus
 
         std::vector<VkDeviceQueueCreateInfo> QueueCreateInfos(QueueFamilyIndices.size());
 
-        float    QueuePriority = 1.0f;
+        float  QueuePriority = 1.0f;
         UInt32 Counter       = 0;
         for (UInt32 QueueFamilyIndex : QueueFamilyIndices)
         {
@@ -57,46 +50,24 @@ namespace Corvus
         DeviceCreateInfo.enabledLayerCount       = static_cast<UInt32>(ValidationLayers.size());
         DeviceCreateInfo.ppEnabledLayerNames     = ValidationLayers.data();
 
-        if (vkCreateDevice(PhysicalDevice.Handler(), &DeviceCreateInfo, nullptr, &m_Handler) != VK_SUCCESS)
+        if (vkCreateDevice(PhysicalDevice, &DeviceCreateInfo, nullptr, &m_Device) != VK_SUCCESS)
         {
             CORVUS_CRITICAL("Failed to create Vulkan Device!");
-            exit(1);
         }
         CORVUS_TRACE("Created Vulkan Device successfully");
     }
 
-    void CVulkanDevice::Destroy()
+    void CRenderer::DestroyDevice()
     {
-        if (m_Handler)
+        if (m_Device)
         {
-            vkDestroyDevice(m_Handler, nullptr);
-            m_Handler = VK_NULL_HANDLE;
+            vkDestroyDevice(m_Device, nullptr);
+            m_Device = VK_NULL_HANDLE;
             CORVUS_TRACE("Vulkan Device destroyed");
         }
     }
 
-    CVulkanDevice::CVulkanDevice(CVulkanDevice &&Rhs) noexcept
-        : m_Handler{std::exchange(Rhs.m_Handler, VK_NULL_HANDLE)},
-          m_QueueFamilyIndices{std::move(Rhs.m_QueueFamilyIndices)}
-    {
-    }
-
-    CVulkanDevice &CVulkanDevice::operator=(CVulkanDevice &&Rhs) noexcept
-    {
-        if (this != &Rhs)
-        {
-            m_Handler            = std::exchange(Rhs.m_Handler, VK_NULL_HANDLE);
-            m_QueueFamilyIndices = std::move(m_QueueFamilyIndices);
-        }
-        return *this;
-    }
-
-    VkDevice CVulkanDevice::Handler() const
-    {
-        return m_Handler;
-    }
-
-    std::vector<char const *> CVulkanDevice::GetRequiredDeviceExtensions() const
+    std::vector<char const *> CRenderer::GetRequiredDeviceExtensions() const
     {
         // clang-format off
         std::vector<char const *> DeviceExtensions
@@ -107,7 +78,7 @@ namespace Corvus
         return DeviceExtensions;
     }
 
-    std::vector<char const *> CVulkanDevice::GetRequiredDeviceValidationLayers() const
+    std::vector<char const *> CRenderer::GetRequiredDeviceValidationLayers() const
     {
 #ifdef CORVUS_DEBUG
         // clang-format off
@@ -117,10 +88,9 @@ namespace Corvus
         };
         // clang-format on
 
-        if (!CVulkanInstance::CheckValidationLayersAvailable(ValidationLayers))
+        if (!CheckValidationLayersAvailable(ValidationLayers))
         {
             CORVUS_CRITICAL("Not all required validation layers are available!");
-            exit(1);
         }
 
         return ValidationLayers;
@@ -129,23 +99,17 @@ namespace Corvus
 #endif
     }
 
-    CVulkanQueues CVulkanDevice::RetrieveQueues() const
+    void CRenderer::RetrieveQueues()
     {
-        CVulkanQueues Queues;
-
         UInt32 QueueIndex = 0;
         vkGetDeviceQueue(
-            m_Handler, m_QueueFamilyIndices.GraphicsFamily.value(), QueueIndex, &Queues.m_GraphicsQueueHandler
+            m_Device, m_QueueFamilyIndices.GraphicsFamily.value(), QueueIndex, &m_Queues.m_GraphicsQueueHandler
         );
         vkGetDeviceQueue(
-            m_Handler, m_QueueFamilyIndices.PresentationFamily.value(), QueueIndex, &Queues.m_PresentationQueueHandler
+            m_Device, m_QueueFamilyIndices.PresentationFamily.value(), QueueIndex, &m_Queues.m_PresentationQueueHandler
         );
 
-        Queues.m_QueueFamilyIndices = m_QueueFamilyIndices;
-
         CORVUS_TRACE("Retrieved Queues from Vulkan Device");
-
-        return Queues;
     }
 
 } // namespace Corvus

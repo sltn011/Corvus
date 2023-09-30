@@ -111,7 +111,8 @@ namespace Corvus
     {
         std::pair<Int32, Int32> FramebufferSize;
         glfwGetFramebufferSize(m_Window, &FramebufferSize.first, &FramebufferSize.second);
-        return std::pair<UInt32, UInt32>{static_cast<UInt32>(FramebufferSize.first), static_cast<UInt32>(FramebufferSize.second)};
+        return std::pair<UInt32, UInt32>{
+            static_cast<UInt32>(FramebufferSize.first), static_cast<UInt32>(FramebufferSize.second)};
     }
 
     bool PWindowsWindow::ShouldClose() const
@@ -197,7 +198,7 @@ namespace Corvus
 
     std::vector<char const *> PWindowsWindow::GetRequiredExtensions()
     {
-        UInt32                  NumExtensions;
+        UInt32                    NumExtensions;
         char const              **Extensions = glfwGetRequiredInstanceExtensions(&NumExtensions);
         std::vector<char const *> RequiredExtensionsVec(NumExtensions);
         for (UInt32 i = 0; i < NumExtensions; ++i)
@@ -210,12 +211,10 @@ namespace Corvus
     VkSurfaceKHR PWindowsWindow::CreateVulkanSurfaceHandler() const
     {
         VkSurfaceKHR SurfaceHandler = VK_NULL_HANDLE;
-        if (glfwCreateWindowSurface(
-                CRenderer::GetInstance().VulkanInstance().Handler(), m_Window, nullptr, &SurfaceHandler
-            ) != VK_SUCCESS)
+        if (glfwCreateWindowSurface(Renderer().VulkanInstance().Handler(), m_Window, nullptr, &SurfaceHandler) !=
+            VK_SUCCESS)
         {
             CORVUS_CRITICAL("Failed to create VkSurface!");
-            exit(1);
         }
         CORVUS_TRACE("Created VkSurface successfully");
     }

@@ -1,20 +1,14 @@
 #include "CorvusPCH.h"
 
-#include "Corvus/Renderer/VulkanInstance.h"
-
 #include "Corvus/Core/Application.h"
+#include "Corvus/Renderer/Renderer.h"
 
 namespace Corvus
 {
 
-    CVulkanInstance::~CVulkanInstance()
+    void CRenderer::CreateInstance(CString const &ApplicationName, UInt32 ApiVersion)
     {
-        CORVUS_ASSERT_FMT(m_Handler == VK_NULL_HANDLE, "Vulkan Instance was not properly destroyed!");
-    }
-
-    void CVulkanInstance::Create(CString const &ApplicationName, UInt32 ApiVersion)
-    {
-        CORVUS_ASSERT_FMT(m_Handler == VK_NULL_HANDLE, "Vulkan Instance was already created!");
+        CORVUS_ASSERT_FMT(m_VulkanInstance == VK_NULL_HANDLE, "Vulkan Instance was already created!");
 
         CORVUS_TRACE("Creating Vulkan Instance...");
 
@@ -38,44 +32,24 @@ namespace Corvus
         InstanceCreateInfo.enabledLayerCount       = static_cast<UInt32>(ValidationLayers.size());
         InstanceCreateInfo.ppEnabledLayerNames     = ValidationLayers.data();
 
-        if (vkCreateInstance(&InstanceCreateInfo, nullptr, &m_Handler) != VK_SUCCESS)
+        if (vkCreateInstance(&InstanceCreateInfo, nullptr, &m_VulkanInstance) != VK_SUCCESS)
         {
             CORVUS_CRITICAL("Failed to create Vulkan Instance!");
-            exit(1);
         }
         CORVUS_TRACE("Created Vulkan Instance successfully");
     }
 
-    void CVulkanInstance::Destroy()
+    void CRenderer::DestroyInstance()
     {
-        if (m_Handler)
+        if (m_VulkanInstance)
         {
-            vkDestroyInstance(m_Handler, nullptr);
-            m_Handler = VK_NULL_HANDLE;
+            vkDestroyInstance(m_VulkanInstance, nullptr);
+            m_VulkanInstance = VK_NULL_HANDLE;
             CORVUS_TRACE("Vulkan Instance destroyed");
         }
     }
 
-    CVulkanInstance::CVulkanInstance(CVulkanInstance &&Rhs) noexcept
-        : m_Handler{std::exchange(Rhs.m_Handler, VK_NULL_HANDLE)}
-    {
-    }
-
-    CVulkanInstance &CVulkanInstance::operator=(CVulkanInstance &&Rhs) noexcept
-    {
-        if (this != &Rhs)
-        {
-            m_Handler = std::exchange(Rhs.m_Handler, VK_NULL_HANDLE);
-        }
-        return *this;
-    }
-
-    VkInstance CVulkanInstance::Handler() const
-    {
-        return m_Handler;
-    }
-
-    std::vector<char const *> CVulkanInstance::GetRequiredInstanceExtensions()
+    std::vector<char const *> CRenderer::GetRequiredInstanceExtensions()
     {
         const std::vector<char const *> RequiredExtensions =
             CApplication::GetInstance().GetWindow().GetRequiredExtensions();
@@ -106,13 +80,12 @@ namespace Corvus
         if (!CheckExtensionsAvailable(Extensions))
         {
             CORVUS_CRITICAL("Not all required extensions are available!");
-            exit(1);
         }
 
         return Extensions;
     }
 
-    std::vector<char const *> CVulkanInstance::GetRequiredInstanceValidationLayers()
+    std::vector<char const *> CRenderer::GetRequiredInstanceValidationLayers()
     {
 #ifdef _DEBUG
         // clang-format off
@@ -125,7 +98,6 @@ namespace Corvus
         if (!CheckValidationLayersAvailable(ValidationLayers))
         {
             CORVUS_CRITICAL("Not all required validation layers are available!");
-            exit(1);
         }
 
         return ValidationLayers;
@@ -134,7 +106,7 @@ namespace Corvus
 #endif
     }
 
-    std::vector<VkExtensionProperties> CVulkanInstance::GetSupportedInstanceExtensions()
+    std::vector<VkExtensionProperties> CRenderer::GetSupportedInstanceExtensions()
     {
         UInt32 NumExtensions = 0;
         vkEnumerateInstanceExtensionProperties(nullptr, &NumExtensions, nullptr);
@@ -144,7 +116,7 @@ namespace Corvus
         return Extensions;
     }
 
-    std::vector<VkLayerProperties> CVulkanInstance::GetSupportedValidationLayers()
+    std::vector<VkLayerProperties> CRenderer::GetSupportedValidationLayers()
     {
         UInt32 NumLayers = 0;
         vkEnumerateInstanceLayerProperties(&NumLayers, nullptr);
@@ -154,7 +126,7 @@ namespace Corvus
         return Layers;
     }
 
-    bool CVulkanInstance::CheckExtensionsAvailable(std::vector<char const *> const &RequiredExtensions)
+    bool CRenderer::CheckExtensionsAvailable(std::vector<char const *> const &RequiredExtensions)
     {
         std::vector<VkExtensionProperties> const Supported = GetSupportedInstanceExtensions();
 
@@ -178,7 +150,7 @@ namespace Corvus
         return true;
     }
 
-    bool CVulkanInstance::CheckValidationLayersAvailable(std::vector<char const *> const &RequiredLayers)
+    bool CRenderer::CheckValidationLayersAvailable(std::vector<char const *> const &RequiredLayers)
     {
         std::vector<VkLayerProperties> const Supported = GetSupportedValidationLayers();
 

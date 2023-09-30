@@ -3,17 +3,11 @@
 #ifdef CORVUS_DEBUG
 
     #include "Corvus/Renderer/Renderer.h"
-    #include "Corvus/Renderer/VulkanDebugCallback.h"
 
 namespace Corvus
 {
 
-    CVulkanDebugCallback::~CVulkanDebugCallback()
-    {
-        CORVUS_ASSERT_FMT(m_Handler == VK_NULL_HANDLE, "Vulkan DebugCallback was not properly destroyed!");
-    }
-
-    void CVulkanDebugCallback::Create()
+    void CRenderer::CreateDebugCallback()
     {
         // clang-format off
         VkDebugUtilsMessengerCreateInfoEXT MessengerInfo{};
@@ -27,49 +21,27 @@ namespace Corvus
             VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT    |
             VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
             VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-        MessengerInfo.pfnUserCallback = CVulkanDebugCallback::DebugCallback;
+        MessengerInfo.pfnUserCallback = CRenderer::DebugCallback;
         MessengerInfo.pUserData       = nullptr;
         // clang-format on
 
-        if (CreateDebugUtilsMessengerEXT(
-                CRenderer::GetInstance().GetVulkanInstance().Handler(), &MessengerInfo, nullptr, &m_Handler
-            ) != VK_SUCCESS)
+        if (CreateDebugUtilsMessengerEXT(m_Instance, &MessengerInfo, nullptr, &m_DebugCallback) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to create Vulkan DebugCallback!");
-            exit(1);
+            CORVUS_CRITICAL("Failed to create Vulkan Debug Callback!");
         }
-        CORVUS_TRACE("Vulkan DebugCallback set up successfully");
+        CORVUS_TRACE("Vulkan Debug Callback set up successfully");
     }
 
-    void CVulkanDebugCallback::Destroy()
+    void CRenderer::DestroyDebugCallback()
     {
-        if (m_Handler)
+        if (m_DebugCallback)
         {
-            DestroyDebugUtilsMessengerEXT(CRenderer::GetInstance().GetVulkanInstance().Handler(), m_Handler, nullptr);
-            CORVUS_TRACE("Vulkan DebugCallback destroyed");
+            DestroyDebugUtilsMessengerEXT(m_Instance, m_DebugCallback, nullptr);
+            CORVUS_TRACE("Vulkan Debug Callback destroyed");
         }
     }
 
-    CVulkanDebugCallback::CVulkanDebugCallback(CVulkanDebugCallback &&Rhs) noexcept
-        : m_Handler{std::exchange(Rhs.m_Handler, VK_NULL_HANDLE)}
-    {
-    }
-
-    CVulkanDebugCallback &CVulkanDebugCallback::operator=(CVulkanDebugCallback &&Rhs) noexcept
-    {
-        if (this != &Rhs)
-        {
-            m_Handler = std::exchange(Rhs.m_Handler, VK_NULL_HANDLE);
-        }
-        return *this;
-    }
-
-    VkDebugUtilsMessengerEXT CVulkanDebugCallback::Handler() const
-    {
-        return m_Handler;
-    }
-
-    VKAPI_ATTR VkBool32 VKAPI_CALL CVulkanDebugCallback::DebugCallback(
+    VKAPI_ATTR VkBool32 VKAPI_CALL CRenderer::DebugCallback(
         VkDebugUtilsMessageSeverityFlagBitsEXT      MessageSeverity,
         VkDebugUtilsMessageTypeFlagsEXT             MessageType,
         const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
@@ -100,7 +72,7 @@ namespace Corvus
         return VK_FALSE;
     }
 
-    VKAPI_ATTR VkResult VKAPI_CALL CVulkanDebugCallback::CreateDebugUtilsMessengerEXT(
+    VKAPI_ATTR VkResult VKAPI_CALL CRenderer::CreateDebugUtilsMessengerEXT(
         VkInstance                                Instance,
         VkDebugUtilsMessengerCreateInfoEXT const *pCreateInfo,
         VkAllocationCallbacks const              *pAllocator,
@@ -119,7 +91,7 @@ namespace Corvus
         }
     }
 
-    VKAPI_ATTR void VKAPI_CALL CVulkanDebugCallback::DestroyDebugUtilsMessengerEXT(
+    VKAPI_ATTR void VKAPI_CALL CRenderer::DestroyDebugUtilsMessengerEXT(
         VkInstance Instance, VkDebugUtilsMessengerEXT DebugMessenger, VkAllocationCallbacks const *pAllocator
     )
     {
