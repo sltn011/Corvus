@@ -4,7 +4,7 @@
 
 namespace Corvus
 {
-    std::vector<char> CRenderer::ReadSPIRVByteCode(std::filesystem::path const &FilePath) const
+    std::vector<char> CRenderer::ReadSPIRVByteCode(CString const &FilePath) const
     {
         std::ifstream File(FilePath, std::ios::ate | std::ios::binary);
 

@@ -28,7 +28,6 @@ namespace Corvus
         virtual bool ShouldClose() const override;
         virtual void SetShouldClose() override;
 
-        virtual void SetVSyncEnabled(bool bValue) override;
         virtual void SetFullScreen(bool bValue) override;
 
         virtual void AwaitNextEvent() const override;
@@ -42,8 +41,7 @@ namespace Corvus
         static void WindowErrorCallback(int ErrorCode, char const *Description);
 
     protected:
-        virtual void InitRenderingContext() override;
-        virtual void InitGUIRenderingContext() override;
+        // virtual void InitGUIRenderingContext() override;
 
         void SetupWindowEventsHandlers();
 

@@ -7,7 +7,7 @@ namespace Corvus
 
     void CRenderer::CreateCommandPools()
     {
-        CORVUS_CORE_ASSERT(
+        CORVUS_CORE_ASSERT_FMT(
             m_CommandPool == VK_NULL_HANDLE && m_TransferCommandPool == VK_NULL_HANDLE,
             "Vulkan Command Pools were already created"
         );

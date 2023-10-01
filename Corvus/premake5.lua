@@ -15,6 +15,7 @@ project "Corvus"
 	files
 	{
 		"Source/**.cpp",
+		"Source/**.inl",
 		"Source/**.h",
 		
 		"Dependencies/glm/glm/**.hpp",
@@ -25,6 +26,7 @@ project "Corvus"
 		["../Corvus/Source/*"] = 
 		{ 
 			"Source/**.cpp",
+			"Source/**.inl",
 			"Source/**.h" 
 		} 
 	}

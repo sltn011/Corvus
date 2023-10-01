@@ -8,7 +8,7 @@ namespace Corvus
 
     void CRenderer::CreateInstance(CString const &ApplicationName, UInt32 ApiVersion)
     {
-        CORVUS_ASSERT_FMT(m_VulkanInstance == VK_NULL_HANDLE, "Vulkan Instance was already created!");
+        CORVUS_ASSERT_FMT(m_Instance == VK_NULL_HANDLE, "Vulkan Instance was already created!");
 
         CORVUS_TRACE("Creating Vulkan Instance...");
 
@@ -32,7 +32,7 @@ namespace Corvus
         InstanceCreateInfo.enabledLayerCount       = static_cast<UInt32>(ValidationLayers.size());
         InstanceCreateInfo.ppEnabledLayerNames     = ValidationLayers.data();
 
-        if (vkCreateInstance(&InstanceCreateInfo, nullptr, &m_VulkanInstance) != VK_SUCCESS)
+        if (vkCreateInstance(&InstanceCreateInfo, nullptr, &m_Instance) != VK_SUCCESS)
         {
             CORVUS_CRITICAL("Failed to create Vulkan Instance!");
         }
@@ -41,10 +41,10 @@ namespace Corvus
 
     void CRenderer::DestroyInstance()
     {
-        if (m_VulkanInstance)
+        if (m_Instance)
         {
-            vkDestroyInstance(m_VulkanInstance, nullptr);
-            m_VulkanInstance = VK_NULL_HANDLE;
+            vkDestroyInstance(m_Instance, nullptr);
+            m_Instance = VK_NULL_HANDLE;
             CORVUS_TRACE("Vulkan Instance destroyed");
         }
     }
@@ -53,7 +53,7 @@ namespace Corvus
     {
         const std::vector<char const *> RequiredExtensions =
             CApplication::GetInstance().GetWindow().GetRequiredExtensions();
-        UInt32 NumRequiredExtensions = RequiredExtensions.size();
+        UInt32 NumRequiredExtensions = static_cast<UInt32>(RequiredExtensions.size());
 
         // clang-format off
         const std::vector<char const *> AdditionalExtensions

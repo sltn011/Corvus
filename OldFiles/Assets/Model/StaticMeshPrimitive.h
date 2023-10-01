@@ -2,7 +2,7 @@
 #define CORVUS_SOURCE_CORVUS_ASSETS_MODEL_STATICMESHPRIMITIVE_H
 
 #include "Corvus/Assets/AssetRef.h"
-// #include "Corvus/Assets/Material/Material.h"
+#include "Corvus/Assets/Material/Material.h"
 #include "Corvus/Renderer/Data/Vertex.h"
 #include "Corvus/Renderer/VulkanBuffer.h"
 
@@ -26,7 +26,7 @@ namespace Corvus
         CVulkanBuffer       IndexBuffer;
         std::vector<UInt16> IndexData;
 
-        // TAssetRef<CMaterial> MaterialRef;
+        TAssetRef<CMaterial> MaterialRef;
     };
 
 } // namespace Corvus

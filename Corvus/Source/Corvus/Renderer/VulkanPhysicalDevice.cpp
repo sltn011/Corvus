@@ -10,16 +10,16 @@ namespace Corvus
         m_PhysicalDevice                                    = GetMostSuitablePhysicalDevice(PhysicalDevices);
     }
 
-    CVulkanQueueFamilyIndices CRenderer::GetMostSuitableQueueFamilyIndices() const
+    CVulkanQueueFamilyIndices CRenderer::GetMostSuitableQueueFamilyIndices(VkPhysicalDevice PhysicalDevice) const
     {
-        std::vector<VkQueueFamilyProperties> QueueFamiliesProperties = GetQueueFamilyProperties(m_PhysicalDevice);
+        std::vector<VkQueueFamilyProperties> QueueFamiliesProperties = GetQueueFamilyProperties(PhysicalDevice);
 
         CVulkanQueueFamilyIndices FamilyIndices{};
         FamilyIndices.GraphicsFamily = GetMostSuitableQueueFamily(
-            m_PhysicalDevice, QueueFamiliesProperties, &CRenderer::GetGraphicsQueueFamilySuitability
+            PhysicalDevice, QueueFamiliesProperties, &CRenderer::GetGraphicsQueueFamilySuitability
         );
         FamilyIndices.PresentationFamily = GetMostSuitableQueueFamily(
-            m_PhysicalDevice, QueueFamiliesProperties, &CRenderer::GetPresentationQueueFamilySuitability
+            PhysicalDevice, QueueFamiliesProperties, &CRenderer::GetPresentationQueueFamilySuitability
         );
         return FamilyIndices;
     }
@@ -111,7 +111,17 @@ namespace Corvus
 
     bool CRenderer::IsPhysicalDeviceSuitable(VkPhysicalDevice PhysicalDevice) const
     {
-        return false;
+        CVulkanQueueFamilyIndices FamiliesIndices         = GetMostSuitableQueueFamilyIndices(PhysicalDevice);
+        bool                      bAllExtensionsSupported = IsPhysicalDeviceExtensionSupportComplete(PhysicalDevice);
+
+        bool bSwapchainSuitable = false;
+        if (bAllExtensionsSupported)
+        {
+            CVulkanSwapchainSupportDetails SwapchainSupport = GetSwapchainSupportDetails(PhysicalDevice, m_Surface);
+            bSwapchainSuitable = !SwapchainSupport.PresentationMode.empty() && !SwapchainSupport.SurfaceFormats.empty();
+        }
+
+        return FamiliesIndices.IsComplete() && bAllExtensionsSupported && bSwapchainSuitable;
     }
 
     bool CRenderer::IsPhysicalDeviceExtensionSupportComplete(VkPhysicalDevice PhysicalDevice) const
@@ -200,7 +210,7 @@ namespace Corvus
         for (VkQueueFamilyProperties const &QueueFamilyProperties : QueueFamiliesProperties)
         {
             UInt32 QueueFamilySuitability =
-                (*s_RendererInstance.*SuitabilityFunction)(PhysicalDevice, QueueFamilyProperties, FamilyIndex);
+                (Renderer().*SuitabilityFunction)(PhysicalDevice, QueueFamilyProperties, FamilyIndex);
             if (QueueFamilySuitability > HighestSuitabilityScore)
             {
                 QueueFamilyIndex        = FamilyIndex;

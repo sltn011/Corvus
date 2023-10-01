@@ -5,14 +5,10 @@
 #include "Corvus/Camera/OrthographicCamera.h"
 #include "Corvus/Camera/PerspectiveCamera.h"
 #include "Corvus/Core/CoreLayer.h"
-#include "Corvus/GUI/LayerGUI.h"
+// #include "Corvus/GUI/LayerGUI.h"
 #include "Corvus/Memory/ApplicationPools.h"
 #include "Corvus/Profiling/FrameProfiler.h"
-#include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Renderer.h"
-#include "Corvus/Renderer/Shader.h"
-#include "Corvus/Renderer/VertexArray.h"
-#include "Corvus/Renderer/VertexBuffer.h"
 #include "Corvus/Time/TimeDelta.h"
 #include "Corvus/Time/TimePoint.h"
 
@@ -31,6 +27,7 @@ namespace Corvus
 
     CApplication::~CApplication()
     {
+        DestroyRenderer();
         s_ApplicationInstance = nullptr;
     }
 
@@ -64,6 +61,8 @@ namespace Corvus
             CORVUS_EVAL_IF_CONSTEXPR(CFrameProfiler::IsEnabled, CFrameProfiler::RecordFrameProcessingTime, ElapsedTime);
             CORVUS_EVAL_IF_CONSTEXPR(CFrameProfiler::IsEnabled, CFrameProfiler::StopFrame);
         }
+
+        Renderer().AwaitIdle();
     }
 
     void CApplication::PushLayer(TOwn<CLayer> &&NewLayer)
@@ -86,22 +85,22 @@ namespace Corvus
 
     void CApplication::RenderLayers()
     {
-        if (!m_Window->GetGUIController().IsInitialized())
-        {
-            return;
-        }
-
-        m_Window->GetGUIController().BeginFrame();
-        for (auto It = m_LayersStack.Begin(); It != m_LayersStack.End(); ++It)
-        {
-            if (!(*It)->IsEnabled())
-            {
-                continue;
-            }
-
-            (*It)->Render();
-        }
-        m_Window->GetGUIController().EndFrame();
+        // if (!m_Window->GetGUIController().IsInitialized())
+        //{
+        //     return;
+        // }
+        //
+        // m_Window->GetGUIController().BeginFrame();
+        // for (auto It = m_LayersStack.Begin(); It != m_LayersStack.End(); ++It)
+        //{
+        //     if (!(*It)->IsEnabled())
+        //     {
+        //         continue;
+        //     }
+        //
+        //     (*It)->Render();
+        // }
+        // m_Window->GetGUIController().EndFrame();
     }
 
     void CApplication::OnEventReceived(CEvent &Event)
@@ -124,10 +123,9 @@ namespace Corvus
     void CApplication::InitWindow()
     {
         SWindowData WindowSettings;
-        WindowSettings.WindowWidth   = 1600;
-        WindowSettings.WindowHeight  = 900;
-        WindowSettings.WindowName    = "TestWindow";
-        WindowSettings.bVSyncEnabled = true;
+        WindowSettings.WindowWidth  = 1600;
+        WindowSettings.WindowHeight = 900;
+        WindowSettings.WindowName   = "TestWindow";
 
         m_Window = CWindow::Create();
         CORVUS_CORE_ASSERT(m_Window);
@@ -144,7 +142,14 @@ namespace Corvus
 
     void CApplication::InitRenderer()
     {
-        CRenderer::Init();
-        CORVUS_CORE_INFO("Renderer initialized");
+        Renderer().Create();
+        CORVUS_CORE_INFO("Renderer created");
     }
+
+    void CApplication::DestroyRenderer()
+    {
+        Renderer().Destroy();
+        CORVUS_CORE_INFO("Renderer destroyed");
+    }
+
 } // namespace Corvus

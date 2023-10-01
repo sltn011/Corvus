@@ -9,8 +9,8 @@ namespace Corvus
     {
         VkPipelineLayoutCreateInfo PipelineLayoutInfo{};
         PipelineLayoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        PipelineLayoutInfo.setLayoutCount         = 0;
-        PipelineLayoutInfo.pSetLayouts            = nullptr;
+        PipelineLayoutInfo.setLayoutCount         = 1;
+        PipelineLayoutInfo.pSetLayouts            = &m_MatricesUBOLayout;
         PipelineLayoutInfo.pushConstantRangeCount = 0;       // optional
         PipelineLayoutInfo.pPushConstantRanges    = nullptr; // optional
 

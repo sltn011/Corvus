@@ -9,7 +9,7 @@ namespace Corvus
 
     void CRenderer::CreateSwapchain()
     {
-        CVulkanSwapchainSupportDetails SupportDetails = GetSwapchainSupportDetails();
+        CVulkanSwapchainSupportDetails SupportDetails = GetSwapchainSupportDetails(m_PhysicalDevice, m_Surface);
 
         UInt32 const             ImagesCount = SelectImagesCount(SupportDetails);
         VkExtent2D const         Extent      = SelectExtent(SupportDetails);
@@ -69,29 +69,54 @@ namespace Corvus
         }
     }
 
-    CVulkanSwapchainSupportDetails CRenderer::GetSwapchainSupportDetails() const
+    void CRenderer::RecreateSwapchain()
+    {
+        CWindow &Window = CApplication::GetInstance().GetWindow();
+        // Handle minimized window event
+        std::pair<UInt32, UInt32> WindowFramebufferSize = Window.GetFramebufferSize();
+        while (WindowFramebufferSize.first == 0 || WindowFramebufferSize.second == 0)
+        {
+            WindowFramebufferSize = Window.GetFramebufferSize();
+            Window.AwaitNextEvent();
+        }
+
+        vkDeviceWaitIdle(m_Device);
+
+        DestroyFramebuffers();
+        DestroySwapchainImageViews();
+        DestroySwapchain();
+
+        CreateSwapchain();
+        RetrieveSwapchainImages();
+        CreateSwapchainImageViews();
+        CreateFramebuffers();
+    }
+
+    CVulkanSwapchainSupportDetails CRenderer::GetSwapchainSupportDetails(
+        VkPhysicalDevice PhysicalDevice, VkSurfaceKHR Surface
+    ) const
     {
         CVulkanSwapchainSupportDetails SupportDetails;
 
-        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_PhysicalDevice, m_Surface, &SupportDetails.SurfaceCapabilities);
+        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(PhysicalDevice, Surface, &SupportDetails.SurfaceCapabilities);
 
         UInt32 NumSurfaceFormats = 0;
-        vkGetPhysicalDeviceSurfaceFormatsKHR(m_PhysicalDevice, m_Surface, &NumSurfaceFormats, nullptr);
+        vkGetPhysicalDeviceSurfaceFormatsKHR(PhysicalDevice, Surface, &NumSurfaceFormats, nullptr);
         if (NumSurfaceFormats != 0)
         {
             SupportDetails.SurfaceFormats.resize(NumSurfaceFormats);
             vkGetPhysicalDeviceSurfaceFormatsKHR(
-                m_PhysicalDevice, m_Surface, &NumSurfaceFormats, SupportDetails.SurfaceFormats.data()
+                PhysicalDevice, Surface, &NumSurfaceFormats, SupportDetails.SurfaceFormats.data()
             );
         }
 
         UInt32 NumPresentationModes = 0;
-        vkGetPhysicalDeviceSurfacePresentModesKHR(m_PhysicalDevice, m_Surface, &NumPresentationModes, nullptr);
+        vkGetPhysicalDeviceSurfacePresentModesKHR(PhysicalDevice, Surface, &NumPresentationModes, nullptr);
         if (NumPresentationModes != 0)
         {
             SupportDetails.PresentationMode.resize(NumPresentationModes);
             vkGetPhysicalDeviceSurfacePresentModesKHR(
-                m_PhysicalDevice, m_Surface, &NumPresentationModes, SupportDetails.PresentationMode.data()
+                PhysicalDevice, Surface, &NumPresentationModes, SupportDetails.PresentationMode.data()
             );
         }
 

@@ -7,6 +7,7 @@
 #include "Corvus/Event/MouseEvent.h"
 #include "Corvus/Renderer/Renderer.h"
 
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 namespace Corvus
@@ -34,9 +35,7 @@ namespace Corvus
             CORVUS_CORE_ASSERT(GLFWInitialized);
             CORVUS_CORE_TRACE("GLFW initialized successfully");
 
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
             glfwSetErrorCallback(WindowErrorCallback);
         }
@@ -64,16 +63,13 @@ namespace Corvus
 
         SetupWindowEventsHandlers(); // Must be called before InitGUIRenderingContext
 
-        InitRenderingContext();
-        InitGUIRenderingContext();
+        // InitGUIRenderingContext();
 
         glfwSetWindowUserPointer(m_Window, this);
 
         SetFullScreen(m_WindowData.bFullScreen);
-        SetVSyncEnabled(m_WindowData.bVSyncEnabled);
 
         CORVUS_CORE_ASSERT(m_Window);
-        CORVUS_CORE_ASSERT(m_RenderingContext);
     }
 
     void PWindowsWindow::Destroy()
@@ -84,8 +80,7 @@ namespace Corvus
             return;
         }
 
-        m_RenderingContext.reset();
-        m_GUIController.Destroy();
+        // m_GUIController.Destroy();
 
         glfwDestroyWindow(m_Window);
         m_Window         = nullptr;
@@ -104,7 +99,6 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT(m_bIsInitialized);
         glfwPollEvents();
-        m_RenderingContext->SwapBuffers();
     }
 
     std::pair<UInt32, UInt32> PWindowsWindow::GetFramebufferSize() const
@@ -123,19 +117,6 @@ namespace Corvus
     void PWindowsWindow::SetShouldClose()
     {
         glfwSetWindowShouldClose(m_Window, true);
-    }
-
-    void PWindowsWindow::SetVSyncEnabled(bool const bValue)
-    {
-        if (!m_bIsInitialized)
-        {
-            CORVUS_CORE_ERROR("Window not initialized - cant switch VSync on/off!");
-            return;
-        }
-
-        glfwSwapInterval(bValue ? 1 : 0);
-        m_WindowData.bVSyncEnabled = bValue;
-        CORVUS_CORE_TRACE("Window \"{0}\" VSync {1}", m_WindowData.WindowName, bValue ? "On" : "Off");
     }
 
     void PWindowsWindow::SetFullScreen(bool const bValue)
@@ -211,12 +192,12 @@ namespace Corvus
     VkSurfaceKHR PWindowsWindow::CreateVulkanSurfaceHandler() const
     {
         VkSurfaceKHR SurfaceHandler = VK_NULL_HANDLE;
-        if (glfwCreateWindowSurface(Renderer().VulkanInstance().Handler(), m_Window, nullptr, &SurfaceHandler) !=
-            VK_SUCCESS)
+        if (glfwCreateWindowSurface(Renderer().GetVulkanInstance(), m_Window, nullptr, &SurfaceHandler) != VK_SUCCESS)
         {
             CORVUS_CRITICAL("Failed to create VkSurface!");
         }
         CORVUS_TRACE("Created VkSurface successfully");
+        return SurfaceHandler;
     }
 
     void PWindowsWindow::WindowErrorCallback(int const ErrorCode, char const *const Description)
@@ -224,19 +205,11 @@ namespace Corvus
         CORVUS_CORE_ERROR("GLFW Error - Code: {0}, Description: {1:s}", ErrorCode, Description);
     }
 
-    void PWindowsWindow::InitRenderingContext()
-    {
-        m_RenderingContext = CRenderingContext::Create(*this);
-        CORVUS_CORE_ASSERT(m_RenderingContext);
-        m_RenderingContext->Init();
-        CORVUS_CORE_INFO("Rendering context created");
-    }
-
-    void PWindowsWindow::InitGUIRenderingContext()
+    /*void PWindowsWindow::InitGUIRenderingContext()
     {
         m_GUIController.Init();
         CORVUS_CORE_INFO("GUI rendering context created");
-    }
+    }*/
 
     void PWindowsWindow::SetupWindowEventsHandlers()
     {

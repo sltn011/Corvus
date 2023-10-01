@@ -5,28 +5,24 @@
 namespace Corvus
 {
 
-    void CRenderer::CreateBuffer(
-        VkBuffer             &Buffer,
-        VkDeviceMemory       &BufferMemory,
-        VkBufferUsageFlags    Usage,
-        VkDeviceSize          Size,
-        VkMemoryPropertyFlags Properties
-    )
+    CVulkanBuffer CRenderer::CreateBuffer(VkBufferUsageFlags Usage, VkDeviceSize Size, VkMemoryPropertyFlags Properties)
     {
+        CVulkanBuffer Buffer;
+
         VkBufferCreateInfo BufferCreateInfo{};
         BufferCreateInfo.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
         BufferCreateInfo.usage       = Usage;
         BufferCreateInfo.size        = Size;
         BufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE; // only will be used by graphics queue
 
-        if (vkCreateBuffer(m_Device, &BufferCreateInfo, nullptr, &Buffer) != VK_SUCCESS)
+        if (vkCreateBuffer(m_Device, &BufferCreateInfo, nullptr, &Buffer.Buffer) != VK_SUCCESS)
         {
             CORVUS_CRITICAL("Failed to create Vulkan Buffer!");
         }
         CORVUS_TRACE("Created Vulkan Buffer successfully");
 
         VkMemoryRequirements BufferMemoryRequirements{};
-        vkGetBufferMemoryRequirements(m_Device, Buffer, &BufferMemoryRequirements);
+        vkGetBufferMemoryRequirements(m_Device, Buffer.Buffer, &BufferMemoryRequirements);
 
         VkPhysicalDeviceMemoryProperties PhysicalDeviceMemoryProperties{};
         vkGetPhysicalDeviceMemoryProperties(m_PhysicalDevice, &PhysicalDeviceMemoryProperties);
@@ -50,23 +46,37 @@ namespace Corvus
         BufferMemoryAllocateInfo.allocationSize  = BufferMemoryRequirements.size;
         BufferMemoryAllocateInfo.memoryTypeIndex = FindMemoryType(BufferMemoryRequirements.memoryTypeBits, Properties);
 
-        if (vkAllocateMemory(m_Device, &BufferMemoryAllocateInfo, nullptr, &BufferMemory) != VK_SUCCESS)
+        if (vkAllocateMemory(m_Device, &BufferMemoryAllocateInfo, nullptr, &Buffer.Memory) != VK_SUCCESS)
         {
             CORVUS_CRITICAL("Failed to allocate Vulkan Device Memory!");
         }
         CORVUS_TRACE("Allocated Vulkan Device Memory {0}KB successfully", BufferMemoryRequirements.size / 1000.f);
 
-        vkBindBufferMemory(m_Device, Buffer, BufferMemory, 0);
+        vkBindBufferMemory(m_Device, Buffer.Buffer, Buffer.Memory, 0);
+
+        return Buffer;
     }
 
-    void CRenderer::DestroyBuffer(VkBuffer &Buffer, VkDeviceMemory &BufferMemory)
+    void CRenderer::DestroyBuffer(CVulkanBuffer &Buffer)
     {
-        if (Buffer && BufferMemory)
+        if (Buffer.Buffer && Buffer.Memory)
         {
-            vkDestroyBuffer(m_Device, Buffer, nullptr);
-            vkFreeMemory(m_Device, BufferMemory, nullptr);
-            Buffer       = VK_NULL_HANDLE;
-            BufferMemory = VK_NULL_HANDLE;
+            vkDestroyBuffer(m_Device, Buffer.Buffer, nullptr);
+            vkFreeMemory(m_Device, Buffer.Memory, nullptr);
+            Buffer.Buffer = VK_NULL_HANDLE;
+            Buffer.Memory = VK_NULL_HANDLE;
+        }
+    }
+
+    void CRenderer::DestroyBuffer(CVulkanUniformBuffer &Buffer)
+    {
+        if (Buffer.Buffer && Buffer.Memory)
+        {
+            vkDestroyBuffer(m_Device, Buffer.Buffer, nullptr);
+            vkFreeMemory(m_Device, Buffer.Memory, nullptr);
+            Buffer.Buffer       = VK_NULL_HANDLE;
+            Buffer.Memory       = VK_NULL_HANDLE;
+            Buffer.MappedMemory = nullptr;
         }
     }
 
@@ -101,10 +111,31 @@ namespace Corvus
         TransferSubmitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         TransferSubmitInfo.commandBufferCount = 1;
         TransferSubmitInfo.pCommandBuffers    = &TransferCommandBuffer;
-        vkQueueSubmit(m_Queues.m_GraphicsQueue, 1, &TransferSubmitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(m_Queues.m_GraphicsQueue);
+        vkQueueSubmit(m_Queues.GraphicsQueue, 1, &TransferSubmitInfo, VK_NULL_HANDLE);
+        vkQueueWaitIdle(m_Queues.GraphicsQueue);
 
         vkFreeCommandBuffers(m_Device, m_TransferCommandPool, 1, &TransferCommandBuffer);
+    }
+
+    void CRenderer::CreateUniformBuffers()
+    {
+        for (uint32_t i = 0; i < s_FramesInFlight; ++i)
+        {
+            m_MatricesUBOs[i] = CreateUniformBuffer<CMVPUBO>();
+        }
+        CORVUS_TRACE("Vulkan Uniform Buffers created");
+    }
+
+    void CRenderer::DestroyUniformBuffers()
+    {
+        if (!m_MatricesUBOs.empty())
+        {
+            for (uint32_t i = 0; i < s_FramesInFlight; ++i)
+            {
+                DestroyBuffer(m_MatricesUBOs[i]);
+            }
+            CORVUS_TRACE("Vulkan Uniform Buffers destroyed");
+        }
     }
 
 } // namespace Corvus

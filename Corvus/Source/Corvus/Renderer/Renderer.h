@@ -2,6 +2,8 @@
 #define CORVUS_SOURCE_CORVUS_RENDERER_RENDERER_H
 
 #include "Corvus/Core/Base.h"
+#include "Corvus/Renderer/Data/UBOs.h"
+#include "Corvus/Renderer/VulkanBuffer.h"
 #include "Corvus/Renderer/VulkanQueueFamilyIndices.h"
 #include "Corvus/Renderer/VulkanQueues.h"
 #include "Corvus/Renderer/VulkanSwapchainSupportDetails.h"
@@ -10,6 +12,7 @@
 
 namespace Corvus
 {
+    class CStaticModel;
 
     class CRenderer
     {
@@ -17,12 +20,55 @@ namespace Corvus
         void Create();
         void Destroy();
 
+        CRenderer() = default;
         ~CRenderer();
 
         CRenderer(CRenderer const &)            = delete;
         CRenderer(CRenderer &&)                 = delete;
         CRenderer &operator=(CRenderer const &) = delete;
         CRenderer &operator=(CRenderer &&)      = delete;
+
+        static CRenderer &GetInstance();
+
+        VkInstance GetVulkanInstance();
+
+    public:
+        void BeginScene();
+        void EndScene();
+
+        void SubmitStaticModel(CStaticModel &StaticModel, FMatrix4 const &ModelTransformMatrix);
+
+        void NotifyWindowResize();
+
+        void AwaitIdle();
+
+    public:
+        template<typename TVertex>
+        CVulkanBuffer CreateVertexBuffer(std::vector<TVertex> const &BufferData);
+
+        template<typename TIndex>
+        CVulkanBuffer CreateIndexBuffer(std::vector<TIndex> const &BufferData);
+
+        template<typename TUBO>
+        CVulkanUniformBuffer CreateUniformBuffer();
+
+        void DestroyBuffer(CVulkanBuffer &Buffer);
+        void DestroyBuffer(CVulkanUniformBuffer &Buffer);
+
+    private:
+        void SetModelMatrix(FMatrix4 const &ModelMatrix);
+        void SetCameraMatrices();
+
+        VkResult GetNextSwapchainImageIndex(UInt32 &ImageIndex);
+        void     SubmitCommandBuffer(VkCommandBuffer CommandBuffer);
+        VkResult PresentResult();
+
+    private:
+        static bool             s_bInitialized;
+        static constexpr UInt32 s_FramesInFlight = 2;
+        uint32_t                m_CurrentFrame   = 0;
+
+        bool m_bWindowResizeHappened = false;
 
     private:
         // VkInstance
@@ -37,6 +83,8 @@ namespace Corvus
 
         static bool CheckExtensionsAvailable(std::vector<char const *> const &RequiredExtensions);
         static bool CheckValidationLayersAvailable(std::vector<char const *> const &RequiredLayers);
+
+        VkInstance m_Instance = VK_NULL_HANDLE;
 
 #ifdef CORVUS_DEBUG
     private:
@@ -60,6 +108,8 @@ namespace Corvus
         VKAPI_ATTR void VKAPI_CALL DestroyDebugUtilsMessengerEXT(
             VkInstance Instance, VkDebugUtilsMessengerEXT DebugMessenger, VkAllocationCallbacks const *pAllocator
         );
+
+        VkDebugUtilsMessengerEXT m_DebugCallback = VK_NULL_HANDLE;
 #endif
 
     private:
@@ -67,11 +117,13 @@ namespace Corvus
         void CreateSurface();
         void DestroySurface();
 
+        VkSurfaceKHR m_Surface = VK_NULL_HANDLE;
+
     private:
         // VkPhysicalDevice
         void SelectPhysicalDevice();
 
-        CVulkanQueueFamilyIndices GetMostSuitableQueueFamilyIndices() const;
+        CVulkanQueueFamilyIndices GetMostSuitableQueueFamilyIndices(VkPhysicalDevice PhysicalDevice) const;
 
         std::vector<VkPhysicalDevice>      GetPhysicalDevices() const;
         VkPhysicalDeviceProperties         GetPhysicalDeviceProperties(VkPhysicalDevice PhysicalDevice) const;
@@ -110,6 +162,8 @@ namespace Corvus
             UInt32                         QueueFamilyIndex
         );
 
+        VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
+
     private:
         // VkDevice
         void CreateDevice();
@@ -119,14 +173,24 @@ namespace Corvus
         std::vector<char const *> GetRequiredDeviceValidationLayers(
         ) const; // Left for compatibility, not used by newer versions of API
 
+        VkDevice m_Device = VK_NULL_HANDLE;
+
+    private:
+        // VkQueue
         void RetrieveQueues();
+
+        CVulkanQueueFamilyIndices m_QueueFamilyIndices;
+        CVulkanQueues             m_Queues;
 
     private:
         // VkSwapchain
         void CreateSwapchain();
         void DestroySwapchain();
 
-        CVulkanSwapchainSupportDetails GetSwapchainSupportDetails() const;
+        void RecreateSwapchain();
+
+        CVulkanSwapchainSupportDetails GetSwapchainSupportDetails(VkPhysicalDevice PhysicalDevice, VkSurfaceKHR Surface)
+            const;
 
         UInt32             SelectImagesCount(CVulkanSwapchainSupportDetails const &SwapchainSupportDetails) const;
         VkExtent2D         SelectExtent(CVulkanSwapchainSupportDetails const &SwapchainSupportDetails) const;
@@ -137,14 +201,23 @@ namespace Corvus
         void CreateSwapchainImageViews();
         void DestroySwapchainImageViews();
 
+        VkSwapchainKHR           m_Swapchain = VK_NULL_HANDLE;
+        VkExtent2D               m_SwapchainExtent;
+        VkFormat                 m_SwapchainImageFormat;
+        std::vector<VkImage>     m_SwapchainImages;
+        std::vector<VkImageView> m_SwapchainImageViews;
+        UInt32                   m_SwapchainImageIndex = 0;
+
     private:
         // VkRenderPass
         void CreateRenderPass();
         void DestroyRenderPass();
 
+        VkRenderPass m_RenderPass = VK_NULL_HANDLE;
+
     private:
         // VkShaderModule
-        std::vector<char> ReadSPIRVByteCode(std::filesystem::path const &FilePath) const;
+        std::vector<char> ReadSPIRVByteCode(CString const &FilePath) const;
 
         VkShaderModule CreateShaderModule(std::vector<char> const &SPIRVByteCode) const;
         void           DestroyShaderModule(VkShaderModule &ShaderModule) const;
@@ -154,68 +227,81 @@ namespace Corvus
         void CreatePipeline();
         void DestroyPipeline();
 
+        VkPipeline m_Pipeline = VK_NULL_HANDLE;
+
     private:
         // VkPipelineLayout
         void CreatePipelineLayout();
         void DestroyPipelineLayout();
+
+        VkPipelineLayout m_PipelineLayout = VK_NULL_HANDLE;
 
     private:
         // VkCommandPool
         void CreateCommandPools();
         void DestroyCommandPools();
 
+        VkCommandPool m_CommandPool         = VK_NULL_HANDLE;
+        VkCommandPool m_TransferCommandPool = VK_NULL_HANDLE;
+
     private:
         // VkCommandBuffer
         void AllocateCommandBuffers();
 
+        std::array<VkCommandBuffer, s_FramesInFlight> m_CommandBuffers{VK_NULL_HANDLE};
+
     private:
         // VkBuffer
-        void CreateBuffer(
-            VkBuffer             &Buffer,
-            VkDeviceMemory       &BufferMemory,
-            VkBufferUsageFlags    Usage,
-            VkDeviceSize          Size,
-            VkMemoryPropertyFlags Properties
-        );
-        void DestroyBuffer(VkBuffer &Buffer, VkDeviceMemory &BufferMemory);
+        CVulkanBuffer CreateBuffer(VkBufferUsageFlags Usage, VkDeviceSize Size, VkMemoryPropertyFlags Properties);
 
         void TransferBufferData(VkBuffer Source, VkBuffer Destination, VkDeviceSize Size);
 
+        void CreateUniformBuffers();
+        void DestroyUniformBuffers();
+
+        std::array<CVulkanUniformBuffer, s_FramesInFlight> m_MatricesUBOs{VK_NULL_HANDLE};
+
     private:
-        static CRenderer       *s_RendererInstance;
-        static constexpr UInt32 s_FramesInFlight = 2;
+        // VkDescriptorSetLayout
+        void CreateDescriptorSetLayout();
+        void DestroyDescriptorSetLayout();
 
-        VkInstance m_Instance = VK_NULL_HANDLE;
+        VkDescriptorSetLayout m_MatricesUBOLayout = VK_NULL_HANDLE;
 
-#ifdef CORVUS_DEBUG
-        VkDebugUtilsMessengerEXT m_DebugCallback = VK_NULL_HANDLE;
-#endif // CORVUS_DEBUG
+    private:
+        // VkDescriptorPool
+        void CreateDescriptorPool();
+        void DestroyDescriptorPool();
 
-        VkSurfaceKHR m_Surface = VK_NULL_HANDLE;
+        VkDescriptorPool m_DescriptorPool = VK_NULL_HANDLE;
 
-        VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
-        VkDevice         m_Device         = VK_NULL_HANDLE;
+    private:
+        // VkDescriptorSet
+        void AllocateDescriptorSets();
 
-        CVulkanQueueFamilyIndices m_QueueFamilyIndices;
-        CVulkanQueues             m_Queues;
+        std::array<VkDescriptorSet, s_FramesInFlight> m_DescriptorSets{VK_NULL_HANDLE};
 
-        VkSwapchainKHR           m_Swapchain = VK_NULL_HANDLE;
-        VkExtent2D               m_SwapchainExtent;
-        VkFormat                 m_SwapchainImageFormat;
-        std::vector<VkImage>     m_SwapchainImages;
-        std::vector<VkImageView> m_SwapchainImageViews;
+    private:
+        // VkFramebuffer
+        void CreateFramebuffers();
+        void DestroyFramebuffers();
 
-        VkRenderPass m_RenderPass = VK_NULL_HANDLE;
+        std::vector<VkFramebuffer> m_SwapchainFramebuffers;
 
-        VkPipeline       m_Pipeline       = VK_NULL_HANDLE;
-        VkPipelineLayout m_PipelineLayout = VK_NULL_HANDLE;
+    private:
+        // VkSemaphore && VkFence
+        void CreateSyncObjects();
+        void DestroySyncObjects();
 
-        VkCommandPool m_CommandPool         = VK_NULL_HANDLE;
-        VkCommandPool m_TransferCommandPool = VK_NULL_HANDLE;
-
-        std::array<VkCommandBuffer, s_FramesInFlight> m_CommandBuffers{VK_NULL_HANDLE};
+        std::array<VkSemaphore, s_FramesInFlight> m_ImageAvailableSemaphores{VK_NULL_HANDLE};
+        std::array<VkSemaphore, s_FramesInFlight> m_RenderFinishedSemaphores{VK_NULL_HANDLE};
+        std::array<VkFence, s_FramesInFlight>     m_InFlightFences{VK_NULL_HANDLE};
     };
 
+    CRenderer &Renderer();
+
 } // namespace Corvus
+
+#include "Corvus/Renderer/VulkanBuffer.inl"
 
 #endif // !CORVUS_SOURCE_CORVUS_RENDERER_RENDERER_H

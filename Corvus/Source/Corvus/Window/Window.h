@@ -4,8 +4,6 @@
 #include "Corvus/Core/Base.h"
 #include "Corvus/Core/Delegate.h"
 #include "Corvus/Event/Event.h"
-#include "Corvus/GUI/GUIController.h"
-#include "Corvus/Renderer/Old/RenderingContext.h"
 
 #include <vulkan/vulkan.h>
 
@@ -22,8 +20,7 @@ namespace Corvus
         Int32   WindowWidth  = 0;
         Int32   WindowHeight = 0;
 
-        bool bVSyncEnabled = false;
-        bool bFullScreen   = false;
+        bool bFullScreen = false;
     };
 
     class CWindow
@@ -41,8 +38,7 @@ namespace Corvus
         CWindow &operator=(CWindow &&)      = default;
 
         virtual void Init(SWindowData const &Settings) = 0;
-        virtual void InitRenderingContext()            = 0;
-        virtual void InitGUIRenderingContext()         = 0;
+        // virtual void InitGUIRenderingContext()         = 0;
 
         virtual void OnUpdate() = 0;
 
@@ -56,9 +52,6 @@ namespace Corvus
         virtual bool ShouldClose() const = 0;
         virtual void SetShouldClose()    = 0;
 
-        bool         IsVSyncEnabled() const;
-        virtual void SetVSyncEnabled(bool bValue) = 0;
-
         bool         IsFullScreen() const;
         virtual void SetFullScreen(bool bValue) = 0;
 
@@ -70,7 +63,7 @@ namespace Corvus
 
         virtual VkSurfaceKHR CreateVulkanSurfaceHandler() const = 0;
 
-        CGUIController &GetGUIController();
+        // CGUIController &GetGUIController();
 
         COnEventDelegate OnEvent;
 
@@ -78,8 +71,7 @@ namespace Corvus
         SWindowData m_WindowData;
         bool        m_bIsInitialized = false;
 
-        TOwn<CRenderingContext> m_RenderingContext;
-        CGUIController          m_GUIController;
+        // CGUIController m_GUIController;
     };
 
 } // namespace Corvus

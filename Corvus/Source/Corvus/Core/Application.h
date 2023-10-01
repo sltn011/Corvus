@@ -3,6 +3,7 @@
 
 #include "Corvus/Core/Base.h"
 #include "Corvus/Core/LayersStack.h"
+#include "Corvus/Scene/Scene.h"
 #include "Corvus/Window/Window.h"
 
 namespace Corvus
@@ -36,9 +37,12 @@ namespace Corvus
 
         static CApplication &GetInstance() { return *s_ApplicationInstance; }
 
+        CScene Scene;
+
     private:
         void InitWindow();
         void InitRenderer();
+        void DestroyRenderer();
 
         TOwn<CWindow> m_Window;
         CLayersStack  m_LayersStack;

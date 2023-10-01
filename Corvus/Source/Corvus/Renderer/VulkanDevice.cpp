@@ -12,7 +12,7 @@ namespace Corvus
     {
         CORVUS_ASSERT_FMT(m_Device == VK_NULL_HANDLE, "Vulkan Device was already created!");
 
-        m_QueueFamilyIndices = GetMostSuitableQueueFamilyIndices();
+        m_QueueFamilyIndices = GetMostSuitableQueueFamilyIndices(m_PhysicalDevice);
 
         // clang-format off
         std::unordered_set<UInt32> QueueFamilyIndices{
@@ -104,9 +104,9 @@ namespace Corvus
     void CRenderer::RetrieveQueues()
     {
         UInt32 QueueIndex = 0;
-        vkGetDeviceQueue(m_Device, m_QueueFamilyIndices.GraphicsFamily.value(), QueueIndex, &m_Queues.m_GraphicsQueue);
+        vkGetDeviceQueue(m_Device, m_QueueFamilyIndices.GraphicsFamily.value(), QueueIndex, &m_Queues.GraphicsQueue);
         vkGetDeviceQueue(
-            m_Device, m_QueueFamilyIndices.PresentationFamily.value(), QueueIndex, &m_Queues.m_PresentationQueue
+            m_Device, m_QueueFamilyIndices.PresentationFamily.value(), QueueIndex, &m_Queues.PresentationQueue
         );
 
         CORVUS_TRACE("Retrieved Queues from Vulkan Device");

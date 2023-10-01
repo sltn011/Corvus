@@ -114,7 +114,7 @@ namespace Corvus
     void CCoreLayer::OnWindowResize(CEvent &Event)
     {
         CWindowResizeEvent &WREvent = CastEvent<CWindowResizeEvent>(Event);
-        CRenderer::ViewportResize(WREvent.NewWidth, WREvent.NewHeight);
+        CRenderer::GetInstance().NotifyWindowResize();
         Event.SetHandled();
     }
 

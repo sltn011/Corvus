@@ -8,11 +8,10 @@
 namespace Corvus
 {
 
-    class CVulkanQueues
+    struct CVulkanQueues
     {
-    public:
-        VkQueue m_GraphicsQueue     = VK_NULL_HANDLE;
-        VkQueue m_PresentationQueue = VK_NULL_HANDLE;
+        VkQueue GraphicsQueue     = VK_NULL_HANDLE;
+        VkQueue PresentationQueue = VK_NULL_HANDLE;
     };
 
 } // namespace Corvus
