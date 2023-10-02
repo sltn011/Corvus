@@ -46,8 +46,6 @@ namespace Corvus
 
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
         {
-            CRenderer::GetInstance().BeginScene();
-
             CCamera *Camera = CApplication::GetInstance().Scene.GetPlayerCamera();
             if (!Camera)
             {
@@ -97,8 +95,6 @@ namespace Corvus
                     Entity->StaticMeshComponent->GetTransformMatrix()
                 );
             }
-
-            CRenderer::GetInstance().EndScene();
         }
 
         virtual void OnEvent(CEvent &Event)

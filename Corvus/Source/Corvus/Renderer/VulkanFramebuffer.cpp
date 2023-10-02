@@ -24,10 +24,10 @@ namespace Corvus
 
             if (vkCreateFramebuffer(m_Device, &FramebufferInfo, nullptr, &m_SwapchainFramebuffers[i]) != VK_SUCCESS)
             {
-                CORVUS_CRITICAL("Failed to create Vulkan Framebuffer!");
+                CORVUS_CORE_CRITICAL("Failed to create Vulkan Framebuffer!");
             }
         }
-        CORVUS_TRACE("Created Vulkan Framebuffers successfully");
+        CORVUS_CORE_TRACE("Created Vulkan Framebuffers successfully");
     }
 
     void CRenderer::DestroyFramebuffers()
@@ -38,7 +38,7 @@ namespace Corvus
             {
                 vkDestroyFramebuffer(m_Device, m_SwapchainFramebuffers[i], nullptr);
             }
-            CORVUS_TRACE("Vulkan Framebuffers destroyed");
+            CORVUS_CORE_TRACE("Vulkan Framebuffers destroyed");
         }
     }
 

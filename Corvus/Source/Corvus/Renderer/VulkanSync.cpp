@@ -7,7 +7,7 @@ namespace Corvus
 
     void CRenderer::CreateSyncObjects()
     {
-        for (uint32_t i = 0; i < s_FramesInFlight; ++i)
+        for (UInt32 i = 0; i < s_FramesInFlight; ++i)
         {
             VkSemaphoreCreateInfo ImageAvailableSemaphoreInfo{};
             ImageAvailableSemaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -25,21 +25,21 @@ namespace Corvus
                     VK_SUCCESS ||
                 vkCreateFence(m_Device, &InFlightFenceInfo, nullptr, &m_InFlightFences[i]) != VK_SUCCESS)
             {
-                CORVUS_CRITICAL("Failed to create Vulkan Syncronization Objects!");
+                CORVUS_CORE_CRITICAL("Failed to create Vulkan Syncronization Objects!");
             }
         }
-        CORVUS_TRACE("Created Vulkan Syncronization Objects successfully");
+        CORVUS_CORE_TRACE("Created Vulkan Syncronization Objects successfully");
     }
 
     void CRenderer::DestroySyncObjects()
     {
-        for (uint32_t i = 0; i < s_FramesInFlight; ++i)
+        for (UInt32 i = 0; i < s_FramesInFlight; ++i)
         {
             vkDestroySemaphore(m_Device, m_ImageAvailableSemaphores[i], nullptr);
             vkDestroySemaphore(m_Device, m_RenderFinishedSemaphores[i], nullptr);
             vkDestroyFence(m_Device, m_InFlightFences[i], nullptr);
         }
-        CORVUS_TRACE("Vulkan Syncronization Objects destroyed");
+        CORVUS_CORE_TRACE("Vulkan Syncronization Objects destroyed");
     }
 
 } // namespace Corvus

@@ -19,7 +19,7 @@ namespace Corvus
 
         if (vkCreateCommandPool(m_Device, &CommandPoolInfo, nullptr, &m_CommandPool) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to create Vulkan Command Pool!");
+            CORVUS_CORE_CRITICAL("Failed to create Vulkan Command Pool!");
         }
 
         VkCommandPoolCreateInfo TransferCommandPoolInfo{};
@@ -30,9 +30,9 @@ namespace Corvus
 
         if (vkCreateCommandPool(m_Device, &TransferCommandPoolInfo, nullptr, &m_TransferCommandPool) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to create Vulkan Command Pool!");
+            CORVUS_CORE_CRITICAL("Failed to create Vulkan Command Pool!");
         }
-        CORVUS_TRACE("Created Vulkan Command Pools successfully");
+        CORVUS_CORE_TRACE("Created Vulkan Command Pools successfully");
     }
 
     void CRenderer::DestroyCommandPools()
@@ -43,7 +43,7 @@ namespace Corvus
             vkDestroyCommandPool(m_Device, m_TransferCommandPool, nullptr);
             m_CommandPool         = VK_NULL_HANDLE;
             m_TransferCommandPool = VK_NULL_HANDLE;
-            CORVUS_TRACE("Vulkan Command Pools destroyed");
+            CORVUS_CORE_TRACE("Vulkan Command Pools destroyed");
         }
     }
 

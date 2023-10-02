@@ -54,9 +54,9 @@ namespace Corvus
 
         if (vkCreateSwapchainKHR(m_Device, &CreateInfo, nullptr, &m_Swapchain) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to create Vulkan Swapchain!");
+            CORVUS_CORE_CRITICAL("Failed to create Vulkan Swapchain!");
         }
-        CORVUS_TRACE("Created Vulkan Swapchain successfully");
+        CORVUS_CORE_TRACE("Created Vulkan Swapchain successfully");
     }
 
     void CRenderer::DestroySwapchain()
@@ -65,7 +65,7 @@ namespace Corvus
         {
             vkDestroySwapchainKHR(m_Device, m_Swapchain, nullptr);
             m_Swapchain = VK_NULL_HANDLE;
-            CORVUS_TRACE("Vulkan Swapchain destroyed");
+            CORVUS_CORE_TRACE("Vulkan Swapchain destroyed");
         }
     }
 
@@ -125,13 +125,13 @@ namespace Corvus
 
     void CRenderer::RetrieveSwapchainImages()
     {
-        uint32_t SwapchainImagesCount = 0;
+        UInt32 SwapchainImagesCount = 0;
         vkGetSwapchainImagesKHR(m_Device, m_Swapchain, &SwapchainImagesCount, nullptr);
 
         m_SwapchainImages.resize(SwapchainImagesCount);
         vkGetSwapchainImagesKHR(m_Device, m_Swapchain, &SwapchainImagesCount, m_SwapchainImages.data());
 
-        CORVUS_TRACE("Retrieved Vulkan Images from Vulkan Swapchain");
+        CORVUS_CORE_TRACE("Retrieved Vulkan Images from Vulkan Swapchain");
     }
 
     void CRenderer::CreateSwapchainImageViews()
@@ -158,11 +158,11 @@ namespace Corvus
 
             if (vkCreateImageView(m_Device, &CreateInfo, nullptr, &m_SwapchainImageViews[i]) != VK_SUCCESS)
             {
-                CORVUS_CRITICAL("Failed to create Vulkan Image View!");
+                CORVUS_CORE_CRITICAL("Failed to create Vulkan Image View!");
             }
         }
 
-        CORVUS_TRACE("Swapchain Image Views created");
+        CORVUS_CORE_TRACE("Swapchain Image Views created");
     }
 
     void CRenderer::DestroySwapchainImageViews()
@@ -173,7 +173,7 @@ namespace Corvus
         }
         m_SwapchainImageViews.clear();
 
-        CORVUS_TRACE("Swapchain Image Views destroyed");
+        CORVUS_CORE_TRACE("Swapchain Image Views destroyed");
     }
 
     UInt32 CRenderer::SelectImagesCount(CVulkanSwapchainSupportDetails const &SwapchainSupportDetails) const
@@ -194,8 +194,8 @@ namespace Corvus
     {
         VkSurfaceCapabilitiesKHR Capabilities = SwapchainSupportDetails.SurfaceCapabilities;
 
-        if (Capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max() &&
-            Capabilities.currentExtent.height != std::numeric_limits<uint32_t>::max())
+        if (Capabilities.currentExtent.width != std::numeric_limits<UInt32>::max() &&
+            Capabilities.currentExtent.height != std::numeric_limits<UInt32>::max())
         {
             return Capabilities.currentExtent; // swapchain images size == surface size
         }
@@ -217,7 +217,9 @@ namespace Corvus
     {
         for (VkSurfaceFormatKHR const &Format : SwapchainSupportDetails.SurfaceFormats)
         {
-            if (Format.format == VK_FORMAT_B8G8R8A8_SRGB && Format.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
+            // Select UNORM format bcz of ImGui issues with sRGB
+            // Forced to apply gamma correction in shaders for final image :(
+            if (Format.format == VK_FORMAT_B8G8R8A8_UNORM && Format.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
             {
                 return Format; // most preferable
             }

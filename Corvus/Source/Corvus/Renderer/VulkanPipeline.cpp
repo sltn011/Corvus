@@ -42,7 +42,7 @@ namespace Corvus
         VertexInputStageInfo.vertexBindingDescriptionCount = 1;
         VertexInputStageInfo.pVertexBindingDescriptions    = &VertexInputBindingDescription;
         VertexInputStageInfo.vertexAttributeDescriptionCount =
-            static_cast<uint32_t>(VertexInputAttributeDescriptions.size());
+            static_cast<UInt32>(VertexInputAttributeDescriptions.size());
         VertexInputStageInfo.pVertexAttributeDescriptions = VertexInputAttributeDescriptions.data();
 
         VkPipelineInputAssemblyStateCreateInfo InputAssemblyStageInfo{};
@@ -157,9 +157,9 @@ namespace Corvus
 
         if (PipelineCreateResult != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to create Vulkan Pipeline!");
+            CORVUS_CORE_CRITICAL("Failed to create Vulkan Pipeline!");
         }
-        CORVUS_TRACE("Created Vulkan Pipeline successfully");
+        CORVUS_CORE_TRACE("Created Vulkan Pipeline successfully");
     }
 
     void CRenderer::DestroyPipeline()
@@ -168,7 +168,7 @@ namespace Corvus
         {
             vkDestroyPipeline(m_Device, m_Pipeline, nullptr);
             m_Pipeline = VK_NULL_HANDLE;
-            CORVUS_TRACE("Vulkan Pipeline destroyed");
+            CORVUS_CORE_TRACE("Vulkan Pipeline destroyed");
         }
     }
 

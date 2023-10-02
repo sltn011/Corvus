@@ -61,9 +61,7 @@ namespace Corvus
 
         CORVUS_CORE_INFO("Window \"{0}\" created", m_WindowData.WindowName);
 
-        SetupWindowEventsHandlers(); // Must be called before InitGUIRenderingContext
-
-        // InitGUIRenderingContext();
+        SetupWindowEventsHandlers();
 
         glfwSetWindowUserPointer(m_Window, this);
 
@@ -205,11 +203,17 @@ namespace Corvus
         CORVUS_CORE_ERROR("GLFW Error - Code: {0}, Description: {1:s}", ErrorCode, Description);
     }
 
-    /*void PWindowsWindow::InitGUIRenderingContext()
+    void PWindowsWindow::CreateGUIController()
     {
         m_GUIController.Init();
-        CORVUS_CORE_INFO("GUI rendering context created");
-    }*/
+        CORVUS_CORE_INFO("GUI Controller initialized created");
+    }
+
+    void PWindowsWindow::DestroyGUIController()
+    {
+        m_GUIController.Destroy();
+        CORVUS_CORE_INFO("GUI Controller destroyed");
+    }
 
     void PWindowsWindow::SetupWindowEventsHandlers()
     {

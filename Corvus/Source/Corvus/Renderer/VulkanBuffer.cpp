@@ -17,9 +17,9 @@ namespace Corvus
 
         if (vkCreateBuffer(m_Device, &BufferCreateInfo, nullptr, &Buffer.Buffer) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to create Vulkan Buffer!");
+            CORVUS_CORE_CRITICAL("Failed to create Vulkan Buffer!");
         }
-        CORVUS_TRACE("Created Vulkan Buffer successfully");
+        CORVUS_CORE_TRACE("Created Vulkan Buffer successfully");
 
         VkMemoryRequirements BufferMemoryRequirements{};
         vkGetBufferMemoryRequirements(m_Device, Buffer.Buffer, &BufferMemoryRequirements);
@@ -27,9 +27,9 @@ namespace Corvus
         VkPhysicalDeviceMemoryProperties PhysicalDeviceMemoryProperties{};
         vkGetPhysicalDeviceMemoryProperties(m_PhysicalDevice, &PhysicalDeviceMemoryProperties);
 
-        auto FindMemoryType = [PhysicalDeviceMemoryProperties](uint32_t TypeFilter, VkMemoryPropertyFlags Properties)
+        auto FindMemoryType = [PhysicalDeviceMemoryProperties](UInt32 TypeFilter, VkMemoryPropertyFlags Properties)
         {
-            for (uint32_t i = 0; i < PhysicalDeviceMemoryProperties.memoryTypeCount; ++i)
+            for (UInt32 i = 0; i < PhysicalDeviceMemoryProperties.memoryTypeCount; ++i)
             {
                 if ((TypeFilter & (1 << i)) &&
                     (Properties & PhysicalDeviceMemoryProperties.memoryTypes[i].propertyFlags) == Properties)
@@ -38,7 +38,7 @@ namespace Corvus
                 }
             }
 
-            CORVUS_CRITICAL("Required memory block not found for Vulkan Buffer!");
+            CORVUS_CORE_CRITICAL("Required memory block not found for Vulkan Buffer!");
         };
 
         VkMemoryAllocateInfo BufferMemoryAllocateInfo{};
@@ -48,9 +48,9 @@ namespace Corvus
 
         if (vkAllocateMemory(m_Device, &BufferMemoryAllocateInfo, nullptr, &Buffer.Memory) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to allocate Vulkan Device Memory!");
+            CORVUS_CORE_CRITICAL("Failed to allocate Vulkan Device Memory!");
         }
-        CORVUS_TRACE("Allocated Vulkan Device Memory {0}KB successfully", BufferMemoryRequirements.size / 1000.f);
+        CORVUS_CORE_TRACE("Allocated Vulkan Device Memory {0}KB successfully", BufferMemoryRequirements.size / 1000.f);
 
         vkBindBufferMemory(m_Device, Buffer.Buffer, Buffer.Memory, 0);
 
@@ -91,7 +91,7 @@ namespace Corvus
         VkCommandBuffer TransferCommandBuffer;
         if (vkAllocateCommandBuffers(m_Device, &CommandBufferAllocateInfo, &TransferCommandBuffer) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to create transfer command buffer!");
+            CORVUS_CORE_CRITICAL("Failed to create transfer command buffer!");
         }
 
         VkCommandBufferBeginInfo TransferBeginInfo{};
@@ -119,22 +119,22 @@ namespace Corvus
 
     void CRenderer::CreateUniformBuffers()
     {
-        for (uint32_t i = 0; i < s_FramesInFlight; ++i)
+        for (UInt32 i = 0; i < s_FramesInFlight; ++i)
         {
             m_MatricesUBOs[i] = CreateUniformBuffer<CMVPUBO>();
         }
-        CORVUS_TRACE("Vulkan Uniform Buffers created");
+        CORVUS_CORE_TRACE("Vulkan Uniform Buffers created");
     }
 
     void CRenderer::DestroyUniformBuffers()
     {
         if (!m_MatricesUBOs.empty())
         {
-            for (uint32_t i = 0; i < s_FramesInFlight; ++i)
+            for (UInt32 i = 0; i < s_FramesInFlight; ++i)
             {
                 DestroyBuffer(m_MatricesUBOs[i]);
             }
-            CORVUS_TRACE("Vulkan Uniform Buffers destroyed");
+            CORVUS_CORE_TRACE("Vulkan Uniform Buffers destroyed");
         }
     }
 

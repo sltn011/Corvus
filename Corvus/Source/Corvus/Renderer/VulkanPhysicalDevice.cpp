@@ -31,7 +31,7 @@ namespace Corvus
 
         if (NumPhysicalDevices == 0)
         {
-            CORVUS_CRITICAL("No Vulkan PhysicalDevice found!");
+            CORVUS_CORE_CRITICAL("No Vulkan PhysicalDevice found!");
         }
 
         std::vector<VkPhysicalDevice> PhysicalDevices(NumPhysicalDevices);
@@ -103,7 +103,7 @@ namespace Corvus
 
         if (MostSuitableDevice == VK_NULL_HANDLE)
         {
-            CORVUS_CRITICAL("No suitable Vulkan PhysicalDevice found!");
+            CORVUS_CORE_CRITICAL("No suitable Vulkan PhysicalDevice found!");
         }
 
         return MostSuitableDevice;

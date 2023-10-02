@@ -12,7 +12,7 @@ namespace Corvus
 
         m_Surface = CApplication::GetInstance().GetWindow().CreateVulkanSurfaceHandler();
 
-        CORVUS_TRACE("Vulkan Surface created");
+        CORVUS_CORE_TRACE("Vulkan Surface created");
     }
 
     void CRenderer::DestroySurface()
@@ -21,7 +21,7 @@ namespace Corvus
         {
             vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
             m_Surface = VK_NULL_HANDLE;
-            CORVUS_TRACE("Vulkan Surface destroyed");
+            CORVUS_CORE_TRACE("Vulkan Surface destroyed");
         }
     }
 

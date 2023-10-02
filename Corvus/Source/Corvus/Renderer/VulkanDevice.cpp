@@ -54,9 +54,9 @@ namespace Corvus
 
         if (vkCreateDevice(m_PhysicalDevice, &DeviceCreateInfo, nullptr, &m_Device) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to create Vulkan Device!");
+            CORVUS_CORE_CRITICAL("Failed to create Vulkan Device!");
         }
-        CORVUS_TRACE("Created Vulkan Device successfully");
+        CORVUS_CORE_TRACE("Created Vulkan Device successfully");
     }
 
     void CRenderer::DestroyDevice()
@@ -65,7 +65,7 @@ namespace Corvus
         {
             vkDestroyDevice(m_Device, nullptr);
             m_Device = VK_NULL_HANDLE;
-            CORVUS_TRACE("Vulkan Device destroyed");
+            CORVUS_CORE_TRACE("Vulkan Device destroyed");
         }
     }
 
@@ -92,7 +92,7 @@ namespace Corvus
 
         if (!CheckValidationLayersAvailable(ValidationLayers))
         {
-            CORVUS_CRITICAL("Not all required validation layers are available!");
+            CORVUS_CORE_CRITICAL("Not all required validation layers are available!");
         }
 
         return ValidationLayers;
@@ -109,7 +109,7 @@ namespace Corvus
             m_Device, m_QueueFamilyIndices.PresentationFamily.value(), QueueIndex, &m_Queues.PresentationQueue
         );
 
-        CORVUS_TRACE("Retrieved Queues from Vulkan Device");
+        CORVUS_CORE_TRACE("Retrieved Queues from Vulkan Device");
     }
 
 } // namespace Corvus

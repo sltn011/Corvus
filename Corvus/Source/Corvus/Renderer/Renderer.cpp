@@ -54,7 +54,7 @@ namespace Corvus
         CreateUniformBuffers();
 
         CreateDescriptorSetLayout();
-        CreateDescriptorPool();
+        CreateDescriptorPools();
         AllocateDescriptorSets();
 
         CreateRenderPass();
@@ -76,7 +76,7 @@ namespace Corvus
         DestroyPipelineLayout();
         DestroyRenderPass();
 
-        DestroyDescriptorPool();
+        DestroyDescriptorPools();
         DestroyDescriptorSetLayout();
 
         DestroyUniformBuffers();
@@ -104,7 +104,7 @@ namespace Corvus
         CORVUS_ASSERT_FMT(!s_bInitialized, "Renderer was not destroyed properly!");
     }
 
-    void CRenderer::BeginScene()
+    void CRenderer::BeginFrame()
     {
         SetCameraMatrices();
 
@@ -122,7 +122,7 @@ namespace Corvus
         {
             if (AcquisitionResult != VK_SUBOPTIMAL_KHR) // Swapchain properties not matched exactly
             {
-                CORVUS_CRITICAL("Failed to acquire Swapchain image!");
+                CORVUS_CORE_CRITICAL("Failed to acquire Swapchain image!");
             }
         }
 
@@ -138,7 +138,7 @@ namespace Corvus
 
         if (vkBeginCommandBuffer(CommandBuffer, &CommandBufferBeginInfo) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to Begin Vulkan Command Buffer!");
+            CORVUS_CORE_CRITICAL("Failed to Begin Vulkan Command Buffer!");
         }
 
         VkRenderPassBeginInfo RenderPassBeginInfo{};
@@ -183,14 +183,14 @@ namespace Corvus
         );
     }
 
-    void CRenderer::EndScene()
+    void CRenderer::EndFrame()
     {
         VkCommandBuffer CommandBuffer = m_CommandBuffers[m_CurrentFrame];
         vkCmdEndRenderPass(CommandBuffer);
 
         if (vkEndCommandBuffer(CommandBuffer) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to End Vulkan Command Buffer!");
+            CORVUS_CORE_CRITICAL("Failed to End Vulkan Command Buffer!");
         }
 
         // Submit recorded Command Buffer
@@ -206,7 +206,7 @@ namespace Corvus
         }
         else if (QueuePresentResult != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to present Swapchain Image!");
+            CORVUS_CORE_CRITICAL("Failed to present Swapchain Image!");
         }
 
         m_CurrentFrame = (m_CurrentFrame + 1) % s_FramesInFlight;
@@ -228,7 +228,7 @@ namespace Corvus
 
                 vkCmdBindIndexBuffer(CommandBuffer, Primitive.IndexBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
 
-                vkCmdDrawIndexed(CommandBuffer, static_cast<uint32_t>(Primitive.IndexData.size()), 1, 0, 0, 0);
+                vkCmdDrawIndexed(CommandBuffer, static_cast<UInt32>(Primitive.IndexData.size()), 1, 0, 0, 0);
             }
         }
     }
@@ -296,7 +296,7 @@ namespace Corvus
 
         if (vkQueueSubmit(m_Queues.GraphicsQueue, 1, &SubmitInfo, m_InFlightFences[m_CurrentFrame]) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to submit draw Commands Buffer!");
+            CORVUS_CORE_CRITICAL("Failed to submit draw Commands Buffer!");
         }
     }
 

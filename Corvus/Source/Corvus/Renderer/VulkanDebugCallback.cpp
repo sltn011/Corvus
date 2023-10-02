@@ -27,9 +27,9 @@ namespace Corvus
 
         if (CreateDebugUtilsMessengerEXT(m_Instance, &MessengerInfo, nullptr, &m_DebugCallback) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to create Vulkan Debug Callback!");
+            CORVUS_CORE_CRITICAL("Failed to create Vulkan Debug Callback!");
         }
-        CORVUS_TRACE("Vulkan Debug Callback set up successfully");
+        CORVUS_CORE_TRACE("Vulkan Debug Callback set up successfully");
     }
 
     void CRenderer::DestroyDebugCallback()
@@ -37,7 +37,7 @@ namespace Corvus
         if (m_DebugCallback)
         {
             DestroyDebugUtilsMessengerEXT(m_Instance, m_DebugCallback, nullptr);
-            CORVUS_TRACE("Vulkan Debug Callback destroyed");
+            CORVUS_CORE_TRACE("Vulkan Debug Callback destroyed");
         }
     }
 
@@ -51,19 +51,19 @@ namespace Corvus
         switch (MessageSeverity)
         {
         case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-            CORVUS_TRACE(pCallbackData->pMessage);
+            CORVUS_CORE_TRACE(pCallbackData->pMessage);
             break;
 
         case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-            CORVUS_INFO(pCallbackData->pMessage);
+            CORVUS_CORE_INFO(pCallbackData->pMessage);
             break;
 
         case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-            CORVUS_WARN(pCallbackData->pMessage);
+            CORVUS_CORE_WARN(pCallbackData->pMessage);
             break;
 
         case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-            CORVUS_ERROR(pCallbackData->pMessage);
+            CORVUS_CORE_ERROR(pCallbackData->pMessage);
             break;
 
         default:

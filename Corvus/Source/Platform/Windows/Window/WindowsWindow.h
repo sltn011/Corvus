@@ -41,7 +41,8 @@ namespace Corvus
         static void WindowErrorCallback(int ErrorCode, char const *Description);
 
     protected:
-        // virtual void InitGUIRenderingContext() override;
+        virtual void CreateGUIController() override;
+        virtual void DestroyGUIController() override;
 
         void SetupWindowEventsHandlers();
 

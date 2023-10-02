@@ -4,6 +4,7 @@
 #include "Corvus/Core/Base.h"
 #include "Corvus/Core/Delegate.h"
 #include "Corvus/Event/Event.h"
+#include "Corvus/GUI/GUIController.h"
 
 #include <vulkan/vulkan.h>
 
@@ -38,7 +39,8 @@ namespace Corvus
         CWindow &operator=(CWindow &&)      = default;
 
         virtual void Init(SWindowData const &Settings) = 0;
-        // virtual void InitGUIRenderingContext()         = 0;
+        virtual void CreateGUIController()             = 0;
+        virtual void DestroyGUIController()            = 0;
 
         virtual void OnUpdate() = 0;
 
@@ -63,7 +65,7 @@ namespace Corvus
 
         virtual VkSurfaceKHR CreateVulkanSurfaceHandler() const = 0;
 
-        // CGUIController &GetGUIController();
+        CGUIController &GetGUIController();
 
         COnEventDelegate OnEvent;
 
@@ -71,7 +73,7 @@ namespace Corvus
         SWindowData m_WindowData;
         bool        m_bIsInitialized = false;
 
-        // CGUIController m_GUIController;
+        CGUIController m_GUIController;
     };
 
 } // namespace Corvus

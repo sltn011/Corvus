@@ -10,8 +10,6 @@ namespace Corvus
     {
         CORVUS_ASSERT_FMT(m_Instance == VK_NULL_HANDLE, "Vulkan Instance was already created!");
 
-        CORVUS_TRACE("Creating Vulkan Instance...");
-
         VkApplicationInfo ApplicationInfo{};
         ApplicationInfo.sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO;
         ApplicationInfo.apiVersion         = VK_API_VERSION_1_3;
@@ -34,9 +32,9 @@ namespace Corvus
 
         if (vkCreateInstance(&InstanceCreateInfo, nullptr, &m_Instance) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to create Vulkan Instance!");
+            CORVUS_CORE_CRITICAL("Failed to create Vulkan Instance!");
         }
-        CORVUS_TRACE("Created Vulkan Instance successfully");
+        CORVUS_CORE_TRACE("Created Vulkan Instance successfully");
     }
 
     void CRenderer::DestroyInstance()
@@ -45,7 +43,7 @@ namespace Corvus
         {
             vkDestroyInstance(m_Instance, nullptr);
             m_Instance = VK_NULL_HANDLE;
-            CORVUS_TRACE("Vulkan Instance destroyed");
+            CORVUS_CORE_TRACE("Vulkan Instance destroyed");
         }
     }
 
@@ -64,13 +62,13 @@ namespace Corvus
         // clang-format on
 
         std::vector<char const *> Extensions(NumRequiredExtensions + NumAdditionalExtensions);
-        CORVUS_TRACE("Required instance extensions: ");
+        CORVUS_CORE_TRACE("Required instance extensions: ");
         for (UInt32 i = 0; i < NumRequiredExtensions; ++i)
         {
-            CORVUS_TRACE("{}: {}", i + 1, RequiredExtensions[i]);
+            CORVUS_CORE_TRACE("{}: {}", i + 1, RequiredExtensions[i]);
             Extensions[i] = RequiredExtensions[i];
         }
-        CORVUS_TRACE("Additional instance extensions: ");
+        CORVUS_CORE_TRACE("Additional instance extensions: ");
         for (UInt32 i = 0; i < NumAdditionalExtensions; ++i)
         {
             CORVUS_TRACE("{}: {}", i + 1, AdditionalExtensions[i]);
@@ -79,7 +77,7 @@ namespace Corvus
 
         if (!CheckExtensionsAvailable(Extensions))
         {
-            CORVUS_CRITICAL("Not all required extensions are available!");
+            CORVUS_CORE_CRITICAL("Not all required extensions are available!");
         }
 
         return Extensions;
@@ -97,7 +95,7 @@ namespace Corvus
 
         if (!CheckValidationLayersAvailable(ValidationLayers))
         {
-            CORVUS_CRITICAL("Not all required validation layers are available!");
+            CORVUS_CORE_CRITICAL("Not all required validation layers are available!");
         }
 
         return ValidationLayers;
@@ -143,7 +141,7 @@ namespace Corvus
             }
             if (!bIsSupported)
             {
-                CORVUS_ERROR("Extension \"{}\" not supported!", RequiredExtName);
+                CORVUS_CORE_ERROR("Extension \"{}\" not supported!", RequiredExtName);
                 return false;
             }
         }
@@ -167,7 +165,7 @@ namespace Corvus
             }
             if (!bIsSupported)
             {
-                CORVUS_ERROR("Validation layer \"{}\" not supported!", RequiredLayerName);
+                CORVUS_CORE_ERROR("Validation layer \"{}\" not supported!", RequiredLayerName);
                 return false;
             }
         }

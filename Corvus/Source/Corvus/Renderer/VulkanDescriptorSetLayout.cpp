@@ -22,9 +22,9 @@ namespace Corvus
         if (vkCreateDescriptorSetLayout(m_Device, &DescriptorSetLayoutInfo, nullptr, &m_MatricesUBOLayout) !=
             VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to create Vulkan Descriptor Set Layout!");
+            CORVUS_CORE_CRITICAL("Failed to create Vulkan Descriptor Set Layout!");
         }
-        CORVUS_TRACE("Created Vulkan Descriptor Set Layout successfully");
+        CORVUS_CORE_TRACE("Created Vulkan Descriptor Set Layout successfully");
     }
 
     void CRenderer::DestroyDescriptorSetLayout()
@@ -33,7 +33,7 @@ namespace Corvus
         {
             vkDestroyDescriptorSetLayout(m_Device, m_MatricesUBOLayout, nullptr);
             m_MatricesUBOLayout = VK_NULL_HANDLE;
-            CORVUS_TRACE("Vulkan Descriptor Set Layout destroyed");
+            CORVUS_CORE_TRACE("Vulkan Descriptor Set Layout destroyed");
         }
     }
 

@@ -16,9 +16,9 @@ namespace Corvus
 
         if (vkCreatePipelineLayout(m_Device, &PipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to create Vulkan Pipeline Layout!");
+            CORVUS_CORE_CRITICAL("Failed to create Vulkan Pipeline Layout!");
         }
-        CORVUS_TRACE("Created Vulkan Pipeline Layout successfully");
+        CORVUS_CORE_TRACE("Created Vulkan Pipeline Layout successfully");
     }
 
     void CRenderer::DestroyPipelineLayout()
@@ -27,7 +27,7 @@ namespace Corvus
         {
             vkDestroyPipelineLayout(m_Device, m_PipelineLayout, nullptr);
             m_PipelineLayout = VK_NULL_HANDLE;
-            CORVUS_TRACE("Vulkan Pipeline Layout destroyed");
+            CORVUS_CORE_TRACE("Vulkan Pipeline Layout destroyed");
         }
     }
 

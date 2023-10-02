@@ -5,7 +5,7 @@
 #include "Corvus/Camera/OrthographicCamera.h"
 #include "Corvus/Camera/PerspectiveCamera.h"
 #include "Corvus/Core/CoreLayer.h"
-// #include "Corvus/GUI/LayerGUI.h"
+#include "Corvus/GUI/LayerGUI.h"
 #include "Corvus/Memory/ApplicationPools.h"
 #include "Corvus/Profiling/FrameProfiler.h"
 #include "Corvus/Renderer/Renderer.h"
@@ -27,6 +27,7 @@ namespace Corvus
 
     CApplication::~CApplication()
     {
+        m_Window->DestroyGUIController();
         DestroyRenderer();
         s_ApplicationInstance = nullptr;
     }
@@ -37,9 +38,10 @@ namespace Corvus
 
         InitWindow();
         InitRenderer();
+        m_Window->CreateGUIController();
 
         PushLayer(CLayer::Create<CCoreLayer>());
-        // PushLayer(Layer::Create<CLayerGUI>("GUI", true));
+        PushLayer(CLayer::Create<CLayerGUI>("GUI", true));
     }
 
     void CApplication::Run()
@@ -53,8 +55,12 @@ namespace Corvus
             FTimeDelta const ElapsedTime = TimePointNew - TimePointOld;
             TimePointOld                 = TimePointNew;
 
+            Renderer().BeginFrame();
+
             UpdateLayers(ElapsedTime);
             RenderLayers();
+
+            Renderer().EndFrame();
 
             m_Window->OnUpdate();
 
@@ -85,22 +91,22 @@ namespace Corvus
 
     void CApplication::RenderLayers()
     {
-        // if (!m_Window->GetGUIController().IsInitialized())
-        //{
-        //     return;
-        // }
-        //
-        // m_Window->GetGUIController().BeginFrame();
-        // for (auto It = m_LayersStack.Begin(); It != m_LayersStack.End(); ++It)
-        //{
-        //     if (!(*It)->IsEnabled())
-        //     {
-        //         continue;
-        //     }
-        //
-        //     (*It)->Render();
-        // }
-        // m_Window->GetGUIController().EndFrame();
+        if (!m_Window->GetGUIController().IsInitialized())
+        {
+            return;
+        }
+
+        m_Window->GetGUIController().BeginFrame();
+        for (auto It = m_LayersStack.Begin(); It != m_LayersStack.End(); ++It)
+        {
+            if (!(*It)->IsEnabled())
+            {
+                continue;
+            }
+
+            (*It)->Render();
+        }
+        m_Window->GetGUIController().EndFrame();
     }
 
     void CApplication::OnEventReceived(CEvent &Event)

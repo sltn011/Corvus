@@ -13,17 +13,17 @@ namespace Corvus
         VkDescriptorSetAllocateInfo DescriptorSetInfo{};
         DescriptorSetInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
         DescriptorSetInfo.descriptorPool     = m_DescriptorPool;
-        DescriptorSetInfo.descriptorSetCount = static_cast<uint32_t>(s_FramesInFlight);
+        DescriptorSetInfo.descriptorSetCount = static_cast<UInt32>(s_FramesInFlight);
         DescriptorSetInfo.pSetLayouts        = SetsLayouts.data();
 
         if (vkAllocateDescriptorSets(m_Device, &DescriptorSetInfo, m_DescriptorSets.data()) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to allocate Vulkan Descriptor Sets!");
+            CORVUS_CORE_CRITICAL("Failed to allocate Vulkan Descriptor Sets!");
         }
-        CORVUS_TRACE("Allocated Vulkan Descriptor Sets successfully");
+        CORVUS_CORE_TRACE("Allocated Vulkan Descriptor Sets successfully");
 
         // Allocated but not configured yet
-        for (uint32_t i = 0; i < s_FramesInFlight; ++i)
+        for (UInt32 i = 0; i < s_FramesInFlight; ++i)
         {
             VkDescriptorBufferInfo DescriptorBufferInfo{};
             DescriptorBufferInfo.buffer = m_MatricesUBOs[i].Buffer;

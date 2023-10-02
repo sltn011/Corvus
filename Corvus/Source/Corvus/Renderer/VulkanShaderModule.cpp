@@ -23,12 +23,12 @@ namespace Corvus
 
         CreateInfo.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
         CreateInfo.codeSize = SPIRVByteCode.size();
-        CreateInfo.pCode    = reinterpret_cast<uint32_t const *>(SPIRVByteCode.data());
+        CreateInfo.pCode    = reinterpret_cast<UInt32 const *>(SPIRVByteCode.data());
 
         VkShaderModule ShaderModule{};
         if (vkCreateShaderModule(m_Device, &CreateInfo, nullptr, &ShaderModule) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to create Vulkan Shader Module!");
+            CORVUS_CORE_CRITICAL("Failed to create Vulkan Shader Module!");
         }
         return ShaderModule;
     }

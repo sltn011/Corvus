@@ -17,6 +17,9 @@ namespace Corvus
     class CRenderer
     {
     public:
+        friend class CGUIController;
+
+    public:
         void Create();
         void Destroy();
 
@@ -33,8 +36,8 @@ namespace Corvus
         VkInstance GetVulkanInstance();
 
     public:
-        void BeginScene();
-        void EndScene();
+        void BeginFrame();
+        void EndFrame();
 
         void SubmitStaticModel(CStaticModel &StaticModel, FMatrix4 const &ModelTransformMatrix);
 
@@ -66,7 +69,7 @@ namespace Corvus
     private:
         static bool             s_bInitialized;
         static constexpr UInt32 s_FramesInFlight = 2;
-        uint32_t                m_CurrentFrame   = 0;
+        UInt32                  m_CurrentFrame   = 0;
 
         bool m_bWindowResizeHappened = false;
 
@@ -270,10 +273,11 @@ namespace Corvus
 
     private:
         // VkDescriptorPool
-        void CreateDescriptorPool();
-        void DestroyDescriptorPool();
+        void CreateDescriptorPools();
+        void DestroyDescriptorPools();
 
-        VkDescriptorPool m_DescriptorPool = VK_NULL_HANDLE;
+        VkDescriptorPool m_DescriptorPool    = VK_NULL_HANDLE;
+        VkDescriptorPool m_GUIDescriptorPool = VK_NULL_HANDLE;
 
     private:
         // VkDescriptorSet

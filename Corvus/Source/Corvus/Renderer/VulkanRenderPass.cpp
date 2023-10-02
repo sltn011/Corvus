@@ -47,9 +47,9 @@ namespace Corvus
 
         if (vkCreateRenderPass(m_Device, &RenderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to create Vulkan Render Pass!");
+            CORVUS_CORE_CRITICAL("Failed to create Vulkan Render Pass!");
         }
-        CORVUS_TRACE("Created Vulkan Render Pass successfully");
+        CORVUS_CORE_TRACE("Created Vulkan Render Pass successfully");
     }
 
     void CRenderer::DestroyRenderPass()
@@ -58,7 +58,7 @@ namespace Corvus
         {
             vkDestroyRenderPass(m_Device, m_RenderPass, nullptr);
             m_RenderPass = VK_NULL_HANDLE;
-            CORVUS_TRACE("Vulkan Render Pass destroyed");
+            CORVUS_CORE_TRACE("Vulkan Render Pass destroyed");
         }
     }
 

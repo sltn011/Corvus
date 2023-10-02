@@ -28,7 +28,6 @@ workspace "Corvus"
 	
 	group "Dependencies"
 		include "Corvus/Dependencies/GLFW"
-		include "Corvus/Dependencies/GLAD"
 		include "Corvus/Dependencies/imgui"
 	group ""
 	

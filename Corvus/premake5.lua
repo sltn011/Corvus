@@ -54,7 +54,6 @@ project "Corvus"
 	{
 		"vulkan-1",
 		"GLFW",
-		"GLAD",
 		"imgui"
 	}
 	
