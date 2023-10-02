@@ -51,6 +51,8 @@ namespace Corvus
         CreateCommandPools();
         AllocateCommandBuffers();
 
+        CreateDepthResources();
+
         CreateUniformBuffers();
 
         CreateDescriptorSetLayout();
@@ -80,6 +82,8 @@ namespace Corvus
         DestroyDescriptorSetLayout();
 
         DestroyUniformBuffers();
+
+        DestroyDepthResources();
 
         DestroyCommandPools();
 
@@ -148,9 +152,12 @@ namespace Corvus
         RenderPassBeginInfo.renderArea.offset = {0, 0};
         RenderPassBeginInfo.renderArea.extent = m_SwapchainExtent;
 
-        VkClearValue ClearColor             = {0.6f, 0.8f, 1.0f, 1.0f};
-        RenderPassBeginInfo.clearValueCount = 1;
-        RenderPassBeginInfo.pClearValues    = &ClearColor;
+        std::array<VkClearValue, 2> ClearColors;
+        ClearColors[0].color        = VkClearColorValue{0.6f, 0.8f, 1.0f, 1.0f};
+        ClearColors[1].depthStencil = VkClearDepthStencilValue{1.0f, 0};
+
+        RenderPassBeginInfo.clearValueCount = static_cast<UInt32>(ClearColors.size());
+        RenderPassBeginInfo.pClearValues    = ClearColors.data();
 
         vkCmdBeginRenderPass(CommandBuffer, &RenderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 

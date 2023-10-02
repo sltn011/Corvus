@@ -95,9 +95,16 @@ namespace Corvus
 
         // Depth and Stencil testing =========================================================================
         VkPipelineDepthStencilStateCreateInfo DepthStencilTestStateInfo{};
-        DepthStencilTestStateInfo.sType            = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-        DepthStencilTestStateInfo.depthTestEnable  = true;
-        DepthStencilTestStateInfo.depthWriteEnable = true;
+        DepthStencilTestStateInfo.sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+        DepthStencilTestStateInfo.depthTestEnable       = VK_TRUE;
+        DepthStencilTestStateInfo.depthWriteEnable      = VK_TRUE;
+        DepthStencilTestStateInfo.depthCompareOp        = VK_COMPARE_OP_LESS;
+        DepthStencilTestStateInfo.depthBoundsTestEnable = VK_FALSE;
+        DepthStencilTestStateInfo.minDepthBounds        = 0.0f;
+        DepthStencilTestStateInfo.maxDepthBounds        = 1.0f;
+        DepthStencilTestStateInfo.stencilTestEnable     = VK_FALSE;
+        DepthStencilTestStateInfo.front                 = {};
+        DepthStencilTestStateInfo.back                  = {};
         // ===================================================================================================
 
         // Color Blending ====================================================================================

@@ -11,13 +11,13 @@ namespace Corvus
 
         for (size_t i = 0; i < m_SwapchainFramebuffers.size(); ++i)
         {
-            VkImageView Attachments[] = {m_SwapchainImageViews[i]};
+            std::array<VkImageView, 2> Attachments = {m_SwapchainImageViews[i], m_DepthImageView};
 
             VkFramebufferCreateInfo FramebufferInfo{};
             FramebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
             FramebufferInfo.renderPass      = m_RenderPass;
-            FramebufferInfo.attachmentCount = 1;
-            FramebufferInfo.pAttachments    = Attachments;
+            FramebufferInfo.attachmentCount = static_cast<UInt32>(Attachments.size());
+            FramebufferInfo.pAttachments    = Attachments.data();
             FramebufferInfo.width           = m_SwapchainExtent.width;
             FramebufferInfo.height          = m_SwapchainExtent.height;
             FramebufferInfo.layers          = 1;

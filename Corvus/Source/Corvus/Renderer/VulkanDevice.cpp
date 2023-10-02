@@ -69,6 +69,19 @@ namespace Corvus
         }
     }
 
+    VkDeviceMemory CRenderer::AllocateDeviceMemory(VkMemoryAllocateInfo MemoryAllocateInfo)
+    {
+        VkDeviceMemory Memory = VK_NULL_HANDLE;
+        if (vkAllocateMemory(m_Device, &MemoryAllocateInfo, nullptr, &Memory) != VK_SUCCESS)
+        {
+            CORVUS_CORE_CRITICAL("Failed to allocate Vulkan Device Memory!");
+        }
+        CORVUS_CORE_TRACE(
+            "Allocated Vulkan Device Memory {0}KB successfully", MemoryAllocateInfo.allocationSize / 1000.f
+        );
+        return Memory;
+    }
+
     std::vector<char const *> CRenderer::GetRequiredDeviceExtensions() const
     {
         // clang-format off

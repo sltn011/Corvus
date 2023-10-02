@@ -60,7 +60,8 @@ project "Corvus"
 	defines
 	{
 		"GLFW_INCLUDE_NONE",
-		"_CRT_SECURE_NO_WARNINGS"
+		"_CRT_SECURE_NO_WARNINGS",
+		"GLM_FORCE_DEPTH_ZERO_TO_ONE"
 	}
 	
 	filter { "configurations:Debug" }

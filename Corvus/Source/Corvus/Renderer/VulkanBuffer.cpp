@@ -24,33 +24,12 @@ namespace Corvus
         VkMemoryRequirements BufferMemoryRequirements{};
         vkGetBufferMemoryRequirements(m_Device, Buffer.Buffer, &BufferMemoryRequirements);
 
-        VkPhysicalDeviceMemoryProperties PhysicalDeviceMemoryProperties{};
-        vkGetPhysicalDeviceMemoryProperties(m_PhysicalDevice, &PhysicalDeviceMemoryProperties);
-
-        auto FindMemoryType = [PhysicalDeviceMemoryProperties](UInt32 TypeFilter, VkMemoryPropertyFlags Properties)
-        {
-            for (UInt32 i = 0; i < PhysicalDeviceMemoryProperties.memoryTypeCount; ++i)
-            {
-                if ((TypeFilter & (1 << i)) &&
-                    (Properties & PhysicalDeviceMemoryProperties.memoryTypes[i].propertyFlags) == Properties)
-                {
-                    return i;
-                }
-            }
-
-            CORVUS_CORE_CRITICAL("Required memory block not found for Vulkan Buffer!");
-        };
-
         VkMemoryAllocateInfo BufferMemoryAllocateInfo{};
         BufferMemoryAllocateInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         BufferMemoryAllocateInfo.allocationSize  = BufferMemoryRequirements.size;
         BufferMemoryAllocateInfo.memoryTypeIndex = FindMemoryType(BufferMemoryRequirements.memoryTypeBits, Properties);
 
-        if (vkAllocateMemory(m_Device, &BufferMemoryAllocateInfo, nullptr, &Buffer.Memory) != VK_SUCCESS)
-        {
-            CORVUS_CORE_CRITICAL("Failed to allocate Vulkan Device Memory!");
-        }
-        CORVUS_CORE_TRACE("Allocated Vulkan Device Memory {0}KB successfully", BufferMemoryRequirements.size / 1000.f);
+        Buffer.Memory = AllocateDeviceMemory(BufferMemoryAllocateInfo);
 
         vkBindBufferMemory(m_Device, Buffer.Buffer, Buffer.Memory, 0);
 

@@ -292,4 +292,22 @@ namespace Corvus
         Score += QueueFamilyProperties.queueCount;
         return Score;
     }
+
+    UInt32 CRenderer::FindMemoryType(UInt32 TypeFilter, VkMemoryPropertyFlags Properties)
+    {
+        VkPhysicalDeviceMemoryProperties PhysicalDeviceMemoryProperties{};
+        vkGetPhysicalDeviceMemoryProperties(m_PhysicalDevice, &PhysicalDeviceMemoryProperties);
+
+        for (UInt32 i = 0; i < PhysicalDeviceMemoryProperties.memoryTypeCount; ++i)
+        {
+            if ((TypeFilter & (1 << i)) &&
+                (Properties & PhysicalDeviceMemoryProperties.memoryTypes[i].propertyFlags) == Properties)
+            {
+                return i;
+            }
+        }
+
+        CORVUS_CORE_CRITICAL("Required memory block not found!");
+    }
+
 } // namespace Corvus

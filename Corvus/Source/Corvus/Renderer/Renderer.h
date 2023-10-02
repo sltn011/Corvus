@@ -4,6 +4,7 @@
 #include "Corvus/Core/Base.h"
 #include "Corvus/Renderer/Data/UBOs.h"
 #include "Corvus/Renderer/VulkanBuffer.h"
+#include "Corvus/Renderer/VulkanImage.h"
 #include "Corvus/Renderer/VulkanQueueFamilyIndices.h"
 #include "Corvus/Renderer/VulkanQueues.h"
 #include "Corvus/Renderer/VulkanSwapchainSupportDetails.h"
@@ -165,12 +166,16 @@ namespace Corvus
             UInt32                         QueueFamilyIndex
         );
 
+        UInt32 FindMemoryType(UInt32 TypeFilter, VkMemoryPropertyFlags Properties);
+
         VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
 
     private:
         // VkDevice
         void CreateDevice();
         void DestroyDevice();
+
+        VkDeviceMemory AllocateDeviceMemory(VkMemoryAllocateInfo MemoryAllocateInfo);
 
         std::vector<char const *> GetRequiredDeviceExtensions() const;
         std::vector<char const *> GetRequiredDeviceValidationLayers(
@@ -212,6 +217,40 @@ namespace Corvus
         UInt32                   m_SwapchainImageIndex = 0;
 
     private:
+        // VkImage
+        CVulkanImage CreateImage(
+            UInt32                Width,
+            UInt32                Height,
+            VkFormat              Format,
+            VkImageTiling         Tiling,
+            VkImageUsageFlags     Usage,
+            VkMemoryPropertyFlags Properties
+        );
+        void DestroyImage(CVulkanImage &Image);
+
+        void TransitionImageLayout(VkImage Image, VkFormat Format, VkImageLayout OldLayout, VkImageLayout NewLayout);
+
+        VkFormat FindSupportedFormat(
+            std::vector<VkFormat> const &Candidates, VkImageTiling Tiling, VkFormatFeatureFlags Features
+        );
+
+        bool bFormatSupportsStencilData(VkFormat Format);
+
+        // Depth VkImage
+        void CreateDepthResources();
+        void DestroyDepthResources();
+
+        VkFormat FindDepthFormat();
+
+        CVulkanImage m_DepthImage;
+        VkImageView  m_DepthImageView = VK_NULL_HANDLE;
+
+    private:
+        // VkImageView
+        VkImageView CreateImageView(VkImage Image, VkFormat Format, VkImageAspectFlags AspectFlags);
+        void        DestroyImageView(VkImageView &ImageView);
+
+    private:
         // VkRenderPass
         void CreateRenderPass();
         void DestroyRenderPass();
@@ -250,6 +289,9 @@ namespace Corvus
     private:
         // VkCommandBuffer
         void AllocateCommandBuffers();
+
+        VkCommandBuffer BeginSingleTimeCommand();
+        void            EndSingleTimeCommand(VkCommandBuffer CommandBuffer);
 
         std::array<VkCommandBuffer, s_FramesInFlight> m_CommandBuffers{VK_NULL_HANDLE};
 
