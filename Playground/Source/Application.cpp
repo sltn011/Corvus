@@ -1,7 +1,7 @@
 #include <Corvus.h>
 
-// #include "Corvus/Assets/Material/Material.h"
-// #include "Corvus/Assets/Model/ModelLoader.h"
+#include "Corvus/Assets/Material/Material.h"
+#include "Corvus/Assets/Model/ModelLoader.h"
 #include "Corvus/Assets/Model/StaticModel.h"
 // #include "Corvus/Assets/Texture/Texture2D.h"
 #include "Corvus/Components/StaticMeshComponent.h"
@@ -29,20 +29,7 @@ namespace Corvus
             WireUpAssets();
         }
 
-        ~CApplicationLayer()
-        {
-            for (auto &[UUID, Model] : StaticModelsAssets)
-            {
-                for (auto &Mesh : Model)
-                {
-                    for (auto &Primitive : Mesh)
-                    {
-                        Renderer().DestroyBuffer(Primitive.VertexBuffer);
-                        Renderer().DestroyBuffer(Primitive.IndexBuffer);
-                    }
-                }
-            }
-        }
+        ~CApplicationLayer() {}
 
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
         {
@@ -167,19 +154,19 @@ namespace Corvus
             TPoolable<CEntity> Entity = ConstructPoolable<CEntity>();
             Entity->TransformComponent->SetPosition(FVector3{5.0f, -1.5f, 0.0f});
             Entity->TransformComponent->SetRotation(FRotation{{0.0f, -45.0f, 0.0f}});
-            Entity->TransformComponent->SetScale(FVector3{1.0f});
-            // Entity->StaticMeshComponent->StaticModelRef.SetUUID(StaticModelsAssets.begin()->first);
+            Entity->TransformComponent->SetScale(FVector3{0.01f});
+            Entity->StaticMeshComponent->StaticModelRef.SetUUID(StaticModelsAssets.begin()->first);
 
             CApplication::GetInstance().Scene.AddEntity(std::move(Entity));
         }
 
         void LoadAssets()
         {
-            // SStaticModelLoadedData LoadedModelData =
-            //     CModelLoader::LoadStaticModelFromFile("./Assets/Models/sponza.glb");
+            SStaticModelLoadedData LoadedModelData =
+                CModelLoader::LoadStaticModelFromFile("./Assets/Models/sponza.glb");
 
-            //// StaticModel
-            // StaticModelsAssets.emplace(LoadedModelData.StaticModel.UUID, std::move(LoadedModelData.StaticModel));
+            // StaticModel
+            StaticModelsAssets.emplace(LoadedModelData.StaticModel.UUID, std::move(LoadedModelData.StaticModel));
 
             //// Textures
             // for (CTexture2D &Texture : LoadedModelData.Textures)
@@ -193,48 +180,6 @@ namespace Corvus
             //     Material.CompileMaterialShader("./Assets/Shaders/TestShader.glsl");
             //     MaterialsAssets.emplace(Material.UUID, std::move(Material));
             // }
-
-            // clang-format off
-            std::vector<CVertex> Vertices = {
-                {{ 1.0f,  1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}},
-                {{ 1.0f, -1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}},
-                {{ 1.0f,  1.0f,  1.0f}, {0.0f, 0.0f, 1.0f}},
-                {{ 1.0f, -1.0f,  1.0f}, {1.0f, 1.0f, 0.0f}},
-                {{-1.0f,  1.0f, -1.0f}, {1.0f, 0.0f, 1.0f}},
-                {{-1.0f, -1.0f, -1.0f}, {0.0f, 1.0f, 1.0f}},
-                {{-1.0f,  1.0f,  1.0f}, {1.0f, 1.0f, 1.0f}},
-                {{-1.0f, -1.0f,  1.0f}, {0.2f, 0.2f, 0.2f}}
-            };
-            // clang-format on
-
-            CVulkanBuffer VertexBuffer = Renderer().CreateVertexBuffer(Vertices);
-
-            // clang-format off
-            std::vector<UInt16> Indices = {
-                4, 2, 0,
-                2, 7, 3,
-                6, 5, 7,
-                1, 7, 5,
-                0, 3, 1,
-                4, 1, 5,
-                4, 6, 2,
-                2, 6, 7,
-                6, 4, 5,
-                1, 3, 7,
-                0, 2, 3,
-                4, 0, 1
-            };
-            // clang-format on
-
-            CVulkanBuffer IndexBuffer = Renderer().CreateIndexBuffer(Indices);
-
-            CStaticMeshPrimitive Primitive(VertexBuffer, std::move(Vertices), IndexBuffer, std::move(Indices));
-            CStaticMesh          Mesh;
-            Mesh.AddPrimitive(std::move(Primitive));
-            CStaticModel Model;
-            Model.AddMesh(std::move(Mesh));
-
-            TestModel = std::move(Model);
         }
 
         void WireUpAssets()
@@ -266,13 +211,11 @@ namespace Corvus
             for (TPoolable<CEntity> const &Entity : CApplication::GetInstance().Scene.GetEntities())
             {
                 FUUID StaticModelUUID = Entity->StaticMeshComponent->StaticModelRef.GetUUID();
-                Entity->StaticMeshComponent->StaticModelRef.SetRawPtr(&TestModel);
+                Entity->StaticMeshComponent->StaticModelRef.SetRawPtr(&StaticModelsAssets.at(StaticModelUUID));
             }
         }
 
     private:
-        CStaticModel TestModel;
-
         // std::unordered_map<FUUID, CTexture2D>   TexturesAssets;
         // std::unordered_map<FUUID, CMaterial>    MaterialsAssets;
         std::unordered_map<FUUID, CStaticModel> StaticModelsAssets;

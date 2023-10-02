@@ -94,7 +94,10 @@ namespace Corvus
         // ===================================================================================================
 
         // Depth and Stencil testing =========================================================================
-        // NOT USED - PASS NULLPTR
+        VkPipelineDepthStencilStateCreateInfo DepthStencilTestStateInfo{};
+        DepthStencilTestStateInfo.sType            = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+        DepthStencilTestStateInfo.depthTestEnable  = true;
+        DepthStencilTestStateInfo.depthWriteEnable = true;
         // ===================================================================================================
 
         // Color Blending ====================================================================================
@@ -136,7 +139,7 @@ namespace Corvus
         PipelineCreateInfo.pViewportState      = &ViewportState;
         PipelineCreateInfo.pRasterizationState = &RasterizerStageInfo;
         PipelineCreateInfo.pMultisampleState   = &MultisamplerStateInfo;
-        PipelineCreateInfo.pDepthStencilState  = nullptr;
+        PipelineCreateInfo.pDepthStencilState  = &DepthStencilTestStateInfo;
         PipelineCreateInfo.pColorBlendState    = &ColorBlendState;
 
         // Uniforms and push-constants specified in layout

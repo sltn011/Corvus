@@ -96,6 +96,10 @@ namespace Corvus::FMath
         return ATan2(X, Y);
     }
 
+    UInt64 Random();
+
+    UInt64 Random(UInt64 Min, UInt64 Max);
+
 } // namespace Corvus::FMath
 
 #endif //! CORVUS_SOURCE_CORVUS_MATH_MATH_H

@@ -12,8 +12,8 @@ namespace Corvus
 
     struct CVertex
     {
-        glm::vec3 Position;
-        glm::vec3 Color;
+        FVector3 Position;
+        FVector3 Color;
 
         static VkVertexInputBindingDescription                  GetInputBindingDescription();
         static std::array<VkVertexInputAttributeDescription, 2> GetInputAttributeDescriptions();
