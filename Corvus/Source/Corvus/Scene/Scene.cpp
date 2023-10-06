@@ -18,11 +18,6 @@ namespace Corvus
         m_Entities.Erase(std::remove(m_Entities.Begin(), m_Entities.End(), Entity), m_Entities.End());
     }
 
-    void CScene::Clear()
-    {
-        m_Entities.Erase(m_Entities.Begin(), m_Entities.End());
-    }
-
     TArray<TPoolable<CEntity>> &CScene::GetEntities()
     {
         return m_Entities;

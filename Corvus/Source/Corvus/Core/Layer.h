@@ -16,7 +16,7 @@ namespace Corvus
 
     public:
         template<typename LayerType, typename... Args>
-        static [[nodiscard]] TOwn<LayerType> Create(Args &&...args)
+        static [[nodiscard]] TOwn<CLayer> Create(Args &&...args)
         {
             return MakeOwned<LayerType>(std::forward<Args>(args)...);
         }
@@ -35,6 +35,8 @@ namespace Corvus
 
         virtual void OnUpdate(FTimeDelta ElapsedTime);
         virtual void OnEvent(CEvent &Event);
+
+        virtual void Render();
 
     protected:
         CString m_LayerName;

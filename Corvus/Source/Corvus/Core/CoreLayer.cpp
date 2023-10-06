@@ -44,6 +44,10 @@ namespace Corvus
         }
     }
 
+    void CCoreLayer::Render()
+    {
+    }
+
     void CCoreLayer::OnApplicationEvent(CEvent &Event)
     {
         switch (Event.GetEventType())

@@ -80,7 +80,7 @@ namespace Corvus
         InitInfo.MSAASamples               = VK_SAMPLE_COUNT_1_BIT;
         InitInfo.Allocator                 = nullptr;
         InitInfo.CheckVkResultFn           = CheckGUIVulkanResult;
-        ImGui_ImplVulkan_Init(&InitInfo, VulkanRenderer.m_GUIRenderPass);
+        ImGui_ImplVulkan_Init(&InitInfo, VulkanRenderer.m_RenderPass);
 
         // Load Fonts
         // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use

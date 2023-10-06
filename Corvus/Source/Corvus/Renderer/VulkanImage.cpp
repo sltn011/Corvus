@@ -167,8 +167,6 @@ namespace Corvus
 
     void CRenderer::DestroyDepthResources()
     {
-        DestroyImageView(m_DepthImageView);
-        DestroyImage(m_DepthImage);
     }
 
     VkFormat CRenderer::FindDepthFormat()

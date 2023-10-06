@@ -255,11 +255,7 @@ namespace Corvus
         void CreateRenderPass();
         void DestroyRenderPass();
 
-        void CreateGUIRenderPass();
-        void DestroyGUIRenderPass();
-
-        VkRenderPass m_RenderPass    = VK_NULL_HANDLE;
-        VkRenderPass m_GUIRenderPass = VK_NULL_HANDLE;
+        VkRenderPass m_RenderPass = VK_NULL_HANDLE;
 
     private:
         // VkShaderModule

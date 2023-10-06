@@ -19,6 +19,8 @@ namespace Corvus
         virtual void OnUpdate(FTimeDelta ElapsedTime) override;
         virtual void OnEvent(CEvent &Event) override;
 
+        virtual void Render() override;
+
     private:
         void OnApplicationEvent(CEvent &Event);
         void OnKeyboardEvent(CEvent &Event);

@@ -60,8 +60,6 @@ namespace Corvus
         AllocateDescriptorSets();
 
         CreateRenderPass();
-        CreateGUIRenderPass();
-
         CreatePipelineLayout();
         CreatePipeline();
 
@@ -78,8 +76,6 @@ namespace Corvus
 
         DestroyPipeline();
         DestroyPipelineLayout();
-
-        DestroyGUIRenderPass();
         DestroyRenderPass();
 
         DestroyDescriptorPools();

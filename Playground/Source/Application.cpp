@@ -162,7 +162,8 @@ namespace Corvus
 
         void LoadAssets()
         {
-            SStaticModelLoadedData LoadedModelData = CModelLoader::LoadStaticModelFromFile("./Assets/Models/Shack.glb");
+            SStaticModelLoadedData LoadedModelData =
+                CModelLoader::LoadStaticModelFromFile("./Assets/Models/sponza.glb");
 
             // StaticModel
             StaticModelsAssets.emplace(LoadedModelData.StaticModel.UUID, std::move(LoadedModelData.StaticModel));

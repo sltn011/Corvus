@@ -42,4 +42,8 @@ namespace Corvus
     {
     }
 
+    void CLayer::Render()
+    {
+    }
+
 } // namespace Corvus

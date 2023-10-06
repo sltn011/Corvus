@@ -14,7 +14,6 @@ namespace Corvus
     public:
         void AddEntity(TPoolable<CEntity> &&Entity);
         void RemoveEntity(TPoolable<CEntity> const &Entity);
-        void Clear();
 
         TArray<TPoolable<CEntity>>       &GetEntities();
         TArray<TPoolable<CEntity>> const &GetEntities() const;

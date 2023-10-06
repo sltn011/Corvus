@@ -58,12 +58,6 @@ namespace Corvus
             m_DescriptorPool = VK_NULL_HANDLE;
             CORVUS_CORE_TRACE("Vulkan Descriptor Pool destroyed");
         }
-        if (m_GUIDescriptorPool)
-        {
-            vkDestroyDescriptorPool(m_Device, m_GUIDescriptorPool, nullptr);
-            m_GUIDescriptorPool = VK_NULL_HANDLE;
-            CORVUS_CORE_TRACE("Vulkan GUI Descriptor Pool destroyed");
-        }
     }
 
 } // namespace Corvus
