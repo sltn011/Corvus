@@ -13,7 +13,7 @@ namespace Corvus
 
         CLayerGUI(CString LayerName, bool bEnabled);
 
-        virtual void Render() override;
+        virtual void Render();
 
     private:
         static UInt8 s_NumImGUIInstances;

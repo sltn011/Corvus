@@ -2,8 +2,12 @@
 
 #include "Corvus/Core/Application.h"
 
+#include "Corvus/Assets/Model/StaticMesh.h"
+#include "Corvus/Assets/Model/StaticMeshPrimitive.h"
+#include "Corvus/Assets/Model/StaticModel.h"
 #include "Corvus/Camera/OrthographicCamera.h"
 #include "Corvus/Camera/PerspectiveCamera.h"
+#include "Corvus/Components/StaticMeshComponent.h"
 #include "Corvus/Core/CoreLayer.h"
 #include "Corvus/GUI/LayerGUI.h"
 #include "Corvus/Memory/ApplicationPools.h"
@@ -41,7 +45,7 @@ namespace Corvus
         m_Window->CreateGUIController();
 
         PushLayer(CLayer::Create<CCoreLayer>());
-        PushLayer(CLayer::Create<CLayerGUI>("GUI", true));
+        PushGUILayer(CLayer::Create<CLayerGUI>("GUI", true));
     }
 
     void CApplication::Run()
@@ -56,10 +60,10 @@ namespace Corvus
             TimePointOld                 = TimePointNew;
 
             Renderer().BeginFrame();
-
-            UpdateLayers(ElapsedTime);
-            RenderLayers();
-
+            {
+                UpdateLayers(ElapsedTime);
+                RenderGUILayers();
+            }
             Renderer().EndFrame();
 
             m_Window->OnUpdate();
@@ -69,6 +73,18 @@ namespace Corvus
         }
 
         Renderer().AwaitIdle();
+        for (TPoolable<CEntity> &Entity : Scene.GetEntities())
+        {
+            CStaticModel &Model = *Entity->StaticMeshComponent->StaticModelRef.GetRawPtr();
+            for (CStaticMesh &Mesh : Model)
+            {
+                for (CStaticMeshPrimitive &Primitive : Mesh)
+                {
+                    Renderer().DestroyBuffer(Primitive.VertexBuffer);
+                    Renderer().DestroyBuffer(Primitive.IndexBuffer);
+                }
+            }
+        }
     }
 
     void CApplication::PushLayer(TOwn<CLayer> &&NewLayer)
@@ -81,15 +97,29 @@ namespace Corvus
         return m_LayersStack.PopLayer();
     }
 
+    void CApplication::PushGUILayer(TOwn<CLayerGUI> &&NewLayer)
+    {
+        m_GUILayersStack.PushLayer(std::move(NewLayer));
+    }
+
+    TOwn<CLayerGUI> CApplication::PopGUILayer()
+    {
+        return m_GUILayersStack.PopLayer();
+    }
+
     void CApplication::UpdateLayers(FTimeDelta ElapsedTime)
     {
         for (auto It = m_LayersStack.Begin(); It != m_LayersStack.End(); ++It)
         {
             (*It)->OnUpdate(ElapsedTime);
         }
+        for (auto It = m_GUILayersStack.Begin(); It != m_GUILayersStack.End(); ++It)
+        {
+            (*It)->OnUpdate(ElapsedTime);
+        }
     }
 
-    void CApplication::RenderLayers()
+    void CApplication::RenderGUILayers()
     {
         if (!m_Window->GetGUIController().IsInitialized())
         {
@@ -97,7 +127,7 @@ namespace Corvus
         }
 
         m_Window->GetGUIController().BeginFrame();
-        for (auto It = m_LayersStack.Begin(); It != m_LayersStack.End(); ++It)
+        for (auto It = m_GUILayersStack.Begin(); It != m_GUILayersStack.End(); ++It)
         {
             if (!(*It)->IsEnabled())
             {
