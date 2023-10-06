@@ -2,8 +2,12 @@
 
 #include "Corvus/Core/Application.h"
 
+#include "Corvus/Assets/Model/StaticMesh.h"
+#include "Corvus/Assets/Model/StaticMeshPrimitive.h"
+#include "Corvus/Assets/Model/StaticModel.h"
 #include "Corvus/Camera/OrthographicCamera.h"
 #include "Corvus/Camera/PerspectiveCamera.h"
+#include "Corvus/Components/StaticMeshComponent.h"
 #include "Corvus/Core/CoreLayer.h"
 #include "Corvus/GUI/LayerGUI.h"
 #include "Corvus/Memory/ApplicationPools.h"
@@ -69,6 +73,18 @@ namespace Corvus
         }
 
         Renderer().AwaitIdle();
+        for (TPoolable<CEntity> &Entity : Scene.GetEntities()) // TODO: Move somewhere else
+        {
+            CStaticModel &Model = *Entity->StaticMeshComponent->StaticModelRef.GetRawPtr();
+            for (CStaticMesh &Mesh : Model)
+            {
+                for (CStaticMeshPrimitive &Primitive : Mesh)
+                {
+                    Renderer().DestroyBuffer(Primitive.VertexBuffer);
+                    Renderer().DestroyBuffer(Primitive.IndexBuffer);
+                }
+            }
+        }
     }
 
     void CApplication::PushLayer(TOwn<CLayer> &&NewLayer)
