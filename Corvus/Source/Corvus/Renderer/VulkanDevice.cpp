@@ -1,7 +1,6 @@
 #include "CorvusPCH.h"
 
 #include "Corvus/Renderer/Renderer.h"
-#include "Corvus/Renderer/VulkanQueues.h"
 
 #include <unordered_set>
 
@@ -114,15 +113,19 @@ namespace Corvus
 #endif
     }
 
-    void CRenderer::RetrieveQueues()
+    void *CRenderer::MapDeviceMemory(VkDeviceMemory DeviceMemory, VkDeviceSize Size, VkMemoryMapFlags Flags)
     {
-        UInt32 QueueIndex = 0;
-        vkGetDeviceQueue(m_Device, m_QueueFamilyIndices.GraphicsFamily.value(), QueueIndex, &m_Queues.GraphicsQueue);
-        vkGetDeviceQueue(
-            m_Device, m_QueueFamilyIndices.PresentationFamily.value(), QueueIndex, &m_Queues.PresentationQueue
-        );
+        void *MappedMemory = nullptr;
+        if (vkMapMemory(m_Device, DeviceMemory, 0, Size, Flags, &MappedMemory) != VK_SUCCESS)
+        {
+            CORVUS_CRITICAL("Failed to map Vulkan Buffer memory!");
+        }
+        return MappedMemory;
+    }
 
-        CORVUS_CORE_TRACE("Retrieved Queues from Vulkan Device");
+    void CRenderer::UnmapDeviceMemory(VkDeviceMemory DeviceMemory)
+    {
+        vkUnmapMemory(m_Device, DeviceMemory);
     }
 
 } // namespace Corvus

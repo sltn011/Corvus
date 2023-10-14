@@ -14,6 +14,7 @@
 namespace Corvus
 {
     class CStaticModel;
+    class CImageData;
 
     class CRenderer
     {
@@ -181,6 +182,9 @@ namespace Corvus
         std::vector<char const *> GetRequiredDeviceValidationLayers(
         ) const; // Left for compatibility, not used by newer versions of API
 
+        void *MapDeviceMemory(VkDeviceMemory DeviceMemory, VkDeviceSize Size, VkMemoryMapFlags Flags);
+        void  UnmapDeviceMemory(VkDeviceMemory DeviceMemory);
+
         VkDevice m_Device = VK_NULL_HANDLE;
 
     private:
@@ -225,6 +229,9 @@ namespace Corvus
             VkImageTiling         Tiling,
             VkImageUsageFlags     Usage,
             VkMemoryPropertyFlags Properties
+        );
+        CVulkanImage CreateTextureImage(
+            CImageData const &ImageData, VkImageTiling Tiling, VkImageUsageFlags Usage, VkMemoryPropertyFlags Properties
         );
         void DestroyImage(CVulkanImage &Image);
 
@@ -300,6 +307,7 @@ namespace Corvus
         CVulkanBuffer CreateBuffer(VkBufferUsageFlags Usage, VkDeviceSize Size, VkMemoryPropertyFlags Properties);
 
         void TransferBufferData(VkBuffer Source, VkBuffer Destination, VkDeviceSize Size);
+        void TransferBufferData(VkBuffer Source, VkImage Destination, UInt32 Width, UInt32 Height);
 
         void CreateUniformBuffers();
         void DestroyUniformBuffers();

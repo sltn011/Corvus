@@ -61,39 +61,35 @@ namespace Corvus
 
     void CRenderer::TransferBufferData(VkBuffer Source, VkBuffer Destination, VkDeviceSize Size)
     {
-        VkCommandBufferAllocateInfo CommandBufferAllocateInfo{};
-        CommandBufferAllocateInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        CommandBufferAllocateInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        CommandBufferAllocateInfo.commandPool        = m_TransferCommandPool;
-        CommandBufferAllocateInfo.commandBufferCount = 1;
-
-        VkCommandBuffer TransferCommandBuffer;
-        if (vkAllocateCommandBuffers(m_Device, &CommandBufferAllocateInfo, &TransferCommandBuffer) != VK_SUCCESS)
-        {
-            CORVUS_CORE_CRITICAL("Failed to create transfer command buffer!");
-        }
-
-        VkCommandBufferBeginInfo TransferBeginInfo{};
-        TransferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        TransferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-        vkBeginCommandBuffer(TransferCommandBuffer, &TransferBeginInfo);
+        VkCommandBuffer CommandBuffer = BeginSingleTimeCommand();
 
         VkBufferCopy TransferInfo{};
         TransferInfo.srcOffset = 0;
         TransferInfo.dstOffset = 0;
         TransferInfo.size      = Size;
-        vkCmdCopyBuffer(TransferCommandBuffer, Source, Destination, 1, &TransferInfo);
+        vkCmdCopyBuffer(CommandBuffer, Source, Destination, 1, &TransferInfo);
 
-        vkEndCommandBuffer(TransferCommandBuffer);
+        EndSingleTimeCommand(CommandBuffer);
+    }
 
-        VkSubmitInfo TransferSubmitInfo{};
-        TransferSubmitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        TransferSubmitInfo.commandBufferCount = 1;
-        TransferSubmitInfo.pCommandBuffers    = &TransferCommandBuffer;
-        vkQueueSubmit(m_Queues.GraphicsQueue, 1, &TransferSubmitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(m_Queues.GraphicsQueue);
+    void CRenderer::TransferBufferData(VkBuffer Source, VkImage Destination, UInt32 Width, UInt32 Height)
+    {
+        VkCommandBuffer CommandBuffer = BeginSingleTimeCommand();
 
-        vkFreeCommandBuffers(m_Device, m_TransferCommandPool, 1, &TransferCommandBuffer);
+        VkBufferImageCopy Region{};
+        Region.bufferOffset                    = 0;
+        Region.bufferRowLength                 = 0;
+        Region.bufferImageHeight               = 0;
+        Region.imageSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+        Region.imageSubresource.mipLevel       = 0;
+        Region.imageSubresource.baseArrayLayer = 0;
+        Region.imageSubresource.layerCount     = 1;
+        Region.imageOffset                     = VkOffset3D{0, 0, 0};
+        Region.imageExtent                     = VkExtent3D{Width, Height, 1};
+
+        vkCmdCopyBufferToImage(CommandBuffer, Source, Destination, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &Region);
+
+        EndSingleTimeCommand(CommandBuffer);
     }
 
     void CRenderer::CreateUniformBuffers()

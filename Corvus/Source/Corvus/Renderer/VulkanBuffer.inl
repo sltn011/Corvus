@@ -13,10 +13,9 @@ namespace Corvus
             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
         );
 
-        void *StagingBufferData = nullptr;
-        vkMapMemory(m_Device, StagingBuffer.Memory, 0, BufferSize, 0, &StagingBufferData);
+        void *StagingBufferData = MapDeviceMemory(StagingBuffer.Memory, BufferSize, 0);
         std::memcpy(StagingBufferData, BufferData.data(), static_cast<SizeT>(BufferSize));
-        vkUnmapMemory(m_Device, StagingBuffer.Memory);
+        UnmapDeviceMemory(StagingBuffer.Memory);
 
         CVulkanBuffer VertexBuffer = CreateBuffer(
             VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
@@ -42,10 +41,9 @@ namespace Corvus
             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
         );
 
-        void *StagingBufferData = nullptr;
-        vkMapMemory(m_Device, StagingBuffer.Memory, 0, BufferSize, 0, &StagingBufferData);
+        void *StagingBufferData = MapDeviceMemory(StagingBuffer.Memory, BufferSize, 0);
         std::memcpy(StagingBufferData, BufferData.data(), static_cast<SizeT>(BufferSize));
-        vkUnmapMemory(m_Device, StagingBuffer.Memory);
+        UnmapDeviceMemory(StagingBuffer.Memory);
 
         CVulkanBuffer IndexBuffer = CreateBuffer(
             VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
@@ -75,7 +73,7 @@ namespace Corvus
         UniformBuffer.Buffer = UnmappedBuffer.Buffer;
         UniformBuffer.Memory = UnmappedBuffer.Memory;
 
-        vkMapMemory(m_Device, UniformBuffer.Memory, 0, UBOSize, 0, &UniformBuffer.MappedMemory);
+        UniformBuffer.MappedMemory = MapDeviceMemory(UniformBuffer.Memory, UBOSize, 0);
 
         return UniformBuffer;
     }

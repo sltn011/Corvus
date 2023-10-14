@@ -2,6 +2,7 @@
 
 #include "Corvus/Renderer/VulkanImage.h"
 
+#include "Corvus/Assets/Texture/ImageData.h"
 #include "Corvus/Renderer/Renderer.h"
 
 namespace Corvus
@@ -50,6 +51,52 @@ namespace Corvus
         vkBindImageMemory(m_Device, Image.Image, Image.Memory, 0);
 
         return Image;
+    }
+
+    CVulkanImage CRenderer::CreateTextureImage(
+        CImageData const &ImageData, VkImageTiling Tiling, VkImageUsageFlags Usage, VkMemoryPropertyFlags Properties
+    )
+    {
+        VkDeviceSize ImageSize = ImageData.GetImageSize();
+
+        CVulkanBuffer StagingBuffer = CreateBuffer(
+            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+            ImageSize,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+        );
+
+        void *StagingBufferMemory = MapDeviceMemory(StagingBuffer.Memory, ImageSize, 0);
+        std::memcpy(StagingBufferMemory, ImageData.GetImageRawData(), ImageSize);
+        UnmapDeviceMemory(StagingBuffer.Memory);
+
+        CVulkanImage TextureImage = CreateImage(
+            ImageData.GetImageWidth(),
+            ImageData.GetImageHeight(),
+            ImageData.GetPixelFormat(),
+            VK_IMAGE_TILING_OPTIMAL,
+            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+        );
+
+        TransitionImageLayout(
+            TextureImage.Image,
+            ImageData.GetPixelFormat(),
+            VK_IMAGE_LAYOUT_UNDEFINED,
+            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+        );
+        TransferBufferData(
+            StagingBuffer.Buffer, TextureImage.Image, ImageData.GetImageWidth(), ImageData.GetImageHeight()
+        );
+        TransitionImageLayout(
+            TextureImage.Image,
+            ImageData.GetPixelFormat(),
+            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+        );
+
+        DestroyBuffer(StagingBuffer);
+
+        return TextureImage;
     }
 
     void CRenderer::DestroyImage(CVulkanImage &Image)
