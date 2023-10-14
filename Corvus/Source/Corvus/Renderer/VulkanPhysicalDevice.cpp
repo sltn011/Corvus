@@ -121,7 +121,11 @@ namespace Corvus
             bSwapchainSuitable = !SwapchainSupport.PresentationMode.empty() && !SwapchainSupport.SurfaceFormats.empty();
         }
 
-        return FamiliesIndices.IsComplete() && bAllExtensionsSupported && bSwapchainSuitable;
+        VkPhysicalDeviceFeatures PhysicalDeviceFeatures{};
+        vkGetPhysicalDeviceFeatures(PhysicalDevice, &PhysicalDeviceFeatures);
+
+        return FamiliesIndices.IsComplete() && bAllExtensionsSupported && bSwapchainSuitable &&
+               PhysicalDeviceFeatures.samplerAnisotropy;
     }
 
     bool CRenderer::IsPhysicalDeviceExtensionSupportComplete(VkPhysicalDevice PhysicalDevice) const

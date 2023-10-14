@@ -37,6 +37,7 @@ namespace Corvus
 
         // Features supported by VkPhysicalDevice that are requested for use by VkDevice
         VkPhysicalDeviceFeatures DeviceRequestedFeatures{};
+        DeviceRequestedFeatures.samplerAnisotropy = VK_TRUE;
 
         std::vector<char const *> Extensions       = GetRequiredDeviceExtensions();
         std::vector<char const *> ValidationLayers = GetRequiredDeviceValidationLayers();
@@ -118,7 +119,7 @@ namespace Corvus
         void *MappedMemory = nullptr;
         if (vkMapMemory(m_Device, DeviceMemory, 0, Size, Flags, &MappedMemory) != VK_SUCCESS)
         {
-            CORVUS_CRITICAL("Failed to map Vulkan Buffer memory!");
+            CORVUS_CORE_CRITICAL("Failed to map Vulkan Buffer memory!");
         }
         return MappedMemory;
     }

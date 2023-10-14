@@ -258,6 +258,13 @@ namespace Corvus
         void        DestroyImageView(VkImageView &ImageView);
 
     private:
+        // VkSampler
+        void CreateSamplers();
+        void DestroySamplers();
+
+        VkSampler m_Sampler = VK_NULL_HANDLE;
+
+    private:
         // VkRenderPass
         void CreateRenderPass();
         void DestroyRenderPass();

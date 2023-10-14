@@ -7,12 +7,11 @@
 namespace Corvus
 {
 
-    class CTexture2DBuffer;
-
     class CTexture2D
     {
         FUUID        UUID;
         CVulkanImage Image;
+        VkImageView  ImageView;
     };
 
 } // namespace Corvus

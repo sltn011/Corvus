@@ -65,12 +65,16 @@ namespace Corvus
 
         CreateFramebuffers();
 
+        CreateSamplers();
+
         CreateSyncObjects();
     }
 
     void CRenderer::Destroy()
     {
         DestroySyncObjects();
+
+        DestroySamplers();
 
         DestroyFramebuffers();
 
