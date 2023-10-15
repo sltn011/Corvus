@@ -53,9 +53,7 @@ namespace Corvus
         return Image;
     }
 
-    CVulkanImage CRenderer::CreateTextureImage(
-        CImageData const &ImageData, VkImageTiling Tiling, VkImageUsageFlags Usage, VkMemoryPropertyFlags Properties
-    )
+    CVulkanImage CRenderer::CreateTextureImage(CImageData const &ImageData)
     {
         VkDeviceSize ImageSize = ImageData.GetImageSize();
 
@@ -70,8 +68,8 @@ namespace Corvus
         UnmapDeviceMemory(StagingBuffer.Memory);
 
         CVulkanImage TextureImage = CreateImage(
-            ImageData.GetImageWidth(),
-            ImageData.GetImageHeight(),
+            static_cast<UInt32>(ImageData.GetImageWidth()),
+            static_cast<UInt32>(ImageData.GetImageHeight()),
             ImageData.GetPixelFormat(),
             VK_IMAGE_TILING_OPTIMAL,
             VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,

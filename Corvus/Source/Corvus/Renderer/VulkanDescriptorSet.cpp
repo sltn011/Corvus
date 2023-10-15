@@ -5,22 +5,10 @@
 namespace Corvus
 {
 
-    void CRenderer::AllocateDescriptorSets()
+    void CRenderer::AllocatePerFrameDescriptorSets()
     {
-        std::array<VkDescriptorSetLayout, s_FramesInFlight> SetsLayouts{};
-        SetsLayouts.fill(m_DescriptorSetLayout);
-
-        VkDescriptorSetAllocateInfo DescriptorSetInfo{};
-        DescriptorSetInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-        DescriptorSetInfo.descriptorPool     = m_DescriptorPool;
-        DescriptorSetInfo.descriptorSetCount = static_cast<UInt32>(s_FramesInFlight);
-        DescriptorSetInfo.pSetLayouts        = SetsLayouts.data();
-
-        if (vkAllocateDescriptorSets(m_Device, &DescriptorSetInfo, m_DescriptorSets.data()) != VK_SUCCESS)
-        {
-            CORVUS_CORE_CRITICAL("Failed to allocate Vulkan Descriptor Sets!");
-        }
-        CORVUS_CORE_TRACE("Allocated Vulkan Descriptor Sets successfully");
+        m_PerFrameDescriptorSets =
+            AllocateDescriptorSets<s_FramesInFlight>(m_PerFrameDescriptorPool, m_PerFrameDescriptorSetLayout);
 
         // Allocated but not configured yet
         for (UInt32 i = 0; i < s_FramesInFlight; ++i)
@@ -35,7 +23,7 @@ namespace Corvus
                 DescriptorBufferInfo.range  = sizeof(CVPUBO);
 
                 DescriptorSetWrites[0].sType            = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                DescriptorSetWrites[0].dstSet           = m_DescriptorSets[i];
+                DescriptorSetWrites[0].dstSet           = m_PerFrameDescriptorSets[i];
                 DescriptorSetWrites[0].dstBinding       = 0;
                 DescriptorSetWrites[0].dstArrayElement  = 0;
                 DescriptorSetWrites[0].descriptorType   = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -48,6 +36,15 @@ namespace Corvus
             vkUpdateDescriptorSets(
                 m_Device, static_cast<UInt32>(DescriptorSetWrites.size()), DescriptorSetWrites.data(), 0, nullptr
             );
+        }
+    }
+
+    void CRenderer::FreeDescriptorSets(VkDescriptorPool Pool, VkDescriptorSet *pSets, SizeT Amount)
+    {
+        vkFreeDescriptorSets(m_Device, Pool, static_cast<UInt32>(Amount), pSets);
+        for (SizeT i = 0; i < Amount; ++i)
+        {
+            pSets[i] = VK_NULL_HANDLE;
         }
     }
 

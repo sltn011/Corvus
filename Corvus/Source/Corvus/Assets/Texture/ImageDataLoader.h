@@ -50,6 +50,14 @@ namespace Corvus
             VkFormat           PixelFormat
         );
 
+        static std::vector<UInt8> AddAlphaChannel(
+            UInt8             *ImageData,
+            SizeT              ImageWidth,
+            SizeT              ImageHeight,
+            ELoadImageChannels ChannelsToLoad,
+            VkFormat           PixelFormat
+        );
+
         static ELoadImageChannels CalculateChannelsToLoad(ELoadImageChannels ChannelsToLoad);
     };
 

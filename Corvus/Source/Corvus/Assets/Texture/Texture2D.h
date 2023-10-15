@@ -9,10 +9,11 @@ namespace Corvus
 
     struct CTexture2D
     {
-        FUUID        UUID;
-        CVulkanImage Image;
-        VkImageView  ImageView;
-        VkSampler    Sampler;
+        FUUID           UUID;
+        CVulkanImage    Image;
+        VkImageView     ImageView;
+        VkSampler       Sampler;
+        VkDescriptorSet DescriptorSet;
     };
 
 } // namespace Corvus

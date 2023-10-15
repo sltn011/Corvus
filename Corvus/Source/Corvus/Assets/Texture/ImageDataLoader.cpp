@@ -59,6 +59,16 @@ namespace Corvus
         Image.m_ImageHeight = ImageHeight;
         Image.m_PixelFormat = PixelFormat;
         Image.m_bIsSRGB     = bIsSRGB;
+
+        if (!IsPixelFormatFloat(PixelFormat) && PixelFormatComponentSize(PixelFormat) == 1 &&
+            PixelFormatNumComponents(PixelFormat) == 3)
+        {
+            Image.m_ImageRawData = AddAlphaChannel(
+                Image.m_ImageRawData.data(), ImageWidth, ImageHeight, ELoadImageChannels::RGB, PixelFormat
+            );
+            Image.m_PixelFormat = VK_FORMAT_R8G8B8A8_SRGB;
+        }
+
         return Image;
     }
 
@@ -288,6 +298,55 @@ namespace Corvus
         }
 
         return ImageData;
+    }
+
+    std::vector<UInt8> CImageDataLoader::AddAlphaChannel(
+        UInt8 *ImageData, SizeT ImageWidth, SizeT ImageHeight, ELoadImageChannels ChannelsToLoad, VkFormat PixelFormat
+    )
+    {
+        if (IsPixelFormatFloat(PixelFormat))
+        {
+            CORVUS_CRITICAL("Adding Alpha Channel to HDR textures not supported!");
+        }
+
+        if (ChannelsToLoad != ELoadImageChannels::RGB)
+        {
+            CORVUS_CRITICAL("Adding Alpha Channel supported only for RGB textures!");
+        }
+
+        if (PixelFormatComponentSize(PixelFormat) != 1)
+        {
+            CORVUS_CRITICAL("Adding Alpha Channel supported only for 8bit channel textures!");
+        }
+
+        struct OldFormat
+        {
+            UInt8 R;
+            UInt8 G;
+            UInt8 B;
+        };
+
+        struct NewFormat
+        {
+            OldFormat Color;
+            UInt8     Alpha;
+        };
+
+        static constexpr SizeT OldStride = sizeof(OldFormat);
+        static constexpr SizeT NewStride = sizeof(NewFormat);
+
+        SizeT              NumPixels = ImageWidth * ImageHeight;
+        SizeT              OldSize   = NumPixels * 3;
+        SizeT              NewSize   = NumPixels * 4;
+        std::vector<UInt8> UpdatedImage(NewSize);
+        for (SizeT i = 0; i < NumPixels; ++i)
+        {
+            OldFormat OldPixel = *(reinterpret_cast<OldFormat *>(ImageData) + i);
+            NewFormat NewPixel{OldPixel, 255};
+            *(reinterpret_cast<NewFormat *>(UpdatedImage.data()) + i) = NewPixel;
+        }
+
+        return UpdatedImage;
     }
 
     ELoadImageChannels CImageDataLoader::CalculateChannelsToLoad(ELoadImageChannels const ChannelsToLoad)

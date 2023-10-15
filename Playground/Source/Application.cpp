@@ -168,11 +168,11 @@ namespace Corvus
             // StaticModel
             StaticModelsAssets.emplace(LoadedModelData.StaticModel.UUID, std::move(LoadedModelData.StaticModel));
 
-            //// Textures
-            // for (CTexture2D &Texture : LoadedModelData.Textures)
-            //{
-            //     TexturesAssets.emplace(Texture.UUID, std::move(Texture));
-            // }
+            // Textures
+            for (CTexture2D &Texture : LoadedModelData.Textures)
+            {
+                TexturesAssets.emplace(Texture.UUID, std::move(Texture));
+            }
 
             //// Materials
             // for (CMaterial &Material : LoadedModelData.Materials)
@@ -207,6 +207,25 @@ namespace Corvus
             //    }
             //}
 
+            // Provide StaticMeshPrimitives with their textures
+            auto it = TexturesAssets.begin();
+            for (auto &[StaticModelUUID, StaticModel] : StaticModelsAssets)
+            {
+                for (CStaticMesh &Mesh : StaticModel)
+                {
+                    for (CStaticMeshPrimitive &Primitive : Mesh)
+                    {
+                        FUUID TextureUUID   = Primitive.Texture2D.UUID;
+                        Primitive.Texture2D = it->second;
+                        std::advance(it, 1);
+                        if (it == TexturesAssets.end())
+                        {
+                            it = TexturesAssets.begin();
+                        }
+                    }
+                }
+            }
+
             // Provide Entities with their StaticModels
             for (TPoolable<CEntity> const &Entity : CApplication::GetInstance().Scene.GetEntities())
             {
@@ -216,7 +235,7 @@ namespace Corvus
         }
 
     private:
-        // std::unordered_map<FUUID, CTexture2D>   TexturesAssets;
+        std::unordered_map<FUUID, CTexture2D> TexturesAssets;
         // std::unordered_map<FUUID, CMaterial>    MaterialsAssets;
         std::unordered_map<FUUID, CStaticModel> StaticModelsAssets;
 

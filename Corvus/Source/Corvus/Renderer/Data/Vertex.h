@@ -13,7 +13,7 @@ namespace Corvus
     struct CVertex
     {
         FVector3 Position;
-        FVector3 Color;
+        FVector2 UVCoord;
 
         static VkVertexInputBindingDescription                  GetInputBindingDescription();
         static std::array<VkVertexInputAttributeDescription, 2> GetInputAttributeDescriptions();

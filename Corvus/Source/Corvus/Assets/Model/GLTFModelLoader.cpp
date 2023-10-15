@@ -6,9 +6,9 @@
 #include "Corvus/Assets/Model/StaticMesh.h"
 #include "Corvus/Assets/Model/StaticMeshPrimitive.h"
 #include "Corvus/Assets/Model/StaticModel.h"
-// #include "Corvus/Assets/Texture/ImageData.h"
-// #include "Corvus/Assets/Texture/ImageDataLoader.h"
-// #include "Corvus/Assets/Texture/Texture2D.h"
+#include "Corvus/Assets/Texture/ImageData.h"
+#include "Corvus/Assets/Texture/ImageDataLoader.h"
+#include "Corvus/Assets/Texture/Texture2D.h"
 #include "Corvus/Math/Matrix.h"
 #include "Corvus/Math/Quaternion.h"
 #include "Corvus/Renderer/Data/Vertex.h"
@@ -18,7 +18,7 @@
 #define TINYGLTF_NO_STB_IMAGE_WRITE
 #include <tiny_gltf.h>
 
-#define STB_IMAGE_IMPLEMENTATION
+//
 #include <stb_image.h>
 
 namespace Corvus
@@ -117,20 +117,6 @@ namespace Corvus
             return ElementFormat;
         }
 
-        // STextureParameters ProcessNoTextureSampler()
-        //{
-        //     STextureParameters TextureParameters;
-        //     TextureParameters.MinFiltering = ETextureFiltering::LinearMipMap_Linear;
-        //     TextureParameters.MagFiltering = ETextureFiltering::Linear;
-        //     TextureParameters.WrappingS    = ETextureWrapping::Repeat;
-        //     TextureParameters.WrappingT    = ETextureWrapping::Repeat;
-        //     TextureParameters.WrappingR    = ETextureWrapping::Repeat;
-
-        //    TextureParameters.bHasMipmaps              = true;
-        //    TextureParameters.bHasAnisotropicFiltering = true;
-        //    return TextureParameters;
-        //}
-
         // STextureParameters ProcessTextureSampler(tinygltf::Sampler const &Sampler)
         //{
         //     static const std::unordered_map<int, ETextureFiltering> TextureFiltering{
@@ -166,66 +152,66 @@ namespace Corvus
         //    return TextureParameters;
         //}
 
-        // CImageData ProcessImage(tinygltf::Image const &Image)
-        //{
-        //     CORVUS_CORE_ASSERT_FMT(
-        //         Image.pixel_type == TINYGLTF_COMPONENT_TYPE_BYTE ||
-        //             Image.pixel_type == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE,
-        //         "Only 8 bit images are allowed in GLTF models!"
-        //     );
+        CImageData ProcessImage(tinygltf::Image const &Image)
+        {
+            CORVUS_CORE_ASSERT_FMT(
+                Image.pixel_type == TINYGLTF_COMPONENT_TYPE_BYTE ||
+                    Image.pixel_type == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE,
+                "Only 8 bit images are allowed in GLTF models!"
+            );
 
-        //    EPixelFormat PixelFormat = EPixelFormat::RGBA8;
-        //    switch (Image.component)
-        //    {
-        //    case 1:
-        //        PixelFormat = EPixelFormat::R8;
-        //        break;
-        //    case 2:
-        //        PixelFormat = EPixelFormat::RG8;
-        //        break;
-        //    case 3:
-        //        PixelFormat = EPixelFormat::RGB8;
-        //        break;
-        //    case 4:
-        //        PixelFormat = EPixelFormat::RGBA8;
-        //        break;
-        //    default:
-        //        CORVUS_ERROR("Invalid number of components in GLTF Image");
-        //        break;
-        //    }
+            VkFormat PixelFormat;
+            switch (Image.component)
+            {
+            case 1:
+                PixelFormat = VK_FORMAT_R8_SRGB;
+                break;
+            case 2:
+                PixelFormat = VK_FORMAT_R8G8_SRGB;
+                break;
+            case 3:
+                PixelFormat = VK_FORMAT_R8G8B8_SRGB;
+                break;
+            case 4:
+                PixelFormat = VK_FORMAT_R8G8B8A8_SRGB;
+                break;
+            default:
+                CORVUS_ERROR("Invalid number of components in GLTF Image");
+                break;
+            }
 
-        //    // TODO: sRGB check?
-        //    return CImageDataLoader::LoadFromMemory(Image.image.data(), Image.width, Image.height, PixelFormat, true);
-        //}
+            // TODO: sRGB check?
+            return CImageDataLoader::LoadFromMemory(Image.image.data(), Image.width, Image.height, PixelFormat, true);
+        }
 
-        // std::vector<CTexture2D> LoadTextures(tinygltf::Model const &GLTFModel)
-        //{
-        //     std::vector<CTexture2D> Textures(GLTFModel.textures.size());
+        std::vector<CTexture2D> LoadTextures(tinygltf::Model const &GLTFModel)
+        {
+            std::vector<CTexture2D> Textures(GLTFModel.textures.size());
 
-        //    for (SizeT i = 0; i < Textures.size(); ++i)
-        //    {
-        //        tinygltf::Texture const &Texture = GLTFModel.textures[i];
+            for (SizeT i = 0; i < Textures.size(); ++i)
+            {
+                tinygltf::Texture const &Texture = GLTFModel.textures[i];
 
-        //        STextureParameters TextureParameters;
-        //        Int32              SamplerIndex = Texture.sampler;
-        //        if (SamplerIndex != -1)
-        //        {
-        //            TextureParameters = ProcessTextureSampler(GLTFModel.samplers[SamplerIndex]);
-        //        }
-        //        else
-        //        {
-        //            TextureParameters = ProcessNoTextureSampler();
-        //        }
+                // STextureParameters TextureParameters;
+                // Int32              SamplerIndex = Texture.sampler;
+                // if (SamplerIndex != -1)
+                //{
+                //     TextureParameters = ProcessTextureSampler(GLTFModel.samplers[SamplerIndex]);
+                // }
+                // else
+                //{
+                //     TextureParameters = ProcessNoTextureSampler();
+                // }
 
-        //        Int32 ImageIndex = Texture.source;
-        //        CORVUS_CORE_ASSERT(ImageIndex != -1);
-        //        CImageData Image = ProcessImage(GLTFModel.images[ImageIndex]);
+                Int32 ImageIndex = Texture.source;
+                CORVUS_CORE_ASSERT(ImageIndex != -1);
+                CImageData Image = ProcessImage(GLTFModel.images[ImageIndex]);
 
-        //        Textures[i] = CTexture2D{CTexture2DBuffer::Create(Image, TextureParameters)};
-        //    }
+                Textures[i] = Renderer().CreateTexture2D(Image, Renderer().GetSamplers().DefaultSampler);
+            }
 
-        //    return Textures;
-        //}
+            return Textures;
+        }
 
         std::vector<CMaterial> LoadMaterials(tinygltf::Model const &GLTFModel)
         // std::vector<CMaterial> LoadMaterials(tinygltf::Model const &GLTFModel, std::vector<CTexture2D> const
@@ -639,19 +625,12 @@ namespace Corvus
             TexCoord0Vec.resize(NumElements);
             NormalVec.resize(NumElements);
 
-            // Random primitive color
-            FVector3 PrimitiveColor{};
-            UInt64   UnusedChannel = FMath::Random(0, 2);
-            PrimitiveColor[0]      = FMath::Random(32, 255) / 255.f * (0 != UnusedChannel);
-            PrimitiveColor[1]      = FMath::Random(32, 255) / 255.f * (1 != UnusedChannel);
-            PrimitiveColor[2]      = FMath::Random(32, 255) / 255.f * (2 != UnusedChannel);
-
             // Combine Vertex Data
             std::vector<CVertex> VertexData(NumElements);
             for (SizeT i = 0; i < NumElements; ++i)
             {
                 VertexData[i].Position = PositionVec[i];
-                VertexData[i].Color    = PrimitiveColor;
+                VertexData[i].UVCoord  = TexCoord0Vec[i];
             }
 
             // Index data
@@ -720,7 +699,7 @@ namespace Corvus
 
         SStaticModelLoadedData ProcessModel(tinygltf::Model const &GLTFModel)
         {
-            // std::vector<CTexture2D> Textures  = LoadTextures(GLTFModel);
+            std::vector<CTexture2D> Textures = LoadTextures(GLTFModel);
             // std::vector<CMaterial> Materials = LoadMaterials(GLTFModel, Textures);
             std::vector<CMaterial> Materials = LoadMaterials(GLTFModel);
 
@@ -737,7 +716,7 @@ namespace Corvus
 
             SStaticModelLoadedData LoadedData;
             LoadedData.StaticModel = std::move(StaticModel);
-            // LoadedData.Textures    = std::move(Textures);
+            LoadedData.Textures    = std::move(Textures);
             // LoadedData.Materials   = std::move(Materials);
             return LoadedData;
         }

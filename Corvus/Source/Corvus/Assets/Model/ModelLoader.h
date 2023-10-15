@@ -9,13 +9,13 @@ namespace Corvus
 
     class CMaterial;
     class CStaticModel;
-    class CTexture2D;
+    struct CTexture2D;
 
     struct SStaticModelLoadedData
     {
-        CStaticModel StaticModel;
-        // std::vector<CTexture2D> Textures;
-        std::vector<CMaterial> Materials;
+        CStaticModel            StaticModel;
+        std::vector<CTexture2D> Textures;
+        std::vector<CMaterial>  Materials;
     };
 
     class CModelLoader

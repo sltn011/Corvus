@@ -59,7 +59,7 @@ namespace Corvus
 
         CreateDescriptorSetLayout();
         CreateDescriptorPools();
-        AllocateDescriptorSets();
+        AllocatePerFrameDescriptorSets();
 
         CreateRenderPass();
         CreatePipelineLayout();
@@ -190,7 +190,7 @@ namespace Corvus
             m_PipelineLayout,
             0,
             1,
-            &m_DescriptorSets[m_CurrentFrame],
+            &m_PerFrameDescriptorSets[m_CurrentFrame],
             0,
             nullptr
         );
@@ -235,6 +235,17 @@ namespace Corvus
         {
             for (CStaticMeshPrimitive &Primitive : StaticMesh)
             {
+                vkCmdBindDescriptorSets(
+                    CommandBuffer,
+                    VK_PIPELINE_BIND_POINT_GRAPHICS,
+                    m_PipelineLayout,
+                    1,
+                    1,
+                    &Primitive.Texture2D.DescriptorSet,
+                    0,
+                    nullptr
+                );
+
                 VkBuffer     Buffers[] = {Primitive.VertexBuffer.Buffer};
                 VkDeviceSize Offsets[] = {0};
                 vkCmdBindVertexBuffers(CommandBuffer, 0, 1, Buffers, Offsets);

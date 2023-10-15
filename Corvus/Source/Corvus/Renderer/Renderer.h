@@ -16,7 +16,7 @@ namespace Corvus
 {
     class CStaticModel;
     class CImageData;
-    class CTexture2D;
+    struct CTexture2D;
 
     class CRenderer
     {
@@ -24,6 +24,7 @@ namespace Corvus
         friend class CGUIController;
 
     public:
+        // Construct-Destruct
         void Create();
         void Destroy();
 
@@ -40,6 +41,11 @@ namespace Corvus
         VkInstance GetVulkanInstance();
 
     public:
+        // Access
+        CVulkanSamplers GetSamplers() const;
+
+    public:
+        // General
         void BeginFrame();
         void EndFrame();
 
@@ -50,6 +56,7 @@ namespace Corvus
         void AwaitIdle();
 
     public:
+        // Buffers
         template<typename TVertex>
         CVulkanBuffer CreateVertexBuffer(std::vector<TVertex> const &BufferData);
 
@@ -61,6 +68,11 @@ namespace Corvus
 
         void DestroyBuffer(CVulkanBuffer &Buffer);
         void DestroyBuffer(CVulkanUniformBuffer &Buffer);
+
+    public:
+        // Textures
+        CTexture2D CreateTexture2D(CImageData const &ImageData, VkSampler TextureSampler);
+        void       DestroyTexture2D(CTexture2D &Texture2D);
 
     private:
         void SetModelMatrix(FMatrix4 const &ModelMatrix);
@@ -232,10 +244,8 @@ namespace Corvus
             VkImageUsageFlags     Usage,
             VkMemoryPropertyFlags Properties
         );
-        CVulkanImage CreateTextureImage(
-            CImageData const &ImageData, VkImageTiling Tiling, VkImageUsageFlags Usage, VkMemoryPropertyFlags Properties
-        );
-        void DestroyImage(CVulkanImage &Image);
+        CVulkanImage CreateTextureImage(CImageData const &ImageData);
+        void         DestroyImage(CVulkanImage &Image);
 
         void TransitionImageLayout(VkImage Image, VkFormat Format, VkImageLayout OldLayout, VkImageLayout NewLayout);
 
@@ -263,8 +273,6 @@ namespace Corvus
         // VkSampler
         void CreateSamplers();
         void DestroySamplers();
-
-        CVulkanSamplers GetSamplers() const;
 
         CVulkanSamplers m_Samplers{};
 
@@ -330,21 +338,29 @@ namespace Corvus
         void CreateDescriptorSetLayout();
         void DestroyDescriptorSetLayout();
 
-        VkDescriptorSetLayout m_DescriptorSetLayout = VK_NULL_HANDLE;
+        VkDescriptorSetLayout m_PerFrameDescriptorSetLayout = VK_NULL_HANDLE;
+        VkDescriptorSetLayout m_PerDrawDescriptorSetLayout  = VK_NULL_HANDLE;
 
     private:
         // VkDescriptorPool
         void CreateDescriptorPools();
         void DestroyDescriptorPools();
 
-        VkDescriptorPool m_DescriptorPool    = VK_NULL_HANDLE;
-        VkDescriptorPool m_GUIDescriptorPool = VK_NULL_HANDLE;
+        VkDescriptorPool m_PerFrameDescriptorPool = VK_NULL_HANDLE;
+        VkDescriptorPool m_PerDrawDescriptorPool  = VK_NULL_HANDLE;
+        VkDescriptorPool m_GUIDescriptorPool      = VK_NULL_HANDLE;
 
     private:
         // VkDescriptorSet
-        void AllocateDescriptorSets();
+        void AllocatePerFrameDescriptorSets();
 
-        std::array<VkDescriptorSet, s_FramesInFlight> m_DescriptorSets{VK_NULL_HANDLE};
+        template<SizeT TAmount>
+        std::array<VkDescriptorSet, TAmount> AllocateDescriptorSets(
+            VkDescriptorPool Pool, VkDescriptorSetLayout Layout
+        );
+        void FreeDescriptorSets(VkDescriptorPool Pool, VkDescriptorSet *pSets, SizeT Amount);
+
+        std::array<VkDescriptorSet, s_FramesInFlight> m_PerFrameDescriptorSets{VK_NULL_HANDLE};
 
     private:
         // VkFramebuffer
@@ -368,5 +384,6 @@ namespace Corvus
 } // namespace Corvus
 
 #include "Corvus/Renderer/VulkanBuffer.inl"
+#include "Corvus/Renderer/VulkanDescriptorSet.inl"
 
 #endif // !CORVUS_SOURCE_CORVUS_RENDERER_RENDERER_H

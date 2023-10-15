@@ -21,12 +21,12 @@ namespace Corvus
         PositionAttribute.format   = VK_FORMAT_R32G32B32_SFLOAT;
         PositionAttribute.offset   = offsetof(CVertex, Position);
 
-        VkVertexInputAttributeDescription ColorAttribute{};
-        ColorAttribute.binding  = 0;
-        ColorAttribute.location = 1;
-        ColorAttribute.format   = VK_FORMAT_R32G32B32_SFLOAT;
-        ColorAttribute.offset   = offsetof(CVertex, Color);
+        VkVertexInputAttributeDescription UVCoordAttribute{};
+        UVCoordAttribute.binding  = 0;
+        UVCoordAttribute.location = 1;
+        UVCoordAttribute.format   = VK_FORMAT_R32G32_SFLOAT;
+        UVCoordAttribute.offset   = offsetof(CVertex, UVCoord);
 
-        return {PositionAttribute, ColorAttribute};
+        return {PositionAttribute, UVCoordAttribute};
     }
 } // namespace Corvus

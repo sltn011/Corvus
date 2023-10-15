@@ -3,6 +3,7 @@
 
 #include "Corvus/Assets/AssetRef.h"
 // #include "Corvus/Assets/Material/Material.h"
+#include "Corvus/Assets/Texture/Texture2D.h"
 #include "Corvus/Renderer/Data/Vertex.h"
 #include "Corvus/Renderer/VulkanBuffer.h"
 
@@ -25,6 +26,8 @@ namespace Corvus
 
         CVulkanBuffer       IndexBuffer;
         std::vector<UInt16> IndexData;
+
+        CTexture2D Texture2D;
 
         // TAssetRef<CMaterial> MaterialRef;
     };

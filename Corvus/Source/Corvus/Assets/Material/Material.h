@@ -8,7 +8,7 @@ namespace Corvus
 {
 
     class CShader;
-    class CTexture2D;
+    struct CTexture2D;
 
     template<typename OtherT>
     class TMaterialTexParam

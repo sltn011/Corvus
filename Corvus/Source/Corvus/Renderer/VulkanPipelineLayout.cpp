@@ -13,10 +13,12 @@ namespace Corvus
         PushConstantRange.size       = sizeof(CModelPushConstant);
         PushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 
+        std::array<VkDescriptorSetLayout, 2> SetLayouts = {m_PerFrameDescriptorSetLayout, m_PerDrawDescriptorSetLayout};
+
         VkPipelineLayoutCreateInfo PipelineLayoutInfo{};
         PipelineLayoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        PipelineLayoutInfo.setLayoutCount         = 1;
-        PipelineLayoutInfo.pSetLayouts            = &m_DescriptorSetLayout;
+        PipelineLayoutInfo.setLayoutCount         = static_cast<UInt32>(SetLayouts.size());
+        PipelineLayoutInfo.pSetLayouts            = SetLayouts.data();
         PipelineLayoutInfo.pushConstantRangeCount = 1;
         PipelineLayoutInfo.pPushConstantRanges    = &PushConstantRange;
 
