@@ -7,11 +7,12 @@
 namespace Corvus
 {
 
-    class CTexture2D
+    struct CTexture2D
     {
         FUUID        UUID;
         CVulkanImage Image;
         VkImageView  ImageView;
+        VkSampler    Sampler;
     };
 
 } // namespace Corvus

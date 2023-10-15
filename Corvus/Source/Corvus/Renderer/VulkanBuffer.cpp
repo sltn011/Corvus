@@ -96,7 +96,7 @@ namespace Corvus
     {
         for (UInt32 i = 0; i < s_FramesInFlight; ++i)
         {
-            m_MatricesUBOs[i] = CreateUniformBuffer<CMVPUBO>();
+            m_MatricesUBOs[i] = CreateUniformBuffer<CVPUBO>();
         }
         CORVUS_CORE_TRACE("Vulkan Uniform Buffers created");
     }

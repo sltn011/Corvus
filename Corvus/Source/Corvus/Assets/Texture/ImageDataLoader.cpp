@@ -42,6 +42,26 @@ namespace Corvus
         return Image;
     }
 
+    CImageData CImageDataLoader::LoadFromMemory(
+        void const *ImageData, SizeT ImageWidth, SizeT ImageHeight, VkFormat PixelFormat, bool bIsSRGB
+    )
+    {
+        CORVUS_CORE_ASSERT(ImageData != nullptr);
+        CORVUS_CORE_ASSERT(ImageWidth > 0);
+        CORVUS_CORE_ASSERT(ImageHeight > 0);
+
+        SizeT DataBytes = ImageWidth * ImageHeight * PixelFormatElementSize(PixelFormat);
+
+        CImageData Image;
+        Image.m_ImageRawData.resize(DataBytes);
+        std::memcpy(Image.m_ImageRawData.data(), ImageData, DataBytes);
+        Image.m_ImageWidth  = ImageWidth;
+        Image.m_ImageHeight = ImageHeight;
+        Image.m_PixelFormat = PixelFormat;
+        Image.m_bIsSRGB     = bIsSRGB;
+        return Image;
+    }
+
     CImageData CImageDataLoader::LoadHDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad)
     {
         VkFormat PixelFormat;
@@ -182,7 +202,7 @@ namespace Corvus
         case VK_FORMAT_R16G16B16A16_SFLOAT:
             return 2;
         default:
-            CORVUS_CORE_NO_ENTRY("Unsupported PixelFormat!");
+            CORVUS_CORE_NO_ENTRY();
             return 0;
         }
     }
@@ -208,7 +228,7 @@ namespace Corvus
             return 4;
 
         default:
-            CORVUS_CORE_NO_ENTRY("Unsupported PixelFormat!");
+            CORVUS_CORE_NO_ENTRY();
             return 0;
         }
     }

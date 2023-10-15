@@ -7,6 +7,7 @@
 #include "Corvus/Renderer/VulkanImage.h"
 #include "Corvus/Renderer/VulkanQueueFamilyIndices.h"
 #include "Corvus/Renderer/VulkanQueues.h"
+#include "Corvus/Renderer/VulkanSampler.h"
 #include "Corvus/Renderer/VulkanSwapchainSupportDetails.h"
 
 #include <vulkan/vulkan.h>
@@ -15,6 +16,7 @@ namespace Corvus
 {
     class CStaticModel;
     class CImageData;
+    class CTexture2D;
 
     class CRenderer
     {
@@ -262,7 +264,9 @@ namespace Corvus
         void CreateSamplers();
         void DestroySamplers();
 
-        VkSampler m_Sampler = VK_NULL_HANDLE;
+        CVulkanSamplers GetSamplers() const;
+
+        CVulkanSamplers m_Samplers{};
 
     private:
         // VkRenderPass
@@ -326,7 +330,7 @@ namespace Corvus
         void CreateDescriptorSetLayout();
         void DestroyDescriptorSetLayout();
 
-        VkDescriptorSetLayout m_MatricesUBOLayout = VK_NULL_HANDLE;
+        VkDescriptorSetLayout m_DescriptorSetLayout = VK_NULL_HANDLE;
 
     private:
         // VkDescriptorPool

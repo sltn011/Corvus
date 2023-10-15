@@ -13,6 +13,11 @@ namespace Corvus
         FMatrix4 ProjectionView{};
     };
 
+    struct CVPUBO
+    {
+        FMatrix4 ProjectionView{};
+    };
+
 } // namespace Corvus
 
 #endif // !CORVUS_SOURCE_CORVUS_RENDERER_DATA_UBOS_H

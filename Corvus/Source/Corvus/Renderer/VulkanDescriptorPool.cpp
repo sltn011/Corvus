@@ -7,14 +7,14 @@ namespace Corvus
 
     void CRenderer::CreateDescriptorPools()
     {
-        VkDescriptorPoolSize DescriptorPoolSize{};
-        DescriptorPoolSize.type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        DescriptorPoolSize.descriptorCount = static_cast<UInt32>(s_FramesInFlight);
+        std::array<VkDescriptorPoolSize, 1> DescriptorPoolSizes{};
+        DescriptorPoolSizes[0].type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        DescriptorPoolSizes[0].descriptorCount = static_cast<UInt32>(s_FramesInFlight);
 
         VkDescriptorPoolCreateInfo DescriptorPoolInfo{};
         DescriptorPoolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-        DescriptorPoolInfo.poolSizeCount = 1;
-        DescriptorPoolInfo.pPoolSizes    = &DescriptorPoolSize;
+        DescriptorPoolInfo.poolSizeCount = static_cast<UInt32>(DescriptorPoolSizes.size());
+        DescriptorPoolInfo.pPoolSizes    = DescriptorPoolSizes.data();
         DescriptorPoolInfo.maxSets       = static_cast<UInt32>(s_FramesInFlight);
 
         if (vkCreateDescriptorPool(m_Device, &DescriptorPoolInfo, nullptr, &m_DescriptorPool) != VK_SUCCESS)

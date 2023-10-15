@@ -3,8 +3,10 @@
 #include "Corvus/Renderer/Renderer.h"
 
 #include "Corvus/Assets/Model/StaticModel.h"
+#include "Corvus/Assets/Texture/Texture2D.h"
 #include "Corvus/Camera/Camera.h"
 #include "Corvus/Core/Application.h"
+#include "Corvus/Renderer/Data/PushConstants.h"
 
 namespace Corvus
 {
@@ -256,9 +258,21 @@ namespace Corvus
 
     void CRenderer::SetModelMatrix(FMatrix4 const &ModelMatrix)
     {
-        UInt8 *MVPUBOStart         = static_cast<UInt8 *>(m_MatricesUBOs[m_CurrentFrame].MappedMemory);
-        UInt8 *ModelMatrixLocation = MVPUBOStart + offsetof(CMVPUBO, Model);
-        std::memcpy(ModelMatrixLocation, &ModelMatrix, sizeof(ModelMatrix));
+        // UInt8 *MVPUBOStart         = static_cast<UInt8 *>(m_MatricesUBOs[m_CurrentFrame].MappedMemory);
+        // UInt8 *ModelMatrixLocation = MVPUBOStart + offsetof(CMVPUBO, Model);
+        // std::memcpy(ModelMatrixLocation, &ModelMatrix, sizeof(ModelMatrix));
+
+        CModelPushConstant PushConstant{};
+        PushConstant.Model = ModelMatrix;
+
+        vkCmdPushConstants(
+            m_CommandBuffers[m_CurrentFrame],
+            m_PipelineLayout,
+            VK_SHADER_STAGE_VERTEX_BIT,
+            0,
+            static_cast<UInt32>(sizeof(PushConstant)),
+            &PushConstant
+        );
     }
 
     void CRenderer::SetCameraMatrices()
@@ -275,8 +289,8 @@ namespace Corvus
 
         FMatrix4 CameraProjectionView = CameraProjection * CameraView;
 
-        UInt8 *MVPUBOStart          = static_cast<UInt8 *>(m_MatricesUBOs[m_CurrentFrame].MappedMemory);
-        UInt8 *CameraMatrixLocation = MVPUBOStart + offsetof(CMVPUBO, ProjectionView);
+        UInt8 *VPUBOStart           = static_cast<UInt8 *>(m_MatricesUBOs[m_CurrentFrame].MappedMemory);
+        UInt8 *CameraMatrixLocation = VPUBOStart + offsetof(CVPUBO, ProjectionView);
 
         std::memcpy(CameraMatrixLocation, &CameraProjectionView, sizeof(CameraProjectionView));
     }

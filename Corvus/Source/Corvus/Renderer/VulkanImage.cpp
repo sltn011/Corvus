@@ -85,7 +85,10 @@ namespace Corvus
             VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
         );
         TransferBufferData(
-            StagingBuffer.Buffer, TextureImage.Image, ImageData.GetImageWidth(), ImageData.GetImageHeight()
+            StagingBuffer.Buffer,
+            TextureImage.Image,
+            static_cast<UInt32>(ImageData.GetImageWidth()),
+            static_cast<UInt32>(ImageData.GetImageHeight())
         );
         TransitionImageLayout(
             TextureImage.Image,
