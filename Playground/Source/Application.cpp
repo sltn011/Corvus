@@ -3,7 +3,7 @@
 #include "Corvus/Assets/Material/Material.h"
 #include "Corvus/Assets/Model/ModelLoader.h"
 #include "Corvus/Assets/Model/StaticModel.h"
-// #include "Corvus/Assets/Texture/Texture2D.h"
+#include "Corvus/Assets/Texture/Texture2D.h"
 #include "Corvus/Components/StaticMeshComponent.h"
 #include "Corvus/Components/TransformComponent.h"
 #include "Corvus/Scene/Entity.h"
@@ -174,54 +174,32 @@ namespace Corvus
                 TexturesAssets.emplace(Texture.UUID, std::move(Texture));
             }
 
-            //// Materials
-            // for (CMaterial &Material : LoadedModelData.Materials)
-            //{
-            //     Material.CompileMaterialShader("./Assets/Shaders/TestShader.glsl");
-            //     MaterialsAssets.emplace(Material.UUID, std::move(Material));
-            // }
+            // Materials
+            for (CMaterial &Material : LoadedModelData.Materials)
+            {
+                MaterialsAssets.emplace(Material.UUID, std::move(Material));
+            }
         }
 
         void WireUpAssets()
         {
             // Provide materials with their textures
-            // for (auto &[MaterialUUID, Material] : MaterialsAssets)
-            //{
-            //    if (Material.AlbedoMap.IsTexture())
-            //    {
-            //        FUUID AlbedoUUID = Material.AlbedoMap.TextureRef.GetUUID();
-            //        Material.AlbedoMap.TextureRef.SetRawPtr(&TexturesAssets.at(AlbedoUUID));
-            //    }
-            //}
+            for (auto &[MaterialUUID, Material] : MaterialsAssets)
+            {
+                FUUID AlbedoUUID = Material.Albedo.UUID;
+                Material.Albedo  = TexturesAssets.at(AlbedoUUID);
+            }
 
             // Provide StaticMeshPrimitives with their materials
-            // for (auto &[StaticModelUUID, StaticModel] : StaticModelsAssets)
-            //{
-            //    for (CStaticMesh &Mesh : StaticModel)
-            //    {
-            //        for (CStaticMeshPrimitive &Primitive : Mesh)
-            //        {
-            //            FUUID MaterialUUID = Primitive.MaterialRef.GetUUID();
-            //            Primitive.MaterialRef.SetRawPtr(&MaterialsAssets.at(MaterialUUID));
-            //        }
-            //    }
-            //}
-
-            // Provide StaticMeshPrimitives with their textures
-            auto it = TexturesAssets.begin();
             for (auto &[StaticModelUUID, StaticModel] : StaticModelsAssets)
             {
                 for (CStaticMesh &Mesh : StaticModel)
                 {
                     for (CStaticMeshPrimitive &Primitive : Mesh)
                     {
-                        FUUID TextureUUID   = Primitive.Texture2D.UUID;
-                        Primitive.Texture2D = it->second;
-                        std::advance(it, 1);
-                        if (it == TexturesAssets.end())
-                        {
-                            it = TexturesAssets.begin();
-                        }
+                        FUUID MaterialUUID = Primitive.Material.UUID;
+                        Primitive.Material = MaterialsAssets.at(MaterialUUID);
+                        Renderer().CreateMaterialRenderData(Primitive.Material);
                     }
                 }
             }
@@ -235,8 +213,8 @@ namespace Corvus
         }
 
     private:
-        std::unordered_map<FUUID, CTexture2D> TexturesAssets;
-        // std::unordered_map<FUUID, CMaterial>    MaterialsAssets;
+        std::unordered_map<FUUID, CTexture2D>   TexturesAssets;
+        std::unordered_map<FUUID, CMaterial>    MaterialsAssets;
         std::unordered_map<FUUID, CStaticModel> StaticModelsAssets;
 
         bool     bCameraMode = false;

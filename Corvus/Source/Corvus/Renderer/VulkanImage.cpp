@@ -185,9 +185,10 @@ namespace Corvus
             {
                 return Format;
             }
-
-            CORVUS_CORE_CRITICAL("Could not find requested Vulkan Format!");
         }
+
+        CORVUS_CORE_CRITICAL("Could not find requested Vulkan Format!");
+        return VK_FORMAT_UNDEFINED;
     }
 
     bool CRenderer::bFormatSupportsStencilData(VkFormat Format)

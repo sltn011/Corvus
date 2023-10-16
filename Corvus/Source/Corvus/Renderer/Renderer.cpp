@@ -241,7 +241,7 @@ namespace Corvus
                     m_PipelineLayout,
                     1,
                     1,
-                    &Primitive.Texture2D.DescriptorSet,
+                    &Primitive.Material.DescriptorSet,
                     0,
                     nullptr
                 );

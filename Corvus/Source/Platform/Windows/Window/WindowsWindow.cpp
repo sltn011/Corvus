@@ -56,7 +56,7 @@ namespace Corvus
         if (!m_Window)
         {
             Destroy();
-            CORVUS_NO_ENTRY_FMT("Failed to create window!");
+            CORVUS_CORE_NO_ENTRY_FMT("Failed to create window!");
         }
 
         CORVUS_CORE_INFO("Window \"{0}\" created", m_WindowData.WindowName);

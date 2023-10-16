@@ -17,6 +17,7 @@ namespace Corvus
     class CStaticModel;
     class CImageData;
     struct CTexture2D;
+    struct CMaterial;
 
     class CRenderer
     {
@@ -73,6 +74,11 @@ namespace Corvus
         // Textures
         CTexture2D CreateTexture2D(CImageData const &ImageData, VkSampler TextureSampler);
         void       DestroyTexture2D(CTexture2D &Texture2D);
+
+    public:
+        // Materials
+        void CreateMaterialRenderData(CMaterial &Material);
+        void DestroyMaterialRenderData(CMaterial &Material);
 
     private:
         void SetModelMatrix(FMatrix4 const &ModelMatrix);

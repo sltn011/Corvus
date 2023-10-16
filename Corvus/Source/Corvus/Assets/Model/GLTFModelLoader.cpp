@@ -213,9 +213,7 @@ namespace Corvus
             return Textures;
         }
 
-        std::vector<CMaterial> LoadMaterials(tinygltf::Model const &GLTFModel)
-        // std::vector<CMaterial> LoadMaterials(tinygltf::Model const &GLTFModel, std::vector<CTexture2D> const
-        // &Textures)
+        std::vector<CMaterial> LoadMaterials(tinygltf::Model const &GLTFModel, std::vector<CTexture2D> const &Textures)
         {
             std::vector<CMaterial> Materials(GLTFModel.materials.size());
 
@@ -227,6 +225,8 @@ namespace Corvus
                 // Albedo
                 if (MaterialInfo.pbrMetallicRoughness.baseColorTexture.index == -1) // Vertex color
                 {
+                    CORVUS_CORE_NO_ENTRY_FMT("Models without albedo not supported!");
+
                     std::vector<double> const &VertexColorData = MaterialInfo.pbrMetallicRoughness.baseColorFactor;
 
                     FVector4 VertexColor{};
@@ -240,9 +240,8 @@ namespace Corvus
                 }
                 else // Albedo map
                 {
-                    Int32 AlbedoIndex = MaterialInfo.pbrMetallicRoughness.baseColorTexture.index;
-                    // Material.AlbedoMap.TextureRef.SetUUID(Textures[AlbedoIndex].UUID);
-                    // Material.AlbedoMap.UseTexture();
+                    Int32 AlbedoIndex    = MaterialInfo.pbrMetallicRoughness.baseColorTexture.index;
+                    Material.Albedo.UUID = Textures[AlbedoIndex].UUID;
                 }
 
                 // TODO: Normals
@@ -639,10 +638,16 @@ namespace Corvus
             CVulkanBuffer VertexBuffer = Renderer().CreateVertexBuffer(VertexData);
             CVulkanBuffer IndexBuffer  = Renderer().CreateIndexBuffer(IndicesData);
 
-            // CMaterial const     &Material = GetPrimitiveMaterial(Primitive, Materials);
-            //  MeshPrimitive.MaterialRef.SetUUID(Material.UUID);
+            CMaterial const &Material = GetPrimitiveMaterial(Primitive, Materials);
 
-            return CStaticMeshPrimitive{VertexBuffer, std::move(VertexData), IndexBuffer, std::move(IndicesData)};
+            CStaticMeshPrimitive MeshPrimitive;
+            MeshPrimitive.VertexBuffer  = VertexBuffer;
+            MeshPrimitive.VertexData    = std::move(VertexData);
+            MeshPrimitive.IndexBuffer   = IndexBuffer;
+            MeshPrimitive.IndexData     = std::move(IndicesData);
+            MeshPrimitive.Material.UUID = Material.UUID;
+
+            return MeshPrimitive;
         }
 
         CStaticMesh ProcessMesh(
@@ -699,9 +704,8 @@ namespace Corvus
 
         SStaticModelLoadedData ProcessModel(tinygltf::Model const &GLTFModel)
         {
-            std::vector<CTexture2D> Textures = LoadTextures(GLTFModel);
-            // std::vector<CMaterial> Materials = LoadMaterials(GLTFModel, Textures);
-            std::vector<CMaterial> Materials = LoadMaterials(GLTFModel);
+            std::vector<CTexture2D> Textures  = LoadTextures(GLTFModel);
+            std::vector<CMaterial>  Materials = LoadMaterials(GLTFModel, Textures);
 
             CStaticModel StaticModel;
 
@@ -717,7 +721,7 @@ namespace Corvus
             SStaticModelLoadedData LoadedData;
             LoadedData.StaticModel = std::move(StaticModel);
             LoadedData.Textures    = std::move(Textures);
-            // LoadedData.Materials   = std::move(Materials);
+            LoadedData.Materials   = std::move(Materials);
             return LoadedData;
         }
 
