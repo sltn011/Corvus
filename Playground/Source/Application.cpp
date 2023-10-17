@@ -29,7 +29,28 @@ namespace Corvus
             WireUpAssets();
         }
 
-        ~CApplicationLayer() {}
+        ~CApplicationLayer()
+        {
+            for (auto &[UUID, Model] : StaticModelsAssets) // TODO: Move somewhere else
+            {
+                for (CStaticMesh &Mesh : Model)
+                {
+                    for (CStaticMeshPrimitive &Primitive : Mesh)
+                    {
+                        Renderer().DestroyBuffer(Primitive.VertexBuffer);
+                        Renderer().DestroyBuffer(Primitive.IndexBuffer);
+                    }
+                }
+            }
+            for (auto &[UUID, Material] : MaterialsAssets)
+            {
+                Renderer().DestroyMaterialRenderData(Material);
+            }
+            for (auto &[UUID, Texture] : TexturesAssets)
+            {
+                Renderer().DestroyTexture2D(Texture);
+            }
+        }
 
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
         {

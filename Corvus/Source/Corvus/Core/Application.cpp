@@ -31,6 +31,11 @@ namespace Corvus
 
     CApplication::~CApplication()
     {
+        while (!m_LayersStack.Empty())
+        {
+            m_LayersStack.PopLayer();
+        }
+
         m_Window->DestroyGUIController();
         DestroyRenderer();
         s_ApplicationInstance = nullptr;
@@ -73,18 +78,6 @@ namespace Corvus
         }
 
         Renderer().AwaitIdle();
-        for (TPoolable<CEntity> &Entity : Scene.GetEntities()) // TODO: Move somewhere else
-        {
-            CStaticModel &Model = *Entity->StaticMeshComponent->StaticModelRef.GetRawPtr();
-            for (CStaticMesh &Mesh : Model)
-            {
-                for (CStaticMeshPrimitive &Primitive : Mesh)
-                {
-                    Renderer().DestroyBuffer(Primitive.VertexBuffer);
-                    Renderer().DestroyBuffer(Primitive.IndexBuffer);
-                }
-            }
-        }
     }
 
     void CApplication::PushLayer(TOwn<CLayer> &&NewLayer)
@@ -92,9 +85,14 @@ namespace Corvus
         m_LayersStack.PushLayer(std::move(NewLayer));
     }
 
-    TOwn<CLayer> CApplication::PopLayer()
+    void CApplication::PopLayer()
     {
-        return m_LayersStack.PopLayer();
+        m_LayersStack.PopLayer();
+    }
+
+    TOwn<CLayer> &CApplication::TopLayer()
+    {
+        return m_LayersStack.TopLayer();
     }
 
     void CApplication::UpdateLayers(FTimeDelta ElapsedTime)

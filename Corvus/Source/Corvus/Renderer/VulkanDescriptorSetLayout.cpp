@@ -66,6 +66,12 @@ namespace Corvus
             m_PerFrameDescriptorSetLayout = VK_NULL_HANDLE;
             CORVUS_CORE_TRACE("Vulkan Descriptor Set Layout destroyed");
         }
+        if (m_PerDrawDescriptorSetLayout)
+        {
+            vkDestroyDescriptorSetLayout(m_Device, m_PerDrawDescriptorSetLayout, nullptr);
+            m_PerDrawDescriptorSetLayout = VK_NULL_HANDLE;
+            CORVUS_CORE_TRACE("Vulkan Descriptor Set Layout destroyed");
+        }
     }
 
 } // namespace Corvus

@@ -50,6 +50,5 @@ namespace Corvus
     void CRenderer::DestroyMaterialRenderData(CMaterial &Material)
     {
         FreeDescriptorSets(m_PerDrawDescriptorPool, &Material.DescriptorSet, 1);
-        DestroyTexture2D(Material.Albedo);
     }
 } // namespace Corvus

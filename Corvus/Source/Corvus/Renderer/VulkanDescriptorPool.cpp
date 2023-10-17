@@ -37,6 +37,7 @@ namespace Corvus
             DescriptorPoolInfo.poolSizeCount = static_cast<UInt32>(DescriptorPoolSizes.size());
             DescriptorPoolInfo.pPoolSizes    = DescriptorPoolSizes.data();
             DescriptorPoolInfo.maxSets       = 128;
+            DescriptorPoolInfo.flags         = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 
             if (vkCreateDescriptorPool(m_Device, &DescriptorPoolInfo, nullptr, &m_PerDrawDescriptorPool) != VK_SUCCESS)
             {
@@ -81,6 +82,12 @@ namespace Corvus
         {
             vkDestroyDescriptorPool(m_Device, m_PerFrameDescriptorPool, nullptr);
             m_PerFrameDescriptorPool = VK_NULL_HANDLE;
+            CORVUS_CORE_TRACE("Vulkan Descriptor Pool destroyed");
+        }
+        if (m_PerDrawDescriptorPool)
+        {
+            vkDestroyDescriptorPool(m_Device, m_PerDrawDescriptorPool, nullptr);
+            m_PerDrawDescriptorPool = VK_NULL_HANDLE;
             CORVUS_CORE_TRACE("Vulkan Descriptor Pool destroyed");
         }
         if (m_GUIDescriptorPool)

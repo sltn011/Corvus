@@ -26,8 +26,9 @@ namespace Corvus
         void Init();
         void Run();
 
-        void                       PushLayer(TOwn<CLayer> &&NewLayer);
-        [[nodiscard]] TOwn<CLayer> PopLayer();
+        void          PushLayer(TOwn<CLayer> &&NewLayer);
+        void          PopLayer();
+        TOwn<CLayer> &TopLayer();
 
         void UpdateLayers(FTimeDelta ElapsedTime);
         void RenderLayers();

@@ -24,8 +24,8 @@ namespace Corvus
 
     void CRenderer::DestroyTexture2D(CTexture2D &Texture2D)
     {
-        DestroyImage(Texture2D.Image);
         DestroyImageView(Texture2D.ImageView);
+        DestroyImage(Texture2D.Image);
     }
 
 } // namespace Corvus
