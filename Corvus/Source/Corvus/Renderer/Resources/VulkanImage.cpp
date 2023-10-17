@@ -1,6 +1,6 @@
 #include "CorvusPCH.h"
 
-#include "Corvus/Renderer/VulkanImage.h"
+#include "Corvus/Renderer/Resources/VulkanImage.h"
 
 #include "Corvus/Assets/Texture/ImageData.h"
 #include "Corvus/Renderer/Renderer.h"

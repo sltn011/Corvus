@@ -4,7 +4,7 @@
 #include "Corvus/Assets/AssetRef.h"
 #include "Corvus/Assets/Material/Material.h"
 #include "Corvus/Renderer/Data/Vertex.h"
-#include "Corvus/Renderer/VulkanBuffer.h"
+#include "Corvus/Renderer/Memory/VulkanBuffer.h"
 
 namespace Corvus
 {

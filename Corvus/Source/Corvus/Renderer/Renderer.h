@@ -2,13 +2,13 @@
 #define CORVUS_SOURCE_CORVUS_RENDERER_RENDERER_H
 
 #include "Corvus/Core/Base.h"
+#include "Corvus/Renderer/Core/VulkanQueueFamilyIndices.h"
+#include "Corvus/Renderer/Core/VulkanQueues.h"
+#include "Corvus/Renderer/Core/VulkanSwapchainSupportDetails.h"
 #include "Corvus/Renderer/Data/UBOs.h"
-#include "Corvus/Renderer/VulkanBuffer.h"
-#include "Corvus/Renderer/VulkanImage.h"
-#include "Corvus/Renderer/VulkanQueueFamilyIndices.h"
-#include "Corvus/Renderer/VulkanQueues.h"
-#include "Corvus/Renderer/VulkanSampler.h"
-#include "Corvus/Renderer/VulkanSwapchainSupportDetails.h"
+#include "Corvus/Renderer/Memory/VulkanBuffer.h"
+#include "Corvus/Renderer/Resources/VulkanImage.h"
+#include "Corvus/Renderer/Resources/VulkanSampler.h"
 
 #include <vulkan/vulkan.h>
 
@@ -404,7 +404,7 @@ namespace Corvus
 
 } // namespace Corvus
 
-#include "Corvus/Renderer/VulkanBuffer.inl"
-#include "Corvus/Renderer/VulkanDescriptorSet.inl"
+#include "Corvus/Renderer/Memory/VulkanBuffer.inl"
+#include "Corvus/Renderer/Resources/VulkanDescriptorSet.inl"
 
 #endif // !CORVUS_SOURCE_CORVUS_RENDERER_RENDERER_H

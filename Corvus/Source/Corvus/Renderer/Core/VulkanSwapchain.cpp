@@ -1,8 +1,8 @@
 #include "CorvusPCH.h"
 
 #include "Corvus/Core/Application.h"
+#include "Corvus/Renderer/Core/VulkanSwapchainSupportDetails.h"
 #include "Corvus/Renderer/Renderer.h"
-#include "Corvus/Renderer/VulkanSwapchainSupportDetails.h"
 
 namespace Corvus
 {

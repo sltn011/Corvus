@@ -2,7 +2,7 @@
 #define CORVUS_SOURCE_CORVUS_ASSETS_TEXTURE_TEXTURE2D_H
 
 #include "Corvus/Core/UUID.h"
-#include "Corvus/Renderer/VulkanImage.h"
+#include "Corvus/Renderer/Resources/VulkanImage.h"
 
 namespace Corvus
 {

@@ -1,6 +1,6 @@
 #include "CorvusPCH.h"
 
-#include "Corvus/Renderer/VulkanQueues.h"
+#include "Corvus/Renderer/Core/VulkanQueues.h"
 
 #include "Corvus/Renderer/Renderer.h"
 
