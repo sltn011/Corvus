@@ -10,18 +10,10 @@
 namespace Corvus
 {
 
-    CImageData CImageDataLoader::LoadFromImageFile(
-        CString const &FilePath, ELoadImageChannels const ChannelsToLoad
-    )
+    CImageData CImageDataLoader::LoadFromImageFile(CString const &FilePath, ELoadImageChannels const ChannelsToLoad)
     {
         CORVUS_CORE_TRACE("Loading Image {}", FilePath);
         FTimePoint ImageLoadStart;
-
-        if (!FFileSystem::FileExists(FilePath))
-        {
-            CORVUS_CORE_ERROR("Image file {} not found!", FilePath);
-            return {};
-        }
 
         // Handle Don'tCare value of loaded channels
         ELoadImageChannels RealChannelsToLoad = CalculateChannelsToLoad(ChannelsToLoad);
@@ -51,7 +43,7 @@ namespace Corvus
     }
 
     CImageData CImageDataLoader::LoadFromMemory(
-        UInt8 const *ImageData, SizeT ImageWidth, SizeT ImageHeight, EPixelFormat PixelFormat, bool bIsSRGB
+        void const *ImageData, SizeT ImageWidth, SizeT ImageHeight, VkFormat PixelFormat, bool bIsSRGB
     )
     {
         CORVUS_CORE_ASSERT(ImageData != nullptr);
@@ -63,63 +55,71 @@ namespace Corvus
         CImageData Image;
         Image.m_ImageRawData.resize(DataBytes);
         std::memcpy(Image.m_ImageRawData.data(), ImageData, DataBytes);
-        Image.m_ImageFormat.TextureWidth  = ImageWidth;
-        Image.m_ImageFormat.TextureHeight = ImageHeight;
-        Image.m_ImageFormat.PixelFormat   = PixelFormat;
+        Image.m_ImageWidth  = ImageWidth;
+        Image.m_ImageHeight = ImageHeight;
+        Image.m_PixelFormat = PixelFormat;
+        Image.m_bIsSRGB     = bIsSRGB;
+
+        if (!IsPixelFormatFloat(PixelFormat) && PixelFormatComponentSize(PixelFormat) == 1 &&
+            PixelFormatNumComponents(PixelFormat) == 3)
+        {
+            Image.m_ImageRawData = AddAlphaChannel(
+                Image.m_ImageRawData.data(), ImageWidth, ImageHeight, ELoadImageChannels::RGB, PixelFormat
+            );
+            Image.m_PixelFormat = VK_FORMAT_R8G8B8A8_SRGB;
+        }
+
         return Image;
     }
 
     CImageData CImageDataLoader::LoadHDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad)
     {
-        EPixelFormat PixelFormat = EPixelFormat::R8; // HDR should have float value - use R8 as a check
+        VkFormat PixelFormat;
         switch (ChannelsToLoad)
         {
         case ELoadImageChannels::R:
-            PixelFormat = EPixelFormat::R32F;
+            PixelFormat = VK_FORMAT_R16_SFLOAT;
             break;
         case ELoadImageChannels::RG:
-            PixelFormat = EPixelFormat::RG32F;
+            PixelFormat = VK_FORMAT_R16G16_SFLOAT;
             break;
         case ELoadImageChannels::RGB:
-            PixelFormat = EPixelFormat::RGB32F;
+            PixelFormat = VK_FORMAT_R16G16B16_SFLOAT;
             break;
         case ELoadImageChannels::RGBA:
-            PixelFormat = EPixelFormat::RGBA32F;
+            PixelFormat = VK_FORMAT_R16G16B16A16_SFLOAT;
             break;
         default:
             break;
         }
-        CORVUS_CORE_ASSERT(IsPixelFormatFloat(PixelFormat));
-
         return LoadImageImpl(FilePath, ChannelsToLoad, PixelFormat);
     }
 
     CImageData CImageDataLoader::LoadLDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad)
     {
-        EPixelFormat PixelFormat = EPixelFormat::R32F; // LDR should have UByte values - use float as a check
+        VkFormat PixelFormat;
         switch (ChannelsToLoad)
         {
         case ELoadImageChannels::R:
-            PixelFormat = EPixelFormat::R8;
+            PixelFormat = VK_FORMAT_R8_SRGB;
             break;
         case ELoadImageChannels::RG:
-            PixelFormat = EPixelFormat::RG8;
+            PixelFormat = VK_FORMAT_R8G8_SRGB;
             break;
         case ELoadImageChannels::RGB:
-            PixelFormat = EPixelFormat::RGB8;
+            PixelFormat = VK_FORMAT_R8G8B8_SRGB;
             break;
         case ELoadImageChannels::RGBA:
-            PixelFormat = EPixelFormat::RGBA8;
+            PixelFormat = VK_FORMAT_R8G8B8A8_SRGB;
             break;
         default:
             break;
         }
-        CORVUS_CORE_ASSERT(!IsPixelFormatFloat(PixelFormat));
         return LoadImageImpl(FilePath, ChannelsToLoad, PixelFormat);
     }
 
     CImageData CImageDataLoader::LoadImageImpl(
-        CString const &FilePath, ELoadImageChannels const ChannelsToLoad, EPixelFormat const PixelFormat
+        CString const &FilePath, ELoadImageChannels const ChannelsToLoad, VkFormat PixelFormat
     )
     {
         int Width               = 0;
@@ -131,7 +131,6 @@ namespace Corvus
         stbi_set_flip_vertically_on_load(true);
         if (IsPixelFormatFloat(PixelFormat))
         {
-            // Load from .HDR file
             ImageData = reinterpret_cast<UInt8 *>(
                 stbi_loadf(FilePath.c_str(), &Width, &Height, &NumChannels, RequiredNumChannels)
             );
@@ -150,26 +149,26 @@ namespace Corvus
             return CImageData{};
         }
 
-        SizeT  ImageWidth  = static_cast<SizeT>(Width);
-        SizeT  ImageHeight = static_cast<SizeT>(Height);
-        UInt8 *FormattedData =
-            FormatImageData(ImageData, ImageWidth, ImageHeight, ChannelsToLoad, PixelFormat);
+        SizeT  ImageWidth    = static_cast<SizeT>(Width);
+        SizeT  ImageHeight   = static_cast<SizeT>(Height);
+        UInt8 *FormattedData = FormatImageData(ImageData, ImageWidth, ImageHeight, ChannelsToLoad, PixelFormat);
 
         SizeT DataBytes = ImageWidth * ImageHeight * PixelFormatElementSize(PixelFormat);
 
         CImageData Image;
         Image.m_ImageRawData.resize(DataBytes);
         std::memcpy(Image.m_ImageRawData.data(), FormattedData, DataBytes);
-        Image.m_ImageFormat.TextureWidth  = ImageWidth;
-        Image.m_ImageFormat.TextureHeight = ImageHeight;
-        Image.m_ImageFormat.PixelFormat   = PixelFormat;
+        Image.m_ImageWidth  = ImageWidth;
+        Image.m_ImageHeight = ImageHeight;
+        Image.m_PixelFormat = PixelFormat;
+        Image.m_bIsSRGB     = !IsPixelFormatFloat(PixelFormat);
 
         stbi_image_free(ImageData);
 
         return Image;
     }
 
-    int CImageDataLoader::CalculateRequiredNumChannels(ELoadImageChannels const ChannelsToLoad)
+    Int32 CImageDataLoader::CalculateRequiredNumChannels(ELoadImageChannels const ChannelsToLoad)
     {
         switch (ChannelsToLoad)
         {
@@ -192,12 +191,78 @@ namespace Corvus
         }
     }
 
+    SizeT CImageDataLoader::PixelFormatElementSize(VkFormat PixelFormat)
+    {
+        return PixelFormatComponentSize(PixelFormat) * PixelFormatNumComponents(PixelFormat);
+    }
+
+    SizeT CImageDataLoader::PixelFormatComponentSize(VkFormat PixelFormat)
+    {
+        switch (PixelFormat)
+        {
+        case VK_FORMAT_R8_SRGB:
+        case VK_FORMAT_R8G8_SRGB:
+        case VK_FORMAT_R8G8B8_SRGB:
+        case VK_FORMAT_R8G8B8A8_SRGB:
+            return 1;
+
+        case VK_FORMAT_R16_SFLOAT:
+        case VK_FORMAT_R16G16_SFLOAT:
+        case VK_FORMAT_R16G16B16_SFLOAT:
+        case VK_FORMAT_R16G16B16A16_SFLOAT:
+            return 2;
+        default:
+            CORVUS_CORE_NO_ENTRY();
+            return 0;
+        }
+    }
+
+    SizeT CImageDataLoader::PixelFormatNumComponents(VkFormat PixelFormat)
+    {
+        switch (PixelFormat)
+        {
+        case VK_FORMAT_R8_SRGB:
+        case VK_FORMAT_R16_SFLOAT:
+            return 1;
+
+        case VK_FORMAT_R8G8_SRGB:
+        case VK_FORMAT_R16G16_SFLOAT:
+            return 2;
+
+        case VK_FORMAT_R8G8B8_SRGB:
+        case VK_FORMAT_R16G16B16_SFLOAT:
+            return 3;
+
+        case VK_FORMAT_R8G8B8A8_SRGB:
+        case VK_FORMAT_R16G16B16A16_SFLOAT:
+            return 4;
+
+        default:
+            CORVUS_CORE_NO_ENTRY();
+            return 0;
+        }
+    }
+
+    bool CImageDataLoader::IsPixelFormatFloat(VkFormat PixelFormat)
+    {
+        switch (PixelFormat)
+        {
+        case VK_FORMAT_R16_SFLOAT:
+        case VK_FORMAT_R16G16_SFLOAT:
+        case VK_FORMAT_R16G16B16_SFLOAT:
+        case VK_FORMAT_R16G16B16A16_SFLOAT:
+            return true;
+        default:
+            return false;
+        }
+    }
+
     UInt8 *CImageDataLoader::FormatImageData(
         UInt8                   *ImageData,
         SizeT const              ImageWidth,
         SizeT const              ImageHeight,
         ELoadImageChannels const ChannelsToLoad,
-        EPixelFormat const       PixelFormat
+        VkFormat const           PixelFormat
     )
     {
         // Only needs formatting when loading R or RG channels - stb image loads
@@ -207,13 +272,12 @@ namespace Corvus
             return ImageData;
         }
 
-        UInt8 const *Source      = ImageData;
-        UInt8       *Destination = ImageData;
-        SizeT const  Size        = ImageWidth * ImageHeight;
-        SizeT const  ComponentsInSrc =
-            3; // 1 and 2 channeled images are forced to load with 3 channels at first
-        SizeT const ComponentsInDst = ChannelsToLoad == ELoadImageChannels::R ? 1 : 2; // 1 for R, 2 for RG
-        SizeT const SizeOfComponent = PixelFormatComponentSize(PixelFormat);
+        UInt8 const *Source          = ImageData;
+        UInt8       *Destination     = ImageData;
+        SizeT const  Size            = ImageWidth * ImageHeight;
+        SizeT const  ComponentsInSrc = 3; // 1 and 2 channeled images are forced to load with 3 channels at first
+        SizeT const  ComponentsInDst = ChannelsToLoad == ELoadImageChannels::R ? 1 : 2; // 1 for R, 2 for RG
+        SizeT const  SizeOfComponent = PixelFormatComponentSize(PixelFormat);
 
         SizeT const SrcStep = ComponentsInSrc * SizeOfComponent;
         SizeT const DstStep = ComponentsInDst * SizeOfComponent;
@@ -234,6 +298,55 @@ namespace Corvus
         }
 
         return ImageData;
+    }
+
+    std::vector<UInt8> CImageDataLoader::AddAlphaChannel(
+        UInt8 *ImageData, SizeT ImageWidth, SizeT ImageHeight, ELoadImageChannels ChannelsToLoad, VkFormat PixelFormat
+    )
+    {
+        if (IsPixelFormatFloat(PixelFormat))
+        {
+            CORVUS_CRITICAL("Adding Alpha Channel to HDR textures not supported!");
+        }
+
+        if (ChannelsToLoad != ELoadImageChannels::RGB)
+        {
+            CORVUS_CRITICAL("Adding Alpha Channel supported only for RGB textures!");
+        }
+
+        if (PixelFormatComponentSize(PixelFormat) != 1)
+        {
+            CORVUS_CRITICAL("Adding Alpha Channel supported only for 8bit channel textures!");
+        }
+
+        struct OldFormat
+        {
+            UInt8 R;
+            UInt8 G;
+            UInt8 B;
+        };
+
+        struct NewFormat
+        {
+            OldFormat Color;
+            UInt8     Alpha;
+        };
+
+        static constexpr SizeT OldStride = sizeof(OldFormat);
+        static constexpr SizeT NewStride = sizeof(NewFormat);
+
+        SizeT              NumPixels = ImageWidth * ImageHeight;
+        SizeT              OldSize   = NumPixels * 3;
+        SizeT              NewSize   = NumPixels * 4;
+        std::vector<UInt8> UpdatedImage(NewSize);
+        for (SizeT i = 0; i < NumPixels; ++i)
+        {
+            OldFormat OldPixel = *(reinterpret_cast<OldFormat *>(ImageData) + i);
+            NewFormat NewPixel{OldPixel, 255};
+            *(reinterpret_cast<NewFormat *>(UpdatedImage.data()) + i) = NewPixel;
+        }
+
+        return UpdatedImage;
     }
 
     ELoadImageChannels CImageDataLoader::CalculateChannelsToLoad(ELoadImageChannels const ChannelsToLoad)

@@ -7,7 +7,7 @@
 namespace Corvus
 {
 
-    class CStaticMeshPrimitive;
+    struct CStaticMeshPrimitive;
 
     class CStaticMesh
     {

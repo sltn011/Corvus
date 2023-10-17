@@ -45,7 +45,7 @@ namespace Corvus
     {
         if (MeshIndex >= GetNumMeshes())
         {
-            CORVUS_NO_ENTRY_FMT("Invalid StaticMesh Index!");
+            CORVUS_CORE_NO_ENTRY_FMT("Invalid StaticMesh Index!");
         }
         return m_Meshes[MeshIndex];
     }

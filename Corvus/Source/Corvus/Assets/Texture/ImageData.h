@@ -1,7 +1,9 @@
 #ifndef CORVUS_SOURCE_CORVUS_ASSETS_TEXTURE_IMAGEDATA_H
 #define CORVUS_SOURCE_CORVUS_ASSETS_TEXTURE_IMAGEDATA_H
 
-#include "Corvus/Renderer/TextureInfo.h"
+#include "Corvus/Core/Base.h"
+
+#include <vulkan/vulkan.h>
 
 namespace Corvus
 {
@@ -16,12 +18,26 @@ namespace Corvus
         CImageData() = default;
 
     public:
-        STextureDataFormat GetImageFormat() const { return m_ImageFormat; }
-        UInt8 const       *GetImageRawData() const { return m_ImageRawData.data(); }
+        SizeT        GetImageWidth() const { return m_ImageWidth; }
+        SizeT        GetImageHeight() const { return m_ImageHeight; }
+        UInt8 const *GetImageRawData() const { return m_ImageRawData.data(); }
+        SizeT        GetImageSize() const { return m_ImageRawData.size(); }
+        VkFormat     GetPixelFormat() const { return m_PixelFormat; }
+        bool         IsSRGB() const { return m_bIsSRGB; }
+
+        void SetIsSRGB(bool bValue) { m_bIsSRGB = bValue; }
+
+        UInt8 GetMaxMipLevel() const
+        {
+            return FMath::Floor<UInt8>(FMath::Log2(static_cast<float>(FMath::Max(m_ImageWidth, m_ImageHeight)))) + 1;
+        }
 
     private:
-        STextureDataFormat m_ImageFormat;
+        SizeT              m_ImageWidth  = 0;
+        SizeT              m_ImageHeight = 0;
         std::vector<UInt8> m_ImageRawData;
+        VkFormat           m_PixelFormat = VK_FORMAT_UNDEFINED;
+        bool               m_bIsSRGB     = false;
     };
 
 } // namespace Corvus
