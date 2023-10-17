@@ -11,16 +11,6 @@ namespace Corvus
         return MakeOwned<PWindowsWindow>();
     }
 
-    bool CWindow::IsVSyncEnabled() const
-    {
-        if (!m_bIsInitialized)
-        {
-            return false;
-        }
-
-        return m_WindowData.bVSyncEnabled;
-    }
-
     bool CWindow::IsFullScreen() const
     {
         if (!m_bIsInitialized)

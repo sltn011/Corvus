@@ -7,9 +7,9 @@
 namespace Corvus
 {
 
-    class CMaterial;
+    struct CMaterial;
     class CStaticModel;
-    class CTexture2D;
+    struct CTexture2D;
 
     struct SStaticModelLoadedData
     {

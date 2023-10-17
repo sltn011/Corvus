@@ -2,6 +2,7 @@
 
 #include "Corvus/Assets/Model/GLTFModelLoader.h"
 
+#include "Corvus/Assets/Material/Material.h"
 #include "Corvus/Assets/Model/StaticMesh.h"
 #include "Corvus/Assets/Model/StaticMeshPrimitive.h"
 #include "Corvus/Assets/Model/StaticModel.h"
@@ -10,15 +11,15 @@
 #include "Corvus/Assets/Texture/Texture2D.h"
 #include "Corvus/Math/Matrix.h"
 #include "Corvus/Math/Quaternion.h"
-#include "Corvus/Renderer/IndexBuffer.h"
-#include "Corvus/Renderer/Shader.h"
-#include "Corvus/Renderer/Texture2DBuffer.h"
-#include "Corvus/Renderer/VertexArray.h"
-#include "Corvus/Renderer/VertexBuffer.h"
+#include "Corvus/Renderer/Data/Vertex.h"
+#include "Corvus/Renderer/Renderer.h"
 
 #define TINYGLTF_IMPLEMENTATION
 #define TINYGLTF_NO_STB_IMAGE_WRITE
 #include <tiny_gltf.h>
+
+//
+#include <stb_image.h>
 
 namespace Corvus
 {
@@ -116,54 +117,40 @@ namespace Corvus
             return ElementFormat;
         }
 
-        STextureParameters ProcessNoTextureSampler()
-        {
-            STextureParameters TextureParameters;
-            TextureParameters.MinFiltering = ETextureFiltering::LinearMipMap_Linear;
-            TextureParameters.MagFiltering = ETextureFiltering::Linear;
-            TextureParameters.WrappingS    = ETextureWrapping::Repeat;
-            TextureParameters.WrappingT    = ETextureWrapping::Repeat;
-            TextureParameters.WrappingR    = ETextureWrapping::Repeat;
+        // STextureParameters ProcessTextureSampler(tinygltf::Sampler const &Sampler)
+        //{
+        //     static const std::unordered_map<int, ETextureFiltering> TextureFiltering{
+        //         // clang-format off
+        //         {-1,                                             ETextureFiltering::Linear},
+        //         {TINYGLTF_TEXTURE_FILTER_NEAREST,                ETextureFiltering::Nearest},
+        //         {TINYGLTF_TEXTURE_FILTER_LINEAR,                 ETextureFiltering::Linear},
+        //         {TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST, ETextureFiltering::NearestMipMap_Nearest},
+        //         {TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR,  ETextureFiltering::LinearMipMap_Nearest},
+        //         {TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,  ETextureFiltering::NearestMipMap_Linear},
+        //         {TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR,   ETextureFiltering::LinearMipMap_Linear}
+        //         // clang-format on
+        //     };
 
-            TextureParameters.bHasMipmaps              = true;
-            TextureParameters.bHasAnisotropicFiltering = true;
-            return TextureParameters;
-        }
+        //    static const std::unordered_map<int, ETextureWrapping> TextureWrapping{
+        //        // clang-format off
+        //        {TINYGLTF_TEXTURE_WRAP_CLAMP_TO_EDGE,   ETextureWrapping::ClampToEdge},
+        //        {TINYGLTF_TEXTURE_WRAP_MIRRORED_REPEAT, ETextureWrapping::MirrorRepeat},
+        //        {TINYGLTF_TEXTURE_WRAP_REPEAT,          ETextureWrapping::Repeat}
+        //        // No value for ETextureWrapping::Border
+        //        // clang-format on
+        //    };
 
-        STextureParameters ProcessTextureSampler(tinygltf::Sampler const &Sampler)
-        {
-            static const std::unordered_map<int, ETextureFiltering> TextureFiltering{
-                // clang-format off
-                {-1,                                             ETextureFiltering::Linear},
-                {TINYGLTF_TEXTURE_FILTER_NEAREST,                ETextureFiltering::Nearest},
-                {TINYGLTF_TEXTURE_FILTER_LINEAR,                 ETextureFiltering::Linear},
-                {TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST, ETextureFiltering::NearestMipMap_Nearest},
-                {TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR,  ETextureFiltering::LinearMipMap_Nearest},
-                {TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,  ETextureFiltering::NearestMipMap_Linear},
-                {TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR,   ETextureFiltering::LinearMipMap_Linear}
-                // clang-format on
-            };
+        //    STextureParameters TextureParameters;
+        //    TextureParameters.MinFiltering = TextureFiltering.at(Sampler.minFilter);
+        //    TextureParameters.MagFiltering = TextureFiltering.at(Sampler.magFilter);
+        //    TextureParameters.WrappingS    = TextureWrapping.at(Sampler.wrapS);
+        //    TextureParameters.WrappingT    = TextureWrapping.at(Sampler.wrapT);
+        //    TextureParameters.WrappingR    = ETextureWrapping::Repeat; // no value in gltf
 
-            static const std::unordered_map<int, ETextureWrapping> TextureWrapping{
-                // clang-format off
-                {TINYGLTF_TEXTURE_WRAP_CLAMP_TO_EDGE,   ETextureWrapping::ClampToEdge},
-                {TINYGLTF_TEXTURE_WRAP_MIRRORED_REPEAT, ETextureWrapping::MirrorRepeat},
-                {TINYGLTF_TEXTURE_WRAP_REPEAT,          ETextureWrapping::Repeat}
-                // No value for ETextureWrapping::Border
-                // clang-format on
-            };
-
-            STextureParameters TextureParameters;
-            TextureParameters.MinFiltering = TextureFiltering.at(Sampler.minFilter);
-            TextureParameters.MagFiltering = TextureFiltering.at(Sampler.magFilter);
-            TextureParameters.WrappingS    = TextureWrapping.at(Sampler.wrapS);
-            TextureParameters.WrappingT    = TextureWrapping.at(Sampler.wrapT);
-            TextureParameters.WrappingR    = ETextureWrapping::Repeat; // no value in gltf
-
-            TextureParameters.bHasMipmaps              = true;
-            TextureParameters.bHasAnisotropicFiltering = true;
-            return TextureParameters;
-        }
+        //    TextureParameters.bHasMipmaps              = true;
+        //    TextureParameters.bHasAnisotropicFiltering = true;
+        //    return TextureParameters;
+        //}
 
         CImageData ProcessImage(tinygltf::Image const &Image)
         {
@@ -173,20 +160,20 @@ namespace Corvus
                 "Only 8 bit images are allowed in GLTF models!"
             );
 
-            EPixelFormat PixelFormat = EPixelFormat::RGBA8;
+            VkFormat PixelFormat;
             switch (Image.component)
             {
             case 1:
-                PixelFormat = EPixelFormat::R8;
+                PixelFormat = VK_FORMAT_R8_SRGB;
                 break;
             case 2:
-                PixelFormat = EPixelFormat::RG8;
+                PixelFormat = VK_FORMAT_R8G8_SRGB;
                 break;
             case 3:
-                PixelFormat = EPixelFormat::RGB8;
+                PixelFormat = VK_FORMAT_R8G8B8_SRGB;
                 break;
             case 4:
-                PixelFormat = EPixelFormat::RGBA8;
+                PixelFormat = VK_FORMAT_R8G8B8A8_SRGB;
                 break;
             default:
                 CORVUS_ERROR("Invalid number of components in GLTF Image");
@@ -205,22 +192,23 @@ namespace Corvus
             {
                 tinygltf::Texture const &Texture = GLTFModel.textures[i];
 
-                STextureParameters TextureParameters;
-                Int32              SamplerIndex = Texture.sampler;
-                if (SamplerIndex != -1)
-                {
-                    TextureParameters = ProcessTextureSampler(GLTFModel.samplers[SamplerIndex]);
-                }
-                else
-                {
-                    TextureParameters = ProcessNoTextureSampler();
-                }
+                // STextureParameters TextureParameters;
+                // Int32              SamplerIndex = Texture.sampler;
+                // if (SamplerIndex != -1)
+                //{
+                //     TextureParameters = ProcessTextureSampler(GLTFModel.samplers[SamplerIndex]);
+                // }
+                // else
+                //{
+                //     TextureParameters = ProcessNoTextureSampler();
+                // }
 
                 Int32 ImageIndex = Texture.source;
                 CORVUS_CORE_ASSERT(ImageIndex != -1);
                 CImageData Image = ProcessImage(GLTFModel.images[ImageIndex]);
 
-                Textures[i] = CTexture2D{CTexture2DBuffer::Create(Image, TextureParameters)};
+                Textures[i] =
+                    Renderer().CreateTexture2D(Image, Image.GetMaxMipLevel(), Renderer().GetSamplers().DefaultSampler);
             }
 
             return Textures;
@@ -238,6 +226,8 @@ namespace Corvus
                 // Albedo
                 if (MaterialInfo.pbrMetallicRoughness.baseColorTexture.index == -1) // Vertex color
                 {
+                    CORVUS_CORE_NO_ENTRY_FMT("Models without albedo not supported!");
+
                     std::vector<double> const &VertexColorData = MaterialInfo.pbrMetallicRoughness.baseColorFactor;
 
                     FVector4 VertexColor{};
@@ -246,14 +236,13 @@ namespace Corvus
                     VertexColor.b = static_cast<float>(VertexColorData[2]);
                     VertexColor.a = static_cast<float>(VertexColorData[3]);
 
-                    Material.AlbedoMap.Other = VertexColor;
-                    Material.AlbedoMap.UseOther();
+                    // Material.AlbedoMap.Other = VertexColor;
+                    // Material.AlbedoMap.UseOther();
                 }
                 else // Albedo map
                 {
-                    Int32 AlbedoIndex = MaterialInfo.pbrMetallicRoughness.baseColorTexture.index;
-                    Material.AlbedoMap.TextureRef.SetUUID(Textures[AlbedoIndex].UUID);
-                    Material.AlbedoMap.UseTexture();
+                    Int32 AlbedoIndex    = MaterialInfo.pbrMetallicRoughness.baseColorTexture.index;
+                    Material.Albedo.UUID = Textures[AlbedoIndex].UUID;
                 }
 
                 // TODO: Normals
@@ -543,6 +532,77 @@ namespace Corvus
             return Materials[Primitive.material];
         }
 
+        template<typename T>
+        std::vector<T> GetAttributeDataBuffer(
+            tinygltf::Model const     &GLTFModel,
+            CString const             &AttributeKey,
+            tinygltf::Primitive const &Primitive,
+            FMatrix4 const            &TransformMatrix
+        )
+        {
+            std::vector<T> DataBuffer;
+
+            auto AttributeIt = Primitive.attributes.find(AttributeKey);
+            if (AttributeIt == Primitive.attributes.end())
+            {
+                return DataBuffer;
+            }
+
+            UInt32             AttributeValue = AttributeIt->second;
+            std::vector<UInt8> AttributeData;
+            UInt32             AttributeNumElements;
+            UInt32             AttributeNumComponents;
+            if (!GetAttributeData(
+                    GLTFModel,
+                    TransformMatrix,
+                    AttributeKey,
+                    AttributeValue,
+                    AttributeData,
+                    AttributeNumElements,
+                    AttributeNumComponents
+                ))
+            {
+                CORVUS_CORE_ERROR("Failed to get data for attribute {}:{}!", AttributeKey, AttributeValue);
+            }
+
+            SizeT NumVertexPositions = AttributeData.size() / sizeof(DataBuffer[0]);
+            DataBuffer.resize(NumVertexPositions);
+            std::memcpy(DataBuffer.data(), AttributeData.data(), AttributeData.size());
+
+            return DataBuffer;
+        }
+
+        std::vector<UInt16> GetIndicesDataBuffer(tinygltf::Model const &GLTFModel, tinygltf::Primitive const &Primitive)
+        {
+            std::vector<UInt16> Indices;
+
+            std::vector<UInt8> IndicesDataBuffer;
+            UInt32             NumIndices;
+            UInt32             IndicesNumComponents;
+            if (!GetAttributeData(
+                    GLTFModel,
+                    FMatrix::Identity<FMatrix4>(), // Not used here
+                    "",                            // Not used here
+                    Primitive.indices,
+                    IndicesDataBuffer,
+                    NumIndices,
+                    IndicesNumComponents // Not really needed, always 1
+                ))
+            {
+                CORVUS_CORE_ERROR("Failed to get indices data!");
+                Indices = {0, 1, 2};
+                return Indices;
+            }
+
+            Indices.resize(NumIndices);
+            for (SizeT i = 0; i < NumIndices; ++i)
+            {
+                Indices[i] = static_cast<UInt16>(reinterpret_cast<UInt32 *>(IndicesDataBuffer.data())[i]);
+            }
+
+            return Indices;
+        }
+
         CStaticMeshPrimitive ProcessPrimitive(
             tinygltf::Model const        &GLTFModel,
             std::vector<CMaterial> const &Materials,
@@ -550,91 +610,43 @@ namespace Corvus
             FMatrix4 const               &TransformMatrix
         )
         {
-            TOwn<CVertexArray> VertexArray = CVertexArray::Create();
+            std::vector<FVector3> PositionVec =
+                GetAttributeDataBuffer<FVector3>(GLTFModel, "POSITION", Primitive, TransformMatrix);
+            std::vector<FVector2> TexCoord0Vec =
+                GetAttributeDataBuffer<FVector2>(GLTFModel, "TEXCOORD_0", Primitive, TransformMatrix);
+            std::vector<FVector3> NormalVec =
+                GetAttributeDataBuffer<FVector3>(GLTFModel, "NORMAL", Primitive, TransformMatrix);
 
-            // clang-format off
-            std::array<CString, 3> const AttributeKeys = {
-                "POSITION",
-                "TEXCOORD_0", // For now engine only works with one texcoord array per primitive
-                "NORMAL"
-            };
-            // clang-format on
+            SizeT NumElements = PositionVec.size();
+            NumElements       = FMath::Max(NumElements, TexCoord0Vec.size());
+            NumElements       = FMath::Max(NumElements, NormalVec.size());
 
-            // Vertex data
-            for (CString const &AttributeKey : AttributeKeys)
+            PositionVec.resize(NumElements);
+            TexCoord0Vec.resize(NumElements);
+            NormalVec.resize(NumElements);
+
+            // Combine Vertex Data
+            std::vector<CVertex> VertexData(NumElements);
+            for (SizeT i = 0; i < NumElements; ++i)
             {
-                auto AttributeIt = Primitive.attributes.find(AttributeKey);
-                if (AttributeIt == Primitive.attributes.end())
-                {
-                    continue;
-                }
-
-                UInt32             AttributeValue = AttributeIt->second;
-                std::vector<UInt8> AttributeData;
-                UInt32             AttributeNumElements;
-                UInt32             AttributeNumComponents;
-                if (!GetAttributeData(
-                        GLTFModel,
-                        TransformMatrix,
-                        AttributeKey,
-                        AttributeValue,
-                        AttributeData,
-                        AttributeNumElements,
-                        AttributeNumComponents
-                    ))
-                {
-                    CORVUS_ERROR("Failed to get data for attribute {}:{}!", AttributeKey, AttributeValue);
-                    continue;
-                }
-
-                CVertexBufferLayout VertexBufferLayout;
-                switch (AttributeNumComponents)
-                {
-                case 1:
-                    VertexBufferLayout.PushBack(CBufferLayoutElement{EBufferDataType::Float});
-                    break;
-                case 2:
-                    VertexBufferLayout.PushBack(CBufferLayoutElement{EBufferDataType::Vec2});
-                    break;
-                case 3:
-                    VertexBufferLayout.PushBack(CBufferLayoutElement{EBufferDataType::Vec3});
-                    break;
-                default:
-                    CORVUS_ERROR("Unsupported attribute data type!");
-                    continue;
-                }
-
-                TOwn<CVertexBuffer> VertexBuffer =
-                    CVertexBuffer::Create(AttributeData.data(), AttributeNumElements, VertexBufferLayout);
-                VertexArray->AddVertexBuffer(std::move(VertexBuffer));
+                VertexData[i].Position = PositionVec[i];
+                VertexData[i].UVCoord  = TexCoord0Vec[i];
             }
 
             // Index data
-            {
-                std::vector<UInt8> IndexesData;
-                UInt32             NumIndexes;
-                UInt32             IndexesNumComponents;
-                if (!GetAttributeData(
-                        GLTFModel,
-                        TransformMatrix, // Not used here
-                        "",              // Not used here
-                        Primitive.indices,
-                        IndexesData,
-                        NumIndexes,
-                        IndexesNumComponents // Not really needed
-                    ))
-                {
-                    CORVUS_ERROR("Failed to get indices data!");
-                }
+            std::vector<UInt16> IndicesData = GetIndicesDataBuffer(GLTFModel, Primitive);
 
-                TOwn<CIndexBuffer> IndexBuffer =
-                    CIndexBuffer::Create(reinterpret_cast<UInt32 *>(IndexesData.data()), NumIndexes);
-                VertexArray->AddIndexBuffer(std::move(IndexBuffer));
-            }
+            CVulkanBuffer VertexBuffer = Renderer().CreateVertexBuffer(VertexData);
+            CVulkanBuffer IndexBuffer  = Renderer().CreateIndexBuffer(IndicesData);
 
-            CStaticMeshPrimitive MeshPrimitive{std::move(VertexArray)};
-            CMaterial const     &Material = GetPrimitiveMaterial(Primitive, Materials);
-            MeshPrimitive.MaterialRef.SetUUID(Material.UUID);
+            CMaterial const &Material = GetPrimitiveMaterial(Primitive, Materials);
+
+            CStaticMeshPrimitive MeshPrimitive;
+            MeshPrimitive.VertexBuffer  = VertexBuffer;
+            MeshPrimitive.VertexData    = std::move(VertexData);
+            MeshPrimitive.IndexBuffer   = IndexBuffer;
+            MeshPrimitive.IndexData     = std::move(IndicesData);
+            MeshPrimitive.Material.UUID = Material.UUID;
 
             return MeshPrimitive;
         }
@@ -651,7 +663,14 @@ namespace Corvus
 
             for (tinygltf::Primitive const &Primitive : Mesh.primitives)
             {
-                StaticMesh.AddPrimitive(ProcessPrimitive(GLTFModel, Materials, Primitive, TransformMatrix));
+                if (Primitive.attributes.find("POSITION") != Primitive.attributes.end())
+                {
+                    StaticMesh.AddPrimitive(ProcessPrimitive(GLTFModel, Materials, Primitive, TransformMatrix));
+                }
+                else
+                {
+                    CORVUS_CORE_WARN("Mesh Primitive without Vertex Position found and skipped");
+                }
             }
 
             return StaticMesh;

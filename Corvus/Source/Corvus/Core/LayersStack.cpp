@@ -35,15 +35,20 @@ namespace Corvus
         m_Stack.back()->OnPushed();
     }
 
-    TOwn<CLayer> CLayersStack::PopLayer()
+    void CLayersStack::PopLayer()
     {
         CORVUS_CORE_ASSERT_FMT(!m_Stack.empty(), "Can't pop layer from empty stack!");
 
         TOwn<CLayer> PopedLayer = std::move(m_Stack.back());
         m_Stack.erase(End() - 1);
         PopedLayer->OnPoped();
+        PopedLayer.reset();
+    }
 
-        return PopedLayer;
+    TOwn<CLayer> &CLayersStack::TopLayer()
+    {
+        CORVUS_CORE_ASSERT_FMT(!Empty(), "Can't get top layer from empty stack!");
+        return m_Stack.back();
     }
 
 } // namespace Corvus

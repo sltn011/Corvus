@@ -24,21 +24,37 @@ namespace Corvus
     public:
         CApplicationLayer() : CLayer{"ApplicationLayer", true}
         {
-            CRenderer::EnableDepthTest();
-            CRenderer::EnableBackfaceCulling();
-            CRenderer::SetClearColor({0.6f, 0.8f, 1.0f, 1.0f});
-
             LoadAssets();
             CreateScene();
             WireUpAssets();
         }
 
+        ~CApplicationLayer()
+        {
+            for (auto &[UUID, Model] : StaticModelsAssets) // TODO: Move somewhere else
+            {
+                for (CStaticMesh &Mesh : Model)
+                {
+                    for (CStaticMeshPrimitive &Primitive : Mesh)
+                    {
+                        Renderer().DestroyBuffer(Primitive.VertexBuffer);
+                        Renderer().DestroyBuffer(Primitive.IndexBuffer);
+                    }
+                }
+            }
+            for (auto &[UUID, Material] : MaterialsAssets)
+            {
+                Renderer().DestroyMaterialRenderData(Material);
+            }
+            for (auto &[UUID, Texture] : TexturesAssets)
+            {
+                Renderer().DestroyTexture2D(Texture);
+            }
+        }
+
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
         {
-            CRenderer::BeginScene();
-            CRenderer::Clear();
-
-            CCamera *Camera = PlaygroundScene.GetPlayerCamera();
+            CCamera *Camera = CApplication::GetInstance().Scene.GetPlayerCamera();
             if (!Camera)
             {
                 CORVUS_NO_ENTRY_FMT("No Player Camera added to Playground Scene!");
@@ -77,19 +93,16 @@ namespace Corvus
             CursorPos             = NewPos;
             if (bCameraMode)
             {
-                Camera->ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
+                Camera->ProcessRotationInput(Delta.x, Delta.y, 100.0f, ElapsedTime);
             }
 
-            for (TPoolable<CEntity> const &Entity : PlaygroundScene.GetEntities())
+            for (TPoolable<CEntity> const &Entity : CApplication::GetInstance().Scene.GetEntities())
             {
-                CRenderer::SubmitStaticModel(
+                CRenderer::GetInstance().SubmitStaticModel(
                     *Entity->StaticMeshComponent->StaticModelRef.GetRawPtr(),
-                    Entity->StaticMeshComponent->GetTransformMatrix(),
-                    Camera->GetProjectionViewMatrix()
+                    Entity->StaticMeshComponent->GetTransformMatrix()
                 );
             }
-
-            CRenderer::EndScene();
         }
 
         virtual void OnEvent(CEvent &Event)
@@ -119,7 +132,8 @@ namespace Corvus
             else if (Event.GetEventType() == CEvent::EEventType::WindowResize)
             {
                 CWindowResizeEvent &WREvent = CastEvent<CWindowResizeEvent>(Event);
-                CPerspectiveCamera *Camera  = static_cast<CPerspectiveCamera *>(PlaygroundScene.GetPlayerCamera());
+                CPerspectiveCamera *Camera =
+                    static_cast<CPerspectiveCamera *>(CApplication::GetInstance().Scene.GetPlayerCamera());
                 Camera->SetViewportSize(static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight));
             }
             else if (Event.GetEventType() == CEvent::EEventType::MouseScroll)
@@ -127,7 +141,7 @@ namespace Corvus
                 CMouseScrollEvent &MSEvent = CastEvent<CMouseScrollEvent>(Event);
                 if (bCameraMode)
                 {
-                    CCamera    *Camera         = static_cast<CCamera *>(PlaygroundScene.GetPlayerCamera());
+                    CCamera    *Camera = static_cast<CCamera *>(CApplication::GetInstance().Scene.GetPlayerCamera());
                     float const OldCameraSpeed = Camera->GetMoveSpeed();
                     float const NewSpeed       = FMath::Max(OldCameraSpeed + MSEvent.OffsetY, 0.0f);
                     Camera->SetMoveSpeed(NewSpeed);
@@ -153,7 +167,7 @@ namespace Corvus
             Camera->SetClipPlanes(0.01f, 100.0f);
             Camera->SwitchPlayerControl(true, 1.0f);
 
-            PlaygroundScene.SetPlayerCamera(std::move(Camera));
+            CApplication::GetInstance().Scene.SetPlayerCamera(std::move(Camera));
         }
 
         void PopulateScene()
@@ -164,7 +178,7 @@ namespace Corvus
             Entity->TransformComponent->SetScale(FVector3{0.01f});
             Entity->StaticMeshComponent->StaticModelRef.SetUUID(StaticModelsAssets.begin()->first);
 
-            PlaygroundScene.AddEntity(std::move(Entity));
+            CApplication::GetInstance().Scene.AddEntity(std::move(Entity));
         }
 
         void LoadAssets()
@@ -184,7 +198,6 @@ namespace Corvus
             // Materials
             for (CMaterial &Material : LoadedModelData.Materials)
             {
-                Material.CompileMaterialShader("./Assets/Shaders/TestShader.glsl");
                 MaterialsAssets.emplace(Material.UUID, std::move(Material));
             }
         }
@@ -194,11 +207,8 @@ namespace Corvus
             // Provide materials with their textures
             for (auto &[MaterialUUID, Material] : MaterialsAssets)
             {
-                if (Material.AlbedoMap.IsTexture())
-                {
-                    FUUID AlbedoUUID = Material.AlbedoMap.TextureRef.GetUUID();
-                    Material.AlbedoMap.TextureRef.SetRawPtr(&TexturesAssets.at(AlbedoUUID));
-                }
+                FUUID AlbedoUUID = Material.Albedo.UUID;
+                Material.Albedo  = TexturesAssets.at(AlbedoUUID);
             }
 
             // Provide StaticMeshPrimitives with their materials
@@ -208,14 +218,15 @@ namespace Corvus
                 {
                     for (CStaticMeshPrimitive &Primitive : Mesh)
                     {
-                        FUUID MaterialUUID = Primitive.MaterialRef.GetUUID();
-                        Primitive.MaterialRef.SetRawPtr(&MaterialsAssets.at(MaterialUUID));
+                        FUUID MaterialUUID = Primitive.Material.UUID;
+                        Primitive.Material = MaterialsAssets.at(MaterialUUID);
+                        Renderer().CreateMaterialRenderData(Primitive.Material);
                     }
                 }
             }
 
             // Provide Entities with their StaticModels
-            for (TPoolable<CEntity> const &Entity : PlaygroundScene.GetEntities())
+            for (TPoolable<CEntity> const &Entity : CApplication::GetInstance().Scene.GetEntities())
             {
                 FUUID StaticModelUUID = Entity->StaticMeshComponent->StaticModelRef.GetUUID();
                 Entity->StaticMeshComponent->StaticModelRef.SetRawPtr(&StaticModelsAssets.at(StaticModelUUID));
@@ -223,8 +234,6 @@ namespace Corvus
         }
 
     private:
-        CScene PlaygroundScene;
-
         std::unordered_map<FUUID, CTexture2D>   TexturesAssets;
         std::unordered_map<FUUID, CMaterial>    MaterialsAssets;
         std::unordered_map<FUUID, CStaticModel> StaticModelsAssets;

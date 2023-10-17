@@ -2,28 +2,17 @@
 #define CORVUS_SOURCE_CORVUS_ASSETS_TEXTURE_TEXTURE2D_H
 
 #include "Corvus/Core/UUID.h"
-#include "Corvus/Renderer/Texture2DBuffer.h"
+#include "Corvus/Renderer/Resources/VulkanImage.h"
 
 namespace Corvus
 {
 
-    class CTexture2DBuffer;
-
-    class CTexture2D
+    struct CTexture2D
     {
-    public:
-        CTexture2D() = default;
-        CTexture2D(TOwn<CTexture2DBuffer> &&Texture2DBuffer);
-
-        TOwn<CTexture2DBuffer> const &GetTextureBuffer() const;
-
-        void SetTextureBuffer(TOwn<CTexture2DBuffer> &&NewTexture2DBuffer);
-
-    public:
-        FUUID UUID;
-
-    private:
-        TOwn<CTexture2DBuffer> m_TextureBuffer;
+        FUUID        UUID;
+        CVulkanImage Image;
+        VkImageView  ImageView;
+        VkSampler    Sampler;
     };
 
 } // namespace Corvus

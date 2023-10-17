@@ -15,6 +15,7 @@ project "Corvus"
 	files
 	{
 		"Source/**.cpp",
+		"Source/**.inl",
 		"Source/**.h",
 		
 		"Dependencies/glm/glm/**.hpp",
@@ -25,6 +26,7 @@ project "Corvus"
 		["../Corvus/Source/*"] = 
 		{ 
 			"Source/**.cpp",
+			"Source/**.inl",
 			"Source/**.h" 
 		} 
 	}
@@ -32,6 +34,7 @@ project "Corvus"
 	includedirs
 	{
 		"Source",
+		"%{vulkanSDKpath}/Include",
 		"Dependencies/spdlog/include",
 		"Dependencies/GLFW/Source/include",
 		"Dependencies/GLAD/Source/include",
@@ -42,17 +45,23 @@ project "Corvus"
 		"Dependencies/tiny"
 	}
 	
+	libdirs
+	{
+		"%{vulkanSDKpath}/Lib"
+	}
+	
 	links
 	{
+		"vulkan-1",
 		"GLFW",
-		"GLAD",
 		"imgui"
 	}
 	
 	defines
 	{
 		"GLFW_INCLUDE_NONE",
-		"_CRT_SECURE_NO_WARNINGS"
+		"_CRT_SECURE_NO_WARNINGS",
+		"GLM_FORCE_DEPTH_ZERO_TO_ONE"
 	}
 	
 	filter { "configurations:Debug" }
