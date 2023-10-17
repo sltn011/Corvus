@@ -8,6 +8,7 @@ namespace Corvus
     {
         std::vector<VkPhysicalDevice> const PhysicalDevices = GetPhysicalDevices();
         m_PhysicalDevice                                    = GetMostSuitablePhysicalDevice(PhysicalDevices);
+        m_PhysicalDeviceProperties                          = GetPhysicalDeviceProperties(m_PhysicalDevice);
     }
 
     CVulkanQueueFamilyIndices CRenderer::GetMostSuitableQueueFamilyIndices(VkPhysicalDevice PhysicalDevice) const

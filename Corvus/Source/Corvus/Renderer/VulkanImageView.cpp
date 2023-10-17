@@ -5,7 +5,9 @@
 namespace Corvus
 {
 
-    VkImageView CRenderer::CreateImageView(VkImage Image, VkFormat Format, VkImageAspectFlags AspectFlags)
+    VkImageView CRenderer::CreateImageView(
+        VkImage Image, UInt32 MipLevels, VkFormat Format, VkImageAspectFlags AspectFlags
+    )
     {
         VkImageView ImageView = VK_NULL_HANDLE;
 
@@ -22,7 +24,7 @@ namespace Corvus
 
         CreateInfo.subresourceRange.aspectMask     = AspectFlags;
         CreateInfo.subresourceRange.baseMipLevel   = 0;
-        CreateInfo.subresourceRange.levelCount     = 1;
+        CreateInfo.subresourceRange.levelCount     = MipLevels;
         CreateInfo.subresourceRange.baseArrayLayer = 0;
         CreateInfo.subresourceRange.layerCount     = 1;
 

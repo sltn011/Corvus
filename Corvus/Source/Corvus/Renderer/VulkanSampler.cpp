@@ -7,34 +7,9 @@ namespace Corvus
 
     void CRenderer::CreateSamplers()
     {
-        VkPhysicalDeviceProperties DeviceProperties = GetPhysicalDeviceProperties(m_PhysicalDevice);
-        float                      MaxAnisotropy    = DeviceProperties.limits.maxSamplerAnisotropy;
-
-        // Default Sampler
-        {
-            VkSamplerCreateInfo SamplerCreateInfo{};
-            SamplerCreateInfo.sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-            SamplerCreateInfo.minFilter               = VK_FILTER_LINEAR;
-            SamplerCreateInfo.magFilter               = VK_FILTER_LINEAR;
-            SamplerCreateInfo.addressModeU            = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-            SamplerCreateInfo.addressModeV            = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-            SamplerCreateInfo.addressModeW            = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-            SamplerCreateInfo.anisotropyEnable        = VK_TRUE;
-            SamplerCreateInfo.maxAnisotropy           = FMath::Min(MaxAnisotropy, 16.f);
-            SamplerCreateInfo.borderColor             = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
-            SamplerCreateInfo.unnormalizedCoordinates = VK_FALSE;
-            SamplerCreateInfo.compareEnable           = VK_FALSE;
-            SamplerCreateInfo.compareOp               = VK_COMPARE_OP_ALWAYS;
-            SamplerCreateInfo.mipmapMode              = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-            SamplerCreateInfo.mipLodBias              = 0.0f;
-            SamplerCreateInfo.minLod                  = 0.0f;
-            SamplerCreateInfo.maxLod                  = 0.0f;
-
-            if (vkCreateSampler(m_Device, &SamplerCreateInfo, nullptr, &m_Samplers.DefaultSampler) != VK_SUCCESS)
-            {
-                CORVUS_CORE_CRITICAL("Failed to create Vulkan Samplers!");
-            }
-        }
+        m_Samplers.DefaultSampler = CreateSampler(
+            VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_REPEAT, true, 16.f, VK_SAMPLER_MIPMAP_MODE_LINEAR, 1000
+        );
     }
 
     void CRenderer::DestroySamplers()
@@ -44,6 +19,45 @@ namespace Corvus
             vkDestroySampler(m_Device, m_Samplers.DefaultSampler, nullptr);
             m_Samplers.DefaultSampler = VK_NULL_HANDLE;
         }
+    }
+
+    VkSampler CRenderer::CreateSampler(
+        VkFilter             MinMagFilter,
+        VkSamplerAddressMode AddressMode,
+        bool                 bAnisoEnabled,
+        float                Anisotropy,
+        VkSamplerMipmapMode  Filtering,
+        UInt32               MipLevels
+    ) const
+    {
+        VkSampler Sampler = VK_NULL_HANDLE;
+
+        float MaxAnisotropy = m_PhysicalDeviceProperties.limits.maxSamplerAnisotropy;
+
+        VkSamplerCreateInfo SamplerCreateInfo{};
+        SamplerCreateInfo.sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+        SamplerCreateInfo.minFilter               = MinMagFilter;
+        SamplerCreateInfo.magFilter               = MinMagFilter;
+        SamplerCreateInfo.addressModeU            = AddressMode;
+        SamplerCreateInfo.addressModeV            = AddressMode;
+        SamplerCreateInfo.addressModeW            = AddressMode;
+        SamplerCreateInfo.anisotropyEnable        = bAnisoEnabled ? VK_TRUE : VK_FALSE;
+        SamplerCreateInfo.maxAnisotropy           = FMath::Min(MaxAnisotropy, Anisotropy);
+        SamplerCreateInfo.borderColor             = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+        SamplerCreateInfo.unnormalizedCoordinates = VK_FALSE;
+        SamplerCreateInfo.compareEnable           = VK_FALSE;
+        SamplerCreateInfo.compareOp               = VK_COMPARE_OP_ALWAYS;
+        SamplerCreateInfo.mipmapMode              = Filtering;
+        SamplerCreateInfo.mipLodBias              = 0.0f;
+        SamplerCreateInfo.minLod                  = 0.0f;
+        SamplerCreateInfo.maxLod                  = static_cast<float>(MipLevels);
+
+        if (vkCreateSampler(m_Device, &SamplerCreateInfo, nullptr, &Sampler) != VK_SUCCESS)
+        {
+            CORVUS_CORE_CRITICAL("Failed to create Vulkan Sampler!");
+        }
+
+        return Sampler;
     }
 
     CVulkanSamplers CRenderer::GetSamplers() const

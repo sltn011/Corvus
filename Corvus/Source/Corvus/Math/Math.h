@@ -36,6 +36,18 @@ namespace Corvus::FMath
         return glm::clamp(Value, Min, Max);
     }
 
+    template<typename T>
+    T Floor(float Value)
+    {
+        return static_cast<T>(glm::floor(Value));
+    }
+
+    template<typename T>
+    T Ceil(float Value)
+    {
+        return static_cast<T>(glm::ceil(Value));
+    }
+
     constexpr float Radians(float Degrees)
     {
         return glm::radians(Degrees);
@@ -94,6 +106,12 @@ namespace Corvus::FMath
     inline float ACot2(float Y, float X)
     {
         return ATan2(X, Y);
+    }
+
+    inline float Log2(float Value)
+    {
+        CORVUS_CORE_ASSERT(Value > 0);
+        return log2(Value);
     }
 
     UInt64 Random();

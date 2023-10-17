@@ -72,7 +72,7 @@ namespace Corvus
 
     public:
         // Textures
-        CTexture2D CreateTexture2D(CImageData const &ImageData, VkSampler TextureSampler);
+        CTexture2D CreateTexture2D(CImageData const &ImageData, UInt32 MipLevels, VkSampler TextureSampler);
         void       DestroyTexture2D(CTexture2D &Texture2D);
 
     public:
@@ -189,7 +189,8 @@ namespace Corvus
 
         UInt32 FindMemoryType(UInt32 TypeFilter, VkMemoryPropertyFlags Properties);
 
-        VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
+        VkPhysicalDevice           m_PhysicalDevice = VK_NULL_HANDLE;
+        VkPhysicalDeviceProperties m_PhysicalDeviceProperties{};
 
     private:
         // VkDevice
@@ -245,15 +246,20 @@ namespace Corvus
         CVulkanImage CreateImage(
             UInt32                Width,
             UInt32                Height,
+            UInt32                MipLevels,
             VkFormat              Format,
             VkImageTiling         Tiling,
             VkImageUsageFlags     Usage,
             VkMemoryPropertyFlags Properties
         );
-        CVulkanImage CreateTextureImage(CImageData const &ImageData);
+        CVulkanImage CreateTextureImage(CImageData const &ImageData, UInt32 MipLevels);
         void         DestroyImage(CVulkanImage &Image);
 
-        void TransitionImageLayout(VkImage Image, VkFormat Format, VkImageLayout OldLayout, VkImageLayout NewLayout);
+        void TransitionImageLayout(
+            VkImage Image, UInt32 MipLevels, VkFormat Format, VkImageLayout OldLayout, VkImageLayout NewLayout
+        );
+
+        void GenerateMips(VkImage Image, UInt32 MipLevels, UInt32 ImageWidth, UInt32 ImageHeight, VkFormat Format);
 
         VkFormat FindSupportedFormat(
             std::vector<VkFormat> const &Candidates, VkImageTiling Tiling, VkFormatFeatureFlags Features
@@ -272,13 +278,22 @@ namespace Corvus
 
     private:
         // VkImageView
-        VkImageView CreateImageView(VkImage Image, VkFormat Format, VkImageAspectFlags AspectFlags);
+        VkImageView CreateImageView(VkImage Image, UInt32 MipLevels, VkFormat Format, VkImageAspectFlags AspectFlags);
         void        DestroyImageView(VkImageView &ImageView);
 
     private:
         // VkSampler
         void CreateSamplers();
         void DestroySamplers();
+
+        VkSampler CreateSampler(
+            VkFilter             MinMagFilter,
+            VkSamplerAddressMode AddressMode,
+            bool                 bAnisoEnabled,
+            float                Anisotropy,
+            VkSamplerMipmapMode  Filtering,
+            UInt32               MipLevels
+        ) const;
 
         CVulkanSamplers m_Samplers{};
 

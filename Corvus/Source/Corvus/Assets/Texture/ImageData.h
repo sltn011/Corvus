@@ -27,6 +27,11 @@ namespace Corvus
 
         void SetIsSRGB(bool bValue) { m_bIsSRGB = bValue; }
 
+        UInt8 GetMaxMipLevel() const
+        {
+            return FMath::Floor<UInt8>(FMath::Log2(static_cast<float>(FMath::Max(m_ImageWidth, m_ImageHeight)))) + 1;
+        }
+
     private:
         SizeT              m_ImageWidth  = 0;
         SizeT              m_ImageHeight = 0;

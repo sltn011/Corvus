@@ -8,11 +8,11 @@
 namespace Corvus
 {
 
-    CTexture2D CRenderer::CreateTexture2D(CImageData const &ImageData, VkSampler TextureSampler)
+    CTexture2D CRenderer::CreateTexture2D(CImageData const &ImageData, UInt32 MipLevels, VkSampler TextureSampler)
     {
-        CVulkanImage Image     = CreateTextureImage(ImageData);
-        VkImageView  ImageView = CreateImageView(Image.Image, ImageData.GetPixelFormat(), VK_IMAGE_ASPECT_COLOR_BIT);
-        VkSampler    Sampler   = TextureSampler;
+        CVulkanImage Image = CreateTextureImage(ImageData, MipLevels);
+        VkImageView  ImageView =
+            CreateImageView(Image.Image, MipLevels, ImageData.GetPixelFormat(), VK_IMAGE_ASPECT_COLOR_BIT);
 
         CTexture2D Texture2D;
         Texture2D.Image     = Image;

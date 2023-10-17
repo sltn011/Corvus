@@ -10,8 +10,9 @@ namespace Corvus
 
     struct CVulkanImage
     {
-        VkImage        Image  = VK_NULL_HANDLE;
-        VkDeviceMemory Memory = VK_NULL_HANDLE;
+        VkImage        Image     = VK_NULL_HANDLE;
+        VkDeviceMemory Memory    = VK_NULL_HANDLE;
+        UInt32         MipLevels = 1;
     };
 
 } // namespace Corvus

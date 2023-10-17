@@ -207,7 +207,8 @@ namespace Corvus
                 CORVUS_CORE_ASSERT(ImageIndex != -1);
                 CImageData Image = ProcessImage(GLTFModel.images[ImageIndex]);
 
-                Textures[i] = Renderer().CreateTexture2D(Image, Renderer().GetSamplers().DefaultSampler);
+                Textures[i] =
+                    Renderer().CreateTexture2D(Image, Image.GetMaxMipLevel(), Renderer().GetSamplers().DefaultSampler);
             }
 
             return Textures;
