@@ -21,7 +21,7 @@ namespace Corvus
     {
         if (PrimitiveIndex >= GetNumPrimitives())
         {
-            CORVUS_CORE_NO_ENTRY_FMT("Invalid StaticMeshPrimitive Index!");
+            CORVUS_NO_ENTRY_FMT("Invalid StaticMeshPrimitive Index!");
         }
         return m_Primitives[PrimitiveIndex];
     }

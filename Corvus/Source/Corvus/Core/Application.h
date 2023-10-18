@@ -3,6 +3,7 @@
 
 #include "Corvus/Core/Base.h"
 #include "Corvus/Core/LayersStack.h"
+#include "Corvus/GUI/GUIController.h"
 #include "Corvus/Window/Window.h"
 
 namespace Corvus
@@ -34,9 +35,8 @@ namespace Corvus
         void Init(SApplicationCreateInfo const &ApplicationCreateInfo);
         void Run();
 
-        void          PushLayer(TOwn<CLayer> &&NewLayer);
-        void          PopLayer();
-        TOwn<CLayer> &TopLayer();
+        void                       PushLayer(TOwn<CLayer> &&NewLayer);
+        [[nodiscard]] TOwn<CLayer> PopLayer();
 
         void UpdateLayers(FTimeDelta ElapsedTime);
         void RenderLayers(FTimeDelta ElapsedTime);
@@ -48,13 +48,10 @@ namespace Corvus
 
         static CApplication &GetInstance() { return *s_ApplicationInstance; }
 
-        CScene Scene;
-
     private:
         void InitWindow(SWindowInitInfo const &WindowInitInfo);
         void InitGUIController();
         void InitRenderer();
-        void DestroyRenderer();
 
         TOwn<CWindow> m_Window;
 

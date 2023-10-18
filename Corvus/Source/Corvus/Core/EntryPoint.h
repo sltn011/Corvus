@@ -3,7 +3,7 @@
 
 #include "Corvus/Core/Application.h"
 #include "Corvus/Core/Base.h"
-// #include "Corvus/GUI/LayerGUI.h"
+#include "Corvus/GUI/LayerGUI.h"
 
 #ifdef CORVUS_PLATFORM_WINDOWS
 

@@ -5,9 +5,7 @@
 #include "Corvus/Event/ApplicationEvent.h"
 #include "Corvus/Event/KeyboardEvent.h"
 #include "Corvus/Event/MouseEvent.h"
-#include "Corvus/Renderer/Renderer.h"
 
-#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 namespace Corvus
@@ -37,7 +35,9 @@ namespace Corvus
             CORVUS_CORE_ASSERT(GLFWInitialized);
             CORVUS_CORE_TRACE("GLFW initialized successfully");
 
-            glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
             glfwSetErrorCallback(WindowErrorCallback);
         }
@@ -59,18 +59,22 @@ namespace Corvus
         if (!m_Window)
         {
             Destroy();
-            CORVUS_CORE_NO_ENTRY_FMT("Failed to create window!");
+            CORVUS_NO_ENTRY_FMT("Failed to create window!");
         }
 
         CORVUS_CORE_INFO("Window \"{0}\" created", m_WindowData.WindowName);
 
         SetupWindowEventsHandlers();
 
+        InitRenderingContext();
+
         glfwSetWindowUserPointer(m_Window, this);
 
-        SetFullScreen(m_WindowData.bFullScreen);
+        SetFullScreen(m_WindowData.WindowSettings.bFullScreen);
+        SetVSyncEnabled(m_WindowData.WindowSettings.bVSyncEnabled);
 
         CORVUS_CORE_ASSERT(m_Window);
+        CORVUS_CORE_ASSERT(m_RenderingContext);
     }
 
     void PWindowsWindow::Destroy()
@@ -81,7 +85,8 @@ namespace Corvus
             return;
         }
 
-        // m_GUIController.Destroy();
+        m_RenderingContext.reset();
+        CORVUS_CORE_INFO("Rendering context destroyed");
 
         glfwDestroyWindow(m_Window);
         m_Window         = nullptr;
@@ -100,14 +105,7 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT(m_bIsInitialized);
         glfwPollEvents();
-    }
-
-    std::pair<UInt32, UInt32> PWindowsWindow::GetFramebufferSize() const
-    {
-        std::pair<Int32, Int32> FramebufferSize;
-        glfwGetFramebufferSize(m_Window, &FramebufferSize.first, &FramebufferSize.second);
-        return std::pair<UInt32, UInt32>{
-            static_cast<UInt32>(FramebufferSize.first), static_cast<UInt32>(FramebufferSize.second)};
+        m_RenderingContext->SwapBuffers();
     }
 
     FUIntVector2 PWindowsWindow::GetWindowSize() const
@@ -133,7 +131,20 @@ namespace Corvus
     {
         glfwSetWindowShouldClose(m_Window, true);
     }
-	
+
+    void PWindowsWindow::SetVSyncEnabled(bool const bValue)
+    {
+        if (!m_bIsInitialized)
+        {
+            CORVUS_CORE_ERROR("Window not initialized - cant switch VSync on/off!");
+            return;
+        }
+
+        glfwSwapInterval(bValue ? 1 : 0);
+        m_WindowData.WindowSettings.bVSyncEnabled = bValue;
+        CORVUS_CORE_TRACE("Window \"{0}\" VSync {1}", m_WindowData.WindowName, bValue ? "On" : "Off");
+    }
+
     void PWindowsWindow::SetFullScreen(bool const bValue)
     {
         if (!m_bIsInitialized)
@@ -178,37 +189,9 @@ namespace Corvus
         CORVUS_CORE_TRACE("Window \"{0}\" FullScreen {1}", m_WindowData.WindowName, bValue ? "On" : "Off");
     }
 
-    void PWindowsWindow::AwaitNextEvent() const
-    {
-        glfwWaitEvents();
-    }
-
     void *PWindowsWindow::GetRawWindow()
     {
         return m_Window;
-    }
-
-    std::vector<char const *> PWindowsWindow::GetRequiredExtensions()
-    {
-        UInt32                    NumExtensions;
-        char const              **Extensions = glfwGetRequiredInstanceExtensions(&NumExtensions);
-        std::vector<char const *> RequiredExtensionsVec(NumExtensions);
-        for (UInt32 i = 0; i < NumExtensions; ++i)
-        {
-            RequiredExtensionsVec[i] = Extensions[i];
-        }
-        return RequiredExtensionsVec;
-    }
-
-    VkSurfaceKHR PWindowsWindow::CreateVulkanSurfaceHandler() const
-    {
-        VkSurfaceKHR SurfaceHandler = VK_NULL_HANDLE;
-        if (glfwCreateWindowSurface(Renderer().GetVulkanInstance(), m_Window, nullptr, &SurfaceHandler) != VK_SUCCESS)
-        {
-            CORVUS_CRITICAL("Failed to create VkSurface!");
-        }
-        CORVUS_TRACE("Created VkSurface successfully");
-        return SurfaceHandler;
     }
 
     void PWindowsWindow::WindowErrorCallback(int const ErrorCode, char const *const Description)
@@ -216,16 +199,12 @@ namespace Corvus
         CORVUS_CORE_ERROR("GLFW Error - Code: {0}, Description: {1:s}", ErrorCode, Description);
     }
 
-    void PWindowsWindow::CreateGUIController()
+    void PWindowsWindow::InitRenderingContext()
     {
-        m_GUIController.Init();
-        CORVUS_CORE_INFO("GUI Controller initialized created");
-    }
-
-    void PWindowsWindow::DestroyGUIController()
-    {
-        m_GUIController.Destroy();
-        CORVUS_CORE_INFO("GUI Controller destroyed");
+        m_RenderingContext = CRenderingContext::Create(*this);
+        CORVUS_CORE_ASSERT(m_RenderingContext);
+        m_RenderingContext->Init();
+        CORVUS_CORE_INFO("Rendering context created");
     }
 
     void PWindowsWindow::SetupWindowEventsHandlers()

@@ -2,10 +2,11 @@
 
 #include "Corvus/Assets/Model/ModelLoader.h"
 
-#include "Corvus/Assets/Material/Material.h"
 #include "Corvus/Assets/Model/GLTFModelLoader.h"
 #include "Corvus/Assets/Model/StaticModel.h"
-// #include "Corvus/Assets/Texture/Texture2D.h"
+#include "Corvus/Assets/Texture/Texture2D.h"
+#include "Corvus/Renderer/Shader.h"
+#include "Corvus/Renderer/Texture2DBuffer.h"
 
 namespace Corvus
 {

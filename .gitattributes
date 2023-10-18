@@ -1,5 +1,4 @@
 *.h linguist-language=C++
 *.cpp linguist-language=C++
-*.inl linguist-language=C++
 *.glb filter=lfs diff=lfs merge=lfs -text
 *.gltf filter=lfs diff=lfs merge=lfs -text

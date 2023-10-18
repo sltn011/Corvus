@@ -1,9 +1,7 @@
 #ifndef CORVUS_SOURCE_CORVUS_ASSETS_TEXTURE_IMAGEDATALOADER_H
 #define CORVUS_SOURCE_CORVUS_ASSETS_TEXTURE_IMAGEDATALOADER_H
 
-#include "Corvus/Core/Base.h"
-
-#include <vulkan/vulkan.h>
+#include "Corvus/Renderer/TextureInfo.h"
 
 namespace Corvus
 {
@@ -22,40 +20,32 @@ namespace Corvus
     class CImageDataLoader
     {
     public:
-        static [[nodiscard]] CImageData LoadFromImageFile(CString const &FilePath, ELoadImageChannels ChannelsToLoad);
+        static [[nodiscard]] CImageData LoadFromImageFile(
+            CString const &FilePath, ELoadImageChannels ChannelsToLoad
+        );
         static [[nodiscard]] CImageData LoadFromMemory(
-            void const *ImageData, SizeT ImageWidth, SizeT ImageHeight, VkFormat PixelFormat, bool bIsSRGB
+            UInt8 const *ImageData,
+            SizeT        ImageWidth,
+            SizeT        ImageHeight,
+            EPixelFormat PixelFormat,
+            bool         bIsSRGB
         );
 
     private:
         static CImageData LoadHDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad);
         static CImageData LoadLDRImage(CString const &FilePath, ELoadImageChannels ChannelsToLoad);
         static CImageData LoadImageImpl(
-            CString const &FilePath, ELoadImageChannels ChannelsToLoad, VkFormat PixelFormat
+            CString const &FilePath, ELoadImageChannels ChannelsToLoad, EPixelFormat PixelFormat
         );
 
-        static Int32 CalculateRequiredNumChannels(ELoadImageChannels ChannelsToLoad);
-
-        static SizeT PixelFormatElementSize(VkFormat PixelFormat);
-        static SizeT PixelFormatComponentSize(VkFormat PixelFormat);
-        static SizeT PixelFormatNumComponents(VkFormat PixelFormat);
-
-        static bool IsPixelFormatFloat(VkFormat PixelFormat);
+        static int CalculateRequiredNumChannels(ELoadImageChannels ChannelsToLoad);
 
         static UInt8 *FormatImageData(
             UInt8             *ImageData,
             SizeT              ImageWidth,
             SizeT              ImageHeight,
             ELoadImageChannels ChannelsToLoad,
-            VkFormat           PixelFormat
-        );
-
-        static std::vector<UInt8> AddAlphaChannel(
-            UInt8             *ImageData,
-            SizeT              ImageWidth,
-            SizeT              ImageHeight,
-            ELoadImageChannels ChannelsToLoad,
-            VkFormat           PixelFormat
+            EPixelFormat       PixelFormat
         );
 
         static ELoadImageChannels CalculateChannelsToLoad(ELoadImageChannels ChannelsToLoad);

@@ -30,7 +30,11 @@
 #include "Corvus/Scene/Scene.h"
 
 // Renderer
+#include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Renderer.h"
+#include "Corvus/Renderer/Shader.h"
+#include "Corvus/Renderer/VertexArray.h"
+#include "Corvus/Renderer/VertexBuffer.h"
 
 // Math
 #include "Corvus/Math/Math.h"

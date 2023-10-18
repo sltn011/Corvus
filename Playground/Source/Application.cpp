@@ -28,85 +28,25 @@ namespace Corvus
     public:
         CApplicationLayer() : CLayer{"ApplicationLayer", true}
         {
+            CRenderer::EnableDepthTest();
+            CRenderer::EnableBackfaceCulling();
+            CRenderer::SetClearColor({0.6f, 0.8f, 1.0f, 1.0f});
+
             LoadAssets();
             CreateScene();
             WireUpAssets();
         }
 
-        ~CApplicationLayer()
-        {
-            for (auto &[UUID, Model] : StaticModelsAssets) // TODO: Move somewhere else
-            {
-                for (CStaticMesh &Mesh : Model)
-                {
-                    for (CStaticMeshPrimitive &Primitive : Mesh)
-                    {
-                        Renderer().DestroyBuffer(Primitive.VertexBuffer);
-                        Renderer().DestroyBuffer(Primitive.IndexBuffer);
-                    }
-                }
-            }
-            for (auto &[UUID, Material] : MaterialsAssets)
-            {
-                Renderer().DestroyMaterialRenderData(Material);
-            }
-            for (auto &[UUID, Texture] : TexturesAssets)
-            {
-                Renderer().DestroyTexture2D(Texture);
-            }
-        }
-
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
         {
-            CCamera *Camera = CApplication::GetInstance().Scene.GetPlayerCamera();
-            if (!Camera)
-            {
-                CORVUS_NO_ENTRY_FMT("No Player Camera added to Playground Scene!");
-            }
+            CRenderer::BeginScene();
 
-            if (bCameraMode)
-            {
-                if (CInput::IsKeyPressed(Key::W))
-                {
-                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Forward, ElapsedTime);
-                }
-                if (CInput::IsKeyPressed(Key::A))
-                {
-                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Left, ElapsedTime);
-                }
-                if (CInput::IsKeyPressed(Key::S))
-                {
-                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Backward, ElapsedTime);
-                }
-                if (CInput::IsKeyPressed(Key::D))
-                {
-                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Right, ElapsedTime);
-                }
-                if (CInput::IsKeyPressed(Key::Space))
-                {
-                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Up, ElapsedTime);
-                }
-                if (CInput::IsKeyPressed(Key::LeftShift))
-                {
-                    Camera->ProcessMovementInput(CCamera::EMoveDirection::Down, ElapsedTime);
-                }
-            }
+            UpdateCamera(ElapsedTime);
 
-            FVector2 const NewPos = CInput::GetCursorPos();
-            FVector2 const Delta  = NewPos - CursorPos;
-            CursorPos             = NewPos;
-            if (bCameraMode)
-            {
-                Camera->ProcessRotationInput(Delta.x, Delta.y, 100.0f, ElapsedTime);
-            }
+            CRenderer::Clear();
+            RenderScene(ElapsedTime);
 
-            for (TPoolable<CEntity> const &Entity : CApplication::GetInstance().Scene.GetEntities())
-            {
-                CRenderer::GetInstance().SubmitStaticModel(
-                    *Entity->StaticMeshComponent->StaticModelRef.GetRawPtr(),
-                    Entity->StaticMeshComponent->GetTransformMatrix()
-                );
-            }
+            CRenderer::EndScene();
         }
 
         virtual void OnEvent(CEvent &Event)
@@ -136,17 +76,17 @@ namespace Corvus
             else if (Event.GetEventType() == CEvent::EEventType::WindowResize)
             {
                 CWindowResizeEvent &WREvent = CastEvent<CWindowResizeEvent>(Event);
-                
-                CPerspectiveCamera *Camera =
-                    static_cast<CPerspectiveCamera *>(CApplication::GetInstance().Scene.GetPlayerCamera());
-                Camera->SetViewportSize(static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight));
+                CPerspectiveCamera *Camera  = static_cast<CPerspectiveCamera *>(Scene.GetPlayerCamera());
+                Camera->SetViewportSize(
+                    static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight)
+                );
             }
             else if (Event.GetEventType() == CEvent::EEventType::MouseScroll)
             {
                 CMouseScrollEvent &MSEvent = CastEvent<CMouseScrollEvent>(Event);
                 if (bCameraMode)
                 {
-                    CCamera    *Camera = static_cast<CCamera *>(CApplication::GetInstance().Scene.GetPlayerCamera());
+                    CCamera    *Camera         = static_cast<CCamera *>(Scene.GetPlayerCamera());
                     float const OldCameraSpeed = Camera->GetMoveSpeed();
                     float const NewSpeed       = FMath::Max(OldCameraSpeed + MSEvent.OffsetY, 0.0f);
                     Camera->SetMoveSpeed(NewSpeed);
@@ -154,6 +94,8 @@ namespace Corvus
                 }
             }
         }
+
+        virtual void OnGUIRender(FTimeDelta ElapsedTime) override { ImGui::ShowDemoWindow(); }
 
         void CreateScene()
         {
@@ -172,7 +114,7 @@ namespace Corvus
             Camera->SetClipPlanes(0.01f, 100.0f);
             Camera->SwitchPlayerControl(true, 1.0f);
 
-            CApplication::GetInstance().Scene.SetPlayerCamera(std::move(Camera));
+            Scene.SetPlayerCamera(std::move(Camera));
         }
 
         void PopulateScene()
@@ -183,7 +125,7 @@ namespace Corvus
             Entity->TransformComponent->SetScale(FVector3{0.01f});
             Entity->StaticMeshComponent->StaticModelRef.SetUUID(StaticModelsAssets.begin()->first);
 
-            CApplication::GetInstance().Scene.AddEntity(std::move(Entity));
+            Scene.AddEntity(std::move(Entity));
         }
 
         void LoadAssets()
@@ -205,6 +147,7 @@ namespace Corvus
             // Materials
             for (CMaterial &Material : LoadedModelData.Materials)
             {
+                Material.CompileMaterialShader("./Assets/Shaders/TestShader.glsl");
                 MaterialsAssets.emplace(Material.UUID, std::move(Material));
             }
         }
@@ -214,8 +157,11 @@ namespace Corvus
             // Provide materials with their textures
             for (auto &[MaterialUUID, Material] : MaterialsAssets)
             {
-                FUUID AlbedoUUID = Material.Albedo.UUID;
-                Material.Albedo  = TexturesAssets.at(AlbedoUUID);
+                if (Material.AlbedoMap.IsTexture())
+                {
+                    FUUID AlbedoUUID = Material.AlbedoMap.TextureRef.GetUUID();
+                    Material.AlbedoMap.TextureRef.SetRawPtr(&TexturesAssets.at(AlbedoUUID));
+                }
             }
 
             // Provide StaticMeshPrimitives with their materials
@@ -225,15 +171,14 @@ namespace Corvus
                 {
                     for (CStaticMeshPrimitive &Primitive : Mesh)
                     {
-                        FUUID MaterialUUID = Primitive.Material.UUID;
-                        Primitive.Material = MaterialsAssets.at(MaterialUUID);
-                        Renderer().CreateMaterialRenderData(Primitive.Material);
+                        FUUID MaterialUUID = Primitive.MaterialRef.GetUUID();
+                        Primitive.MaterialRef.SetRawPtr(&MaterialsAssets.at(MaterialUUID));
                     }
                 }
             }
 
             // Provide Entities with their StaticModels
-            for (TPoolable<CEntity> const &Entity : CApplication::GetInstance().Scene.GetEntities())
+            for (TPoolable<CEntity> const &Entity : Scene.GetEntities())
             {
                 FUUID StaticModelUUID = Entity->StaticMeshComponent->StaticModelRef.GetUUID();
                 Entity->StaticMeshComponent->StaticModelRef.SetRawPtr(&StaticModelsAssets.at(StaticModelUUID)
@@ -299,6 +244,8 @@ namespace Corvus
         }
 
     private:
+        CScene Scene;
+
         std::unordered_map<FUUID, CTexture2D>   TexturesAssets;
         std::unordered_map<FUUID, CMaterial>    MaterialsAssets;
         std::unordered_map<FUUID, CStaticModel> StaticModelsAssets;

@@ -16,10 +16,8 @@ namespace Corvus
         CLayersStack();
         ~CLayersStack();
 
-        void PushLayer(TOwn<CLayer> NewLayer);
-        void PopLayer();
-
-        TOwn<CLayer> &TopLayer();
+        void                       PushLayer(TOwn<CLayer> NewLayer);
+        [[nodiscard]] TOwn<CLayer> PopLayer();
 
         std::vector<TOwn<CLayer>>::iterator         Begin() { return m_Stack.begin(); }
         std::vector<TOwn<CLayer>>::iterator         End() { return m_Stack.end(); }
@@ -37,9 +35,6 @@ namespace Corvus
 
         std::vector<TOwn<CLayer>>::const_iterator begin() const { return m_Stack.begin(); }
         std::vector<TOwn<CLayer>>::const_iterator end() const { return m_Stack.end(); }
-
-        bool  Empty() const { return m_Stack.empty(); }
-        SizeT Size() const { return m_Stack.size(); }
 
     private:
         // Front - Stack's bottom, Back - Stack's top

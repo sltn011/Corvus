@@ -3,355 +3,174 @@
 #include "Corvus/Renderer/Renderer.h"
 
 #include "Corvus/Assets/Model/StaticModel.h"
-#include "Corvus/Assets/Texture/Texture2D.h"
-#include "Corvus/Camera/Camera.h"
-#include "Corvus/Core/Application.h"
-#include "Corvus/Renderer/Data/PushConstants.h"
+#include "Corvus/Profiling/FrameProfiler.h"
+#include "Corvus/Renderer/CoreShaders/RenderScreenQuadShader.h"
+#include "Corvus/Renderer/FrameBuffer.h"
+#include "Corvus/Renderer/GraphicsAPI.h"
+#include "Corvus/Renderer/IndexBuffer.h"
+#include "Corvus/Renderer/Shader.h"
+#include "Corvus/Renderer/VertexArray.h"
+#include "Corvus/Renderer/VertexBuffer.h"
 
 namespace Corvus
 {
-    bool CRenderer::s_bInitialized = false;
+    TOwn<CGraphicsAPI> CRenderer::s_GraphicsAPI = nullptr;
 
-    CRenderer &Renderer()
+    TOwn<CVertexArray> CRenderer::s_ScreenQuad             = nullptr;
+    TOwn<CShader>      CRenderer::s_RenderScreenQuadShader = nullptr;
+
+    void CRenderer::Init()
     {
-        return CRenderer::GetInstance();
-    }
+        s_GraphicsAPI = CGraphicsAPI::Create();
+        s_GraphicsAPI->Init();
 
-    CRenderer &CRenderer::GetInstance()
-    {
-        static CRenderer Renderer;
-        return Renderer;
-    }
+        InitScreenQuad();
 
-    VkInstance CRenderer::GetVulkanInstance()
-    {
-        return m_Instance;
-    }
-
-    void CRenderer::Create()
-    {
-        CORVUS_ASSERT_FMT(!s_bInitialized, "Renderer was already initialized!");
-
-        s_bInitialized = true;
-
-        CreateInstance(CApplication::GetInstance().GetWindow().GetWindowName(), VK_API_VERSION_1_3);
-
-#ifdef CORVUS_DEBUG
-        CreateDebugCallback();
-#endif // CORVUS_DEBUG
-
-        CreateSurface();
-
-        SelectPhysicalDevice();
-        CreateDevice();
-        RetrieveQueues();
-
-        CreateSwapchain();
-        RetrieveSwapchainImages();
-        CreateSwapchainImageViews();
-
-        CreateCommandPools();
-        AllocateCommandBuffers();
-
-        CreateDepthResources();
-
-        CreateUniformBuffers();
-
-        CreateDescriptorSetLayout();
-        CreateDescriptorPools();
-        AllocatePerFrameDescriptorSets();
-
-        CreateRenderPass();
-        CreatePipelineLayout();
-        CreatePipeline();
-
-        CreateFramebuffers();
-
-        CreateSamplers();
-
-        CreateSyncObjects();
+        CORVUS_CORE_INFO("Renderer created");
     }
 
     void CRenderer::Destroy()
     {
-        DestroySyncObjects();
-
-        DestroySamplers();
-
-        DestroyFramebuffers();
-
-        DestroyPipeline();
-        DestroyPipelineLayout();
-        DestroyRenderPass();
-
-        DestroyDescriptorPools();
-        DestroyDescriptorSetLayout();
-
-        DestroyUniformBuffers();
-
-        DestroyDepthResources();
-
-        DestroyCommandPools();
-
-        DestroySwapchainImageViews();
-        DestroySwapchain();
-
-        DestroyDevice();
-
-        DestroySurface();
-
-#ifdef CORVUS_DEBUG
-        DestroyDebugCallback();
-#endif // CORVUS_DEBUG
-
-        DestroyInstance();
-
-        s_bInitialized = false;
+        CORVUS_CORE_INFO("Renderer destroyed");
     }
 
-    CRenderer::~CRenderer()
+    void CRenderer::BeginScene()
     {
-        CORVUS_ASSERT_FMT(!s_bInitialized, "Renderer was not destroyed properly!");
     }
 
-    void CRenderer::BeginFrame()
+    void CRenderer::EndScene()
     {
-        SetCameraMatrices();
+    }
 
-        // Wait for the previous frame to finish
-        vkWaitForFences(m_Device, 1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
+    void CRenderer::ViewportResize(UInt32 const Width, UInt32 const Height)
+    {
+        s_GraphicsAPI->ViewportResize(Width, Height);
+    }
 
-        // Acquire an image from the swap chain
-        VkResult AcquisitionResult = GetNextSwapchainImageIndex(m_SwapchainImageIndex);
-        if (AcquisitionResult == VK_ERROR_OUT_OF_DATE_KHR) // swapchain not suitable now(after screen resize)
-        {
-            RecreateSwapchain();
-            return;
-        }
-        else if (AcquisitionResult != VK_SUCCESS)
-        {
-            if (AcquisitionResult != VK_SUBOPTIMAL_KHR) // Swapchain properties not matched exactly
-            {
-                CORVUS_CORE_CRITICAL("Failed to acquire Swapchain image!");
-            }
-        }
+    void CRenderer::SetClearColor(FVector4 const &ClearColor)
+    {
+        s_GraphicsAPI->SetClearColor(ClearColor);
+    }
 
-        // Reset fences here to avoid deadlock
-        vkResetFences(m_Device, 1, &m_InFlightFences[m_CurrentFrame]);
+    void CRenderer::Clear(bool const bColorBuffer, bool const bDepthBuffer, bool const bStencilBuffer)
+    {
+        s_GraphicsAPI->Clear(bColorBuffer, bDepthBuffer, bStencilBuffer);
+    }
 
-        // Start recording a command buffer which draws the scene onto that image
-        VkCommandBuffer CommandBuffer = m_CommandBuffers[m_CurrentFrame];
-        vkResetCommandBuffer(CommandBuffer, 0);
+    void CRenderer::EnableDepthTest()
+    {
+        s_GraphicsAPI->EnableDepthTest();
+    }
 
-        VkCommandBufferBeginInfo CommandBufferBeginInfo{};
-        CommandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    void CRenderer::DisableDepthTest()
+    {
+        s_GraphicsAPI->DisableDepthTest();
+    }
 
-        if (vkBeginCommandBuffer(CommandBuffer, &CommandBufferBeginInfo) != VK_SUCCESS)
-        {
-            CORVUS_CORE_CRITICAL("Failed to Begin Vulkan Command Buffer!");
-        }
+    void CRenderer::EnableBackfaceCulling(bool const bIsCulledCCW)
+    {
+        s_GraphicsAPI->EnableBackfaceCulling(bIsCulledCCW);
+    }
 
-        VkRenderPassBeginInfo RenderPassBeginInfo{};
-        RenderPassBeginInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        RenderPassBeginInfo.renderPass        = m_RenderPass;
-        RenderPassBeginInfo.framebuffer       = m_SwapchainFramebuffers[m_SwapchainImageIndex];
-        RenderPassBeginInfo.renderArea.offset = {0, 0};
-        RenderPassBeginInfo.renderArea.extent = m_SwapchainExtent;
+    void CRenderer::DisableBackfaceCulling()
+    {
+        s_GraphicsAPI->DisableBackfaceCulling();
+    }
 
-        std::array<VkClearValue, 2> ClearColors;
-        ClearColors[0].color        = VkClearColorValue{0.6f, 0.8f, 1.0f, 1.0f};
-        ClearColors[1].depthStencil = VkClearDepthStencilValue{1.0f, 0};
+    void CRenderer::SetDefaultRenderTarget()
+    {
+        s_GraphicsAPI->SetDefaultRenderTarget();
+    }
 
-        RenderPassBeginInfo.clearValueCount = static_cast<UInt32>(ClearColors.size());
-        RenderPassBeginInfo.pClearValues    = ClearColors.data();
+    void CRenderer::SetRenderTarget(CFrameBuffer const &Target)
+    {
+        Target.SetRenderTarget();
+    }
 
-        vkCmdBeginRenderPass(CommandBuffer, &RenderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+    void CRenderer::Submit(CVertexArray &VAO, CShader &Shader)
+    {
+        Shader.Bind();
+        VAO.Bind();
 
-        vkCmdBindPipeline(CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
+        UInt64 Vertices  = VAO.GetIndexBuffer().GetNumIndices();
+        UInt64 Triangles = Vertices / 3;
+        UInt64 DrawCalls = 1;
 
-        // Viewport and Scissor are dynamic - specify them here
-        VkViewport Viewport{};
-        Viewport.x        = 0.0f;
-        Viewport.y        = 0.0f;
-        Viewport.width    = static_cast<float>(m_SwapchainExtent.width);
-        Viewport.height   = static_cast<float>(m_SwapchainExtent.height);
-        Viewport.minDepth = 0.0f;
-        Viewport.maxDepth = 1.0f;
-        vkCmdSetViewport(CommandBuffer, 0, 1, &Viewport);
+        s_GraphicsAPI->DrawIndexed(VAO.GetIndexBuffer().GetNumIndices());
 
-        VkRect2D Scissor{};
-        Scissor.offset = {0, 0};
-        Scissor.extent = m_SwapchainExtent;
-        vkCmdSetScissor(CommandBuffer, 0, 1, &Scissor);
-
-        vkCmdBindDescriptorSets(
-            CommandBuffer,
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
-            m_PipelineLayout,
-            0,
-            1,
-            &m_PerFrameDescriptorSets[m_CurrentFrame],
-            0,
-            nullptr
+        CORVUS_EVAL_IF_CONSTEXPR(
+            CFrameProfiler::IsEnabled, CFrameProfiler::RecordRenderCallData, {Vertices, Triangles, DrawCalls}
         );
     }
 
-    void CRenderer::EndFrame()
+    void CRenderer::SubmitStaticModel(
+        CStaticModel &StaticModel, FMatrix4 const &ModelTransformMatrix, FMatrix4 const &ProjectionViewMatrix
+    )
     {
-        VkCommandBuffer CommandBuffer = m_CommandBuffers[m_CurrentFrame];
-        vkCmdEndRenderPass(CommandBuffer);
-
-        if (vkEndCommandBuffer(CommandBuffer) != VK_SUCCESS)
-        {
-            CORVUS_CORE_CRITICAL("Failed to End Vulkan Command Buffer!");
-        }
-
-        // Submit recorded Command Buffer
-        SubmitCommandBuffer(CommandBuffer);
-
-        // Present the swap chain image
-        VkResult QueuePresentResult = PresentResult();
-        if (QueuePresentResult == VK_ERROR_OUT_OF_DATE_KHR || QueuePresentResult == VK_SUBOPTIMAL_KHR ||
-            m_bWindowResizeHappened)
-        {
-            RecreateSwapchain();
-            m_bWindowResizeHappened = false;
-        }
-        else if (QueuePresentResult != VK_SUCCESS)
-        {
-            CORVUS_CORE_CRITICAL("Failed to present Swapchain Image!");
-        }
-
-        m_CurrentFrame = (m_CurrentFrame + 1) % s_FramesInFlight;
-    }
-
-    void CRenderer::SubmitStaticModel(CStaticModel &StaticModel, FMatrix4 const &ModelTransformMatrix)
-    {
-        SetModelMatrix(ModelTransformMatrix);
-
-        VkCommandBuffer CommandBuffer = m_CommandBuffers[m_CurrentFrame];
-
         for (CStaticMesh &StaticMesh : StaticModel)
         {
             for (CStaticMeshPrimitive &Primitive : StaticMesh)
             {
-                vkCmdBindDescriptorSets(
-                    CommandBuffer,
-                    VK_PIPELINE_BIND_POINT_GRAPHICS,
-                    m_PipelineLayout,
-                    1,
-                    1,
-                    &Primitive.Material.DescriptorSet,
-                    0,
-                    nullptr
-                );
+                CMaterial           *Material       = Primitive.MaterialRef.GetRawPtr();
+                TOwn<CShader> const &MaterialShader = Material->GetShader();
 
-                VkBuffer     Buffers[] = {Primitive.VertexBuffer.Buffer};
-                VkDeviceSize Offsets[] = {0};
-                vkCmdBindVertexBuffers(CommandBuffer, 0, 1, Buffers, Offsets);
+                FMatrix4 trs    = ModelTransformMatrix;
+                FVector4 yscale = trs[1];
+                yscale.x *= 3.2f;
+                yscale.y *= 3.2f;
+                yscale.z *= 3.2f;
+                trs[1] = yscale;
 
-                vkCmdBindIndexBuffer(CommandBuffer, Primitive.IndexBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
+                MaterialShader->Bind();
+                MaterialShader->SetMat4("u_Transform", trs);
+                MaterialShader->SetMat4("u_ProjView", ProjectionViewMatrix);
+                Material->LoadInShader();
 
-                vkCmdDrawIndexed(CommandBuffer, static_cast<UInt32>(Primitive.IndexData.size()), 1, 0, 0, 0);
+                Submit(*Primitive.VertexArray, *MaterialShader);
             }
         }
     }
 
-    void CRenderer::NotifyWindowResize()
+    void CRenderer::SubmitFrameBuffer(CFrameBuffer const &FrameBuffer)
     {
-        m_bWindowResizeHappened = true;
+        FrameBuffer.LoadInShader(*s_RenderScreenQuadShader, {"u_ScreenQuadTexture"}, 0);
+        Submit(*s_ScreenQuad, *s_RenderScreenQuadShader);
     }
 
-    void CRenderer::AwaitIdle()
+    void CRenderer::InitScreenQuad()
     {
-        vkDeviceWaitIdle(m_Device);
-    }
+        CVertexBufferLayout QuadVertexLayout{{EBufferDataType::Vec2}, {EBufferDataType::Vec2}};
 
-    void CRenderer::SetModelMatrix(FMatrix4 const &ModelMatrix)
-    {
-        // UInt8 *MVPUBOStart         = static_cast<UInt8 *>(m_MatricesUBOs[m_CurrentFrame].MappedMemory);
-        // UInt8 *ModelMatrixLocation = MVPUBOStart + offsetof(CMVPUBO, Model);
-        // std::memcpy(ModelMatrixLocation, &ModelMatrix, sizeof(ModelMatrix));
-
-        CModelPushConstant PushConstant{};
-        PushConstant.Model = ModelMatrix;
-
-        vkCmdPushConstants(
-            m_CommandBuffers[m_CurrentFrame],
-            m_PipelineLayout,
-            VK_SHADER_STAGE_VERTEX_BIT,
-            0,
-            static_cast<UInt32>(sizeof(PushConstant)),
-            &PushConstant
-        );
-    }
-
-    void CRenderer::SetCameraMatrices()
-    {
-        CCamera *PlayerCamera = CApplication::GetInstance().Scene.GetPlayerCamera();
-        CORVUS_CORE_ASSERT(PlayerCamera != nullptr);
-
-        FMatrix4 CameraView       = PlayerCamera->GetViewMatrix();
-        FMatrix4 CameraProjection = PlayerCamera->GetProjectionMatrix();
-
-        // GLM uses OpenGL's clip coordinates, flip Y to fix
-        // But this flips CW and CCW polygon rotation
-        CameraProjection[1][1] *= -1;
-
-        FMatrix4 CameraProjectionView = CameraProjection * CameraView;
-
-        UInt8 *VPUBOStart           = static_cast<UInt8 *>(m_MatricesUBOs[m_CurrentFrame].MappedMemory);
-        UInt8 *CameraMatrixLocation = VPUBOStart + offsetof(CVPUBO, ProjectionView);
-
-        std::memcpy(CameraMatrixLocation, &CameraProjectionView, sizeof(CameraProjectionView));
-    }
-
-    VkResult CRenderer::GetNextSwapchainImageIndex(UInt32 &ImageIndex)
-    {
-        return vkAcquireNextImageKHR(
-            m_Device, m_Swapchain, UINT64_MAX, m_ImageAvailableSemaphores[m_CurrentFrame], VK_NULL_HANDLE, &ImageIndex
-        );
-    }
-
-    void CRenderer::SubmitCommandBuffer(VkCommandBuffer CommandBuffer)
-    {
-        VkSemaphore          WaitSemaphores[] = {m_ImageAvailableSemaphores[m_CurrentFrame]};
-        VkPipelineStageFlags WaitStages[]     = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-
-        VkSemaphore SignalSemaphores[] = {m_RenderFinishedSemaphores[m_CurrentFrame]};
-
-        VkSubmitInfo SubmitInfo{};
-        SubmitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        SubmitInfo.waitSemaphoreCount   = 1;
-        SubmitInfo.pWaitSemaphores      = WaitSemaphores;
-        SubmitInfo.pWaitDstStageMask    = WaitStages;
-        SubmitInfo.commandBufferCount   = 1;
-        SubmitInfo.pCommandBuffers      = &CommandBuffer;
-        SubmitInfo.signalSemaphoreCount = 1;
-        SubmitInfo.pSignalSemaphores    = SignalSemaphores;
-
-        if (vkQueueSubmit(m_Queues.GraphicsQueue, 1, &SubmitInfo, m_InFlightFences[m_CurrentFrame]) != VK_SUCCESS)
+        // clang-format off
+        FVector2 QuadVertexData[] = 
         {
-            CORVUS_CORE_CRITICAL("Failed to submit draw Commands Buffer!");
-        }
-    }
+            // Coordinate  /  UV
+            {-1.0f, -1.0f}, {0.0f, 0.0f},
+            { 1.0f, -1.0f}, {1.0f, 0.0f},
+            { 1.0f,  1.0f}, {1.0f, 1.0f},
+            {-1.0f,  1.0f}, {0.0f, 1.0f},
+        };
+        // clang-format on
 
-    VkResult CRenderer::PresentResult()
-    {
-        VkSwapchainKHR Swapchains[] = {m_Swapchain};
+        TOwn<CVertexBuffer> QuadVertexBuffer = CVertexBuffer::Create(QuadVertexData, 4, QuadVertexLayout);
 
-        VkSemaphore WaitSemaphores[] = {m_RenderFinishedSemaphores[m_CurrentFrame]};
+        // clang-format off
+        UInt32 QuadIndexData[] = 
+        {
+            0, 1, 2,
+            0, 2, 3
+        };
+        // clang-format on
 
-        VkPresentInfoKHR PresentInfo{};
-        PresentInfo.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-        PresentInfo.waitSemaphoreCount = 1;
-        PresentInfo.pWaitSemaphores    = WaitSemaphores;
-        PresentInfo.swapchainCount     = 1;
-        PresentInfo.pSwapchains        = Swapchains;
-        PresentInfo.pImageIndices      = &m_SwapchainImageIndex;
-        PresentInfo.pResults           = nullptr;
+        TOwn<CIndexBuffer> QuadIndexBuffer = CIndexBuffer::Create(QuadIndexData, 6);
 
-        return vkQueuePresentKHR(m_Queues.GraphicsQueue, &PresentInfo);
+        s_ScreenQuad = CVertexArray::Create();
+        s_ScreenQuad->AddVertexBuffer(std::move(QuadVertexBuffer));
+        s_ScreenQuad->AddIndexBuffer(std::move(QuadIndexBuffer));
+
+        s_RenderScreenQuadShader = CShader::CreateFromMemory(
+            {CoreShaders::RenderScreenQuadVertexShader}, {CoreShaders::RenderScreenQuadFragmentShader}
+        );
     }
 
 } // namespace Corvus

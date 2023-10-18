@@ -2,17 +2,17 @@
 
 #include "Corvus/Core/Application.h"
 
-#include "Corvus/Assets/Model/StaticMesh.h"
-#include "Corvus/Assets/Model/StaticMeshPrimitive.h"
-#include "Corvus/Assets/Model/StaticModel.h"
 #include "Corvus/Camera/OrthographicCamera.h"
 #include "Corvus/Camera/PerspectiveCamera.h"
-#include "Corvus/Components/StaticMeshComponent.h"
 #include "Corvus/Core/CoreLayer.h"
 #include "Corvus/GUI/LayerGUI.h"
 #include "Corvus/Memory/ApplicationPools.h"
 #include "Corvus/Profiling/FrameProfiler.h"
+#include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Renderer.h"
+#include "Corvus/Renderer/Shader.h"
+#include "Corvus/Renderer/VertexArray.h"
+#include "Corvus/Renderer/VertexBuffer.h"
 #include "Corvus/Time/TimeDelta.h"
 #include "Corvus/Time/TimePoint.h"
 
@@ -31,14 +31,6 @@ namespace Corvus
 
     CApplication::~CApplication()
     {
-        while (!m_LayersStack.Empty())
-        {
-            m_LayersStack.PopLayer();
-        }
-
-        m_Window->DestroyGUIController();
-        DestroyRenderer();
-        s_ApplicationInstance = nullptr;
     }
 
     void CApplication::Init(SApplicationCreateInfo const &ApplicationCreateInfo)
@@ -58,7 +50,6 @@ namespace Corvus
         InitGUIController();
 
         InitRenderer();
-        m_Window->CreateGUIController();
 
         PushLayer(CLayer::Create<CCoreLayer>());
         // PushLayer(CLayer::Create<CLayerGUI>("GUI", true));
@@ -75,12 +66,8 @@ namespace Corvus
             FTimeDelta const ElapsedTime = TimePointNew - TimePointOld;
             TimePointOld                 = TimePointNew;
 
-            Renderer().BeginFrame();
-
             UpdateLayers(ElapsedTime);
             RenderLayers(ElapsedTime);
-
-            Renderer().EndFrame();
 
             m_Window->OnUpdate();
 
@@ -89,8 +76,6 @@ namespace Corvus
             );
             CORVUS_EVAL_IF_CONSTEXPR(CFrameProfiler::IsEnabled, CFrameProfiler::StopFrame);
         }
-
-        Renderer().AwaitIdle();
     }
 
     void CApplication::PushLayer(TOwn<CLayer> &&NewLayer)
@@ -98,14 +83,9 @@ namespace Corvus
         m_LayersStack.PushLayer(std::move(NewLayer));
     }
 
-    void CApplication::PopLayer()
+    TOwn<CLayer> CApplication::PopLayer()
     {
-        m_LayersStack.PopLayer();
-    }
-
-    TOwn<CLayer> &CApplication::TopLayer()
-    {
-        return m_LayersStack.TopLayer();
+        return m_LayersStack.PopLayer();
     }
 
     void CApplication::UpdateLayers(FTimeDelta ElapsedTime)
@@ -150,14 +130,9 @@ namespace Corvus
 
     void CApplication::InitWindow(SWindowInitInfo const &WindowInitInfo)
     {
-        SWindowData WindowSettings;
-        WindowSettings.WindowWidth  = 1600;
-        WindowSettings.WindowHeight = 900;
-        WindowSettings.WindowName   = "TestWindow";
-
         m_Window = CWindow::Create();
         CORVUS_CORE_ASSERT(m_Window);
-        m_Window->Init(WindowSettings);
+        m_Window->Init(WindowInitInfo);
         m_Window->OnEvent.BindObject(this, &CApplication::OnEventReceived);
 
         CORVUS_CORE_INFO(
@@ -175,14 +150,7 @@ namespace Corvus
 
     void CApplication::InitRenderer()
     {
-        Renderer().Create();
-        CORVUS_CORE_INFO("Renderer created");
-    }
-
-    void CApplication::DestroyRenderer()
-    {
-        Renderer().Destroy();
-        CORVUS_CORE_INFO("Renderer destroyed");
+        CRenderer::Init();
     }
 
 } // namespace Corvus
