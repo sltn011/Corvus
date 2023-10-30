@@ -28,7 +28,7 @@ namespace Corvus
     std::vector<VkPhysicalDevice> CRenderer::GetPhysicalDevices() const
     {
         UInt32 NumPhysicalDevices = 0;
-        vkEnumeratePhysicalDevices(m_Instance, &NumPhysicalDevices, nullptr);
+        vkEnumeratePhysicalDevices(VulkanInstance, &NumPhysicalDevices, nullptr);
 
         if (NumPhysicalDevices == 0)
         {
@@ -36,7 +36,7 @@ namespace Corvus
         }
 
         std::vector<VkPhysicalDevice> PhysicalDevices(NumPhysicalDevices);
-        vkEnumeratePhysicalDevices(m_Instance, &NumPhysicalDevices, PhysicalDevices.data());
+        vkEnumeratePhysicalDevices(VulkanInstance, &NumPhysicalDevices, PhysicalDevices.data());
 
         return PhysicalDevices;
     }
@@ -118,7 +118,7 @@ namespace Corvus
         bool bSwapchainSuitable = false;
         if (bAllExtensionsSupported)
         {
-            CVulkanSwapchainSupportDetails SwapchainSupport = GetSwapchainSupportDetails(PhysicalDevice, m_Surface);
+            CVulkanSwapchainSupportDetails SwapchainSupport = GetSwapchainSupportDetails(PhysicalDevice, Surface);
             bSwapchainSuitable = !SwapchainSupport.PresentationMode.empty() && !SwapchainSupport.SurfaceFormats.empty();
         }
 
@@ -253,7 +253,7 @@ namespace Corvus
         }
 
         VkBool32 bPresentationSupported = false;
-        vkGetPhysicalDeviceSurfaceSupportKHR(PhysicalDevice, QueueFamilyIndex, m_Surface, &bPresentationSupported);
+        vkGetPhysicalDeviceSurfaceSupportKHR(PhysicalDevice, QueueFamilyIndex, Surface, &bPresentationSupported);
         if (bPresentationSupported)
         {
             Score += 100;
@@ -271,7 +271,7 @@ namespace Corvus
         VkQueueFlags const QueueFlags = QueueFamilyProperties.queueFlags;
 
         VkBool32 bPresentationSupported = false;
-        vkGetPhysicalDeviceSurfaceSupportKHR(PhysicalDevice, QueueFamilyIndex, m_Surface, &bPresentationSupported);
+        vkGetPhysicalDeviceSurfaceSupportKHR(PhysicalDevice, QueueFamilyIndex, Surface, &bPresentationSupported);
         if (!bPresentationSupported)
         {
             return 0;

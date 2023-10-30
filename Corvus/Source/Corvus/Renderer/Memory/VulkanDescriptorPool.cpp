@@ -9,17 +9,17 @@ namespace Corvus
     {
         // Per-Frame Pool
         {
-            std::array<VkDescriptorPoolSize, 1> DescriptorPoolSizes{};
-            DescriptorPoolSizes[0].type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            DescriptorPoolSizes[0].descriptorCount = static_cast<UInt32>(s_FramesInFlight);
+            VkDescriptorPoolSize DescriptorPoolSizes[] = {
+                {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, static_cast<UInt32>(s_FramesInFlight)},
+                {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 4 * static_cast<UInt32>(s_FramesInFlight)}};
 
             VkDescriptorPoolCreateInfo DescriptorPoolInfo{};
             DescriptorPoolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-            DescriptorPoolInfo.poolSizeCount = static_cast<UInt32>(DescriptorPoolSizes.size());
-            DescriptorPoolInfo.pPoolSizes    = DescriptorPoolSizes.data();
+            DescriptorPoolInfo.poolSizeCount = (UInt32)(sizeof(DescriptorPoolSizes) / sizeof(DescriptorPoolSizes[0]));
+            DescriptorPoolInfo.pPoolSizes    = DescriptorPoolSizes;
             DescriptorPoolInfo.maxSets       = static_cast<UInt32>(s_FramesInFlight);
 
-            if (vkCreateDescriptorPool(m_Device, &DescriptorPoolInfo, nullptr, &m_PerFrameDescriptorPool) != VK_SUCCESS)
+            if (vkCreateDescriptorPool(Device, &DescriptorPoolInfo, nullptr, &PerFrameDescriptorPool) != VK_SUCCESS)
             {
                 CORVUS_CORE_CRITICAL("Failed to create Vulkan Descriptor Pool!");
             }
@@ -28,18 +28,16 @@ namespace Corvus
 
         // Per-Draw pool
         {
-            std::array<VkDescriptorPoolSize, 1> DescriptorPoolSizes{};
-            DescriptorPoolSizes[0].type            = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-            DescriptorPoolSizes[0].descriptorCount = 128;
+            VkDescriptorPoolSize DescriptorPoolSizes[] = {{VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 4 * 64}};
 
             VkDescriptorPoolCreateInfo DescriptorPoolInfo{};
             DescriptorPoolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-            DescriptorPoolInfo.poolSizeCount = static_cast<UInt32>(DescriptorPoolSizes.size());
-            DescriptorPoolInfo.pPoolSizes    = DescriptorPoolSizes.data();
-            DescriptorPoolInfo.maxSets       = 128;
+            DescriptorPoolInfo.poolSizeCount = (UInt32)(sizeof(DescriptorPoolSizes) / sizeof(DescriptorPoolSizes[0]));
+            DescriptorPoolInfo.pPoolSizes    = DescriptorPoolSizes;
+            DescriptorPoolInfo.maxSets       = 64;
             DescriptorPoolInfo.flags         = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 
-            if (vkCreateDescriptorPool(m_Device, &DescriptorPoolInfo, nullptr, &m_PerDrawDescriptorPool) != VK_SUCCESS)
+            if (vkCreateDescriptorPool(Device, &DescriptorPoolInfo, nullptr, &PerDrawDescriptorPool) != VK_SUCCESS)
             {
                 CORVUS_CORE_CRITICAL("Failed to create Vulkan Descriptor Pool!");
             }
@@ -62,13 +60,14 @@ namespace Corvus
                 {VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 32}};
 
             VkDescriptorPoolCreateInfo GUIDescriptorPoolInfo = {};
-            GUIDescriptorPoolInfo.sType                      = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-            GUIDescriptorPoolInfo.flags                      = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-            GUIDescriptorPoolInfo.maxSets                    = 32 * (sizeof(GUIPoolSizes) / sizeof(GUIPoolSizes[0]));
-            GUIDescriptorPoolInfo.poolSizeCount              = (UInt32)(sizeof(GUIPoolSizes) / sizeof(GUIPoolSizes[0]));
-            GUIDescriptorPoolInfo.pPoolSizes                 = GUIPoolSizes;
 
-            if (vkCreateDescriptorPool(m_Device, &GUIDescriptorPoolInfo, nullptr, &m_GUIDescriptorPool) != VK_SUCCESS)
+            GUIDescriptorPoolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+            GUIDescriptorPoolInfo.flags         = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+            GUIDescriptorPoolInfo.maxSets       = (UInt32)(32 * (sizeof(GUIPoolSizes) / sizeof(GUIPoolSizes[0])));
+            GUIDescriptorPoolInfo.poolSizeCount = (UInt32)(sizeof(GUIPoolSizes) / sizeof(GUIPoolSizes[0]));
+            GUIDescriptorPoolInfo.pPoolSizes    = GUIPoolSizes;
+
+            if (vkCreateDescriptorPool(Device, &GUIDescriptorPoolInfo, nullptr, &GUIDescriptorPool) != VK_SUCCESS)
             {
                 CORVUS_CORE_CRITICAL("Failed to create Vulkan Descriptor Pool!");
             }
@@ -78,22 +77,22 @@ namespace Corvus
 
     void CRenderer::DestroyDescriptorPools()
     {
-        if (m_PerFrameDescriptorPool)
+        if (PerFrameDescriptorPool)
         {
-            vkDestroyDescriptorPool(m_Device, m_PerFrameDescriptorPool, nullptr);
-            m_PerFrameDescriptorPool = VK_NULL_HANDLE;
+            vkDestroyDescriptorPool(Device, PerFrameDescriptorPool, nullptr);
+            PerFrameDescriptorPool = VK_NULL_HANDLE;
             CORVUS_CORE_TRACE("Vulkan Descriptor Pool destroyed");
         }
-        if (m_PerDrawDescriptorPool)
+        if (PerDrawDescriptorPool)
         {
-            vkDestroyDescriptorPool(m_Device, m_PerDrawDescriptorPool, nullptr);
-            m_PerDrawDescriptorPool = VK_NULL_HANDLE;
+            vkDestroyDescriptorPool(Device, PerDrawDescriptorPool, nullptr);
+            PerDrawDescriptorPool = VK_NULL_HANDLE;
             CORVUS_CORE_TRACE("Vulkan Descriptor Pool destroyed");
         }
-        if (m_GUIDescriptorPool)
+        if (GUIDescriptorPool)
         {
-            vkDestroyDescriptorPool(m_Device, m_GUIDescriptorPool, nullptr);
-            m_GUIDescriptorPool = VK_NULL_HANDLE;
+            vkDestroyDescriptorPool(Device, GUIDescriptorPool, nullptr);
+            GUIDescriptorPool = VK_NULL_HANDLE;
             CORVUS_CORE_TRACE("Vulkan GUI Descriptor Pool destroyed");
         }
     }

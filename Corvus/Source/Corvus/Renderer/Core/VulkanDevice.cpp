@@ -9,22 +9,22 @@ namespace Corvus
 
     void CRenderer::CreateDevice()
     {
-        CORVUS_ASSERT_FMT(m_Device == VK_NULL_HANDLE, "Vulkan Device was already created!");
+        CORVUS_ASSERT_FMT(Device == VK_NULL_HANDLE, "Vulkan Device was already created!");
 
-        m_QueueFamilyIndices = GetMostSuitableQueueFamilyIndices(m_PhysicalDevice);
+        QueueFamilyIndices = GetMostSuitableQueueFamilyIndices(m_PhysicalDevice);
 
         // clang-format off
-        std::unordered_set<UInt32> QueueFamilyIndices{
-            m_QueueFamilyIndices.GraphicsFamily.value(),
-            m_QueueFamilyIndices.PresentationFamily.value()
+        std::unordered_set<UInt32> QueueFamilyIndicesSet{
+            QueueFamilyIndices.GraphicsFamily.value(),
+            QueueFamilyIndices.PresentationFamily.value()
         };
         // clang-format on
 
-        std::vector<VkDeviceQueueCreateInfo> QueueCreateInfos(QueueFamilyIndices.size());
+        std::vector<VkDeviceQueueCreateInfo> QueueCreateInfos(QueueFamilyIndicesSet.size());
 
         float  QueuePriority = 1.0f;
         UInt32 Counter       = 0;
-        for (UInt32 QueueFamilyIndex : QueueFamilyIndices)
+        for (UInt32 QueueFamilyIndex : QueueFamilyIndicesSet)
         {
             VkDeviceQueueCreateInfo DeviceQueueCreateInfo{};
             DeviceQueueCreateInfo.sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -52,7 +52,7 @@ namespace Corvus
         DeviceCreateInfo.enabledLayerCount       = static_cast<UInt32>(ValidationLayers.size());
         DeviceCreateInfo.ppEnabledLayerNames     = ValidationLayers.data();
 
-        if (vkCreateDevice(m_PhysicalDevice, &DeviceCreateInfo, nullptr, &m_Device) != VK_SUCCESS)
+        if (vkCreateDevice(m_PhysicalDevice, &DeviceCreateInfo, nullptr, &Device) != VK_SUCCESS)
         {
             CORVUS_CORE_CRITICAL("Failed to create Vulkan Device!");
         }
@@ -61,10 +61,10 @@ namespace Corvus
 
     void CRenderer::DestroyDevice()
     {
-        if (m_Device)
+        if (Device)
         {
-            vkDestroyDevice(m_Device, nullptr);
-            m_Device = VK_NULL_HANDLE;
+            vkDestroyDevice(Device, nullptr);
+            Device = VK_NULL_HANDLE;
             CORVUS_CORE_TRACE("Vulkan Device destroyed");
         }
     }
@@ -72,7 +72,7 @@ namespace Corvus
     VkDeviceMemory CRenderer::AllocateDeviceMemory(VkMemoryAllocateInfo MemoryAllocateInfo)
     {
         VkDeviceMemory Memory = VK_NULL_HANDLE;
-        if (vkAllocateMemory(m_Device, &MemoryAllocateInfo, nullptr, &Memory) != VK_SUCCESS)
+        if (vkAllocateMemory(Device, &MemoryAllocateInfo, nullptr, &Memory) != VK_SUCCESS)
         {
             CORVUS_CORE_CRITICAL("Failed to allocate Vulkan Device Memory!");
         }
@@ -117,7 +117,7 @@ namespace Corvus
     void *CRenderer::MapDeviceMemory(VkDeviceMemory DeviceMemory, VkDeviceSize Size, VkMemoryMapFlags Flags)
     {
         void *MappedMemory = nullptr;
-        if (vkMapMemory(m_Device, DeviceMemory, 0, Size, Flags, &MappedMemory) != VK_SUCCESS)
+        if (vkMapMemory(Device, DeviceMemory, 0, Size, Flags, &MappedMemory) != VK_SUCCESS)
         {
             CORVUS_CORE_CRITICAL("Failed to map Vulkan Buffer memory!");
         }
@@ -126,7 +126,7 @@ namespace Corvus
 
     void CRenderer::UnmapDeviceMemory(VkDeviceMemory DeviceMemory)
     {
-        vkUnmapMemory(m_Device, DeviceMemory);
+        vkUnmapMemory(Device, DeviceMemory);
     }
 
 } // namespace Corvus

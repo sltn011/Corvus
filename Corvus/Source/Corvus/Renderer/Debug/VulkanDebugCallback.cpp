@@ -21,11 +21,11 @@ namespace Corvus
             VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT    |
             VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
             VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-        MessengerInfo.pfnUserCallback = CRenderer::DebugCallback;
+        MessengerInfo.pfnUserCallback = CRenderer::DebugMessageCallback;
         MessengerInfo.pUserData       = nullptr;
         // clang-format on
 
-        if (CreateDebugUtilsMessengerEXT(m_Instance, &MessengerInfo, nullptr, &m_DebugCallback) != VK_SUCCESS)
+        if (CreateDebugUtilsMessengerEXT(VulkanInstance, &MessengerInfo, nullptr, &DebugCallback) != VK_SUCCESS)
         {
             CORVUS_CORE_CRITICAL("Failed to create Vulkan Debug Callback!");
         }
@@ -34,14 +34,14 @@ namespace Corvus
 
     void CRenderer::DestroyDebugCallback()
     {
-        if (m_DebugCallback)
+        if (DebugCallback)
         {
-            DestroyDebugUtilsMessengerEXT(m_Instance, m_DebugCallback, nullptr);
+            DestroyDebugUtilsMessengerEXT(VulkanInstance, DebugCallback, nullptr);
             CORVUS_CORE_TRACE("Vulkan Debug Callback destroyed");
         }
     }
 
-    VKAPI_ATTR VkBool32 VKAPI_CALL CRenderer::DebugCallback(
+    VKAPI_ATTR VkBool32 VKAPI_CALL CRenderer::DebugMessageCallback(
         VkDebugUtilsMessageSeverityFlagBitsEXT      MessageSeverity,
         VkDebugUtilsMessageTypeFlagsEXT             MessageType,
         const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,

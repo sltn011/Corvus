@@ -8,19 +8,19 @@ namespace Corvus
 
     void CRenderer::CreateSurface()
     {
-        CORVUS_ASSERT_FMT(m_Surface == VK_NULL_HANDLE, "Vulkan Surface was already created!");
+        CORVUS_ASSERT_FMT(Surface == VK_NULL_HANDLE, "Vulkan Surface was already created!");
 
-        m_Surface = CApplication::GetInstance().GetWindow().CreateVulkanSurfaceHandler();
+        Surface = CApplication::GetInstance().GetWindow().CreateVulkanSurfaceHandler();
 
         CORVUS_CORE_TRACE("Vulkan Surface created");
     }
 
     void CRenderer::DestroySurface()
     {
-        if (m_Surface)
+        if (Surface)
         {
-            vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
-            m_Surface = VK_NULL_HANDLE;
+            vkDestroySurfaceKHR(VulkanInstance, Surface, nullptr);
+            Surface = VK_NULL_HANDLE;
             CORVUS_CORE_TRACE("Vulkan Surface destroyed");
         }
     }

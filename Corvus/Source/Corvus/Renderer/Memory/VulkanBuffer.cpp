@@ -15,14 +15,14 @@ namespace Corvus
         BufferCreateInfo.size        = Size;
         BufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE; // only will be used by graphics queue
 
-        if (vkCreateBuffer(m_Device, &BufferCreateInfo, nullptr, &Buffer.Buffer) != VK_SUCCESS)
+        if (vkCreateBuffer(Device, &BufferCreateInfo, nullptr, &Buffer.Buffer) != VK_SUCCESS)
         {
             CORVUS_CORE_CRITICAL("Failed to create Vulkan Buffer!");
         }
         CORVUS_CORE_TRACE("Created Vulkan Buffer successfully");
 
         VkMemoryRequirements BufferMemoryRequirements{};
-        vkGetBufferMemoryRequirements(m_Device, Buffer.Buffer, &BufferMemoryRequirements);
+        vkGetBufferMemoryRequirements(Device, Buffer.Buffer, &BufferMemoryRequirements);
 
         VkMemoryAllocateInfo BufferMemoryAllocateInfo{};
         BufferMemoryAllocateInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -31,7 +31,7 @@ namespace Corvus
 
         Buffer.Memory = AllocateDeviceMemory(BufferMemoryAllocateInfo);
 
-        vkBindBufferMemory(m_Device, Buffer.Buffer, Buffer.Memory, 0);
+        vkBindBufferMemory(Device, Buffer.Buffer, Buffer.Memory, 0);
 
         return Buffer;
     }
@@ -40,8 +40,8 @@ namespace Corvus
     {
         if (Buffer.Buffer && Buffer.Memory)
         {
-            vkDestroyBuffer(m_Device, Buffer.Buffer, nullptr);
-            vkFreeMemory(m_Device, Buffer.Memory, nullptr);
+            vkDestroyBuffer(Device, Buffer.Buffer, nullptr);
+            vkFreeMemory(Device, Buffer.Memory, nullptr);
             Buffer.Buffer = VK_NULL_HANDLE;
             Buffer.Memory = VK_NULL_HANDLE;
         }
@@ -51,8 +51,8 @@ namespace Corvus
     {
         if (Buffer.Buffer && Buffer.Memory)
         {
-            vkDestroyBuffer(m_Device, Buffer.Buffer, nullptr);
-            vkFreeMemory(m_Device, Buffer.Memory, nullptr);
+            vkDestroyBuffer(Device, Buffer.Buffer, nullptr);
+            vkFreeMemory(Device, Buffer.Memory, nullptr);
             Buffer.Buffer       = VK_NULL_HANDLE;
             Buffer.Memory       = VK_NULL_HANDLE;
             Buffer.MappedMemory = nullptr;
@@ -96,18 +96,18 @@ namespace Corvus
     {
         for (UInt32 i = 0; i < s_FramesInFlight; ++i)
         {
-            m_MatricesUBOs[i] = CreateUniformBuffer<CVPUBO>();
+            MatricesUBOs[i] = CreateUniformBuffer<CVPUBO>();
         }
         CORVUS_CORE_TRACE("Vulkan Uniform Buffers created");
     }
 
     void CRenderer::DestroyUniformBuffers()
     {
-        if (!m_MatricesUBOs.empty())
+        if (!MatricesUBOs.empty())
         {
             for (UInt32 i = 0; i < s_FramesInFlight; ++i)
             {
-                DestroyBuffer(m_MatricesUBOs[i]);
+                DestroyBuffer(MatricesUBOs[i]);
             }
             CORVUS_CORE_TRACE("Vulkan Uniform Buffers destroyed");
         }

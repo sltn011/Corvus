@@ -9,19 +9,19 @@ namespace Corvus
 
     void CRenderer::CreateSwapchain()
     {
-        CVulkanSwapchainSupportDetails SupportDetails = GetSwapchainSupportDetails(m_PhysicalDevice, m_Surface);
+        CVulkanSwapchainSupportDetails SupportDetails = GetSwapchainSupportDetails(m_PhysicalDevice, Surface);
 
         UInt32 const             ImagesCount = SelectImagesCount(SupportDetails);
         VkExtent2D const         Extent      = SelectExtent(SupportDetails);
         VkSurfaceFormatKHR const Format      = SelectSurfaceFormat(SupportDetails);
         VkPresentModeKHR const   PresentMode = SelectPresentationMode(SupportDetails);
 
-        m_SwapchainExtent      = Extent;
-        m_SwapchainImageFormat = Format.format;
+        SwapchainExtent      = Extent;
+        SwapchainImageFormat = Format.format;
 
         VkSwapchainCreateInfoKHR CreateInfo{};
         CreateInfo.sType            = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-        CreateInfo.surface          = m_Surface;
+        CreateInfo.surface          = Surface;
         CreateInfo.minImageCount    = ImagesCount;
         CreateInfo.imageExtent      = Extent;
         CreateInfo.imageFormat      = Format.format;
@@ -31,9 +31,9 @@ namespace Corvus
         CreateInfo.imageUsage       = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
         UInt32 QueueFamilyIndicesArray[] = {
-            m_QueueFamilyIndices.GraphicsFamily.value(), m_QueueFamilyIndices.PresentationFamily.value()};
+            QueueFamilyIndices.GraphicsFamily.value(), QueueFamilyIndices.PresentationFamily.value()};
 
-        if (m_QueueFamilyIndices.GraphicsFamily.value() != m_QueueFamilyIndices.PresentationFamily.value())
+        if (QueueFamilyIndices.GraphicsFamily.value() != QueueFamilyIndices.PresentationFamily.value())
         {
             CreateInfo.imageSharingMode      = VK_SHARING_MODE_CONCURRENT;
             CreateInfo.queueFamilyIndexCount = 2;
@@ -52,7 +52,7 @@ namespace Corvus
         CreateInfo.clipped        = VK_TRUE;                                             // Ignore obstructed pixels
         CreateInfo.oldSwapchain   = VK_NULL_HANDLE;
 
-        if (vkCreateSwapchainKHR(m_Device, &CreateInfo, nullptr, &m_Swapchain) != VK_SUCCESS)
+        if (vkCreateSwapchainKHR(Device, &CreateInfo, nullptr, &Swapchain) != VK_SUCCESS)
         {
             CORVUS_CORE_CRITICAL("Failed to create Vulkan Swapchain!");
         }
@@ -61,10 +61,10 @@ namespace Corvus
 
     void CRenderer::DestroySwapchain()
     {
-        if (m_Swapchain)
+        if (Swapchain)
         {
-            vkDestroySwapchainKHR(m_Device, m_Swapchain, nullptr);
-            m_Swapchain = VK_NULL_HANDLE;
+            vkDestroySwapchainKHR(Device, Swapchain, nullptr);
+            Swapchain = VK_NULL_HANDLE;
             CORVUS_CORE_TRACE("Vulkan Swapchain destroyed");
         }
     }
@@ -80,7 +80,7 @@ namespace Corvus
             Window.AwaitNextEvent();
         }
 
-        vkDeviceWaitIdle(m_Device);
+        vkDeviceWaitIdle(Device);
 
         DestroyFramebuffers();
         DestroySwapchainImageViews();
@@ -128,21 +128,21 @@ namespace Corvus
     void CRenderer::RetrieveSwapchainImages()
     {
         UInt32 SwapchainImagesCount = 0;
-        vkGetSwapchainImagesKHR(m_Device, m_Swapchain, &SwapchainImagesCount, nullptr);
+        vkGetSwapchainImagesKHR(Device, Swapchain, &SwapchainImagesCount, nullptr);
 
-        m_SwapchainImages.resize(SwapchainImagesCount);
-        vkGetSwapchainImagesKHR(m_Device, m_Swapchain, &SwapchainImagesCount, m_SwapchainImages.data());
+        SwapchainImages.resize(SwapchainImagesCount);
+        vkGetSwapchainImagesKHR(Device, Swapchain, &SwapchainImagesCount, SwapchainImages.data());
 
         CORVUS_CORE_TRACE("Retrieved Vulkan Images from Vulkan Swapchain");
     }
 
     void CRenderer::CreateSwapchainImageViews()
     {
-        m_SwapchainImageViews.resize(m_SwapchainImages.size());
-        for (UInt32 i = 0; i < m_SwapchainImageViews.size(); ++i)
+        SwapchainImageViews.resize(SwapchainImages.size());
+        for (UInt32 i = 0; i < SwapchainImageViews.size(); ++i)
         {
-            m_SwapchainImageViews[i] =
-                CreateImageView(m_SwapchainImages[i], 1, m_SwapchainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
+            SwapchainImageViews[i] =
+                CreateImageView(SwapchainImages[i], 1, SwapchainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
         }
 
         CORVUS_CORE_TRACE("Swapchain Image Views created");
@@ -150,11 +150,11 @@ namespace Corvus
 
     void CRenderer::DestroySwapchainImageViews()
     {
-        for (VkImageView ImageView : m_SwapchainImageViews)
+        for (VkImageView ImageView : SwapchainImageViews)
         {
             DestroyImageView(ImageView);
         }
-        m_SwapchainImageViews.clear();
+        SwapchainImageViews.clear();
 
         CORVUS_CORE_TRACE("Swapchain Image Views destroyed");
     }

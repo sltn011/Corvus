@@ -1,13 +1,13 @@
 #include "CorvusPCH.h"
 
-#include "Corvus/Assets/Material/Material.h"
+#include "Corvus/Renderer/Resources/RenderTarget.h"
 
 #include "Corvus/Renderer/Renderer.h"
 
 namespace Corvus
 {
     template<SizeT TAmount>
-    void ConfigureMaterialDescriptorSet(
+    void ConfigureRenderTargetDescriptorSet(
         VkDevice Device, VkDescriptorSet DescriptorSet, VkImageView *pImageViews, VkSampler *pSamplers
     )
     {
@@ -35,19 +35,44 @@ namespace Corvus
         );
     }
 
-    void CRenderer::CreateMaterialRenderData(CMaterial &Material)
+    CRenderTarget CRenderer::CreateRenderTarget(
+        std::vector<CAttachment> Attachments,
+        VkExtent2D               Extent,
+        VkRenderPass             RenderPass,
+        VkDescriptorSetLayout    DescriptorSetLayout
+    )
     {
-        std::array<VkImageView, 1> ImageViews      = {Material.Albedo.ImageView};
-        std::array<VkSampler, 1>   TextureSamplers = {Samplers.DefaultSampler};
+        std::vector<VkImageView> AttachmentViews(Attachments.size());
+        for (SizeT i = 0; i < Attachments.size(); ++i)
+        {
+            AttachmentViews[i] = Attachments[i].ImageView;
+        }
 
-        VkDescriptorSet DescriptorSet = AllocateDescriptorSets<1>(PerDrawDescriptorPool, PerDrawDescriptorSetLayout)[0];
-        ConfigureMaterialDescriptorSet<1>(Device, DescriptorSet, ImageViews.data(), TextureSamplers.data());
+        std::vector<VkSampler> Samplers(Attachments.size(), Samplers.DefaultSampler);
 
-        Material.DescriptorSet = DescriptorSet;
+        CRenderTarget RenderTarget{};
+        RenderTarget.Framebuffer = CreateFramebuffer(
+            RenderPass, Extent, 1, AttachmentViews.data(), static_cast<UInt32>(AttachmentViews.size())
+        );
+
+        RenderTarget.DescriptorSet = AllocateDescriptorSets<1>(PerDrawDescriptorPool, DescriptorSetLayout)[0];
+        ConfigureRenderTargetDescriptorSet<4>(
+            Device, RenderTarget.DescriptorSet, AttachmentViews.data(), Samplers.data()
+        );
+
+        RenderTarget.Extent      = Extent;
+        RenderTarget.Attachments = std::move(Attachments);
+
+        return RenderTarget;
     }
 
-    void CRenderer::DestroyMaterialRenderData(CMaterial &Material)
+    void CRenderer::DestroyRenderTarget(CRenderTarget &RenderTarget)
     {
-        FreeDescriptorSets(PerDrawDescriptorPool, &Material.DescriptorSet, 1);
+        for (CAttachment &Attachment : RenderTarget.Attachments)
+        {
+            DestroyAttachment(Attachment);
+        }
+        DestroyFramebuffer(RenderTarget.Framebuffer);
     }
+
 } // namespace Corvus

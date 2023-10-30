@@ -17,7 +17,7 @@ namespace Corvus
         DescriptorSetInfo.descriptorSetCount = static_cast<UInt32>(SetsLayouts.size());
         DescriptorSetInfo.pSetLayouts        = SetsLayouts.data();
 
-        if (vkAllocateDescriptorSets(m_Device, &DescriptorSetInfo, DescriptorSets.data()) != VK_SUCCESS)
+        if (vkAllocateDescriptorSets(Device, &DescriptorSetInfo, DescriptorSets.data()) != VK_SUCCESS)
         {
             CORVUS_CORE_CRITICAL("Failed to allocate Vulkan Descriptor Sets!");
         }

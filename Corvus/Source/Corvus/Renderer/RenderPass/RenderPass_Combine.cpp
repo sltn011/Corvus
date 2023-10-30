@@ -1,21 +1,164 @@
 #include "CorvusPCH.h"
 
+#include "Corvus/Renderer/RenderPass/RenderPass_Combine.h"
+
+#include "Corvus/Renderer/Data/PushConstants.h"
+#include "Corvus/Renderer/Data/ScreenQuad.h"
+#include "Corvus/Renderer/Data/UBOs.h"
 #include "Corvus/Renderer/Data/Vertex.h"
 #include "Corvus/Renderer/Renderer.h"
 
 namespace Corvus
 {
 
-    void CRenderer::CreatePipeline()
+    void CRenderPass_Combine::Create()
     {
-        CORVUS_ASSERT_FMT(Pipeline == VK_NULL_HANDLE, "Vulkan Pipeline was already created!");
+        CreateRenderPass();
+        CreateLayout();
+        CreatePipeline();
+    }
 
+    void CRenderPass_Combine::Destroy()
+    {
+        vkDestroyPipeline(Renderer().Device, Pipeline, nullptr);
+        vkDestroyPipelineLayout(Renderer().Device, PipelineLayout, nullptr);
+        vkDestroyRenderPass(Renderer().Device, RenderPass, nullptr);
+
+        Pipeline       = VK_NULL_HANDLE;
+        PipelineLayout = VK_NULL_HANDLE;
+        RenderPass     = VK_NULL_HANDLE;
+    }
+
+    void CRenderPass_Combine::Render(VkCommandBuffer CommandBuffer, UInt32 SwapchainImageIndex)
+    {
+        std::array<VkClearValue, 1> ClearColors;
+        ClearColors[0].color = VkClearColorValue{0.0f, 0.0f, 0.0f, 1.0f};
+
+        VkRenderPassBeginInfo RenderPassBeginInfo{};
+        RenderPassBeginInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        RenderPassBeginInfo.renderPass        = RenderPass;
+        RenderPassBeginInfo.framebuffer       = Renderer().SwapchainFramebuffers[SwapchainImageIndex];
+        RenderPassBeginInfo.renderArea.offset = {0, 0};
+        RenderPassBeginInfo.renderArea.extent = Renderer().SwapchainExtent;
+
+        RenderPassBeginInfo.clearValueCount = static_cast<UInt32>(ClearColors.size());
+        RenderPassBeginInfo.pClearValues    = ClearColors.data();
+
+        vkCmdBeginRenderPass(CommandBuffer, &RenderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+        vkCmdBindPipeline(CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, Pipeline);
+
+        // Viewport and Scissor are dynamic - specify them here
+        VkViewport Viewport{};
+        Viewport.x        = 0.0f;
+        Viewport.y        = 0.0f;
+        Viewport.width    = static_cast<float>(Renderer().SwapchainExtent.width);
+        Viewport.height   = static_cast<float>(Renderer().SwapchainExtent.height);
+        Viewport.minDepth = 0.0f;
+        Viewport.maxDepth = 1.0f;
+        vkCmdSetViewport(CommandBuffer, 0, 1, &Viewport);
+
+        VkRect2D Scissor{};
+        Scissor.offset = {0, 0};
+        Scissor.extent = Renderer().SwapchainExtent;
+        vkCmdSetScissor(CommandBuffer, 0, 1, &Scissor);
+
+        vkCmdBindDescriptorSets(
+            CommandBuffer,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            PipelineLayout,
+            0,
+            1,
+            &Renderer().RenderPass_Deferred.RenderTarget.DescriptorSet,
+            0,
+            nullptr
+        );
+
+        VkBuffer     Buffers[] = {CScreenQuad::Get().VertexBuffer.Buffer};
+        VkDeviceSize Offsets[] = {0};
+        vkCmdBindVertexBuffers(CommandBuffer, 0, 1, Buffers, Offsets);
+
+        vkCmdBindIndexBuffer(CommandBuffer, CScreenQuad::Get().IndexBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
+
+        vkCmdDrawIndexed(CommandBuffer, 6, 1, 0, 0, 0);
+
+        vkCmdEndRenderPass(CommandBuffer);
+    }
+
+    void CRenderPass_Combine::CreateRenderPass()
+    {
+        VkAttachmentDescription ColorAttachment{};
+        ColorAttachment.format         = Renderer().SwapchainImageFormat;
+        ColorAttachment.samples        = VK_SAMPLE_COUNT_1_BIT;
+        ColorAttachment.loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR;
+        ColorAttachment.storeOp        = VK_ATTACHMENT_STORE_OP_STORE;
+        ColorAttachment.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        ColorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+        ColorAttachment.initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED;
+        ColorAttachment.finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+        VkAttachmentReference ColorAttachmentRef{};
+        ColorAttachmentRef.attachment = 0; // index of attachment in pAttachments array in RenderPassInfo
+        ColorAttachmentRef.layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+        VkSubpassDescription Subpass{};
+        Subpass.pipelineBindPoint       = VK_PIPELINE_BIND_POINT_GRAPHICS;
+        Subpass.colorAttachmentCount    = 1;
+        Subpass.pColorAttachments       = &ColorAttachmentRef;
+        Subpass.pDepthStencilAttachment = nullptr;
+
+        VkSubpassDependency Dependency{};
+        Dependency.srcSubpass    = VK_SUBPASS_EXTERNAL;
+        Dependency.dstSubpass    = 0; // our only subpass
+        Dependency.srcStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        Dependency.srcAccessMask = 0;
+        Dependency.dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        Dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+        std::array<VkAttachmentDescription, 1> AttachmentDescriptions = {ColorAttachment};
+
+        VkRenderPassCreateInfo RenderPassInfo{};
+        RenderPassInfo.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+        RenderPassInfo.attachmentCount = static_cast<UInt32>(AttachmentDescriptions.size());
+        RenderPassInfo.pAttachments    = AttachmentDescriptions.data();
+        RenderPassInfo.subpassCount    = 1;
+        RenderPassInfo.pSubpasses      = &Subpass;
+        RenderPassInfo.dependencyCount = 1;
+        RenderPassInfo.pDependencies   = &Dependency;
+
+        if (vkCreateRenderPass(Renderer().Device, &RenderPassInfo, nullptr, &RenderPass) != VK_SUCCESS)
+        {
+            CORVUS_CORE_CRITICAL("Failed to create Combine Render Pass!");
+        }
+        CORVUS_CORE_TRACE("Created Combine Render Pass successfully");
+    }
+
+    void CRenderPass_Combine::CreateLayout()
+    {
+        std::array<VkDescriptorSetLayout, 1> SetLayouts = {Renderer().PerDrawDescriptorSetLayout};
+
+        VkPipelineLayoutCreateInfo PipelineLayoutInfo{};
+        PipelineLayoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+        PipelineLayoutInfo.setLayoutCount         = static_cast<UInt32>(SetLayouts.size());
+        PipelineLayoutInfo.pSetLayouts            = SetLayouts.data();
+        PipelineLayoutInfo.pushConstantRangeCount = 0;
+        PipelineLayoutInfo.pPushConstantRanges    = nullptr;
+
+        if (vkCreatePipelineLayout(Renderer().Device, &PipelineLayoutInfo, nullptr, &PipelineLayout) != VK_SUCCESS)
+        {
+            CORVUS_CORE_CRITICAL("Failed to create Combine Pipeline Layout!");
+        }
+        CORVUS_CORE_TRACE("Created Combine Pipeline Layout successfully");
+    }
+
+    void CRenderPass_Combine::CreatePipeline()
+    {
         // Programmable stages ===============================================================================
-        std::vector<char> VertexShaderByteCode   = ReadSPIRVByteCode("./Assets/Shaders/vert.spv");
-        std::vector<char> FragmentShaderByteCode = ReadSPIRVByteCode("./Assets/Shaders/frag.spv");
+        std::vector<char> VertexShaderByteCode   = Renderer().ReadSPIRVByteCode("./Assets/Shaders/Combine.vert.spv");
+        std::vector<char> FragmentShaderByteCode = Renderer().ReadSPIRVByteCode("./Assets/Shaders/Combine.frag.spv");
 
-        VkShaderModule VertexShaderModule   = CreateShaderModule(VertexShaderByteCode);
-        VkShaderModule FragmentShaderModule = CreateShaderModule(FragmentShaderByteCode);
+        VkShaderModule VertexShaderModule   = Renderer().CreateShaderModule(VertexShaderByteCode);
+        VkShaderModule FragmentShaderModule = Renderer().CreateShaderModule(FragmentShaderByteCode);
 
         VkPipelineShaderStageCreateInfo VertexShaderStageInfo{};
         VertexShaderStageInfo.sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -73,7 +216,7 @@ namespace Corvus
         RasterizerStageInfo.rasterizerDiscardEnable = VK_FALSE;
         RasterizerStageInfo.polygonMode             = VK_POLYGON_MODE_FILL;
         RasterizerStageInfo.lineWidth               = 1.0f;
-        RasterizerStageInfo.cullMode                = VK_CULL_MODE_BACK_BIT;
+        RasterizerStageInfo.cullMode                = VK_CULL_MODE_NONE;
         RasterizerStageInfo.frontFace               = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         RasterizerStageInfo.depthBiasEnable         = VK_FALSE;
         RasterizerStageInfo.depthBiasConstantFactor = 0.0f; // optional
@@ -96,8 +239,8 @@ namespace Corvus
         // Depth and Stencil testing =========================================================================
         VkPipelineDepthStencilStateCreateInfo DepthStencilTestStateInfo{};
         DepthStencilTestStateInfo.sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-        DepthStencilTestStateInfo.depthTestEnable       = VK_TRUE;
-        DepthStencilTestStateInfo.depthWriteEnable      = VK_TRUE;
+        DepthStencilTestStateInfo.depthTestEnable       = VK_FALSE;
+        DepthStencilTestStateInfo.depthWriteEnable      = VK_FALSE;
         DepthStencilTestStateInfo.depthCompareOp        = VK_COMPARE_OP_LESS;
         DepthStencilTestStateInfo.depthBoundsTestEnable = VK_FALSE;
         DepthStencilTestStateInfo.minDepthBounds        = 0.0f;
@@ -160,26 +303,16 @@ namespace Corvus
         PipelineCreateInfo.basePipelineIndex  = -1;
 
         VkResult PipelineCreateResult =
-            vkCreateGraphicsPipelines(Device, VK_NULL_HANDLE, 1, &PipelineCreateInfo, nullptr, &Pipeline);
+            vkCreateGraphicsPipelines(Renderer().Device, VK_NULL_HANDLE, 1, &PipelineCreateInfo, nullptr, &Pipeline);
 
-        DestroyShaderModule(FragmentShaderModule);
-        DestroyShaderModule(VertexShaderModule);
+        Renderer().DestroyShaderModule(FragmentShaderModule);
+        Renderer().DestroyShaderModule(VertexShaderModule);
 
         if (PipelineCreateResult != VK_SUCCESS)
         {
-            CORVUS_CORE_CRITICAL("Failed to create Vulkan Pipeline!");
+            CORVUS_CORE_CRITICAL("Failed to create Combine Pipeline!");
         }
-        CORVUS_CORE_TRACE("Created Vulkan Pipeline successfully");
-    }
-
-    void CRenderer::DestroyPipeline()
-    {
-        if (Pipeline)
-        {
-            vkDestroyPipeline(Device, Pipeline, nullptr);
-            Pipeline = VK_NULL_HANDLE;
-            CORVUS_CORE_TRACE("Vulkan Pipeline destroyed");
-        }
+        CORVUS_CORE_TRACE("Created Combine Pipeline successfully");
     }
 
 } // namespace Corvus

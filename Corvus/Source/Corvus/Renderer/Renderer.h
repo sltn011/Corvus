@@ -7,6 +7,10 @@
 #include "Corvus/Renderer/Core/VulkanSwapchainSupportDetails.h"
 #include "Corvus/Renderer/Data/UBOs.h"
 #include "Corvus/Renderer/Memory/VulkanBuffer.h"
+#include "Corvus/Renderer/RenderPass/RenderPass_Combine.h"
+#include "Corvus/Renderer/RenderPass/RenderPass_Deferred.h"
+#include "Corvus/Renderer/Resources/Attachment.h"
+#include "Corvus/Renderer/Resources/RenderTarget.h"
 #include "Corvus/Renderer/Resources/VulkanImage.h"
 #include "Corvus/Renderer/Resources/VulkanSampler.h"
 
@@ -39,11 +43,7 @@ namespace Corvus
 
         static CRenderer &GetInstance();
 
-        VkInstance GetVulkanInstance();
-
-    public:
-        // Access
-        CVulkanSamplers GetSamplers() const;
+        UInt32 CurrentFrame() { return m_CurrentFrame; }
 
     public:
         // General
@@ -55,6 +55,11 @@ namespace Corvus
         void NotifyWindowResize();
 
         void AwaitIdle();
+
+    public:
+        // RenderPasses
+        CRenderPass_Deferred RenderPass_Deferred;
+        CRenderPass_Combine  RenderPass_Combine;
 
     public:
         // Buffers
@@ -71,6 +76,20 @@ namespace Corvus
         void DestroyBuffer(CVulkanUniformBuffer &Buffer);
 
     public:
+        // RenderTarget
+        CAttachment CreateColorAttachment(VkFormat Format, VkExtent2D Extent);
+        CAttachment CreateDepthStencilAttachment(VkFormat Format, VkExtent2D Extent);
+        void        DestroyAttachment(CAttachment &Attachment);
+
+        CRenderTarget CreateRenderTarget(
+            std::vector<CAttachment> Attachments,
+            VkExtent2D               Extent,
+            VkRenderPass             RenderPass,
+            VkDescriptorSetLayout    DescriptorSetLayout
+        );
+        void DestroyRenderTarget(CRenderTarget &RenderTarget);
+
+    public:
         // Textures
         CTexture2D CreateTexture2D(CImageData const &ImageData, UInt32 MipLevels, VkSampler TextureSampler);
         void       DestroyTexture2D(CTexture2D &Texture2D);
@@ -79,6 +98,19 @@ namespace Corvus
         // Materials
         void CreateMaterialRenderData(CMaterial &Material);
         void DestroyMaterialRenderData(CMaterial &Material);
+
+    public:
+        // Shader
+        std::vector<char> ReadSPIRVByteCode(CString const &FilePath) const;
+
+        VkShaderModule CreateShaderModule(std::vector<char> const &SPIRVByteCode) const;
+        void           DestroyShaderModule(VkShaderModule &ShaderModule) const;
+
+    public:
+        // Helper
+        VkFormat FindSupportedFormat(
+            std::vector<VkFormat> const &Candidates, VkImageTiling Tiling, VkFormatFeatureFlags Features
+        );
 
     private:
         void SetModelMatrix(FMatrix4 const &ModelMatrix);
@@ -109,14 +141,15 @@ namespace Corvus
         static bool CheckExtensionsAvailable(std::vector<char const *> const &RequiredExtensions);
         static bool CheckValidationLayersAvailable(std::vector<char const *> const &RequiredLayers);
 
-        VkInstance m_Instance = VK_NULL_HANDLE;
+    public:
+        VkInstance VulkanInstance = VK_NULL_HANDLE;
 
 #ifdef CORVUS_DEBUG
     private:
         void CreateDebugCallback();
         void DestroyDebugCallback();
 
-        static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
+        static VKAPI_ATTR VkBool32 VKAPI_CALL DebugMessageCallback(
             VkDebugUtilsMessageSeverityFlagBitsEXT      MessageSeverity,
             VkDebugUtilsMessageTypeFlagsEXT             MessageType,
             const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
@@ -124,17 +157,18 @@ namespace Corvus
         );
 
         VKAPI_ATTR VkResult VKAPI_CALL CreateDebugUtilsMessengerEXT(
-            VkInstance                                Instance,
+            VkInstance                                VulkanInstance,
             VkDebugUtilsMessengerCreateInfoEXT const *pCreateInfo,
             VkAllocationCallbacks const              *pAllocator,
             VkDebugUtilsMessengerEXT                 *pDebugMessenger
         );
 
         VKAPI_ATTR void VKAPI_CALL DestroyDebugUtilsMessengerEXT(
-            VkInstance Instance, VkDebugUtilsMessengerEXT DebugMessenger, VkAllocationCallbacks const *pAllocator
+            VkInstance VulkanInstance, VkDebugUtilsMessengerEXT DebugMessenger, VkAllocationCallbacks const *pAllocator
         );
 
-        VkDebugUtilsMessengerEXT m_DebugCallback = VK_NULL_HANDLE;
+    public:
+        VkDebugUtilsMessengerEXT DebugCallback = VK_NULL_HANDLE;
 #endif
 
     private:
@@ -142,7 +176,8 @@ namespace Corvus
         void CreateSurface();
         void DestroySurface();
 
-        VkSurfaceKHR m_Surface = VK_NULL_HANDLE;
+    public:
+        VkSurfaceKHR Surface = VK_NULL_HANDLE;
 
     private:
         // VkPhysicalDevice
@@ -206,14 +241,16 @@ namespace Corvus
         void *MapDeviceMemory(VkDeviceMemory DeviceMemory, VkDeviceSize Size, VkMemoryMapFlags Flags);
         void  UnmapDeviceMemory(VkDeviceMemory DeviceMemory);
 
-        VkDevice m_Device = VK_NULL_HANDLE;
+    public:
+        VkDevice Device = VK_NULL_HANDLE;
 
     private:
         // VkQueue
         void RetrieveQueues();
 
-        CVulkanQueueFamilyIndices m_QueueFamilyIndices;
-        CVulkanQueues             m_Queues;
+    public:
+        CVulkanQueueFamilyIndices QueueFamilyIndices;
+        CVulkanQueues             Queues;
 
     private:
         // VkSwapchain
@@ -234,12 +271,13 @@ namespace Corvus
         void CreateSwapchainImageViews();
         void DestroySwapchainImageViews();
 
-        VkSwapchainKHR           m_Swapchain = VK_NULL_HANDLE;
-        VkExtent2D               m_SwapchainExtent;
-        VkFormat                 m_SwapchainImageFormat;
-        std::vector<VkImage>     m_SwapchainImages;
-        std::vector<VkImageView> m_SwapchainImageViews;
-        UInt32                   m_SwapchainImageIndex = 0;
+    public:
+        VkSwapchainKHR           Swapchain = VK_NULL_HANDLE;
+        VkExtent2D               SwapchainExtent;
+        VkFormat                 SwapchainImageFormat;
+        std::vector<VkImage>     SwapchainImages;
+        std::vector<VkImageView> SwapchainImageViews;
+        UInt32                   SwapchainImageIndex = 0;
 
     private:
         // VkImage
@@ -261,10 +299,6 @@ namespace Corvus
 
         void GenerateMips(VkImage Image, UInt32 MipLevels, UInt32 ImageWidth, UInt32 ImageHeight, VkFormat Format);
 
-        VkFormat FindSupportedFormat(
-            std::vector<VkFormat> const &Candidates, VkImageTiling Tiling, VkFormatFeatureFlags Features
-        );
-
         bool bFormatSupportsStencilData(VkFormat Format);
 
         // Depth VkImage
@@ -273,8 +307,9 @@ namespace Corvus
 
         VkFormat FindDepthFormat();
 
-        CVulkanImage m_DepthImage;
-        VkImageView  m_DepthImageView = VK_NULL_HANDLE;
+    public:
+        CVulkanImage DepthImage;
+        VkImageView  DepthImageView = VK_NULL_HANDLE;
 
     private:
         // VkImageView
@@ -295,43 +330,41 @@ namespace Corvus
             UInt32               MipLevels
         ) const;
 
-        CVulkanSamplers m_Samplers{};
+    public:
+        CVulkanSamplers Samplers{};
 
     private:
         // VkRenderPass
         void CreateRenderPass();
         void DestroyRenderPass();
 
-        VkRenderPass m_RenderPass = VK_NULL_HANDLE;
-
-    private:
-        // VkShaderModule
-        std::vector<char> ReadSPIRVByteCode(CString const &FilePath) const;
-
-        VkShaderModule CreateShaderModule(std::vector<char> const &SPIRVByteCode) const;
-        void           DestroyShaderModule(VkShaderModule &ShaderModule) const;
+    public:
+        VkRenderPass RenderPass = VK_NULL_HANDLE;
 
     private:
         // VkPipeline
         void CreatePipeline();
         void DestroyPipeline();
 
-        VkPipeline m_Pipeline = VK_NULL_HANDLE;
+    public:
+        VkPipeline Pipeline = VK_NULL_HANDLE;
 
     private:
         // VkPipelineLayout
         void CreatePipelineLayout();
         void DestroyPipelineLayout();
 
-        VkPipelineLayout m_PipelineLayout = VK_NULL_HANDLE;
+    public:
+        VkPipelineLayout PipelineLayout = VK_NULL_HANDLE;
 
     private:
         // VkCommandPool
         void CreateCommandPools();
         void DestroyCommandPools();
 
-        VkCommandPool m_CommandPool         = VK_NULL_HANDLE;
-        VkCommandPool m_TransferCommandPool = VK_NULL_HANDLE;
+    public:
+        VkCommandPool CommandPool         = VK_NULL_HANDLE;
+        VkCommandPool TransferCommandPool = VK_NULL_HANDLE;
 
     private:
         // VkCommandBuffer
@@ -340,7 +373,8 @@ namespace Corvus
         VkCommandBuffer BeginSingleTimeCommand();
         void            EndSingleTimeCommand(VkCommandBuffer CommandBuffer);
 
-        std::array<VkCommandBuffer, s_FramesInFlight> m_CommandBuffers{VK_NULL_HANDLE};
+    public:
+        std::array<VkCommandBuffer, s_FramesInFlight> CommandBuffers{VK_NULL_HANDLE};
 
     private:
         // VkBuffer
@@ -352,52 +386,63 @@ namespace Corvus
         void CreateUniformBuffers();
         void DestroyUniformBuffers();
 
-        std::array<CVulkanUniformBuffer, s_FramesInFlight> m_MatricesUBOs{VK_NULL_HANDLE};
+    public:
+        std::array<CVulkanUniformBuffer, s_FramesInFlight> MatricesUBOs{VK_NULL_HANDLE};
 
     private:
         // VkDescriptorSetLayout
         void CreateDescriptorSetLayout();
         void DestroyDescriptorSetLayout();
 
-        VkDescriptorSetLayout m_PerFrameDescriptorSetLayout = VK_NULL_HANDLE;
-        VkDescriptorSetLayout m_PerDrawDescriptorSetLayout  = VK_NULL_HANDLE;
+    public:
+        VkDescriptorSetLayout PerFrameDescriptorSetLayout = VK_NULL_HANDLE;
+        VkDescriptorSetLayout PerDrawDescriptorSetLayout  = VK_NULL_HANDLE;
 
     private:
         // VkDescriptorPool
         void CreateDescriptorPools();
         void DestroyDescriptorPools();
 
-        VkDescriptorPool m_PerFrameDescriptorPool = VK_NULL_HANDLE;
-        VkDescriptorPool m_PerDrawDescriptorPool  = VK_NULL_HANDLE;
-        VkDescriptorPool m_GUIDescriptorPool      = VK_NULL_HANDLE;
+    public:
+        VkDescriptorPool PerFrameDescriptorPool = VK_NULL_HANDLE;
+        VkDescriptorPool PerDrawDescriptorPool  = VK_NULL_HANDLE;
+        VkDescriptorPool GUIDescriptorPool      = VK_NULL_HANDLE;
 
     private:
         // VkDescriptorSet
-        void AllocatePerFrameDescriptorSets();
-
         template<SizeT TAmount>
         std::array<VkDescriptorSet, TAmount> AllocateDescriptorSets(
             VkDescriptorPool Pool, VkDescriptorSetLayout Layout
         );
         void FreeDescriptorSets(VkDescriptorPool Pool, VkDescriptorSet *pSets, SizeT Amount);
 
-        std::array<VkDescriptorSet, s_FramesInFlight> m_PerFrameDescriptorSets{VK_NULL_HANDLE};
+        void CreatePerFrameDescriptorSets();
+
+    public:
+        std::array<VkDescriptorSet, s_FramesInFlight> PerFrameDescriptorSets{VK_NULL_HANDLE};
 
     private:
         // VkFramebuffer
         void CreateFramebuffers();
         void DestroyFramebuffers();
 
-        std::vector<VkFramebuffer> m_SwapchainFramebuffers;
+        VkFramebuffer CreateFramebuffer(
+            VkRenderPass RenderPass, VkExtent2D Extent, UInt32 Layers, VkImageView *pImageViews, UInt32 NumAttachments
+        );
+        void DestroyFramebuffer(VkFramebuffer &Framebuffer);
+
+    public:
+        std::vector<VkFramebuffer> SwapchainFramebuffers;
 
     private:
         // VkSemaphore && VkFence
         void CreateSyncObjects();
         void DestroySyncObjects();
 
-        std::array<VkSemaphore, s_FramesInFlight> m_ImageAvailableSemaphores{VK_NULL_HANDLE};
-        std::array<VkSemaphore, s_FramesInFlight> m_RenderFinishedSemaphores{VK_NULL_HANDLE};
-        std::array<VkFence, s_FramesInFlight>     m_InFlightFences{VK_NULL_HANDLE};
+    public:
+        std::array<VkSemaphore, s_FramesInFlight> ImageAvailableSemaphores{VK_NULL_HANDLE};
+        std::array<VkSemaphore, s_FramesInFlight> RenderFinishedSemaphores{VK_NULL_HANDLE};
+        std::array<VkFence, s_FramesInFlight>     InFlightFences{VK_NULL_HANDLE};
     };
 
     CRenderer &Renderer();

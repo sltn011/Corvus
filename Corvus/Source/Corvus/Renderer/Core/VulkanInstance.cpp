@@ -8,7 +8,7 @@ namespace Corvus
 
     void CRenderer::CreateInstance(CString const &ApplicationName, UInt32 ApiVersion)
     {
-        CORVUS_ASSERT_FMT(m_Instance == VK_NULL_HANDLE, "Vulkan Instance was already created!");
+        CORVUS_ASSERT_FMT(VulkanInstance == VK_NULL_HANDLE, "Vulkan Instance was already created!");
 
         VkApplicationInfo ApplicationInfo{};
         ApplicationInfo.sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -30,7 +30,7 @@ namespace Corvus
         InstanceCreateInfo.enabledLayerCount       = static_cast<UInt32>(ValidationLayers.size());
         InstanceCreateInfo.ppEnabledLayerNames     = ValidationLayers.data();
 
-        if (vkCreateInstance(&InstanceCreateInfo, nullptr, &m_Instance) != VK_SUCCESS)
+        if (vkCreateInstance(&InstanceCreateInfo, nullptr, &VulkanInstance) != VK_SUCCESS)
         {
             CORVUS_CORE_CRITICAL("Failed to create Vulkan Instance!");
         }
@@ -39,10 +39,10 @@ namespace Corvus
 
     void CRenderer::DestroyInstance()
     {
-        if (m_Instance)
+        if (VulkanInstance)
         {
-            vkDestroyInstance(m_Instance, nullptr);
-            m_Instance = VK_NULL_HANDLE;
+            vkDestroyInstance(VulkanInstance, nullptr);
+            VulkanInstance = VK_NULL_HANDLE;
             CORVUS_CORE_TRACE("Vulkan Instance destroyed");
         }
     }

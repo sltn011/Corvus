@@ -9,9 +9,9 @@ namespace Corvus
     void CRenderer::RetrieveQueues()
     {
         UInt32 QueueIndex = 0;
-        vkGetDeviceQueue(m_Device, m_QueueFamilyIndices.GraphicsFamily.value(), QueueIndex, &m_Queues.GraphicsQueue);
+        vkGetDeviceQueue(Device, QueueFamilyIndices.GraphicsFamily.value(), QueueIndex, &Queues.GraphicsQueue);
         vkGetDeviceQueue(
-            m_Device, m_QueueFamilyIndices.PresentationFamily.value(), QueueIndex, &m_Queues.PresentationQueue
+            Device, QueueFamilyIndices.PresentationFamily.value(), QueueIndex, &Queues.PresentationQueue
         );
 
         CORVUS_CORE_TRACE("Retrieved Queues from Vulkan Device");

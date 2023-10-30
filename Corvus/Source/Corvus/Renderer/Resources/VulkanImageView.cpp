@@ -28,7 +28,7 @@ namespace Corvus
         CreateInfo.subresourceRange.baseArrayLayer = 0;
         CreateInfo.subresourceRange.layerCount     = 1;
 
-        if (vkCreateImageView(m_Device, &CreateInfo, nullptr, &ImageView) != VK_SUCCESS)
+        if (vkCreateImageView(Device, &CreateInfo, nullptr, &ImageView) != VK_SUCCESS)
         {
             CORVUS_CORE_CRITICAL("Failed to create Vulkan Image View!");
         }
@@ -40,7 +40,7 @@ namespace Corvus
     {
         if (ImageView != VK_NULL_HANDLE)
         {
-            vkDestroyImageView(m_Device, ImageView, nullptr);
+            vkDestroyImageView(Device, ImageView, nullptr);
             ImageView = VK_NULL_HANDLE;
         }
     }

@@ -7,10 +7,10 @@ namespace Corvus
 
     void CRenderer::CreateRenderPass()
     {
-        CORVUS_ASSERT_FMT(m_RenderPass == VK_NULL_HANDLE, "Vulkan Render Pass was already created!");
+        CORVUS_ASSERT_FMT(RenderPass == VK_NULL_HANDLE, "Vulkan Render Pass was already created!");
 
         VkAttachmentDescription ColorAttachment{};
-        ColorAttachment.format         = m_SwapchainImageFormat;
+        ColorAttachment.format         = SwapchainImageFormat;
         ColorAttachment.samples        = VK_SAMPLE_COUNT_1_BIT;
         ColorAttachment.loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR;
         ColorAttachment.storeOp        = VK_ATTACHMENT_STORE_OP_STORE;
@@ -64,7 +64,7 @@ namespace Corvus
         RenderPassInfo.dependencyCount = 1;
         RenderPassInfo.pDependencies   = &Dependency;
 
-        if (vkCreateRenderPass(m_Device, &RenderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS)
+        if (vkCreateRenderPass(Device, &RenderPassInfo, nullptr, &RenderPass) != VK_SUCCESS)
         {
             CORVUS_CORE_CRITICAL("Failed to create Vulkan Render Pass!");
         }
@@ -73,10 +73,10 @@ namespace Corvus
 
     void CRenderer::DestroyRenderPass()
     {
-        if (m_RenderPass)
+        if (RenderPass)
         {
-            vkDestroyRenderPass(m_Device, m_RenderPass, nullptr);
-            m_RenderPass = VK_NULL_HANDLE;
+            vkDestroyRenderPass(Device, RenderPass, nullptr);
+            RenderPass = VK_NULL_HANDLE;
             CORVUS_CORE_TRACE("Vulkan Render Pass destroyed");
         }
     }

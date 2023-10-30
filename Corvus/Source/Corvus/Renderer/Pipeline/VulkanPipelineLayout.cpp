@@ -13,7 +13,7 @@ namespace Corvus
         PushConstantRange.size       = sizeof(CModelPushConstant);
         PushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 
-        std::array<VkDescriptorSetLayout, 2> SetLayouts = {m_PerFrameDescriptorSetLayout, m_PerDrawDescriptorSetLayout};
+        std::array<VkDescriptorSetLayout, 2> SetLayouts = {PerFrameDescriptorSetLayout, PerDrawDescriptorSetLayout};
 
         VkPipelineLayoutCreateInfo PipelineLayoutInfo{};
         PipelineLayoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -22,7 +22,7 @@ namespace Corvus
         PipelineLayoutInfo.pushConstantRangeCount = 1;
         PipelineLayoutInfo.pPushConstantRanges    = &PushConstantRange;
 
-        if (vkCreatePipelineLayout(m_Device, &PipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS)
+        if (vkCreatePipelineLayout(Device, &PipelineLayoutInfo, nullptr, &PipelineLayout) != VK_SUCCESS)
         {
             CORVUS_CORE_CRITICAL("Failed to create Vulkan Pipeline Layout!");
         }
@@ -31,10 +31,10 @@ namespace Corvus
 
     void CRenderer::DestroyPipelineLayout()
     {
-        if (m_PipelineLayout)
+        if (PipelineLayout)
         {
-            vkDestroyPipelineLayout(m_Device, m_PipelineLayout, nullptr);
-            m_PipelineLayout = VK_NULL_HANDLE;
+            vkDestroyPipelineLayout(Device, PipelineLayout, nullptr);
+            PipelineLayout = VK_NULL_HANDLE;
             CORVUS_CORE_TRACE("Vulkan Pipeline Layout destroyed");
         }
     }

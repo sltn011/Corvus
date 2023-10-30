@@ -67,20 +67,20 @@ namespace Corvus
         GLFWwindow *AppWindowRaw = static_cast<GLFWwindow *>(CApplication::GetInstance().GetWindow().GetRawWindow());
         ImGui_ImplGlfw_InitForVulkan(AppWindowRaw, true);
         ImGui_ImplVulkan_InitInfo InitInfo = {};
-        InitInfo.Instance                  = VulkanRenderer.m_Instance;
+        InitInfo.Instance                  = VulkanRenderer.VulkanInstance;
         InitInfo.PhysicalDevice            = VulkanRenderer.m_PhysicalDevice;
-        InitInfo.Device                    = VulkanRenderer.m_Device;
-        InitInfo.QueueFamily               = VulkanRenderer.m_QueueFamilyIndices.GraphicsFamily.value();
-        InitInfo.Queue                     = VulkanRenderer.m_Queues.GraphicsQueue;
+        InitInfo.Device                    = VulkanRenderer.Device;
+        InitInfo.QueueFamily               = VulkanRenderer.QueueFamilyIndices.GraphicsFamily.value();
+        InitInfo.Queue                     = VulkanRenderer.Queues.GraphicsQueue;
         InitInfo.PipelineCache             = VK_NULL_HANDLE;
-        InitInfo.DescriptorPool            = VulkanRenderer.m_GUIDescriptorPool;
+        InitInfo.DescriptorPool            = VulkanRenderer.GUIDescriptorPool;
         InitInfo.Subpass                   = 0;
         InitInfo.MinImageCount             = VulkanRenderer.s_FramesInFlight;
-        InitInfo.ImageCount                = static_cast<UInt32>(VulkanRenderer.m_SwapchainImages.size());
+        InitInfo.ImageCount                = static_cast<UInt32>(VulkanRenderer.SwapchainImages.size());
         InitInfo.MSAASamples               = VK_SAMPLE_COUNT_1_BIT;
         InitInfo.Allocator                 = nullptr;
         InitInfo.CheckVkResultFn           = CheckGUIVulkanResult;
-        ImGui_ImplVulkan_Init(&InitInfo, VulkanRenderer.m_RenderPass);
+        ImGui_ImplVulkan_Init(&InitInfo, VulkanRenderer.RenderPass);
 
         // Load Fonts
         // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use
@@ -107,7 +107,7 @@ namespace Corvus
         // Upload Fonts
         {
             // Use any command queue
-            VkCommandBuffer CommandBuffer = VulkanRenderer.m_CommandBuffers[0];
+            VkCommandBuffer CommandBuffer = VulkanRenderer.CommandBuffers[0];
 
             if (vkResetCommandBuffer(CommandBuffer, 0) != VK_SUCCESS)
             {
@@ -133,12 +133,12 @@ namespace Corvus
             EndInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
             EndInfo.commandBufferCount = 1;
             EndInfo.pCommandBuffers    = &CommandBuffer;
-            if (vkQueueSubmit(VulkanRenderer.m_Queues.GraphicsQueue, 1, &EndInfo, VK_NULL_HANDLE) != VK_SUCCESS)
+            if (vkQueueSubmit(VulkanRenderer.Queues.GraphicsQueue, 1, &EndInfo, VK_NULL_HANDLE) != VK_SUCCESS)
             {
                 CORVUS_CORE_CRITICAL("Failed to upload GUI fonts!");
             }
 
-            if (vkDeviceWaitIdle(VulkanRenderer.m_Device) != VK_SUCCESS)
+            if (vkDeviceWaitIdle(VulkanRenderer.Device) != VK_SUCCESS)
             {
                 CORVUS_CORE_CRITICAL("Failed to upload GUI fonts!");
             }
@@ -183,7 +183,7 @@ namespace Corvus
 
         ImGui::Render();
         ImDrawData *GUIDrawData = ImGui::GetDrawData();
-        ImGui_ImplVulkan_RenderDrawData(GUIDrawData, VulkanRenderer.m_CommandBuffers[VulkanRenderer.m_CurrentFrame]);
+        ImGui_ImplVulkan_RenderDrawData(GUIDrawData, VulkanRenderer.CommandBuffers[VulkanRenderer.m_CurrentFrame]);
 
         if (IO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {

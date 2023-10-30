@@ -26,7 +26,7 @@ namespace Corvus
         CreateInfo.pCode    = reinterpret_cast<UInt32 const *>(SPIRVByteCode.data());
 
         VkShaderModule ShaderModule{};
-        if (vkCreateShaderModule(m_Device, &CreateInfo, nullptr, &ShaderModule) != VK_SUCCESS)
+        if (vkCreateShaderModule(Device, &CreateInfo, nullptr, &ShaderModule) != VK_SUCCESS)
         {
             CORVUS_CORE_CRITICAL("Failed to create Vulkan Shader Module!");
         }
@@ -37,7 +37,7 @@ namespace Corvus
     {
         if (ShaderModule)
         {
-            vkDestroyShaderModule(m_Device, ShaderModule, nullptr);
+            vkDestroyShaderModule(Device, ShaderModule, nullptr);
             ShaderModule = VK_NULL_HANDLE;
         }
     }

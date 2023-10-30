@@ -19,11 +19,11 @@ namespace Corvus
             InFlightFenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
             InFlightFenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-            if (vkCreateSemaphore(m_Device, &ImageAvailableSemaphoreInfo, nullptr, &m_ImageAvailableSemaphores[i]) !=
+            if (vkCreateSemaphore(Device, &ImageAvailableSemaphoreInfo, nullptr, &ImageAvailableSemaphores[i]) !=
                     VK_SUCCESS ||
-                vkCreateSemaphore(m_Device, &RenderFinishedSemaphoreInfo, nullptr, &m_RenderFinishedSemaphores[i]) !=
+                vkCreateSemaphore(Device, &RenderFinishedSemaphoreInfo, nullptr, &RenderFinishedSemaphores[i]) !=
                     VK_SUCCESS ||
-                vkCreateFence(m_Device, &InFlightFenceInfo, nullptr, &m_InFlightFences[i]) != VK_SUCCESS)
+                vkCreateFence(Device, &InFlightFenceInfo, nullptr, &InFlightFences[i]) != VK_SUCCESS)
             {
                 CORVUS_CORE_CRITICAL("Failed to create Vulkan Syncronization Objects!");
             }
@@ -35,9 +35,9 @@ namespace Corvus
     {
         for (UInt32 i = 0; i < s_FramesInFlight; ++i)
         {
-            vkDestroySemaphore(m_Device, m_ImageAvailableSemaphores[i], nullptr);
-            vkDestroySemaphore(m_Device, m_RenderFinishedSemaphores[i], nullptr);
-            vkDestroyFence(m_Device, m_InFlightFences[i], nullptr);
+            vkDestroySemaphore(Device, ImageAvailableSemaphores[i], nullptr);
+            vkDestroySemaphore(Device, RenderFinishedSemaphores[i], nullptr);
+            vkDestroyFence(Device, InFlightFences[i], nullptr);
         }
         CORVUS_CORE_TRACE("Vulkan Syncronization Objects destroyed");
     }

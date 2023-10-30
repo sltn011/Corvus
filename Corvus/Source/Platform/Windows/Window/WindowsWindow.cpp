@@ -190,7 +190,7 @@ namespace Corvus
     VkSurfaceKHR PWindowsWindow::CreateVulkanSurfaceHandler() const
     {
         VkSurfaceKHR SurfaceHandler = VK_NULL_HANDLE;
-        if (glfwCreateWindowSurface(Renderer().GetVulkanInstance(), m_Window, nullptr, &SurfaceHandler) != VK_SUCCESS)
+        if (glfwCreateWindowSurface(Renderer().VulkanInstance, m_Window, nullptr, &SurfaceHandler) != VK_SUCCESS)
         {
             CORVUS_CRITICAL("Failed to create VkSurface!");
         }

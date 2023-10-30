@@ -7,17 +7,17 @@ namespace Corvus
 
     void CRenderer::CreateSamplers()
     {
-        m_Samplers.DefaultSampler = CreateSampler(
+        Samplers.DefaultSampler = CreateSampler(
             VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_REPEAT, true, 16.f, VK_SAMPLER_MIPMAP_MODE_LINEAR, 1000
         );
     }
 
     void CRenderer::DestroySamplers()
     {
-        if (m_Samplers.DefaultSampler != VK_NULL_HANDLE)
+        if (Samplers.DefaultSampler != VK_NULL_HANDLE)
         {
-            vkDestroySampler(m_Device, m_Samplers.DefaultSampler, nullptr);
-            m_Samplers.DefaultSampler = VK_NULL_HANDLE;
+            vkDestroySampler(Device, Samplers.DefaultSampler, nullptr);
+            Samplers.DefaultSampler = VK_NULL_HANDLE;
         }
     }
 
@@ -52,17 +52,12 @@ namespace Corvus
         SamplerCreateInfo.minLod                  = 0.0f;
         SamplerCreateInfo.maxLod                  = static_cast<float>(MipLevels);
 
-        if (vkCreateSampler(m_Device, &SamplerCreateInfo, nullptr, &Sampler) != VK_SUCCESS)
+        if (vkCreateSampler(Device, &SamplerCreateInfo, nullptr, &Sampler) != VK_SUCCESS)
         {
             CORVUS_CORE_CRITICAL("Failed to create Vulkan Sampler!");
         }
 
         return Sampler;
-    }
-
-    CVulkanSamplers CRenderer::GetSamplers() const
-    {
-        return m_Samplers;
     }
 
 } // namespace Corvus

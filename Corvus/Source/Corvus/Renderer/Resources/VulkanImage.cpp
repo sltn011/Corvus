@@ -34,13 +34,13 @@ namespace Corvus
         ImageCreateInfo.samples       = VK_SAMPLE_COUNT_1_BIT;
         ImageCreateInfo.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
 
-        if (vkCreateImage(m_Device, &ImageCreateInfo, nullptr, &Image.Image) != VK_SUCCESS)
+        if (vkCreateImage(Device, &ImageCreateInfo, nullptr, &Image.Image) != VK_SUCCESS)
         {
             CORVUS_CORE_CRITICAL("Failed to create Vulkan Image!");
         }
 
         VkMemoryRequirements ImageMemoryRequirements;
-        vkGetImageMemoryRequirements(m_Device, Image.Image, &ImageMemoryRequirements);
+        vkGetImageMemoryRequirements(Device, Image.Image, &ImageMemoryRequirements);
 
         VkMemoryAllocateInfo MemoryAllocateInfo{};
         MemoryAllocateInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -49,7 +49,7 @@ namespace Corvus
 
         Image.Memory = AllocateDeviceMemory(MemoryAllocateInfo);
 
-        vkBindImageMemory(m_Device, Image.Image, Image.Memory, 0);
+        vkBindImageMemory(Device, Image.Image, Image.Memory, 0);
 
         Image.MipLevels = MipLevels;
 
@@ -127,8 +127,8 @@ namespace Corvus
     {
         if (Image.Image != VK_NULL_HANDLE && Image.Memory != VK_NULL_HANDLE)
         {
-            vkDestroyImage(m_Device, Image.Image, nullptr);
-            vkFreeMemory(m_Device, Image.Memory, nullptr);
+            vkDestroyImage(Device, Image.Image, nullptr);
+            vkFreeMemory(Device, Image.Memory, nullptr);
             Image.Image  = VK_NULL_HANDLE;
             Image.Memory = VK_NULL_HANDLE;
         }
@@ -346,9 +346,9 @@ namespace Corvus
     {
         VkFormat DepthFormat = FindDepthFormat();
 
-        m_DepthImage = CreateImage(
-            m_SwapchainExtent.width,
-            m_SwapchainExtent.height,
+        DepthImage = CreateImage(
+            SwapchainExtent.width,
+            SwapchainExtent.height,
             1,
             DepthFormat,
             VK_IMAGE_TILING_OPTIMAL,
@@ -356,15 +356,15 @@ namespace Corvus
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
         );
 
-        m_DepthImageView = CreateImageView(m_DepthImage.Image, 1, DepthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+        DepthImageView = CreateImageView(DepthImage.Image, 1, DepthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
 
         // Don't need to transition layout here, will be done in RenderPass
     }
 
     void CRenderer::DestroyDepthResources()
     {
-        DestroyImageView(m_DepthImageView);
-        DestroyImage(m_DepthImage);
+        DestroyImageView(DepthImageView);
+        DestroyImage(DepthImage);
     }
 
     VkFormat CRenderer::FindDepthFormat()
