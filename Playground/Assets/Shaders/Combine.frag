@@ -14,7 +14,8 @@ layout(set = 0, binding = 3) uniform sampler2D DepthTexture;
 
 void main()
 {
-    vec3 FragColor = texture(AlbedoTexture, InUVCoord).rgb;
-    vec3 GammaCorrectedFragColor = pow(FragColor, vec3(INV_GAMMA));
-    OutColor = vec4(GammaCorrectedFragColor, 1.0);
+    vec3 FragColor                  = texture(AlbedoTexture, InUVCoord).rgb;
+
+    vec3 GammaCorrectedFragColor    = pow(FragColor, vec3(INV_GAMMA));
+    OutColor                        = vec4(GammaCorrectedFragColor, 1.0);
 }
