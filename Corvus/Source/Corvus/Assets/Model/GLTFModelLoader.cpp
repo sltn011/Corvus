@@ -631,6 +631,7 @@ namespace Corvus
             {
                 VertexData[i].Position = PositionVec[i];
                 VertexData[i].UVCoord  = TexCoord0Vec[i];
+                VertexData[i].Normal   = NormalVec[i];
             }
 
             // Index data

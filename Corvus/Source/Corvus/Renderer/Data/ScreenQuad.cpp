@@ -11,11 +11,11 @@ namespace Corvus
     void CScreenQuad::Create()
     {
         // clang-format off
-        std::vector<CVertex> QuadVertices = {
-            CVertex{{-1.f, -1.f, 0.f}, {0.f, 0.f}}, 
-            CVertex{{+1.f, -1.f, 0.f}, {1.f, 0.f}}, 
-            CVertex{{-1.f, +1.f, 0.f}, {0.f, 1.f}}, 
-            CVertex{{+1.f, +1.f, 0.f}, {1.f, 1.f}},
+        std::vector<CQuadVertex> QuadVertices = {
+            CQuadVertex{{-1.f, -1.f, 0.f}, {0.f, 0.f}}, 
+            CQuadVertex{{+1.f, -1.f, 0.f}, {1.f, 0.f}}, 
+            CQuadVertex{{-1.f, +1.f, 0.f}, {0.f, 1.f}}, 
+            CQuadVertex{{+1.f, +1.f, 0.f}, {1.f, 1.f}},
         };
 
         std::vector<UInt16> QuadIndices = {

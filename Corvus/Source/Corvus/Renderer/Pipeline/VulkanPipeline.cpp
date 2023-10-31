@@ -34,9 +34,9 @@ namespace Corvus
 
         // Fixed stages ======================================================================================
         VkPipelineVertexInputStateCreateInfo VertexInputStageInfo{};
-        VkVertexInputBindingDescription      VertexInputBindingDescription = CVertex::GetInputBindingDescription();
+        VkVertexInputBindingDescription      VertexInputBindingDescription = CQuadVertex::GetInputBindingDescription();
         std::array<VkVertexInputAttributeDescription, 2> VertexInputAttributeDescriptions =
-            CVertex::GetInputAttributeDescriptions();
+            CQuadVertex::GetInputAttributeDescriptions();
 
         VertexInputStageInfo.sType                         = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
         VertexInputStageInfo.vertexBindingDescriptionCount = 1;

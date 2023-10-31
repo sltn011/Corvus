@@ -14,6 +14,16 @@ namespace Corvus
     {
         FVector3 Position;
         FVector2 UVCoord;
+        FVector3 Normal;
+
+        static VkVertexInputBindingDescription                  GetInputBindingDescription();
+        static std::array<VkVertexInputAttributeDescription, 3> GetInputAttributeDescriptions();
+    };
+
+    struct CQuadVertex
+    {
+        FVector3 Position;
+        FVector2 UVCoord;
 
         static VkVertexInputBindingDescription                  GetInputBindingDescription();
         static std::array<VkVertexInputAttributeDescription, 2> GetInputAttributeDescriptions();
