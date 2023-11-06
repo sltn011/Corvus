@@ -9,22 +9,17 @@ namespace Corvus
     {
         // Per-Frame Descriptor Set Layout
         {
-            std::array<VkDescriptorSetLayoutBinding, 1> Bindings;
+            std::vector<VkDescriptorSetLayoutBinding> Bindings(1);
 
             // ProjectionView Matrix
             {
-                Bindings[0].binding            = 0;
-                Bindings[0].descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                Bindings[0].descriptorCount    = 1; // > 1 to make uniform array
-                Bindings[0].stageFlags         = VK_SHADER_STAGE_VERTEX_BIT;
-                Bindings[0].pImmutableSamplers = nullptr; // not needed here
-                Bindings[0].pImmutableSamplers = nullptr; // not needed here
+                Bindings[0] = VkInit::DescriptorSetLayoutBinding(
+                    0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT
+                );
             }
 
-            VkDescriptorSetLayoutCreateInfo DescriptorSetLayoutInfo{};
-            DescriptorSetLayoutInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-            DescriptorSetLayoutInfo.bindingCount = static_cast<UInt32>(Bindings.size());
-            DescriptorSetLayoutInfo.pBindings    = Bindings.data();
+            VkDescriptorSetLayoutCreateInfo DescriptorSetLayoutInfo =
+                VkInit::DescriptorSetLayoutCreateInfo(Bindings.data(), Bindings.size());
 
             if (vkCreateDescriptorSetLayout(Device, &DescriptorSetLayoutInfo, nullptr, &PerFrameDescriptorSetLayout) !=
                 VK_SUCCESS)
@@ -36,22 +31,17 @@ namespace Corvus
 
         // Per-Draw Descriptor Set Layout
         {
-            std::array<VkDescriptorSetLayoutBinding, 4> Bindings;
+            std::vector<VkDescriptorSetLayoutBinding> Bindings(4);
 
             for (SizeT i = 0; i < Bindings.size(); ++i)
             {
-                Bindings[i].binding            = static_cast<UInt32>(i);
-                Bindings[i].descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                Bindings[i].descriptorCount    = 1; // > 1 to make uniform array
-                Bindings[i].stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT;
-                Bindings[i].pImmutableSamplers = nullptr; // not needed here
-                Bindings[i].pImmutableSamplers = nullptr; // not needed here
+                Bindings[i] = VkInit::DescriptorSetLayoutBinding(
+                    static_cast<UInt32>(i), VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT
+                );
             }
 
-            VkDescriptorSetLayoutCreateInfo DescriptorSetLayoutInfo{};
-            DescriptorSetLayoutInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-            DescriptorSetLayoutInfo.bindingCount = static_cast<UInt32>(Bindings.size());
-            DescriptorSetLayoutInfo.pBindings    = Bindings.data();
+            VkDescriptorSetLayoutCreateInfo DescriptorSetLayoutInfo =
+                VkInit::DescriptorSetLayoutCreateInfo(Bindings.data(), Bindings.size());
 
             if (vkCreateDescriptorSetLayout(Device, &DescriptorSetLayoutInfo, nullptr, &PerDrawDescriptorSetLayout) !=
                 VK_SUCCESS)

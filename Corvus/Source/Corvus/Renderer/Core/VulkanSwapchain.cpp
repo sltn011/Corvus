@@ -19,38 +19,30 @@ namespace Corvus
         SwapchainExtent      = Extent;
         SwapchainImageFormat = Format.format;
 
-        VkSwapchainCreateInfoKHR CreateInfo{};
-        CreateInfo.sType            = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-        CreateInfo.surface          = Surface;
-        CreateInfo.minImageCount    = ImagesCount;
-        CreateInfo.imageExtent      = Extent;
-        CreateInfo.imageFormat      = Format.format;
-        CreateInfo.imageColorSpace  = Format.colorSpace;
-        CreateInfo.presentMode      = PresentMode;
-        CreateInfo.imageArrayLayers = 1; // Unless it's a stereoscopic 3D app
-        CreateInfo.imageUsage       = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-
-        UInt32 QueueFamilyIndicesArray[] = {
+        std::vector<UInt32> QueueFamilyIndicesArray = {
             QueueFamilyIndices.GraphicsFamily.value(), QueueFamilyIndices.PresentationFamily.value()};
 
+        VkSharingMode SharingMode;
         if (QueueFamilyIndices.GraphicsFamily.value() != QueueFamilyIndices.PresentationFamily.value())
         {
-            CreateInfo.imageSharingMode      = VK_SHARING_MODE_CONCURRENT;
-            CreateInfo.queueFamilyIndexCount = 2;
-            CreateInfo.pQueueFamilyIndices   = QueueFamilyIndicesArray;
+            SharingMode = VK_SHARING_MODE_CONCURRENT;
         }
         else
         {
-            CreateInfo.imageSharingMode =
-                VK_SHARING_MODE_EXCLUSIVE;              // Images in swapchain will be used by one queue family only
-            CreateInfo.queueFamilyIndexCount = 0;       // Optional
-            CreateInfo.pQueueFamilyIndices   = nullptr; // Optional
+            SharingMode = VK_SHARING_MODE_EXCLUSIVE;
         }
 
-        CreateInfo.preTransform   = SupportDetails.SurfaceCapabilities.currentTransform; // Don't want transforms
-        CreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;                   // treat alpha as 1.0f
-        CreateInfo.clipped        = VK_TRUE;                                             // Ignore obstructed pixels
-        CreateInfo.oldSwapchain   = VK_NULL_HANDLE;
+        VkSwapchainCreateInfoKHR CreateInfo = VkInit::SwapchainCreateInfo(
+            Surface,
+            ImagesCount,
+            Extent,
+            Format,
+            PresentMode,
+            SharingMode,
+            QueueFamilyIndicesArray.data(),
+            QueueFamilyIndicesArray.size(),
+            SupportDetails
+        );
 
         if (vkCreateSwapchainKHR(Device, &CreateInfo, nullptr, &Swapchain) != VK_SUCCESS)
         {

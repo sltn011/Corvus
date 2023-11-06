@@ -8,19 +8,18 @@ namespace Corvus
 
     void CRenderer::CreatePipelineLayout()
     {
-        VkPushConstantRange PushConstantRange{};
-        PushConstantRange.offset     = 0;
-        PushConstantRange.size       = sizeof(CModelPushConstant);
-        PushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+        std::vector<VkDescriptorSetLayout> DescriptorSetsLayouts = {
+            PerFrameDescriptorSetLayout, PerDrawDescriptorSetLayout};
 
-        std::array<VkDescriptorSetLayout, 2> SetLayouts = {PerFrameDescriptorSetLayout, PerDrawDescriptorSetLayout};
+        std::vector<VkPushConstantRange> PushConstantsRanges = {
+            VkInit::PushConstantRange(0, sizeof(CModelPushConstant), VK_SHADER_STAGE_VERTEX_BIT)};
 
-        VkPipelineLayoutCreateInfo PipelineLayoutInfo{};
-        PipelineLayoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        PipelineLayoutInfo.setLayoutCount         = static_cast<UInt32>(SetLayouts.size());
-        PipelineLayoutInfo.pSetLayouts            = SetLayouts.data();
-        PipelineLayoutInfo.pushConstantRangeCount = 1;
-        PipelineLayoutInfo.pPushConstantRanges    = &PushConstantRange;
+        VkPipelineLayoutCreateInfo PipelineLayoutInfo = VkInit::PipelineLayoutCreateInfo(
+            DescriptorSetsLayouts.data(),
+            DescriptorSetsLayouts.size(),
+            PushConstantsRanges.data(),
+            PushConstantsRanges.size()
+        );
 
         if (vkCreatePipelineLayout(Device, &PipelineLayoutInfo, nullptr, &PipelineLayout) != VK_SUCCESS)
         {

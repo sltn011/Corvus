@@ -149,8 +149,7 @@ namespace Corvus
         VkCommandBuffer CommandBuffer = CommandBuffers[m_CurrentFrame];
         vkResetCommandBuffer(CommandBuffer, 0);
 
-        VkCommandBufferBeginInfo CommandBufferBeginInfo{};
-        CommandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        VkCommandBufferBeginInfo CommandBufferBeginInfo = VkInit::CommandBufferBeginInfo(0);
 
         if (vkBeginCommandBuffer(CommandBuffer, &CommandBufferBeginInfo) != VK_SUCCESS)
         {
@@ -282,20 +281,18 @@ namespace Corvus
 
     void CRenderer::SubmitCommandBuffer(VkCommandBuffer CommandBuffer)
     {
-        VkSemaphore          WaitSemaphores[] = {ImageAvailableSemaphores[m_CurrentFrame]};
-        VkPipelineStageFlags WaitStages[]     = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+        std::vector<VkSemaphore>          WaitSemaphores   = {ImageAvailableSemaphores[m_CurrentFrame]};
+        std::vector<VkPipelineStageFlags> WaitStages       = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+        std::vector<VkSemaphore>          SignalSemaphores = {RenderFinishedSemaphores[m_CurrentFrame]};
 
-        VkSemaphore SignalSemaphores[] = {RenderFinishedSemaphores[m_CurrentFrame]};
-
-        VkSubmitInfo SubmitInfo{};
-        SubmitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        SubmitInfo.waitSemaphoreCount   = 1;
-        SubmitInfo.pWaitSemaphores      = WaitSemaphores;
-        SubmitInfo.pWaitDstStageMask    = WaitStages;
-        SubmitInfo.commandBufferCount   = 1;
-        SubmitInfo.pCommandBuffers      = &CommandBuffer;
-        SubmitInfo.signalSemaphoreCount = 1;
-        SubmitInfo.pSignalSemaphores    = SignalSemaphores;
+        VkSubmitInfo SubmitInfo = VkInit::SubmitInfo(
+            CommandBuffer,
+            WaitSemaphores.data(),
+            WaitSemaphores.size(),
+            WaitStages.data(),
+            SignalSemaphores.data(),
+            SignalSemaphores.size()
+        );
 
         if (vkQueueSubmit(Queues.GraphicsQueue, 1, &SubmitInfo, InFlightFences[m_CurrentFrame]) != VK_SUCCESS)
         {
@@ -305,18 +302,11 @@ namespace Corvus
 
     VkResult CRenderer::PresentResult()
     {
-        VkSwapchainKHR Swapchains[] = {Swapchain};
+        VkSwapchainKHR Swapchains[]             = {Swapchain};
+        UInt32         SwapchainImagesIndices[] = {SwapchainImageIndex};
+        VkSemaphore    WaitSemaphores[]         = {RenderFinishedSemaphores[m_CurrentFrame]};
 
-        VkSemaphore WaitSemaphores[] = {RenderFinishedSemaphores[m_CurrentFrame]};
-
-        VkPresentInfoKHR PresentInfo{};
-        PresentInfo.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-        PresentInfo.waitSemaphoreCount = 1;
-        PresentInfo.pWaitSemaphores    = WaitSemaphores;
-        PresentInfo.swapchainCount     = 1;
-        PresentInfo.pSwapchains        = Swapchains;
-        PresentInfo.pImageIndices      = &SwapchainImageIndex;
-        PresentInfo.pResults           = nullptr;
+        VkPresentInfoKHR PresentInfo = VkInit::PresentInfo(Swapchains, 1, SwapchainImagesIndices, WaitSemaphores, 1);
 
         return vkQueuePresentKHR(Queues.GraphicsQueue, &PresentInfo);
     }

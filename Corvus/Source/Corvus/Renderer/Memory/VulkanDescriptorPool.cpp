@@ -9,15 +9,13 @@ namespace Corvus
     {
         // Per-Frame Pool
         {
-            VkDescriptorPoolSize DescriptorPoolSizes[] = {
+            std::vector<VkDescriptorPoolSize> DescriptorPoolSizes = {
                 {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, static_cast<UInt32>(s_FramesInFlight)},
                 {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 4 * static_cast<UInt32>(s_FramesInFlight)}};
 
-            VkDescriptorPoolCreateInfo DescriptorPoolInfo{};
-            DescriptorPoolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-            DescriptorPoolInfo.poolSizeCount = (UInt32)(sizeof(DescriptorPoolSizes) / sizeof(DescriptorPoolSizes[0]));
-            DescriptorPoolInfo.pPoolSizes    = DescriptorPoolSizes;
-            DescriptorPoolInfo.maxSets       = static_cast<UInt32>(s_FramesInFlight);
+            VkDescriptorPoolCreateInfo DescriptorPoolInfo = VkInit::DescriptorPoolCreateInfo(
+                DescriptorPoolSizes.data(), DescriptorPoolSizes.size(), s_FramesInFlight, 0
+            );
 
             if (vkCreateDescriptorPool(Device, &DescriptorPoolInfo, nullptr, &PerFrameDescriptorPool) != VK_SUCCESS)
             {
@@ -28,14 +26,15 @@ namespace Corvus
 
         // Per-Draw pool
         {
-            VkDescriptorPoolSize DescriptorPoolSizes[] = {{VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 4 * 64}};
+            std::vector<VkDescriptorPoolSize> DescriptorPoolSizes = {
+                {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 4 * 64}};
 
-            VkDescriptorPoolCreateInfo DescriptorPoolInfo{};
-            DescriptorPoolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-            DescriptorPoolInfo.poolSizeCount = (UInt32)(sizeof(DescriptorPoolSizes) / sizeof(DescriptorPoolSizes[0]));
-            DescriptorPoolInfo.pPoolSizes    = DescriptorPoolSizes;
-            DescriptorPoolInfo.maxSets       = 64;
-            DescriptorPoolInfo.flags         = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+            VkDescriptorPoolCreateInfo DescriptorPoolInfo = VkInit::DescriptorPoolCreateInfo(
+                DescriptorPoolSizes.data(),
+                DescriptorPoolSizes.size(),
+                64,
+                VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT
+            );
 
             if (vkCreateDescriptorPool(Device, &DescriptorPoolInfo, nullptr, &PerDrawDescriptorPool) != VK_SUCCESS)
             {
@@ -46,7 +45,7 @@ namespace Corvus
 
         // GUI Pool
         {
-            VkDescriptorPoolSize GUIPoolSizes[] = {
+            std::vector<VkDescriptorPoolSize> GUIPoolSizes = {
                 {VK_DESCRIPTOR_TYPE_SAMPLER, 32},
                 {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 32},
                 {VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 32},
@@ -59,13 +58,9 @@ namespace Corvus
                 {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 32},
                 {VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 32}};
 
-            VkDescriptorPoolCreateInfo GUIDescriptorPoolInfo = {};
-
-            GUIDescriptorPoolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-            GUIDescriptorPoolInfo.flags         = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-            GUIDescriptorPoolInfo.maxSets       = (UInt32)(32 * (sizeof(GUIPoolSizes) / sizeof(GUIPoolSizes[0])));
-            GUIDescriptorPoolInfo.poolSizeCount = (UInt32)(sizeof(GUIPoolSizes) / sizeof(GUIPoolSizes[0]));
-            GUIDescriptorPoolInfo.pPoolSizes    = GUIPoolSizes;
+            VkDescriptorPoolCreateInfo GUIDescriptorPoolInfo = VkInit::DescriptorPoolCreateInfo(
+                GUIPoolSizes.data(), GUIPoolSizes.size(), 64, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT
+            );
 
             if (vkCreateDescriptorPool(Device, &GUIDescriptorPoolInfo, nullptr, &GUIDescriptorPool) != VK_SUCCESS)
             {

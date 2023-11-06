@@ -6,19 +6,13 @@ namespace Corvus
 {
 
     VkFramebuffer CRenderer::CreateFramebuffer(
-        VkRenderPass RenderPass, VkExtent2D Extent, UInt32 Layers, VkImageView *pAttachments, UInt32 NumAttachments
+        VkRenderPass RenderPass, VkExtent2D Extent, UInt32 Layers, std::vector<VkImageView> const &AttachmentsViews
     )
     {
         VkFramebuffer Framebuffer = VK_NULL_HANDLE;
 
-        VkFramebufferCreateInfo FramebufferInfo{};
-        FramebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-        FramebufferInfo.renderPass      = RenderPass;
-        FramebufferInfo.attachmentCount = NumAttachments;
-        FramebufferInfo.pAttachments    = pAttachments;
-        FramebufferInfo.width           = Extent.width;
-        FramebufferInfo.height          = Extent.height;
-        FramebufferInfo.layers          = Layers;
+        VkFramebufferCreateInfo FramebufferInfo =
+            VkInit::FramebufferCreateInfo(RenderPass, Extent, Layers, AttachmentsViews.data(), AttachmentsViews.size());
 
         if (vkCreateFramebuffer(Device, &FramebufferInfo, nullptr, &Framebuffer) != VK_SUCCESS)
         {
@@ -43,15 +37,10 @@ namespace Corvus
 
         for (size_t i = 0; i < SwapchainFramebuffers.size(); ++i)
         {
-            std::array<VkImageView, 1> Attachments = {SwapchainImageViews[i]};
+            std::vector<VkImageView> Attachments = {SwapchainImageViews[i]};
 
-            SwapchainFramebuffers[i] = CreateFramebuffer(
-                RenderPass_Combine.RenderPass,
-                SwapchainExtent,
-                1,
-                Attachments.data(),
-                static_cast<UInt32>(Attachments.size())
-            );
+            SwapchainFramebuffers[i] =
+                CreateFramebuffer(RenderPass_Combine.RenderPass, SwapchainExtent, 1, Attachments);
         }
         CORVUS_CORE_TRACE("Created Vulkan Framebuffers successfully");
     }

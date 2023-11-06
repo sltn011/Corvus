@@ -51,9 +51,7 @@ namespace Corvus
         std::vector<VkSampler> Samplers(Attachments.size(), Samplers.DefaultSampler);
 
         CRenderTarget RenderTarget{};
-        RenderTarget.Framebuffer = CreateFramebuffer(
-            RenderPass, Extent, 1, AttachmentViews.data(), static_cast<UInt32>(AttachmentViews.size())
-        );
+        RenderTarget.Framebuffer = CreateFramebuffer(RenderPass, Extent, 1, AttachmentViews);
 
         RenderTarget.DescriptorSet = AllocateDescriptorSets<1>(PerDrawDescriptorPool, DescriptorSetLayout)[0];
         ConfigureRenderTargetDescriptorSet<4>(

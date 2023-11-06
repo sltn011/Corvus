@@ -34,33 +34,23 @@ namespace Corvus
         std::array<VkClearValue, 1> ClearColors;
         ClearColors[0].color = VkClearColorValue{0.0f, 0.0f, 0.0f, 1.0f};
 
-        VkRenderPassBeginInfo RenderPassBeginInfo{};
-        RenderPassBeginInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        RenderPassBeginInfo.renderPass        = RenderPass;
-        RenderPassBeginInfo.framebuffer       = Renderer().SwapchainFramebuffers[SwapchainImageIndex];
-        RenderPassBeginInfo.renderArea.offset = {0, 0};
-        RenderPassBeginInfo.renderArea.extent = Renderer().SwapchainExtent;
-
-        RenderPassBeginInfo.clearValueCount = static_cast<UInt32>(ClearColors.size());
-        RenderPassBeginInfo.pClearValues    = ClearColors.data();
+        VkRenderPassBeginInfo RenderPassBeginInfo = VkInit::RenderPassBeginInfo(
+            RenderPass,
+            Renderer().SwapchainFramebuffers[SwapchainImageIndex],
+            Renderer().SwapchainExtent,
+            ClearColors.data(),
+            ClearColors.size()
+        );
 
         vkCmdBeginRenderPass(CommandBuffer, &RenderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
         vkCmdBindPipeline(CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, Pipeline);
 
         // Viewport and Scissor are dynamic - specify them here
-        VkViewport Viewport{};
-        Viewport.x        = 0.0f;
-        Viewport.y        = 0.0f;
-        Viewport.width    = static_cast<float>(Renderer().SwapchainExtent.width);
-        Viewport.height   = static_cast<float>(Renderer().SwapchainExtent.height);
-        Viewport.minDepth = 0.0f;
-        Viewport.maxDepth = 1.0f;
+        VkViewport Viewport = VkInit::Viewport(Renderer().SwapchainExtent);
         vkCmdSetViewport(CommandBuffer, 0, 1, &Viewport);
 
-        VkRect2D Scissor{};
-        Scissor.offset = {0, 0};
-        Scissor.extent = Renderer().SwapchainExtent;
+        VkRect2D Scissor = VkInit::Scissor(Renderer().SwapchainExtent);
         vkCmdSetScissor(CommandBuffer, 0, 1, &Scissor);
 
         vkCmdBindDescriptorSets(
@@ -87,44 +77,36 @@ namespace Corvus
 
     void CRenderPass_Combine::CreateRenderPass()
     {
-        VkAttachmentDescription ColorAttachment{};
-        ColorAttachment.format         = Renderer().SwapchainImageFormat;
-        ColorAttachment.samples        = VK_SAMPLE_COUNT_1_BIT;
-        ColorAttachment.loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR;
-        ColorAttachment.storeOp        = VK_ATTACHMENT_STORE_OP_STORE;
-        ColorAttachment.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        ColorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        ColorAttachment.initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED;
-        ColorAttachment.finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+        VkAttachmentDescription ColorAttachment = VkInit::AttachmentDescription(
+            Renderer().SwapchainImageFormat,
+            VK_IMAGE_LAYOUT_UNDEFINED,
+            VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+            VK_ATTACHMENT_LOAD_OP_CLEAR,
+            VK_ATTACHMENT_STORE_OP_STORE,
+            VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+            VK_ATTACHMENT_STORE_OP_DONT_CARE
+        );
 
-        VkAttachmentReference ColorAttachmentRef{};
-        ColorAttachmentRef.attachment = 0; // index of attachment in pAttachments array in RenderPassInfo
-        ColorAttachmentRef.layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        VkAttachmentReference ColorAttachmentRef =
+            VkInit::AttachmentReference(0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-        VkSubpassDescription Subpass{};
-        Subpass.pipelineBindPoint       = VK_PIPELINE_BIND_POINT_GRAPHICS;
-        Subpass.colorAttachmentCount    = 1;
-        Subpass.pColorAttachments       = &ColorAttachmentRef;
-        Subpass.pDepthStencilAttachment = nullptr;
+        VkSubpassDescription Subpass =
+            VkInit::SubpassDescription(VK_PIPELINE_BIND_POINT_GRAPHICS, &ColorAttachmentRef, 1, nullptr);
 
-        VkSubpassDependency Dependency{};
-        Dependency.srcSubpass    = VK_SUBPASS_EXTERNAL;
-        Dependency.dstSubpass    = 0; // our only subpass
-        Dependency.srcStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        Dependency.srcAccessMask = 0;
-        Dependency.dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        Dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        VkSubpassDependency Dependency = VkInit::SubpassDependency(
+            VK_SUBPASS_EXTERNAL,
+            0,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+            0,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT
+        );
 
         std::array<VkAttachmentDescription, 1> AttachmentDescriptions = {ColorAttachment};
 
-        VkRenderPassCreateInfo RenderPassInfo{};
-        RenderPassInfo.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-        RenderPassInfo.attachmentCount = static_cast<UInt32>(AttachmentDescriptions.size());
-        RenderPassInfo.pAttachments    = AttachmentDescriptions.data();
-        RenderPassInfo.subpassCount    = 1;
-        RenderPassInfo.pSubpasses      = &Subpass;
-        RenderPassInfo.dependencyCount = 1;
-        RenderPassInfo.pDependencies   = &Dependency;
+        VkRenderPassCreateInfo RenderPassInfo = VkInit::RenderPassCreateInfo(
+            AttachmentDescriptions.data(), AttachmentDescriptions.size(), &Subpass, 1, &Dependency, 1
+        );
 
         if (vkCreateRenderPass(Renderer().Device, &RenderPassInfo, nullptr, &RenderPass) != VK_SUCCESS)
         {
@@ -135,14 +117,10 @@ namespace Corvus
 
     void CRenderPass_Combine::CreateLayout()
     {
-        std::array<VkDescriptorSetLayout, 1> SetLayouts = {Renderer().PerDrawDescriptorSetLayout};
+        std::vector<VkDescriptorSetLayout> SetLayouts = {Renderer().PerDrawDescriptorSetLayout};
 
-        VkPipelineLayoutCreateInfo PipelineLayoutInfo{};
-        PipelineLayoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        PipelineLayoutInfo.setLayoutCount         = static_cast<UInt32>(SetLayouts.size());
-        PipelineLayoutInfo.pSetLayouts            = SetLayouts.data();
-        PipelineLayoutInfo.pushConstantRangeCount = 0;
-        PipelineLayoutInfo.pPushConstantRanges    = nullptr;
+        VkPipelineLayoutCreateInfo PipelineLayoutInfo =
+            VkInit::PipelineLayoutCreateInfo(SetLayouts.data(), SetLayouts.size(), nullptr, 0);
 
         if (vkCreatePipelineLayout(Renderer().Device, &PipelineLayoutInfo, nullptr, &PipelineLayout) != VK_SUCCESS)
         {
@@ -160,147 +138,78 @@ namespace Corvus
         VkShaderModule VertexShaderModule   = Renderer().CreateShaderModule(VertexShaderByteCode);
         VkShaderModule FragmentShaderModule = Renderer().CreateShaderModule(FragmentShaderByteCode);
 
-        VkPipelineShaderStageCreateInfo VertexShaderStageInfo{};
-        VertexShaderStageInfo.sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        VertexShaderStageInfo.stage  = VK_SHADER_STAGE_VERTEX_BIT;
-        VertexShaderStageInfo.module = VertexShaderModule;
-        VertexShaderStageInfo.pName  = "main";
+        VkPipelineShaderStageCreateInfo VertexShaderStageInfo =
+            VkInit::PipelineShaderStageCreateInfo(VertexShaderModule, VK_SHADER_STAGE_VERTEX_BIT);
 
-        VkPipelineShaderStageCreateInfo FragmentShaderStageInfo{};
-        FragmentShaderStageInfo.sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        FragmentShaderStageInfo.stage  = VK_SHADER_STAGE_FRAGMENT_BIT;
-        FragmentShaderStageInfo.module = FragmentShaderModule;
-        FragmentShaderStageInfo.pName  = "main";
+        VkPipelineShaderStageCreateInfo FragmentShaderStageInfo =
+            VkInit::PipelineShaderStageCreateInfo(FragmentShaderModule, VK_SHADER_STAGE_FRAGMENT_BIT);
 
-        VkPipelineShaderStageCreateInfo ShaderStagesInfo[] = {VertexShaderStageInfo, FragmentShaderStageInfo};
+        std::vector<VkPipelineShaderStageCreateInfo> ShaderStagesInfo = {
+            VertexShaderStageInfo, FragmentShaderStageInfo};
         // ===================================================================================================
 
         // Fixed stages ======================================================================================
-        VkPipelineVertexInputStateCreateInfo VertexInputStageInfo{};
-        VkVertexInputBindingDescription      VertexInputBindingDescription = CQuadVertex::GetInputBindingDescription();
-        std::array<VkVertexInputAttributeDescription, 2> VertexInputAttributeDescriptions =
+        std::vector<VkVertexInputBindingDescription> VertexInputBindingDescriptions = {
+            CQuadVertex::GetInputBindingDescription()};
+        std::vector<VkVertexInputAttributeDescription> VertexInputAttributeDescriptions =
             CQuadVertex::GetInputAttributeDescriptions();
 
-        VertexInputStageInfo.sType                         = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-        VertexInputStageInfo.vertexBindingDescriptionCount = 1;
-        VertexInputStageInfo.pVertexBindingDescriptions    = &VertexInputBindingDescription;
-        VertexInputStageInfo.vertexAttributeDescriptionCount =
-            static_cast<UInt32>(VertexInputAttributeDescriptions.size());
-        VertexInputStageInfo.pVertexAttributeDescriptions = VertexInputAttributeDescriptions.data();
+        VkPipelineVertexInputStateCreateInfo VertexInputStateInfo = VkInit::PipelineVertexInputStateInfo(
+            VertexInputBindingDescriptions.data(),
+            VertexInputBindingDescriptions.size(),
+            VertexInputAttributeDescriptions.data(),
+            VertexInputAttributeDescriptions.size()
+        );
 
-        VkPipelineInputAssemblyStateCreateInfo InputAssemblyStageInfo{};
-        InputAssemblyStageInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-        InputAssemblyStageInfo.topology               = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-        InputAssemblyStageInfo.primitiveRestartEnable = VK_FALSE;
+        VkPipelineInputAssemblyStateCreateInfo InputAssemblyStateInfo = VkInit::PipelineInputAssemblyStateCreateInfo();
         // ===================================================================================================
 
         // Dynamic Viewport and Scissor ======================================================================
-        VkDynamicState                   DynamicStates[] = {VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR};
-        VkPipelineDynamicStateCreateInfo DynamicStateInfo{};
-        DynamicStateInfo.sType             = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-        DynamicStateInfo.dynamicStateCount = sizeof(DynamicStates) / sizeof(DynamicStates[0]);
-        DynamicStateInfo.pDynamicStates    = DynamicStates;
+        std::vector<VkDynamicState>      DynamicStates = {VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR};
+        VkPipelineDynamicStateCreateInfo DynamicStateInfo =
+            VkInit::PipelineDynamicStateCreateInfo(DynamicStates.data(), DynamicStates.size());
 
-        VkPipelineViewportStateCreateInfo ViewportState{};
-        ViewportState.sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-        ViewportState.viewportCount = 1;
-        ViewportState.pViewports    = nullptr; // ignored if dynamic
-        ViewportState.scissorCount  = 1;
-        ViewportState.pScissors     = nullptr; // ignored if dynamic
+        VkPipelineViewportStateCreateInfo ViewportState = VkInit::PipelineViewportStateCreateInfo();
         // ===================================================================================================
 
         // Rasterizer ========================================================================================
-        VkPipelineRasterizationStateCreateInfo RasterizerStageInfo{};
-        RasterizerStageInfo.sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-        RasterizerStageInfo.depthClampEnable        = VK_FALSE;
-        RasterizerStageInfo.rasterizerDiscardEnable = VK_FALSE;
-        RasterizerStageInfo.polygonMode             = VK_POLYGON_MODE_FILL;
-        RasterizerStageInfo.lineWidth               = 1.0f;
-        RasterizerStageInfo.cullMode                = VK_CULL_MODE_NONE;
-        RasterizerStageInfo.frontFace               = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-        RasterizerStageInfo.depthBiasEnable         = VK_FALSE;
-        RasterizerStageInfo.depthBiasConstantFactor = 0.0f; // optional
-        RasterizerStageInfo.depthBiasClamp          = 0.0f; // optional
-        RasterizerStageInfo.depthBiasSlopeFactor    = 0.0f; // optional
-                                                            // Frontface swapped bcz of flipped Y in proj
+        VkPipelineRasterizationStateCreateInfo RasterizerStateInfo =
+            VkInit::PipelineRasterizationStateCreateInfo(false);
+        // Frontface swapped bcz of flipped Y in proj
         // ===================================================================================================
 
         // Multisampling =====================================================================================
-        VkPipelineMultisampleStateCreateInfo MultisamplerStateInfo{};
-        MultisamplerStateInfo.sType                 = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-        MultisamplerStateInfo.sampleShadingEnable   = VK_FALSE;
-        MultisamplerStateInfo.rasterizationSamples  = VK_SAMPLE_COUNT_1_BIT;
-        MultisamplerStateInfo.minSampleShading      = 1.0f;     // optional
-        MultisamplerStateInfo.pSampleMask           = nullptr;  // optional
-        MultisamplerStateInfo.alphaToCoverageEnable = VK_FALSE; // optional
-        MultisamplerStateInfo.alphaToOneEnable      = VK_FALSE; // optional
+        VkPipelineMultisampleStateCreateInfo MultisamplerStateInfo = VkInit::PipelineMultisampleStateCreateInfo();
         // ===================================================================================================
 
         // Depth and Stencil testing =========================================================================
-        VkPipelineDepthStencilStateCreateInfo DepthStencilTestStateInfo{};
-        DepthStencilTestStateInfo.sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-        DepthStencilTestStateInfo.depthTestEnable       = VK_FALSE;
-        DepthStencilTestStateInfo.depthWriteEnable      = VK_FALSE;
-        DepthStencilTestStateInfo.depthCompareOp        = VK_COMPARE_OP_LESS;
-        DepthStencilTestStateInfo.depthBoundsTestEnable = VK_FALSE;
-        DepthStencilTestStateInfo.minDepthBounds        = 0.0f;
-        DepthStencilTestStateInfo.maxDepthBounds        = 1.0f;
-        DepthStencilTestStateInfo.stencilTestEnable     = VK_FALSE;
-        DepthStencilTestStateInfo.front                 = {};
-        DepthStencilTestStateInfo.back                  = {};
+        VkPipelineDepthStencilStateCreateInfo DepthStencilTestStateInfo =
+            VkInit::PipelineDepthStencilStateCreateInfo(false, false);
         // ===================================================================================================
 
         // Color Blending ====================================================================================
-        VkPipelineColorBlendAttachmentState ColorBlendAttachment{};
-        ColorBlendAttachment.colorWriteMask =
-            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-        ColorBlendAttachment.blendEnable         = VK_FALSE;
-        ColorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;  // optional
-        ColorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO; // optional
-        ColorBlendAttachment.colorBlendOp        = VK_BLEND_OP_ADD;      // optional
-        ColorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;  // optional
-        ColorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO; // optional
-        ColorBlendAttachment.alphaBlendOp        = VK_BLEND_OP_ADD;      // optional
+        std::vector<VkPipelineColorBlendAttachmentState> ColorBlendAttachments = {
+            VkInit::PipelineColorBlendAttachmentState()};
 
-        VkPipelineColorBlendStateCreateInfo ColorBlendState{};
-        ColorBlendState.sType             = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-        ColorBlendState.logicOpEnable     = VK_FALSE;
-        ColorBlendState.logicOp           = VK_LOGIC_OP_COPY; // optional
-        ColorBlendState.attachmentCount   = 1;
-        ColorBlendState.pAttachments      = &ColorBlendAttachment;
-        ColorBlendState.blendConstants[0] = 0.0f; // optional
-        ColorBlendState.blendConstants[1] = 0.0f; // optional
-        ColorBlendState.blendConstants[2] = 0.0f; // optional
-        ColorBlendState.blendConstants[3] = 0.0f; // optional
+        VkPipelineColorBlendStateCreateInfo ColorBlendState =
+            VkInit::PipelineColorBlendStateCreateInfo(ColorBlendAttachments.data(), ColorBlendAttachments.size());
         // ===================================================================================================
 
         // Pipeline creation =================================================================================
-        VkGraphicsPipelineCreateInfo PipelineCreateInfo{};
-        PipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-
-        // Programmable stages
-        PipelineCreateInfo.stageCount = 2;
-        PipelineCreateInfo.pStages    = ShaderStagesInfo;
-
-        // Fixed stages
-        PipelineCreateInfo.pVertexInputState   = &VertexInputStageInfo;
-        PipelineCreateInfo.pInputAssemblyState = &InputAssemblyStageInfo;
-        PipelineCreateInfo.pDynamicState       = &DynamicStateInfo;
-        PipelineCreateInfo.pViewportState      = &ViewportState;
-        PipelineCreateInfo.pRasterizationState = &RasterizerStageInfo;
-        PipelineCreateInfo.pMultisampleState   = &MultisamplerStateInfo;
-        PipelineCreateInfo.pDepthStencilState  = &DepthStencilTestStateInfo;
-        PipelineCreateInfo.pColorBlendState    = &ColorBlendState;
-
-        // Uniforms and push-constants specified in layout
-        PipelineCreateInfo.layout = PipelineLayout;
-
-        // RenderPass and it's Subpass in which Pipeline is used
-        PipelineCreateInfo.renderPass = RenderPass;
-        PipelineCreateInfo.subpass    = 0;
-
-        PipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE;
-        PipelineCreateInfo.basePipelineIndex  = -1;
+        VkGraphicsPipelineCreateInfo PipelineCreateInfo = VkInit::GraphicsPipelineCreateInfo(
+            ShaderStagesInfo.data(),
+            ShaderStagesInfo.size(),
+            VertexInputStateInfo,
+            InputAssemblyStateInfo,
+            DynamicStateInfo,
+            ViewportState,
+            RasterizerStateInfo,
+            MultisamplerStateInfo,
+            DepthStencilTestStateInfo,
+            ColorBlendState,
+            PipelineLayout,
+            RenderPass
+        );
 
         VkResult PipelineCreateResult =
             vkCreateGraphicsPipelines(Renderer().Device, VK_NULL_HANDLE, 1, &PipelineCreateInfo, nullptr, &Pipeline);

@@ -11,11 +11,8 @@ namespace Corvus
         std::array<VkDescriptorSetLayout, TAmount> SetsLayouts{};
         SetsLayouts.fill(Layout);
 
-        VkDescriptorSetAllocateInfo DescriptorSetInfo{};
-        DescriptorSetInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-        DescriptorSetInfo.descriptorPool     = Pool;
-        DescriptorSetInfo.descriptorSetCount = static_cast<UInt32>(SetsLayouts.size());
-        DescriptorSetInfo.pSetLayouts        = SetsLayouts.data();
+        VkDescriptorSetAllocateInfo DescriptorSetInfo =
+            VkInit::DescriptorSetAllocateInfo(Pool, SetsLayouts.data(), SetsLayouts.size());
 
         if (vkAllocateDescriptorSets(Device, &DescriptorSetInfo, DescriptorSets.data()) != VK_SUCCESS)
         {

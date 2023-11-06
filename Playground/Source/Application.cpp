@@ -9,6 +9,8 @@
 #include "Corvus/Scene/Entity.h"
 #include "Corvus/Scene/Scene.h"
 
+#include <GLFW/glfw3.h>
+
 namespace Corvus
 {
 

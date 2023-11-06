@@ -34,23 +34,9 @@ namespace Corvus
 
         float MaxAnisotropy = m_PhysicalDeviceProperties.limits.maxSamplerAnisotropy;
 
-        VkSamplerCreateInfo SamplerCreateInfo{};
-        SamplerCreateInfo.sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-        SamplerCreateInfo.minFilter               = MinMagFilter;
-        SamplerCreateInfo.magFilter               = MinMagFilter;
-        SamplerCreateInfo.addressModeU            = AddressMode;
-        SamplerCreateInfo.addressModeV            = AddressMode;
-        SamplerCreateInfo.addressModeW            = AddressMode;
-        SamplerCreateInfo.anisotropyEnable        = bAnisoEnabled ? VK_TRUE : VK_FALSE;
-        SamplerCreateInfo.maxAnisotropy           = FMath::Min(MaxAnisotropy, Anisotropy);
-        SamplerCreateInfo.borderColor             = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
-        SamplerCreateInfo.unnormalizedCoordinates = VK_FALSE;
-        SamplerCreateInfo.compareEnable           = VK_FALSE;
-        SamplerCreateInfo.compareOp               = VK_COMPARE_OP_ALWAYS;
-        SamplerCreateInfo.mipmapMode              = Filtering;
-        SamplerCreateInfo.mipLodBias              = 0.0f;
-        SamplerCreateInfo.minLod                  = 0.0f;
-        SamplerCreateInfo.maxLod                  = static_cast<float>(MipLevels);
+        VkSamplerCreateInfo SamplerCreateInfo = VkInit::SamplerCreateInfo(
+            MinMagFilter, AddressMode, bAnisoEnabled, FMath::Min(MaxAnisotropy, Anisotropy), Filtering, MipLevels
+        );
 
         if (vkCreateSampler(Device, &SamplerCreateInfo, nullptr, &Sampler) != VK_SUCCESS)
         {

@@ -20,19 +20,14 @@ namespace Corvus
         };
         // clang-format on
 
-        std::vector<VkDeviceQueueCreateInfo> QueueCreateInfos(QueueFamilyIndicesSet.size());
+        std::vector<VkDeviceQueueCreateInfo> QueuesCreateInfo(QueueFamilyIndicesSet.size());
 
-        float  QueuePriority = 1.0f;
-        UInt32 Counter       = 0;
+        std::vector<float> QueuePriorities = {1.0f};
+        UInt32             Counter         = 0;
         for (UInt32 QueueFamilyIndex : QueueFamilyIndicesSet)
         {
-            VkDeviceQueueCreateInfo DeviceQueueCreateInfo{};
-            DeviceQueueCreateInfo.sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-            DeviceQueueCreateInfo.queueFamilyIndex = QueueFamilyIndex;
-            DeviceQueueCreateInfo.queueCount       = 1;
-            DeviceQueueCreateInfo.pQueuePriorities = &QueuePriority;
-
-            QueueCreateInfos[Counter++] = DeviceQueueCreateInfo;
+            QueuesCreateInfo[Counter++] =
+                VkInit::DeviceQueueCreateInfo(QueueFamilyIndex, QueuePriorities.data(), QueuePriorities.size());
         }
 
         // Features supported by VkPhysicalDevice that are requested for use by VkDevice
@@ -42,15 +37,8 @@ namespace Corvus
         std::vector<char const *> Extensions       = GetRequiredDeviceExtensions();
         std::vector<char const *> ValidationLayers = GetRequiredDeviceValidationLayers();
 
-        VkDeviceCreateInfo DeviceCreateInfo{};
-        DeviceCreateInfo.sType                   = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-        DeviceCreateInfo.pQueueCreateInfos       = QueueCreateInfos.data();
-        DeviceCreateInfo.queueCreateInfoCount    = static_cast<UInt32>(QueueCreateInfos.size());
-        DeviceCreateInfo.pEnabledFeatures        = &DeviceRequestedFeatures;
-        DeviceCreateInfo.enabledExtensionCount   = static_cast<UInt32>(Extensions.size());
-        DeviceCreateInfo.ppEnabledExtensionNames = Extensions.data();
-        DeviceCreateInfo.enabledLayerCount       = static_cast<UInt32>(ValidationLayers.size());
-        DeviceCreateInfo.ppEnabledLayerNames     = ValidationLayers.data();
+        VkDeviceCreateInfo DeviceCreateInfo =
+            VkInit::DeviceCreateInfo(QueuesCreateInfo, &DeviceRequestedFeatures, Extensions, ValidationLayers);
 
         if (vkCreateDevice(m_PhysicalDevice, &DeviceCreateInfo, nullptr, &Device) != VK_SUCCESS)
         {

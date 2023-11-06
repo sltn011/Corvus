@@ -427,7 +427,7 @@ namespace Corvus
         void DestroyFramebuffers();
 
         VkFramebuffer CreateFramebuffer(
-            VkRenderPass RenderPass, VkExtent2D Extent, UInt32 Layers, VkImageView *pImageViews, UInt32 NumAttachments
+            VkRenderPass RenderPass, VkExtent2D Extent, UInt32 Layers, std::vector<VkImageView> const &AttachmentsViews
         );
         void DestroyFramebuffer(VkFramebuffer &Framebuffer);
 

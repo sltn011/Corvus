@@ -9,11 +9,8 @@ namespace Corvus
     {
         CVulkanBuffer Buffer;
 
-        VkBufferCreateInfo BufferCreateInfo{};
-        BufferCreateInfo.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-        BufferCreateInfo.usage       = Usage;
-        BufferCreateInfo.size        = Size;
-        BufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE; // only will be used by graphics queue
+        VkBufferCreateInfo BufferCreateInfo =
+            VkInit::BufferCreateInfo(Usage, Size, VK_SHARING_MODE_EXCLUSIVE); // only will be used by graphics queue
 
         if (vkCreateBuffer(Device, &BufferCreateInfo, nullptr, &Buffer.Buffer) != VK_SUCCESS)
         {
@@ -24,10 +21,9 @@ namespace Corvus
         VkMemoryRequirements BufferMemoryRequirements{};
         vkGetBufferMemoryRequirements(Device, Buffer.Buffer, &BufferMemoryRequirements);
 
-        VkMemoryAllocateInfo BufferMemoryAllocateInfo{};
-        BufferMemoryAllocateInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-        BufferMemoryAllocateInfo.allocationSize  = BufferMemoryRequirements.size;
-        BufferMemoryAllocateInfo.memoryTypeIndex = FindMemoryType(BufferMemoryRequirements.memoryTypeBits, Properties);
+        VkMemoryAllocateInfo BufferMemoryAllocateInfo = VkInit::MemoryAllocateInfo(
+            BufferMemoryRequirements.size, FindMemoryType(BufferMemoryRequirements.memoryTypeBits, Properties)
+        );
 
         Buffer.Memory = AllocateDeviceMemory(BufferMemoryAllocateInfo);
 
@@ -63,10 +59,8 @@ namespace Corvus
     {
         VkCommandBuffer CommandBuffer = BeginSingleTimeCommand();
 
-        VkBufferCopy TransferInfo{};
-        TransferInfo.srcOffset = 0;
-        TransferInfo.dstOffset = 0;
-        TransferInfo.size      = Size;
+        VkBufferCopy TransferInfo = VkInit::BufferCopy(0, 0, Size);
+
         vkCmdCopyBuffer(CommandBuffer, Source, Destination, 1, &TransferInfo);
 
         EndSingleTimeCommand(CommandBuffer);
@@ -76,16 +70,7 @@ namespace Corvus
     {
         VkCommandBuffer CommandBuffer = BeginSingleTimeCommand();
 
-        VkBufferImageCopy Region{};
-        Region.bufferOffset                    = 0;
-        Region.bufferRowLength                 = 0;
-        Region.bufferImageHeight               = 0;
-        Region.imageSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
-        Region.imageSubresource.mipLevel       = 0;
-        Region.imageSubresource.baseArrayLayer = 0;
-        Region.imageSubresource.layerCount     = 1;
-        Region.imageOffset                     = VkOffset3D{0, 0, 0};
-        Region.imageExtent                     = VkExtent3D{Width, Height, 1};
+        VkBufferImageCopy Region = VkInit::BufferImageCopy({Width, Height, 1});
 
         vkCmdCopyBufferToImage(CommandBuffer, Source, Destination, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &Region);
 

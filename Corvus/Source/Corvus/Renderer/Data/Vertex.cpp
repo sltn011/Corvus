@@ -13,7 +13,7 @@ namespace Corvus
         return InputBindingDescription;
     }
 
-    std::array<VkVertexInputAttributeDescription, 3> CVertex::GetInputAttributeDescriptions()
+    std::vector<VkVertexInputAttributeDescription> CVertex::GetInputAttributeDescriptions()
     {
         VkVertexInputAttributeDescription PositionAttribute{};
         PositionAttribute.binding  = 0;
@@ -45,7 +45,7 @@ namespace Corvus
         return InputBindingDescription;
     }
 
-    std::array<VkVertexInputAttributeDescription, 2> CQuadVertex::GetInputAttributeDescriptions()
+    std::vector<VkVertexInputAttributeDescription> CQuadVertex::GetInputAttributeDescriptions()
     {
         VkVertexInputAttributeDescription PositionAttribute{};
         PositionAttribute.binding  = 0;

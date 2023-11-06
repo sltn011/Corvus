@@ -9,15 +9,9 @@ namespace Corvus
     {
         for (UInt32 i = 0; i < s_FramesInFlight; ++i)
         {
-            VkSemaphoreCreateInfo ImageAvailableSemaphoreInfo{};
-            ImageAvailableSemaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
-            VkSemaphoreCreateInfo RenderFinishedSemaphoreInfo{};
-            RenderFinishedSemaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
-            VkFenceCreateInfo InFlightFenceInfo{};
-            InFlightFenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-            InFlightFenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+            VkSemaphoreCreateInfo ImageAvailableSemaphoreInfo = VkInit::SemaphoreCreateInfo(0);
+            VkSemaphoreCreateInfo RenderFinishedSemaphoreInfo = VkInit::SemaphoreCreateInfo(0);
+            VkFenceCreateInfo     InFlightFenceInfo           = VkInit::FenceCreateInfo(VK_FENCE_CREATE_SIGNALED_BIT);
 
             if (vkCreateSemaphore(Device, &ImageAvailableSemaphoreInfo, nullptr, &ImageAvailableSemaphores[i]) !=
                     VK_SUCCESS ||

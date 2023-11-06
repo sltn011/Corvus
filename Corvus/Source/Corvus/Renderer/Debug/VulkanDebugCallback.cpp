@@ -9,21 +9,8 @@ namespace Corvus
 
     void CRenderer::CreateDebugCallback()
     {
-        // clang-format off
-        VkDebugUtilsMessengerCreateInfoEXT MessengerInfo{};
-        MessengerInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-        MessengerInfo.messageSeverity =
-            //VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | 
-            VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT    |
-            VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | 
-            VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-        MessengerInfo.messageType = 
-            VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT    |
-            VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-            VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-        MessengerInfo.pfnUserCallback = CRenderer::DebugMessageCallback;
-        MessengerInfo.pUserData       = nullptr;
-        // clang-format on
+        VkDebugUtilsMessengerCreateInfoEXT MessengerInfo =
+            VkInit::DebugUtilsMessengerCreateInfo(CRenderer::DebugMessageCallback);
 
         if (CreateDebugUtilsMessengerEXT(VulkanInstance, &MessengerInfo, nullptr, &DebugCallback) != VK_SUCCESS)
         {

@@ -19,11 +19,7 @@ namespace Corvus
 
     VkShaderModule CRenderer::CreateShaderModule(std::vector<char> const &SPIRVByteCode) const
     {
-        VkShaderModuleCreateInfo CreateInfo{};
-
-        CreateInfo.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-        CreateInfo.codeSize = SPIRVByteCode.size();
-        CreateInfo.pCode    = reinterpret_cast<UInt32 const *>(SPIRVByteCode.data());
+        VkShaderModuleCreateInfo CreateInfo = VkInit::ShaderModuleCreateInfo(SPIRVByteCode);
 
         VkShaderModule ShaderModule{};
         if (vkCreateShaderModule(Device, &CreateInfo, nullptr, &ShaderModule) != VK_SUCCESS)

@@ -12,21 +12,18 @@ namespace Corvus
             "Vulkan Command Pools were already created"
         );
 
-        VkCommandPoolCreateInfo CommandPoolInfo{};
-        CommandPoolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-        CommandPoolInfo.flags            = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-        CommandPoolInfo.queueFamilyIndex = QueueFamilyIndices.GraphicsFamily.value();
+        VkCommandPoolCreateInfo CommandPoolInfo = VkInit::CommandPoolCreateInfo(
+            QueueFamilyIndices.GraphicsFamily.value(), VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT
+        );
 
         if (vkCreateCommandPool(Device, &CommandPoolInfo, nullptr, &CommandPool) != VK_SUCCESS)
         {
             CORVUS_CORE_CRITICAL("Failed to create Vulkan Command Pool!");
         }
 
-        VkCommandPoolCreateInfo TransferCommandPoolInfo{};
-        TransferCommandPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-        TransferCommandPoolInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
-        TransferCommandPoolInfo.queueFamilyIndex =
-            QueueFamilyIndices.GraphicsFamily.value(); // Graphics queue family always supports transfer bit
+        VkCommandPoolCreateInfo TransferCommandPoolInfo = VkInit::CommandPoolCreateInfo(
+            QueueFamilyIndices.GraphicsFamily.value(), VK_COMMAND_POOL_CREATE_TRANSIENT_BIT
+        ); // Graphics queue family always supports transfer bit
 
         if (vkCreateCommandPool(Device, &TransferCommandPoolInfo, nullptr, &TransferCommandPool) != VK_SUCCESS)
         {

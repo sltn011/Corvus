@@ -9,60 +9,55 @@ namespace Corvus
     {
         CORVUS_ASSERT_FMT(RenderPass == VK_NULL_HANDLE, "Vulkan Render Pass was already created!");
 
-        VkAttachmentDescription ColorAttachment{};
-        ColorAttachment.format         = SwapchainImageFormat;
-        ColorAttachment.samples        = VK_SAMPLE_COUNT_1_BIT;
-        ColorAttachment.loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR;
-        ColorAttachment.storeOp        = VK_ATTACHMENT_STORE_OP_STORE;
-        ColorAttachment.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        ColorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        ColorAttachment.initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED;
-        ColorAttachment.finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+        VkAttachmentDescription ColorAttachment = VkInit::AttachmentDescription(
+            SwapchainImageFormat,
+            VK_IMAGE_LAYOUT_UNDEFINED,
+            VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+            VK_ATTACHMENT_LOAD_OP_CLEAR,
+            VK_ATTACHMENT_STORE_OP_STORE,
+            VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+            VK_ATTACHMENT_STORE_OP_DONT_CARE
+        );
 
-        VkAttachmentReference ColorAttachmentRef{};
-        ColorAttachmentRef.attachment = 0; // index of attachment in pAttachments array in RenderPassInfo
-        ColorAttachmentRef.layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        std::vector<VkAttachmentReference> ColorAttachmentsRef = {
+            VkInit::AttachmentReference(0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)};
 
-        VkAttachmentDescription DepthAttachment{};
-        DepthAttachment.format         = FindDepthFormat();
-        DepthAttachment.samples        = VK_SAMPLE_COUNT_1_BIT;
-        DepthAttachment.loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR;
-        DepthAttachment.storeOp        = VK_ATTACHMENT_STORE_OP_DONT_CARE; // won't be used after rendering
-        DepthAttachment.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        DepthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        DepthAttachment.initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED;
-        DepthAttachment.finalLayout    = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        VkAttachmentDescription DepthAttachment = VkInit::AttachmentDescription(
+            FindDepthFormat(),
+            VK_IMAGE_LAYOUT_UNDEFINED,
+            VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+            VK_ATTACHMENT_LOAD_OP_CLEAR,
+            VK_ATTACHMENT_STORE_OP_DONT_CARE, // won't be used after rendering
+            VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+            VK_ATTACHMENT_STORE_OP_DONT_CARE
+        );
 
-        VkAttachmentReference DepthAttachmentRef{};
-        DepthAttachmentRef.attachment = 1;
-        DepthAttachmentRef.layout     = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        VkAttachmentReference DepthAttachmentRef =
+            VkInit::AttachmentReference(1, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
-        VkSubpassDescription Subpass{};
-        Subpass.pipelineBindPoint       = VK_PIPELINE_BIND_POINT_GRAPHICS;
-        Subpass.colorAttachmentCount    = 1;
-        Subpass.pColorAttachments       = &ColorAttachmentRef;
-        Subpass.pDepthStencilAttachment = &DepthAttachmentRef;
+        std::vector<VkSubpassDescription> SubpassesDescription = {VkInit::SubpassDescription(
+            VK_PIPELINE_BIND_POINT_GRAPHICS, ColorAttachmentsRef.data(), ColorAttachmentsRef.size(), &DepthAttachmentRef
+        )};
 
-        VkSubpassDependency Dependency{};
-        Dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-        Dependency.dstSubpass = 0; // our only subpass
-        Dependency.srcStageMask =
-            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-        Dependency.srcAccessMask = 0;
-        Dependency.dstStageMask =
-            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-        Dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+        std::vector<VkSubpassDependency> DependenciesDescription = {VkInit::SubpassDependency(
+            VK_SUBPASS_EXTERNAL,
+            0,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
+            0,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
+            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT
+        )};
 
-        std::array<VkAttachmentDescription, 2> AttachmentDescriptions = {ColorAttachment, DepthAttachment};
+        std::vector<VkAttachmentDescription> AttachmentDescriptions = {ColorAttachment, DepthAttachment};
 
-        VkRenderPassCreateInfo RenderPassInfo{};
-        RenderPassInfo.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-        RenderPassInfo.attachmentCount = static_cast<UInt32>(AttachmentDescriptions.size());
-        RenderPassInfo.pAttachments    = AttachmentDescriptions.data();
-        RenderPassInfo.subpassCount    = 1;
-        RenderPassInfo.pSubpasses      = &Subpass;
-        RenderPassInfo.dependencyCount = 1;
-        RenderPassInfo.pDependencies   = &Dependency;
+        VkRenderPassCreateInfo RenderPassInfo = VkInit::RenderPassCreateInfo(
+            AttachmentDescriptions.data(),
+            AttachmentDescriptions.size(),
+            SubpassesDescription.data(),
+            SubpassesDescription.size(),
+            DependenciesDescription.data(),
+            DependenciesDescription.size()
+        );
 
         if (vkCreateRenderPass(Device, &RenderPassInfo, nullptr, &RenderPass) != VK_SUCCESS)
         {

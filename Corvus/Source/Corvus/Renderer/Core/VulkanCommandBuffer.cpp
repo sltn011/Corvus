@@ -7,11 +7,8 @@ namespace Corvus
 
     void CRenderer::AllocateCommandBuffers()
     {
-        VkCommandBufferAllocateInfo CommandBufferInfo{};
-        CommandBufferInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        CommandBufferInfo.commandPool        = CommandPool;
-        CommandBufferInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        CommandBufferInfo.commandBufferCount = static_cast<UInt32>(CommandBuffers.size());
+        VkCommandBufferAllocateInfo CommandBufferInfo =
+            VkInit::CommandBufferAllocateInfo(CommandPool, static_cast<UInt32>(CommandBuffers.size()));
 
         if (vkAllocateCommandBuffers(Device, &CommandBufferInfo, CommandBuffers.data()) != VK_SUCCESS)
         {
@@ -22,11 +19,7 @@ namespace Corvus
 
     VkCommandBuffer CRenderer::BeginSingleTimeCommand()
     {
-        VkCommandBufferAllocateInfo BufferAllocateInfo{};
-        BufferAllocateInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        BufferAllocateInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        BufferAllocateInfo.commandPool        = CommandPool;
-        BufferAllocateInfo.commandBufferCount = 1;
+        VkCommandBufferAllocateInfo BufferAllocateInfo = VkInit::CommandBufferAllocateInfo(CommandPool, 1);
 
         VkCommandBuffer CommandBuffer;
         if (vkAllocateCommandBuffers(Device, &BufferAllocateInfo, &CommandBuffer) != VK_SUCCESS)
@@ -34,9 +27,8 @@ namespace Corvus
             CORVUS_CORE_CRITICAL("Failed to allocate Vulkan Command Buffer!");
         }
 
-        VkCommandBufferBeginInfo CommandBufferBeginInfo{};
-        CommandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        CommandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+        VkCommandBufferBeginInfo CommandBufferBeginInfo =
+            VkInit::CommandBufferBeginInfo(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
         if (vkBeginCommandBuffer(CommandBuffer, &CommandBufferBeginInfo) != VK_SUCCESS)
         {
@@ -53,10 +45,7 @@ namespace Corvus
             CORVUS_CORE_CRITICAL("Failed to end Vulkan Command Buffer!");
         }
 
-        VkSubmitInfo SubmitInfo{};
-        SubmitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        SubmitInfo.commandBufferCount = 1;
-        SubmitInfo.pCommandBuffers    = &CommandBuffer;
+        VkSubmitInfo SubmitInfo = VkInit::SubmitInfo(CommandBuffer, nullptr, 0, nullptr, nullptr, 0);
 
         if (vkQueueSubmit(Queues.GraphicsQueue, 1, &SubmitInfo, VK_NULL_HANDLE) != VK_SUCCESS)
         {

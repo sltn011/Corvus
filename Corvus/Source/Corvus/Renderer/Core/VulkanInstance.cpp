@@ -10,25 +10,16 @@ namespace Corvus
     {
         CORVUS_ASSERT_FMT(VulkanInstance == VK_NULL_HANDLE, "Vulkan Instance was already created!");
 
-        VkApplicationInfo ApplicationInfo{};
-        ApplicationInfo.sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-        ApplicationInfo.apiVersion         = VK_API_VERSION_1_3;
-        ApplicationInfo.pApplicationName   = ApplicationName.c_str();
-        ApplicationInfo.applicationVersion = VK_MAKE_API_VERSION(0, 1, 0, 0);
-        ApplicationInfo.pEngineName        = "";
-        ApplicationInfo.engineVersion      = VK_MAKE_API_VERSION(0, 1, 0, 0);
+        VkApplicationInfo ApplicationInfo = VkInit::ApplicationInfo(
+            ApplicationName, VK_MAKE_API_VERSION(0, 1, 0, 0), "Corvus", VK_MAKE_API_VERSION(0, 1, 0, 0)
+        );
 
         std::vector<char const *> const Extensions       = GetRequiredInstanceExtensions();
         std::vector<char const *> const ValidationLayers = GetRequiredInstanceValidationLayers();
 
         // Specify global(for whole program) extensions and validation layers
-        VkInstanceCreateInfo InstanceCreateInfo{};
-        InstanceCreateInfo.sType                   = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-        InstanceCreateInfo.pApplicationInfo        = &ApplicationInfo;
-        InstanceCreateInfo.enabledExtensionCount   = static_cast<UInt32>(Extensions.size());
-        InstanceCreateInfo.ppEnabledExtensionNames = Extensions.data();
-        InstanceCreateInfo.enabledLayerCount       = static_cast<UInt32>(ValidationLayers.size());
-        InstanceCreateInfo.ppEnabledLayerNames     = ValidationLayers.data();
+        VkInstanceCreateInfo InstanceCreateInfo =
+            VkInit::InstanceCreateInfo(ApplicationInfo, Extensions, ValidationLayers);
 
         if (vkCreateInstance(&InstanceCreateInfo, nullptr, &VulkanInstance) != VK_SUCCESS)
         {
