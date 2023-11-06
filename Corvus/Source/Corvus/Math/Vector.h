@@ -3,9 +3,29 @@
 
 #include "Corvus/Math/Math.h"
 
-using FIntVector2 = glm::ivec2;
-using FIntVector3 = glm::ivec3;
-using FIntVector4 = glm::ivec4;
+using FUByteVector2 = glm::u8vec2;
+using FUByteVector3 = glm::u8vec3;
+using FUByteVector4 = glm::u8vec4;
+
+using FSByteVector2 = glm::i8vec2;
+using FSByteVector3 = glm::i8vec3;
+using FSByteVector4 = glm::i8vec4;
+
+using FUWordVector2 = glm::u8vec2;
+using FUWordVector3 = glm::u8vec3;
+using FUWordVector4 = glm::u8vec4;
+
+using FSWordVector2 = glm::i16vec2;
+using FSWordVector3 = glm::i16vec3;
+using FSWordVector4 = glm::i16vec4;
+
+using FUIntVector2 = glm::uvec2;
+using FUIntVector3 = glm::uvec3;
+using FUIntVector4 = glm::uvec4;
+
+using FSIntVector2 = glm::ivec2;
+using FSIntVector3 = glm::ivec3;
+using FSIntVector4 = glm::ivec4;
 
 using FVector2 = glm::vec2;
 using FVector3 = glm::vec3;

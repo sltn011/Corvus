@@ -3,7 +3,6 @@
 #include "Corvus/Renderer/RenderPass/RenderPass_Combine.h"
 
 #include "Corvus/Renderer/Data/PushConstants.h"
-#include "Corvus/Renderer/Data/ScreenQuad.h"
 #include "Corvus/Renderer/Data/UBOs.h"
 #include "Corvus/Renderer/Data/Vertex.h"
 #include "Corvus/Renderer/Renderer.h"
@@ -64,11 +63,11 @@ namespace Corvus
             nullptr
         );
 
-        VkBuffer     Buffers[] = {CScreenQuad::Get().VertexBuffer.Buffer};
+        VkBuffer     Buffers[] = {Renderer().ScreenQuad.VertexBuffer.Buffer};
         VkDeviceSize Offsets[] = {0};
         vkCmdBindVertexBuffers(CommandBuffer, 0, 1, Buffers, Offsets);
 
-        vkCmdBindIndexBuffer(CommandBuffer, CScreenQuad::Get().IndexBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
+        vkCmdBindIndexBuffer(CommandBuffer, Renderer().ScreenQuad.IndexBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
 
         vkCmdDrawIndexed(CommandBuffer, 6, 1, 0, 0, 0);
 

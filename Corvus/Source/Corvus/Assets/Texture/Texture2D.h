@@ -7,8 +7,9 @@
 namespace Corvus
 {
 
-    struct CTexture2D
+    class CTexture2D
     {
+    public:
         FUUID        UUID;
         CVulkanImage Image;
         VkImageView  ImageView;

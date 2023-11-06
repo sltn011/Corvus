@@ -5,22 +5,6 @@
 namespace Corvus
 {
 
-    void CRenderer::CreateSamplers()
-    {
-        Samplers.DefaultSampler = CreateSampler(
-            VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_REPEAT, true, 16.f, VK_SAMPLER_MIPMAP_MODE_LINEAR, 1000
-        );
-    }
-
-    void CRenderer::DestroySamplers()
-    {
-        if (Samplers.DefaultSampler != VK_NULL_HANDLE)
-        {
-            vkDestroySampler(Device, Samplers.DefaultSampler, nullptr);
-            Samplers.DefaultSampler = VK_NULL_HANDLE;
-        }
-    }
-
     VkSampler CRenderer::CreateSampler(
         VkFilter             MinMagFilter,
         VkSamplerAddressMode AddressMode,
@@ -44,6 +28,32 @@ namespace Corvus
         }
 
         return Sampler;
+    }
+
+    void CRenderer::DestroySampler(VkSampler &Sampler)
+    {
+        if (Sampler != VK_NULL_HANDLE)
+        {
+            vkDestroySampler(Device, Sampler, nullptr);
+            Sampler = VK_NULL_HANDLE;
+        }
+    }
+
+    void CRenderer::CreateSamplers()
+    {
+        Samplers.FilteredSampler = Renderer().CreateSampler(
+            VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_REPEAT, true, 16.f, VK_SAMPLER_MIPMAP_MODE_LINEAR, 1000
+        );
+
+        Samplers.PixelatedSampler = Renderer().CreateSampler(
+            VK_FILTER_NEAREST, VK_SAMPLER_ADDRESS_MODE_REPEAT, true, 16.f, VK_SAMPLER_MIPMAP_MODE_LINEAR, 1000
+        );
+    }
+
+    void CRenderer::DestroySamplers()
+    {
+        DestroySampler(Samplers.FilteredSampler);
+        DestroySampler(Samplers.PixelatedSampler);
     }
 
 } // namespace Corvus

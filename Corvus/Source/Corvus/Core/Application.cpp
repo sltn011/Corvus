@@ -36,8 +36,12 @@ namespace Corvus
             m_LayersStack.PopLayer();
         }
 
+        AssetDrawer.DestroyRenderData();
+
         m_Window->DestroyGUIController();
+
         DestroyRenderer();
+
         s_ApplicationInstance = nullptr;
     }
 
@@ -46,8 +50,12 @@ namespace Corvus
         CApplicationPools::Init();
 
         InitWindow();
+
         InitRenderer();
+
         m_Window->CreateGUIController();
+
+        AssetDrawer.DefaultTextures.Create();
 
         PushLayer(CLayer::Create<CCoreLayer>());
         // PushLayer(CLayer::Create<CLayerGUI>("GUI", true));

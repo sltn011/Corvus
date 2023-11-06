@@ -3,7 +3,6 @@
 #include "Corvus/Renderer/RenderPass/RenderPass_Deferred.h"
 
 #include "Corvus/Renderer/Data/PushConstants.h"
-#include "Corvus/Renderer/Data/ScreenQuad.h"
 #include "Corvus/Renderer/Data/UBOs.h"
 #include "Corvus/Renderer/Data/Vertex.h"
 #include "Corvus/Renderer/Renderer.h"

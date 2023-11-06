@@ -31,28 +31,7 @@ namespace Corvus
             WireUpAssets();
         }
 
-        ~CApplicationLayer()
-        {
-            for (auto &[UUID, Model] : StaticModelsAssets) // TODO: Move somewhere else
-            {
-                for (CStaticMesh &Mesh : Model)
-                {
-                    for (CStaticMeshPrimitive &Primitive : Mesh)
-                    {
-                        Renderer().DestroyBuffer(Primitive.VertexBuffer);
-                        Renderer().DestroyBuffer(Primitive.IndexBuffer);
-                    }
-                }
-            }
-            for (auto &[UUID, Material] : MaterialsAssets)
-            {
-                Renderer().DestroyMaterialRenderData(Material);
-            }
-            for (auto &[UUID, Texture] : TexturesAssets)
-            {
-                Renderer().DestroyTexture2D(Texture);
-            }
-        }
+        ~CApplicationLayer() {}
 
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
         {
@@ -178,67 +157,30 @@ namespace Corvus
             Entity->TransformComponent->SetPosition(FVector3{5.0f, -1.5f, 0.0f});
             Entity->TransformComponent->SetRotation(FRotation{{0.0f, -45.0f, 0.0f}});
             Entity->TransformComponent->SetScale(FVector3{0.01f});
-            Entity->StaticMeshComponent->StaticModelRef.SetUUID(StaticModelsAssets.begin()->first);
+            Entity->StaticMeshComponent->StaticModelRef.SetUUID(ModelUUID);
 
             CApplication::GetInstance().Scene.AddEntity(std::move(Entity));
         }
 
         void LoadAssets()
         {
-            SStaticModelLoadedData LoadedModelData =
-                CModelLoader::LoadStaticModelFromFile("./Assets/Models/sponza.glb");
-
-            // StaticModel
-            StaticModelsAssets.emplace(LoadedModelData.StaticModel.UUID, std::move(LoadedModelData.StaticModel));
-
-            // Textures
-            for (CTexture2D &Texture : LoadedModelData.Textures)
-            {
-                TexturesAssets.emplace(Texture.UUID, std::move(Texture));
-            }
-
-            // Materials
-            for (CMaterial &Material : LoadedModelData.Materials)
-            {
-                MaterialsAssets.emplace(Material.UUID, std::move(Material));
-            }
+            ModelUUID = CApplication::GetInstance().AssetDrawer.LoadStaticModelFromFile("./Assets/Models/sponza.glb");
         }
 
         void WireUpAssets()
         {
-            // Provide materials with their textures
-            for (auto &[MaterialUUID, Material] : MaterialsAssets)
-            {
-                FUUID AlbedoUUID = Material.Albedo.UUID;
-                Material.Albedo  = TexturesAssets.at(AlbedoUUID);
-            }
-
-            // Provide StaticMeshPrimitives with their materials
-            for (auto &[StaticModelUUID, StaticModel] : StaticModelsAssets)
-            {
-                for (CStaticMesh &Mesh : StaticModel)
-                {
-                    for (CStaticMeshPrimitive &Primitive : Mesh)
-                    {
-                        FUUID MaterialUUID = Primitive.Material.UUID;
-                        Primitive.Material = MaterialsAssets.at(MaterialUUID);
-                        Renderer().CreateMaterialRenderData(Primitive.Material);
-                    }
-                }
-            }
-
             // Provide Entities with their StaticModels
             for (TPoolable<CEntity> const &Entity : CApplication::GetInstance().Scene.GetEntities())
             {
                 FUUID StaticModelUUID = Entity->StaticMeshComponent->StaticModelRef.GetUUID();
-                Entity->StaticMeshComponent->StaticModelRef.SetRawPtr(&StaticModelsAssets.at(StaticModelUUID));
+                Entity->StaticMeshComponent->StaticModelRef.SetRawPtr(
+                    &CApplication::GetInstance().AssetDrawer.StaticModels[ModelUUID]
+                );
             }
         }
 
     private:
-        std::unordered_map<FUUID, CTexture2D>   TexturesAssets;
-        std::unordered_map<FUUID, CMaterial>    MaterialsAssets;
-        std::unordered_map<FUUID, CStaticModel> StaticModelsAssets;
+        FUUID ModelUUID;
 
         bool     bCameraMode = false;
         FVector2 CursorPos;

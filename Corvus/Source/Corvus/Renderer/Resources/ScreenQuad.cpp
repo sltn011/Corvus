@@ -1,6 +1,6 @@
 #include "CorvusPCH.h"
 
-#include "Corvus/Renderer/Data/ScreenQuad.h"
+#include "Corvus/Renderer/Resources/ScreenQuad.h"
 
 #include "Corvus/Renderer/Data/Vertex.h"
 #include "Corvus/Renderer/Renderer.h"
@@ -32,12 +32,6 @@ namespace Corvus
     {
         Renderer().DestroyBuffer(IndexBuffer);
         Renderer().DestroyBuffer(VertexBuffer);
-    }
-
-    CScreenQuad &CScreenQuad::Get()
-    {
-        static CScreenQuad ScreenQuad;
-        return ScreenQuad;
     }
 
 } // namespace Corvus

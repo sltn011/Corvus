@@ -8,10 +8,12 @@
 namespace Corvus
 {
 
-    struct CMaterial
+    class CMaterial
     {
+    public:
         CTexture2D      Albedo;
-        VkDescriptorSet DescriptorSet;
+        CTexture2D      Normal;
+        VkDescriptorSet DescriptorSet = VK_NULL_HANDLE;
 
         FUUID UUID;
     };

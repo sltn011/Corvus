@@ -143,7 +143,7 @@ namespace Corvus
                 m_Window, nullptr, 0, 0, m_WindowData.WindowWidth, m_WindowData.WindowHeight, GLFW_DONT_CARE
             );
 
-            FIntVector2 MonitorTopLeft{}, MonitorBottomRight{};
+            FSIntVector2 MonitorTopLeft{}, MonitorBottomRight{};
             glfwGetMonitorWorkarea(
                 glfwGetPrimaryMonitor(),
                 &MonitorTopLeft.x,
@@ -152,9 +152,9 @@ namespace Corvus
                 &MonitorBottomRight.y
             );
 
-            FIntVector2 const MonitorCenter = (MonitorBottomRight - MonitorTopLeft) / 2;
+            FSIntVector2 const MonitorCenter = (MonitorBottomRight - MonitorTopLeft) / 2;
 
-            FIntVector2 WindowTopLeft;
+            FSIntVector2 WindowTopLeft;
             WindowTopLeft.x = FMath::Max(0, MonitorCenter.x - m_WindowData.WindowWidth / 2);
             WindowTopLeft.y = FMath::Max(0, MonitorCenter.y - m_WindowData.WindowHeight / 2);
 

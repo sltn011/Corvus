@@ -11,8 +11,9 @@
 #include "Corvus/Renderer/RenderPass/RenderPass_Deferred.h"
 #include "Corvus/Renderer/Resources/Attachment.h"
 #include "Corvus/Renderer/Resources/RenderTarget.h"
+#include "Corvus/Renderer/Resources/Samplers.h"
+#include "Corvus/Renderer/Resources/ScreenQuad.h"
 #include "Corvus/Renderer/Resources/VulkanImage.h"
-#include "Corvus/Renderer/Resources/VulkanSampler.h"
 
 #include <vulkan/vulkan.h>
 
@@ -20,8 +21,8 @@ namespace Corvus
 {
     class CStaticModel;
     class CImageData;
-    struct CTexture2D;
-    struct CMaterial;
+    class CTexture2D;
+    class CMaterial;
 
     class CRenderer
     {
@@ -55,6 +56,9 @@ namespace Corvus
         void NotifyWindowResize();
 
         void AwaitIdle();
+
+    public:
+        CScreenQuad ScreenQuad;
 
     public:
         // RenderPasses
@@ -105,6 +109,19 @@ namespace Corvus
 
         VkShaderModule CreateShaderModule(std::vector<char> const &SPIRVByteCode) const;
         void           DestroyShaderModule(VkShaderModule &ShaderModule) const;
+
+    public:
+        // Sampler
+        VkSampler CreateSampler(
+            VkFilter             MinMagFilter,
+            VkSamplerAddressMode AddressMode,
+            bool                 bAnisoEnabled,
+            float                Anisotropy,
+            VkSamplerMipmapMode  Filtering,
+            UInt32               MipLevels
+        ) const;
+
+        void DestroySampler(VkSampler &Sampler);
 
     public:
         // Helper
@@ -317,29 +334,19 @@ namespace Corvus
         void        DestroyImageView(VkImageView &ImageView);
 
     private:
-        // VkSampler
-        void CreateSamplers();
-        void DestroySamplers();
-
-        VkSampler CreateSampler(
-            VkFilter             MinMagFilter,
-            VkSamplerAddressMode AddressMode,
-            bool                 bAnisoEnabled,
-            float                Anisotropy,
-            VkSamplerMipmapMode  Filtering,
-            UInt32               MipLevels
-        ) const;
-
-    public:
-        CVulkanSamplers Samplers{};
-
-    private:
         // VkRenderPass
         void CreateRenderPass();
         void DestroyRenderPass();
 
     public:
         VkRenderPass RenderPass = VK_NULL_HANDLE;
+
+    private:
+        void CreateSamplers();
+        void DestroySamplers();
+
+    public:
+        CSamplers Samplers;
 
     private:
         // VkPipeline

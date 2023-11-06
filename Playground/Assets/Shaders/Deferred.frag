@@ -9,10 +9,13 @@ layout(location = 1) out vec4 OutAlbedo;
 layout(location = 2) out vec4 OutNormal;
 
 layout(set = 1, binding = 0) uniform sampler2D TextureAlbedo;
+layout(set = 1, binding = 1) uniform sampler2D TextureNormal;
 
 void main()
 {
-    OutPosition = vec4(InPosition, 1.f);
-    OutAlbedo   = texture(TextureAlbedo, InUVCoord);
-    OutNormal   = vec4(InNormal, 1.f);
+    OutPosition         = vec4(InPosition, 1.f);
+    OutAlbedo           = texture(TextureAlbedo, InUVCoord);
+
+    vec3 SurfaceNormal  = normalize(texture(TextureNormal, InUVCoord).xyz);
+    OutNormal           = vec4(SurfaceNormal, 1.f);
 }

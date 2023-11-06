@@ -9,6 +9,7 @@
 #include "Corvus/Assets/Texture/ImageData.h"
 #include "Corvus/Assets/Texture/ImageDataLoader.h"
 #include "Corvus/Assets/Texture/Texture2D.h"
+#include "Corvus/Core/Application.h"
 #include "Corvus/Math/Matrix.h"
 #include "Corvus/Math/Quaternion.h"
 #include "Corvus/Renderer/Data/Vertex.h"
@@ -208,7 +209,7 @@ namespace Corvus
                 CImageData Image = ProcessImage(GLTFModel.images[ImageIndex]);
 
                 Textures[i] =
-                    Renderer().CreateTexture2D(Image, Image.GetMaxMipLevel(), Renderer().Samplers.DefaultSampler);
+                    Renderer().CreateTexture2D(Image, Image.GetMaxMipLevel(), Renderer().Samplers.FilteredSampler);
             }
 
             return Textures;
@@ -224,28 +225,27 @@ namespace Corvus
                 CMaterial                &Material     = Materials[i];
 
                 // Albedo
-                if (MaterialInfo.pbrMetallicRoughness.baseColorTexture.index == -1) // Vertex color
+                if (MaterialInfo.pbrMetallicRoughness.baseColorTexture.index == -1)
                 {
-                    CORVUS_CORE_NO_ENTRY_FMT("Models without albedo not supported!");
-
-                    std::vector<double> const &VertexColorData = MaterialInfo.pbrMetallicRoughness.baseColorFactor;
-
-                    FVector4 VertexColor{};
-                    VertexColor.r = static_cast<float>(VertexColorData[0]);
-                    VertexColor.g = static_cast<float>(VertexColorData[1]);
-                    VertexColor.b = static_cast<float>(VertexColorData[2]);
-                    VertexColor.a = static_cast<float>(VertexColorData[3]);
-
-                    // Material.AlbedoMap.Other = VertexColor;
-                    // Material.AlbedoMap.UseOther();
+                    Material.Albedo.UUID = CApplication::GetInstance().AssetDrawer.DefaultTextures.Albedo.UUID;
                 }
-                else // Albedo map
+                else
                 {
                     Int32 AlbedoIndex    = MaterialInfo.pbrMetallicRoughness.baseColorTexture.index;
                     Material.Albedo.UUID = Textures[AlbedoIndex].UUID;
                 }
 
-                // TODO: Normals
+                // Normal
+                if (MaterialInfo.normalTexture.index == -1)
+                {
+                    Material.Normal.UUID = CApplication::GetInstance().AssetDrawer.DefaultTextures.Normal.UUID;
+                }
+                else
+                {
+                    Int32 NormalIndex    = MaterialInfo.normalTexture.index;
+                    Material.Normal.UUID = Textures[NormalIndex].UUID;
+                }
+
                 // TODO: MetallicRoughness
             }
 
@@ -344,9 +344,9 @@ namespace Corvus
             return TranslateMatrix * RotateMatrix * ScaleMatrix;
         }
 
-        FIntVector4 ReadIntegerElement(UInt8 const *SrcData, SElementFormat const ElementFormat)
+        FSIntVector4 ReadIntegerElement(UInt8 const *SrcData, SElementFormat const ElementFormat)
         {
-            FIntVector4 Result{};
+            FSIntVector4 Result{};
 
             for (SizeT Component = 0; Component < ElementFormat.NumComponents; ++Component)
             {
@@ -355,15 +355,15 @@ namespace Corvus
                 switch (ElementFormat.ComponentSize) // can be 1, 2 or 4 bytes
                 {
                 case 1:
-                    Result[static_cast<FIntVector4::length_type>(Component)] =
+                    Result[static_cast<FSIntVector4::length_type>(Component)] =
                         *(reinterpret_cast<UInt8 const *>(SrcData + ComponentOffset));
                     break;
                 case 2:
-                    Result[static_cast<FIntVector4::length_type>(Component)] =
+                    Result[static_cast<FSIntVector4::length_type>(Component)] =
                         *(reinterpret_cast<UInt16 const *>(SrcData + ComponentOffset));
                     break;
                 case 4:
-                    Result[static_cast<FIntVector4::length_type>(Component)] =
+                    Result[static_cast<FSIntVector4::length_type>(Component)] =
                         *(reinterpret_cast<UInt32 const *>(SrcData + ComponentOffset));
                     break;
                 }
@@ -372,7 +372,7 @@ namespace Corvus
             return Result;
         }
 
-        void WriteIntegerElement(FIntVector4 const &SrcData, SizeT const NumComponents, UInt8 *DstData)
+        void WriteIntegerElement(FSIntVector4 const &SrcData, SizeT const NumComponents, UInt8 *DstData)
         {
             switch (NumComponents)
             {
@@ -380,10 +380,10 @@ namespace Corvus
                 *(reinterpret_cast<UInt32 *>(DstData)) = SrcData[0];
                 break;
             case 2:
-                *(reinterpret_cast<FIntVector2 *>(DstData)) = FIntVector2{SrcData};
+                *(reinterpret_cast<FSIntVector2 *>(DstData)) = FSIntVector2{SrcData};
                 break;
             case 3:
-                *(reinterpret_cast<FIntVector3 *>(DstData)) = FIntVector3{SrcData};
+                *(reinterpret_cast<FSIntVector3 *>(DstData)) = FSIntVector3{SrcData};
                 break;
             default:
                 CORVUS_ERROR("Invalid number of element components!");

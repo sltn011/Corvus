@@ -7,7 +7,6 @@
 #include "Corvus/Camera/Camera.h"
 #include "Corvus/Core/Application.h"
 #include "Corvus/Renderer/Data/PushConstants.h"
-#include "Corvus/Renderer/Data/ScreenQuad.h"
 
 namespace Corvus
 {
@@ -49,14 +48,15 @@ namespace Corvus
         CreateCommandPools();
         AllocateCommandBuffers();
 
+        CreateDescriptorSetLayout();
+        CreateDescriptorPools();
+
+        CreateSamplers();
+
         CreateDepthResources();
 
         CreateUniformBuffers();
 
-        CreateSamplers();
-
-        CreateDescriptorSetLayout();
-        CreateDescriptorPools();
         CreatePerFrameDescriptorSets();
 
         CreateRenderPass();
@@ -70,12 +70,12 @@ namespace Corvus
 
         CreateSyncObjects();
 
-        CScreenQuad::Get().Create();
+        ScreenQuad.Create();
     }
 
     void CRenderer::Destroy()
     {
-        CScreenQuad::Get().Destroy();
+        ScreenQuad.Destroy();
 
         DestroySyncObjects();
 
@@ -88,14 +88,14 @@ namespace Corvus
         DestroyPipelineLayout();
         DestroyRenderPass();
 
-        DestroyDescriptorPools();
-        DestroyDescriptorSetLayout();
-
-        DestroySamplers();
-
         DestroyUniformBuffers();
 
         DestroyDepthResources();
+
+        DestroySamplers();
+
+        DestroyDescriptorPools();
+        DestroyDescriptorSetLayout();
 
         DestroyCommandPools();
 

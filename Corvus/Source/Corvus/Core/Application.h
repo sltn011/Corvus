@@ -1,6 +1,7 @@
 #ifndef CORVUS_SOURCE_CORVUS_CORE_APPLICATION_H
 #define CORVUS_SOURCE_CORVUS_CORE_APPLICATION_H
 
+#include "Corvus/Assets/AssetDrawer.h"
 #include "Corvus/Core/Base.h"
 #include "Corvus/Core/LayersStack.h"
 #include "Corvus/Scene/Scene.h"
@@ -39,6 +40,8 @@ namespace Corvus
         static CApplication &GetInstance() { return *s_ApplicationInstance; }
 
         CScene Scene;
+
+        CAssetDrawer AssetDrawer;
 
     private:
         void InitWindow();

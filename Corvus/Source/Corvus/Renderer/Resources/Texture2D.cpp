@@ -17,7 +17,7 @@ namespace Corvus
         CTexture2D Texture2D;
         Texture2D.Image     = Image;
         Texture2D.ImageView = ImageView;
-        Texture2D.Sampler   = Samplers.DefaultSampler;
+        Texture2D.Sampler   = TextureSampler;
 
         return Texture2D;
     }
