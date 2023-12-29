@@ -800,6 +800,27 @@ namespace Corvus
             return SamplerCreateInfo;
         }
 
+        inline VkVertexInputBindingDescription VertexInputBindingDescription(UInt32 Stride, VkVertexInputRate InputRate)
+        {
+            VkVertexInputBindingDescription InputBindingDescription{};
+            InputBindingDescription.binding   = 0;
+            InputBindingDescription.stride    = Stride;
+            InputBindingDescription.inputRate = InputRate;
+            return InputBindingDescription;
+        }
+
+        inline VkVertexInputAttributeDescription VertexInputAttributeDescription(
+            UInt32 Binding, UInt32 Location, VkFormat Format, UInt32 Offset
+        )
+        {
+            VkVertexInputAttributeDescription Attribute{};
+            Attribute.binding  = Binding;
+            Attribute.location = Location;
+            Attribute.format   = Format;
+            Attribute.offset   = Offset;
+            return Attribute;
+        }
+
         inline VkSemaphoreCreateInfo SemaphoreCreateInfo(VkSemaphoreCreateFlags Flags)
         {
             VkSemaphoreCreateInfo CreateInfo{};

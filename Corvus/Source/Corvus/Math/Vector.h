@@ -59,15 +59,15 @@ namespace Corvus::FVector
     }
 
     template<typename TVector>
-    inline float Dot(TVector const &Vector)
+    inline float Dot(TVector const &Lhs, TVector const &Rhs)
     {
-        return glm::dot(Vector);
+        return glm::dot(Lhs, Rhs);
     }
 
     template<typename TVector>
-    inline TVector Cross(TVector const &Vector)
+    inline TVector Cross(TVector const &Lhs, TVector const &Rhs)
     {
-        return glm::cross(Vector);
+        return glm::cross(Lhs, Rhs);
     }
 
     template<typename TVector>

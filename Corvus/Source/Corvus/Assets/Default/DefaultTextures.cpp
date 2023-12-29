@@ -57,7 +57,7 @@ namespace Corvus
             // clang-format on
 
             CImageData DefaultNormalData =
-                CImageDataLoader::LoadFromMemory(TextureData.data(), 4, 4, VK_FORMAT_R8G8B8A8_UNORM, true);
+                CImageDataLoader::LoadFromMemory(TextureData.data(), 4, 4, VK_FORMAT_R8G8B8A8_UNORM, false);
 
             Normal = Renderer().CreateTexture2D(DefaultNormalData, 1, Renderer().Samplers.FilteredSampler);
 

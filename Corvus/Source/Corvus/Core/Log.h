@@ -38,6 +38,7 @@ namespace Corvus
     #define CORVUS_CORE_ERROR(...) ::Corvus::CLog::GetEngineLogger()->error(__VA_ARGS__)
     #define CORVUS_CORE_CRITICAL(...)                                                                          \
         ::Corvus::CLog::GetEngineLogger()->critical(__VA_ARGS__);                                              \
+        CORVUS_DEBUG_BREAK();                                                                                  \
         ::Corvus::CLog::GetEngineLogger()->critical("CRITICAL ERROR IN FILE {}, LINE {}", __FILE__, __LINE__); \
         exit(1)
 
@@ -47,6 +48,7 @@ namespace Corvus
     #define CORVUS_ERROR(...) ::Corvus::CLog::GetClientLogger()->error(__VA_ARGS__)
     #define CORVUS_CRITICAL(...)                                                                               \
         ::Corvus::CLog::GetClientLogger()->critical(__VA_ARGS__);                                              \
+        CORVUS_DEBUG_BREAK();                                                                                  \
         ::Corvus::CLog::GetClientLogger()->critical("CRITICAL ERROR IN FILE {}, LINE {}", __FILE__, __LINE__); \
         exit(1)
 

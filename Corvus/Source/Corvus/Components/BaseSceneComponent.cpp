@@ -23,6 +23,7 @@ namespace Corvus
 
     void CBaseSceneComponent::SetPosition(FVector3 const &Position)
     {
+        m_TransformCache.MakeDirty();
         m_Transform.SetPosition(Position);
     }
 
@@ -38,6 +39,7 @@ namespace Corvus
 
     void CBaseSceneComponent::SetRotation(FRotation const &Rotation)
     {
+        m_TransformCache.MakeDirty();
         m_Transform.SetRotation(Rotation);
     }
 
@@ -75,6 +77,7 @@ namespace Corvus
 
     void CBaseSceneComponent::SetScale(FVector3 const &Scale)
     {
+        m_TransformCache.MakeDirty();
         m_Transform.SetScale(Scale);
     }
 

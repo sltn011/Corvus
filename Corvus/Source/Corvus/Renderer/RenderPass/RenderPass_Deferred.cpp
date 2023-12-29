@@ -34,7 +34,7 @@ namespace Corvus
     {
         std::array<VkClearValue, 4> ClearColors;
         ClearColors[0].color        = VkClearColorValue{0.f, 0.f, 0.f, 1.0f};
-        ClearColors[1].color        = VkClearColorValue{0.f, 0.f, 0.f, 1.0f};
+        ClearColors[1].color        = VkClearColorValue{1.f, 1.f, 1.f, 1.0f};
         ClearColors[2].color        = VkClearColorValue{0.f, 0.f, 0.f, 1.0f};
         ClearColors[3].depthStencil = VkClearDepthStencilValue{1.0f, 0};
 
@@ -208,7 +208,7 @@ namespace Corvus
             VertexShaderStageInfo, FragmentShaderStageInfo};
         // ===================================================================================================
 
-        // Fixed stages ======================================================================================
+        // Vertex Input ======================================================================================
         std::vector<VkVertexInputBindingDescription> VertexInputBindingDescriptions = {
             CVertex::GetInputBindingDescription()};
         std::vector<VkVertexInputAttributeDescription> VertexInputAttributeDescriptions =

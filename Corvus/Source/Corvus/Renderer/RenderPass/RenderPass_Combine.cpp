@@ -147,7 +147,7 @@ namespace Corvus
             VertexShaderStageInfo, FragmentShaderStageInfo};
         // ===================================================================================================
 
-        // Fixed stages ======================================================================================
+        // Vertex Input ======================================================================================
         std::vector<VkVertexInputBindingDescription> VertexInputBindingDescriptions = {
             CQuadVertex::GetInputBindingDescription()};
         std::vector<VkVertexInputAttributeDescription> VertexInputAttributeDescriptions =

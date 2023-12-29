@@ -86,6 +86,9 @@ namespace Corvus
             case TINYGLTF_TYPE_VEC3:
                 ElementFormat.NumComponents = 3;
                 break;
+            case TINYGLTF_TYPE_VEC4:
+                ElementFormat.NumComponents = 4;
+                break;
             default:
                 CORVUS_ERROR("Unsupported data type in gltf model!");
             }
@@ -118,41 +121,6 @@ namespace Corvus
             return ElementFormat;
         }
 
-        // STextureParameters ProcessTextureSampler(tinygltf::Sampler const &Sampler)
-        //{
-        //     static const std::unordered_map<int, ETextureFiltering> TextureFiltering{
-        //         // clang-format off
-        //         {-1,                                             ETextureFiltering::Linear},
-        //         {TINYGLTF_TEXTURE_FILTER_NEAREST,                ETextureFiltering::Nearest},
-        //         {TINYGLTF_TEXTURE_FILTER_LINEAR,                 ETextureFiltering::Linear},
-        //         {TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST, ETextureFiltering::NearestMipMap_Nearest},
-        //         {TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR,  ETextureFiltering::LinearMipMap_Nearest},
-        //         {TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,  ETextureFiltering::NearestMipMap_Linear},
-        //         {TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR,   ETextureFiltering::LinearMipMap_Linear}
-        //         // clang-format on
-        //     };
-
-        //    static const std::unordered_map<int, ETextureWrapping> TextureWrapping{
-        //        // clang-format off
-        //        {TINYGLTF_TEXTURE_WRAP_CLAMP_TO_EDGE,   ETextureWrapping::ClampToEdge},
-        //        {TINYGLTF_TEXTURE_WRAP_MIRRORED_REPEAT, ETextureWrapping::MirrorRepeat},
-        //        {TINYGLTF_TEXTURE_WRAP_REPEAT,          ETextureWrapping::Repeat}
-        //        // No value for ETextureWrapping::Border
-        //        // clang-format on
-        //    };
-
-        //    STextureParameters TextureParameters;
-        //    TextureParameters.MinFiltering = TextureFiltering.at(Sampler.minFilter);
-        //    TextureParameters.MagFiltering = TextureFiltering.at(Sampler.magFilter);
-        //    TextureParameters.WrappingS    = TextureWrapping.at(Sampler.wrapS);
-        //    TextureParameters.WrappingT    = TextureWrapping.at(Sampler.wrapT);
-        //    TextureParameters.WrappingR    = ETextureWrapping::Repeat; // no value in gltf
-
-        //    TextureParameters.bHasMipmaps              = true;
-        //    TextureParameters.bHasAnisotropicFiltering = true;
-        //    return TextureParameters;
-        //}
-
         CImageData ProcessImage(tinygltf::Image const &Image)
         {
             CORVUS_CORE_ASSERT_FMT(
@@ -177,7 +145,7 @@ namespace Corvus
                 PixelFormat = VK_FORMAT_R8G8B8A8_SRGB;
                 break;
             default:
-                CORVUS_ERROR("Invalid number of components in GLTF Image");
+                CORVUS_CORE_ERROR("Invalid number of components in GLTF Image");
                 break;
             }
 
@@ -385,8 +353,11 @@ namespace Corvus
             case 3:
                 *(reinterpret_cast<FSIntVector3 *>(DstData)) = FSIntVector3{SrcData};
                 break;
+            case 4:
+                *(reinterpret_cast<FSIntVector4 *>(DstData)) = FSIntVector4{SrcData};
+                break;
             default:
-                CORVUS_ERROR("Invalid number of element components!");
+                CORVUS_CORE_ERROR("Invalid number of element components!");
                 break;
             }
         }
@@ -427,10 +398,29 @@ namespace Corvus
             case 3:
                 *(reinterpret_cast<FVector3 *>(DstData)) = FVector3{SrcData};
                 break;
+            case 4:
+                *(reinterpret_cast<FVector4 *>(DstData)) = FVector4{SrcData};
+                break;
             default:
-                CORVUS_ERROR("Invalid number of element components!");
+                CORVUS_CORE_ERROR("Invalid number of element components!");
                 break;
             }
+        }
+
+        FVector4 CalculateTangentVec(FVector3 const Position[3], FVector2 const UV[3])
+        {
+            FVector3 const E[2]  = {Position[0] - Position[1], Position[2] - Position[1]};
+            float const    dU[2] = {UV[0].x - UV[1].x, UV[2].x - UV[1].x};
+            float const    dV[2] = {UV[0].y - UV[1].y, UV[2].y - UV[1].y};
+            float const    Coeff = 1.f / (dU[0] * dV[1] - dU[1] * dV[0]);
+
+            FMatrix2 const   Lhs = {dV[1], -dU[1], -dV[0], dU[0]};
+            FMatrix3_2 const Rhs = {E[0].x, E[1].x, E[0].y, E[1].y, E[0].z, E[1].z};
+
+            FMatrix3_2 const TB = Coeff * Lhs * Rhs;
+            FVector3 const   T  = {TB[0].x, TB[1].x, TB[2].x};
+
+            return FVector4{FVector::Normalize(T), 1.f};
         }
 
         void TransformAttributeData(
@@ -442,7 +432,7 @@ namespace Corvus
             {
                 WValue = 1.0f;
             }
-            else if (AttributeKey == "NORMAL")
+            else if (AttributeKey == "NORMAL" || AttributeKey == "TANGENT")
             {
                 WValue = 0.0f;
             }
@@ -616,14 +606,22 @@ namespace Corvus
                 GetAttributeDataBuffer<FVector2>(GLTFModel, "TEXCOORD_0", Primitive, TransformMatrix);
             std::vector<FVector3> NormalVec =
                 GetAttributeDataBuffer<FVector3>(GLTFModel, "NORMAL", Primitive, TransformMatrix);
+            std::vector<FVector4> TangentVec; // Calculate tangent vectors manually
 
             SizeT NumElements = PositionVec.size();
             NumElements       = FMath::Max(NumElements, TexCoord0Vec.size());
             NumElements       = FMath::Max(NumElements, NormalVec.size());
+            NumElements       = FMath::Max(NumElements, TangentVec.size());
 
             PositionVec.resize(NumElements);
             TexCoord0Vec.resize(NumElements);
             NormalVec.resize(NumElements);
+            TangentVec.resize(NumElements);
+
+            // Index data
+            std::vector<UInt16> IndicesData = GetIndicesDataBuffer(GLTFModel, Primitive);
+
+            CORVUS_CORE_ASSERT(IndicesData.size() % 3 == 0);
 
             // Combine Vertex Data
             std::vector<CVertex> VertexData(NumElements);
@@ -634,8 +632,20 @@ namespace Corvus
                 VertexData[i].Normal   = NormalVec[i];
             }
 
-            // Index data
-            std::vector<UInt16> IndicesData = GetIndicesDataBuffer(GLTFModel, Primitive);
+            // Calculate Tangent vectors for each polygon
+            for (SizeT i = 0; i < IndicesData.size(); i += 3)
+            {
+                UInt16 const  Index[3]  = {IndicesData[i], IndicesData[i + 1], IndicesData[i + 2]};
+                CVertex const Vertex[3] = {VertexData[Index[0]], VertexData[Index[1]], VertexData[Index[2]]};
+
+                FVector3 const Position[3] = {Vertex[0].Position, Vertex[1].Position, Vertex[2].Position};
+                FVector2 const UV[3]       = {Vertex[0].UVCoord, Vertex[1].UVCoord, Vertex[2].UVCoord};
+
+                FVector4 const Tangent       = CalculateTangentVec(Position, UV);
+                VertexData[Index[0]].Tangent = Tangent;
+                VertexData[Index[1]].Tangent = Tangent;
+                VertexData[Index[2]].Tangent = Tangent;
+            }
 
             CVulkanBuffer VertexBuffer = Renderer().CreateVertexBuffer(VertexData);
             CVulkanBuffer IndexBuffer  = Renderer().CreateIndexBuffer(IndicesData);

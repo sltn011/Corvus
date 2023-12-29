@@ -81,7 +81,7 @@ namespace Corvus
             {
                 CRenderer::GetInstance().SubmitStaticModel(
                     *Entity->StaticMeshComponent->StaticModelRef.GetRawPtr(),
-                    Entity->StaticMeshComponent->GetTransformMatrix()
+                    Entity->TransformComponent->GetTransformMatrix()
                 );
             }
         }
@@ -164,7 +164,7 @@ namespace Corvus
 
         void LoadAssets()
         {
-            ModelUUID = CApplication::GetInstance().AssetDrawer.LoadStaticModelFromFile("./Assets/Models/sponza.glb");
+            ModelUUID = CApplication::GetInstance().AssetDrawer.LoadStaticModelFromFile("./Assets/Models/Sponza.glb");
         }
 
         void WireUpAssets()

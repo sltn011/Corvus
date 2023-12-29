@@ -15,6 +15,7 @@ namespace Corvus
         FVector3 Position;
         FVector2 UVCoord;
         FVector3 Normal;
+        FVector4 Tangent;
 
         static VkVertexInputBindingDescription                GetInputBindingDescription();
         static std::vector<VkVertexInputAttributeDescription> GetInputAttributeDescriptions();
