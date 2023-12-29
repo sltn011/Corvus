@@ -45,7 +45,7 @@ namespace Corvus
 
         // Default Normal
         {
-            FUByteVector4 N = {0, 0, 255, 255};
+            FUByteVector4 N = {127, 127, 255, 255};
 
             // clang-format off
             std::vector<FUByteVector4> TextureData = {

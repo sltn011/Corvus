@@ -1,5 +1,8 @@
 #version 450
 
+#define GAMMA (2.2f)
+#define INV_GAMMA (1.f / GAMMA)
+
 layout(location = 0) in vec3 InPosition;
 layout(location = 1) in vec2 InUVCoord;
 layout(location = 2) in mat3 InTBN;
@@ -15,7 +18,8 @@ void main()
 {
     OutPosition         = vec4(InPosition, 1.f);
 
-    OutAlbedo           = texture(TextureAlbedo, InUVCoord);
+    vec4 AlbedoSRGB     = texture(TextureAlbedo, InUVCoord);
+    OutAlbedo           = pow(AlbedoSRGB, vec4(vec3(GAMMA), 1.f));
 
     vec3 SurfaceNormal  = texture(TextureNormal, InUVCoord).xyz;
     SurfaceNormal       = (SurfaceNormal * 2.f) - 1.f;

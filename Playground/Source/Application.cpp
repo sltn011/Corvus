@@ -155,7 +155,7 @@ namespace Corvus
         {
             TPoolable<CEntity> Entity = ConstructPoolable<CEntity>();
             Entity->TransformComponent->SetPosition(FVector3{5.0f, -1.5f, 0.0f});
-            Entity->TransformComponent->SetRotation(FRotation{{0.0f, -45.0f, 0.0f}});
+            Entity->TransformComponent->SetRotation(FRotation{{0.0f, 0.0f, 0.0f}});
             Entity->TransformComponent->SetScale(FVector3{0.01f});
             Entity->StaticMeshComponent->StaticModelRef.SetUUID(ModelUUID);
 

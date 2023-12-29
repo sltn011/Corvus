@@ -133,16 +133,16 @@ namespace Corvus
             switch (Image.component)
             {
             case 1:
-                PixelFormat = VK_FORMAT_R8_SRGB;
+                PixelFormat = VK_FORMAT_R8_UNORM;
                 break;
             case 2:
-                PixelFormat = VK_FORMAT_R8G8_SRGB;
+                PixelFormat = VK_FORMAT_R8G8_UNORM;
                 break;
             case 3:
-                PixelFormat = VK_FORMAT_R8G8B8_SRGB;
+                PixelFormat = VK_FORMAT_R8G8B8_UNORM;
                 break;
             case 4:
-                PixelFormat = VK_FORMAT_R8G8B8A8_SRGB;
+                PixelFormat = VK_FORMAT_R8G8B8A8_UNORM;
                 break;
             default:
                 CORVUS_CORE_ERROR("Invalid number of components in GLTF Image");
@@ -150,7 +150,7 @@ namespace Corvus
             }
 
             // TODO: sRGB check?
-            return CImageDataLoader::LoadFromMemory(Image.image.data(), Image.width, Image.height, PixelFormat, true);
+            return CImageDataLoader::LoadFromMemory(Image.image.data(), Image.width, Image.height, PixelFormat, false);
         }
 
         std::vector<CTexture2D> LoadTextures(tinygltf::Model const &GLTFModel)

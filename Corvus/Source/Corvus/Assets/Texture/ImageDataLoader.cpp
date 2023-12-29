@@ -66,7 +66,7 @@ namespace Corvus
             Image.m_ImageRawData = AddAlphaChannel(
                 Image.m_ImageRawData.data(), ImageWidth, ImageHeight, ELoadImageChannels::RGB, PixelFormat
             );
-            Image.m_PixelFormat = VK_FORMAT_R8G8B8A8_SRGB;
+            Image.m_PixelFormat = IsPixelFormatSRGB(PixelFormat) ? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM;
         }
 
         return Image;
@@ -260,6 +260,21 @@ namespace Corvus
         case VK_FORMAT_R16G16B16_SFLOAT:
         case VK_FORMAT_R16G16B16A16_SFLOAT:
             return true;
+        default:
+            return false;
+        }
+    }
+
+    bool CImageDataLoader::IsPixelFormatSRGB(VkFormat PixelFormat)
+    {
+        switch (PixelFormat)
+        {
+        case VK_FORMAT_R8_SRGB:
+        case VK_FORMAT_R8G8_SRGB:
+        case VK_FORMAT_R8G8B8_SRGB:
+        case VK_FORMAT_R8G8B8A8_SRGB:
+            return true;
+
         default:
             return false;
         }

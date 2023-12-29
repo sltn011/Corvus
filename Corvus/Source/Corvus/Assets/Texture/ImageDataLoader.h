@@ -41,6 +41,7 @@ namespace Corvus
         static SizeT PixelFormatNumComponents(VkFormat PixelFormat);
 
         static bool IsPixelFormatFloat(VkFormat PixelFormat);
+        static bool IsPixelFormatSRGB(VkFormat PixelFormat);
 
         static UInt8 *FormatImageData(
             UInt8             *ImageData,
