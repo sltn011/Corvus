@@ -29,6 +29,7 @@ project "Playground"
 		"%{wks.location}/Corvus/Dependencies/spdlog/include",
 		"%{wks.location}/Corvus/Dependencies/GLFW/Source/include",
 		"%{wks.location}/Corvus/Dependencies/glm",
+		"%{wks.location}/Corvus/Dependencies/imgui/Source",
 		"%{vulkanSDKpath}/Include"
 	}
 	
