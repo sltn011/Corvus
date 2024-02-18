@@ -9,6 +9,7 @@
 #include "Corvus/Renderer/Memory/VulkanBuffer.h"
 #include "Corvus/Renderer/RenderPass/RenderPass_Combine.h"
 #include "Corvus/Renderer/RenderPass/RenderPass_Deferred.h"
+#include "Corvus/Renderer/RenderPass/RenderPass_Postprocess.h"
 #include "Corvus/Renderer/Resources/Attachment.h"
 #include "Corvus/Renderer/Resources/RenderTarget.h"
 #include "Corvus/Renderer/Resources/Samplers.h"
@@ -62,8 +63,9 @@ namespace Corvus
 
     public:
         // RenderPasses
-        CRenderPass_Deferred RenderPass_Deferred;
-        CRenderPass_Combine  RenderPass_Combine;
+        CRenderPass_Deferred    RenderPass_Deferred;
+        CRenderPass_Combine     RenderPass_Combine;
+        CRenderPass_Postprocess RenderPass_Postprocess;
 
     public:
         // Buffers
@@ -81,8 +83,8 @@ namespace Corvus
 
     public:
         // RenderTarget
-        CAttachment CreateColorAttachment(VkFormat Format, VkExtent2D Extent);
-        CAttachment CreateDepthStencilAttachment(VkFormat Format, VkExtent2D Extent);
+        CAttachment CreateColorAttachment(VkFormat Format, VkExtent2D Extent, VkImageLayout Layout);
+        CAttachment CreateDepthStencilAttachment(VkFormat Format, VkExtent2D Extent, VkImageLayout Layout);
         void        DestroyAttachment(CAttachment &Attachment);
 
         CRenderTarget CreateRenderTarget(
@@ -129,9 +131,11 @@ namespace Corvus
             std::vector<VkFormat> const &Candidates, VkImageTiling Tiling, VkFormatFeatureFlags Features
         );
 
+        VkFramebuffer CurrentSwapchainFramebuffer();
+
     private:
         void SetModelMatrix(FMatrix4 const &ModelMatrix);
-        void SetCameraMatrices();
+        void SetFrameUniforms();
 
         VkResult GetNextSwapchainImageIndex(UInt32 &ImageIndex);
         void     SubmitCommandBuffer(VkCommandBuffer CommandBuffer);
@@ -185,7 +189,8 @@ namespace Corvus
         );
 
     public:
-        VkDebugUtilsMessengerEXT DebugCallback = VK_NULL_HANDLE;
+        VkDebugUtilsMessengerEXT DebugCallback         = VK_NULL_HANDLE;
+        UInt32                   FrameValidationErrors = 0;
 #endif
 
     private:
@@ -394,7 +399,8 @@ namespace Corvus
         void DestroyUniformBuffers();
 
     public:
-        std::array<CVulkanUniformBuffer, s_FramesInFlight> MatricesUBOs{VK_NULL_HANDLE};
+        std::array<CVulkanUniformBuffer, s_FramesInFlight> CameraUBOs{VK_NULL_HANDLE};
+        std::array<CVulkanUniformBuffer, s_FramesInFlight> RenderTargetUBOs{VK_NULL_HANDLE};
 
     private:
         // VkDescriptorSetLayout

@@ -51,6 +51,7 @@ namespace Corvus
 
         case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
             CORVUS_CORE_ERROR(pCallbackData->pMessage);
+            Renderer().FrameValidationErrors++;
             break;
 
         default:

@@ -13,7 +13,6 @@ namespace Corvus
     void CRenderPass_Deferred::Create()
     {
         CreateRenderPass();
-        CreateLayout();
         CreatePipeline();
         CreateRenderTarget();
     }
@@ -22,12 +21,10 @@ namespace Corvus
     {
         Renderer().DestroyRenderTarget(RenderTarget);
         vkDestroyPipeline(Renderer().Device, Pipeline, nullptr);
-        vkDestroyPipelineLayout(Renderer().Device, PipelineLayout, nullptr);
         vkDestroyRenderPass(Renderer().Device, RenderPass, nullptr);
 
-        Pipeline       = VK_NULL_HANDLE;
-        PipelineLayout = VK_NULL_HANDLE;
-        RenderPass     = VK_NULL_HANDLE;
+        Pipeline   = VK_NULL_HANDLE;
+        RenderPass = VK_NULL_HANDLE;
     }
 
     void CRenderPass_Deferred::BeginRender(VkCommandBuffer CommandBuffer)
@@ -56,7 +53,7 @@ namespace Corvus
         vkCmdBindDescriptorSets(
             CommandBuffer,
             VK_PIPELINE_BIND_POINT_GRAPHICS,
-            PipelineLayout,
+            Renderer().PipelineLayout,
             0,
             1,
             &Renderer().PerFrameDescriptorSets[Renderer().CurrentFrame()],
@@ -90,6 +87,8 @@ namespace Corvus
                 VK_ATTACHMENT_STORE_OP_DONT_CARE
             );
 
+            AttachmentsDescriptions.push_back(ColorAttachments[0]);
+
             ColorAttachmentRefs[0] = VkInit::AttachmentReference(0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
         }
 
@@ -104,6 +103,8 @@ namespace Corvus
                 VK_ATTACHMENT_LOAD_OP_DONT_CARE,
                 VK_ATTACHMENT_STORE_OP_DONT_CARE
             );
+
+            AttachmentsDescriptions.push_back(ColorAttachments[1]);
 
             ColorAttachmentRefs[1] = VkInit::AttachmentReference(1, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
         }
@@ -120,6 +121,8 @@ namespace Corvus
                 VK_ATTACHMENT_STORE_OP_DONT_CARE
             );
 
+            AttachmentsDescriptions.push_back(ColorAttachments[2]);
+
             ColorAttachmentRefs[2] = VkInit::AttachmentReference(2, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
         }
 
@@ -134,12 +137,14 @@ namespace Corvus
             DepthAttachment = VkInit::AttachmentDescription(
                 DepthFormat,
                 VK_IMAGE_LAYOUT_UNDEFINED,
-                VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 VK_ATTACHMENT_LOAD_OP_CLEAR,
                 VK_ATTACHMENT_STORE_OP_STORE,
                 VK_ATTACHMENT_LOAD_OP_DONT_CARE,
                 VK_ATTACHMENT_STORE_OP_DONT_CARE
             );
+
+            AttachmentsDescriptions.push_back(DepthAttachment);
 
             DepthAttachmentRef = VkInit::AttachmentReference(3, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
         }
@@ -169,24 +174,6 @@ namespace Corvus
             CORVUS_CORE_CRITICAL("Failed to create Deferred Render Pass!");
         }
         CORVUS_CORE_TRACE("Created Deferred Render Pass successfully");
-    }
-
-    void CRenderPass_Deferred::CreateLayout()
-    {
-        VkPushConstantRange PushConstantRange =
-            VkInit::PushConstantRange(0, sizeof(CModelPushConstant), VK_SHADER_STAGE_VERTEX_BIT);
-
-        std::array<VkDescriptorSetLayout, 2> SetLayouts = {
-            Renderer().PerFrameDescriptorSetLayout, Renderer().PerDrawDescriptorSetLayout};
-
-        VkPipelineLayoutCreateInfo PipelineLayoutInfo =
-            VkInit::PipelineLayoutCreateInfo(SetLayouts.data(), SetLayouts.size(), &PushConstantRange, 1);
-
-        if (vkCreatePipelineLayout(Renderer().Device, &PipelineLayoutInfo, nullptr, &PipelineLayout) != VK_SUCCESS)
-        {
-            CORVUS_CORE_CRITICAL("Failed to create Deferred Pipeline Layout!");
-        }
-        CORVUS_CORE_TRACE("Created Deferred Pipeline Layout successfully");
     }
 
     void CRenderPass_Deferred::CreatePipeline()
@@ -268,7 +255,7 @@ namespace Corvus
             MultisamplerStateInfo,
             DepthStencilTestStateInfo,
             ColorBlendState,
-            PipelineLayout,
+            Renderer().PipelineLayout,
             RenderPass
         );
 
@@ -287,17 +274,19 @@ namespace Corvus
 
     void CRenderPass_Deferred::CreateRenderTarget()
     {
-        VkFormat DepthFormat = Renderer().FindSupportedFormat(
-            {VK_FORMAT_D24_UNORM_S8_UINT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D32_SFLOAT},
-            VK_IMAGE_TILING_OPTIMAL,
-            VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
-        );
-
         std::vector<CAttachment> Attachments(4);
-        Attachments[0] = Renderer().CreateColorAttachment(VK_FORMAT_R16G16B16A16_SFLOAT, Renderer().SwapchainExtent);
-        Attachments[1] = Renderer().CreateColorAttachment(VK_FORMAT_R8G8B8A8_UNORM, Renderer().SwapchainExtent);
-        Attachments[2] = Renderer().CreateColorAttachment(VK_FORMAT_R16G16B16A16_SFLOAT, Renderer().SwapchainExtent);
-        Attachments[3] = Renderer().CreateDepthStencilAttachment(DepthFormat, Renderer().SwapchainExtent);
+        Attachments[0] = Renderer().CreateColorAttachment(
+            AttachmentsDescriptions[0].format, Renderer().SwapchainExtent, AttachmentsDescriptions[0].finalLayout
+        );
+        Attachments[1] = Renderer().CreateColorAttachment(
+            AttachmentsDescriptions[1].format, Renderer().SwapchainExtent, AttachmentsDescriptions[1].finalLayout
+        );
+        Attachments[2] = Renderer().CreateColorAttachment(
+            AttachmentsDescriptions[2].format, Renderer().SwapchainExtent, AttachmentsDescriptions[2].finalLayout
+        );
+        Attachments[3] = Renderer().CreateDepthStencilAttachment(
+            AttachmentsDescriptions[3].format, Renderer().SwapchainExtent, AttachmentsDescriptions[3].finalLayout
+        );
 
         RenderTarget = Renderer().CreateRenderTarget(
             std::move(Attachments), Renderer().SwapchainExtent, RenderPass, Renderer().PerDrawDescriptorSetLayout

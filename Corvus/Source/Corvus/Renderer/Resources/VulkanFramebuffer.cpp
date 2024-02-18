@@ -57,4 +57,10 @@ namespace Corvus
         }
     }
 
+    VkFramebuffer CRenderer::CurrentSwapchainFramebuffer()
+    {
+        CORVUS_CORE_ASSERT(SwapchainImageIndex < SwapchainFramebuffers.size());
+        return SwapchainFramebuffers[SwapchainImageIndex];
+    }
+
 } // namespace Corvus

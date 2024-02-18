@@ -12,10 +12,11 @@ namespace Corvus
     class CAttachment
     {
     public:
-        CVulkanImage Image;
-        VkImageView  ImageView = VK_NULL_HANDLE;
-        VkFormat     Format;
-        VkExtent2D   Extent;
+        CVulkanImage  Image;
+        VkImageView   ImageView = VK_NULL_HANDLE;
+        VkFormat      Format;
+        VkExtent2D    Extent;
+        VkImageLayout Layout;
     };
 
 } // namespace Corvus

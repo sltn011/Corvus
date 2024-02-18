@@ -203,6 +203,14 @@ namespace Corvus
             return DescriptorSetLayoutInfo;
         }
 
+        inline VkDescriptorPoolSize DescriptorPoolSize(VkDescriptorType Type, UInt32 DescriptorCount)
+        {
+            VkDescriptorPoolSize DescriptorPoolSizeInfo{};
+            DescriptorPoolSizeInfo.type            = Type;
+            DescriptorPoolSizeInfo.descriptorCount = DescriptorCount;
+            return DescriptorPoolSizeInfo;
+        }
+
         inline VkDescriptorPoolCreateInfo DescriptorPoolCreateInfo(
             VkDescriptorPoolSize const *pPoolSizes,
             SizeT                       NumPoolSizes,
@@ -254,8 +262,8 @@ namespace Corvus
             VkWriteDescriptorSet DescriptorSetWrite{};
             DescriptorSetWrite.sType            = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
             DescriptorSetWrite.dstSet           = DescriptorSet;
-            DescriptorSetWrite.dstBinding       = 0;
-            DescriptorSetWrite.dstArrayElement  = 0;
+            DescriptorSetWrite.dstBinding       = Binding;
+            DescriptorSetWrite.dstArrayElement  = ArrayElement;
             DescriptorSetWrite.descriptorType   = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             DescriptorSetWrite.descriptorCount  = static_cast<UInt32>(NumDescriptorInfos);
             DescriptorSetWrite.pBufferInfo      = pDescriptorBuffersInfo;

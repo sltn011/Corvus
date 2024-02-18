@@ -6,16 +6,20 @@
 
 namespace Corvus
 {
-    template<SizeT TAmount>
     void ConfigureRenderTargetDescriptorSet(
-        VkDevice Device, VkDescriptorSet DescriptorSet, VkImageView *pImageViews, VkSampler *pSamplers
+        VkDevice           Device,
+        VkDescriptorSet    DescriptorSet,
+        CAttachment const *pAttachments,
+        VkImageView const *pImageViews,
+        VkSampler const   *pSamplers,
+        SizeT              NumViews
     )
     {
-        std::array<VkWriteDescriptorSet, TAmount>  DescriptorSetWrites{};
-        std::array<VkDescriptorImageInfo, TAmount> DescriptorImageInfos{};
-        for (SizeT i = 0; i < TAmount; ++i)
+        std::vector<VkWriteDescriptorSet>  DescriptorSetWrites(NumViews, VkWriteDescriptorSet{});
+        std::vector<VkDescriptorImageInfo> DescriptorImageInfos(NumViews, VkDescriptorImageInfo{});
+        for (SizeT i = 0; i < NumViews; ++i)
         {
-            DescriptorImageInfos[i].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            DescriptorImageInfos[i].imageLayout = pAttachments[i].Layout;
             DescriptorImageInfos[i].imageView   = pImageViews[i];
             DescriptorImageInfos[i].sampler     = pSamplers[i];
 
@@ -54,8 +58,13 @@ namespace Corvus
         RenderTarget.Framebuffer = CreateFramebuffer(RenderPass, Extent, 1, AttachmentViews);
 
         RenderTarget.DescriptorSet = AllocateDescriptorSets<1>(PerDrawDescriptorPool, DescriptorSetLayout)[0];
-        ConfigureRenderTargetDescriptorSet<4>(
-            Device, RenderTarget.DescriptorSet, AttachmentViews.data(), Samplers.data()
+        ConfigureRenderTargetDescriptorSet(
+            Device,
+            RenderTarget.DescriptorSet,
+            Attachments.data(),
+            AttachmentViews.data(),
+            Samplers.data(),
+            AttachmentViews.size()
         );
 
         RenderTarget.Extent      = Extent;

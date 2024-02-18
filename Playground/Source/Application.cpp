@@ -10,6 +10,7 @@
 #include "Corvus/Scene/Scene.h"
 
 #include <GLFW/glfw3.h>
+#include <imgui.h>
 
 namespace Corvus
 {
@@ -76,14 +77,6 @@ namespace Corvus
             {
                 Camera->ProcessRotationInput(Delta.x, Delta.y, 100.0f, ElapsedTime);
             }
-
-            for (TPoolable<CEntity> const &Entity : CApplication::GetInstance().Scene.GetEntities())
-            {
-                CRenderer::GetInstance().SubmitStaticModel(
-                    *Entity->StaticMeshComponent->StaticModelRef.GetRawPtr(),
-                    Entity->TransformComponent->GetTransformMatrix()
-                );
-            }
         }
 
         virtual void OnEvent(CEvent &Event)
@@ -131,6 +124,17 @@ namespace Corvus
             }
         }
 
+        virtual void Render()
+        {
+            for (TPoolable<CEntity> const &Entity : CApplication::GetInstance().Scene.GetEntities())
+            {
+                CRenderer::GetInstance().SubmitStaticModel(
+                    *Entity->StaticMeshComponent->StaticModelRef.GetRawPtr(),
+                    Entity->TransformComponent->GetTransformMatrix()
+                );
+            }
+        }
+
         void CreateScene()
         {
             AddSceneCamera();
@@ -156,7 +160,7 @@ namespace Corvus
             TPoolable<CEntity> Entity = ConstructPoolable<CEntity>();
             Entity->TransformComponent->SetPosition(FVector3{5.0f, -1.5f, 0.0f});
             Entity->TransformComponent->SetRotation(FRotation{{0.0f, 0.0f, 0.0f}});
-            Entity->TransformComponent->SetScale(FVector3{0.01f});
+            Entity->TransformComponent->SetScale(FVector3{1.0f});
             Entity->StaticMeshComponent->StaticModelRef.SetUUID(ModelUUID);
 
             CApplication::GetInstance().Scene.AddEntity(std::move(Entity));

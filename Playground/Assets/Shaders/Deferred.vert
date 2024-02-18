@@ -9,7 +9,7 @@ layout(location = 0) out vec3 OutVertexPos;
 layout(location = 1) out vec2 OutVertexUVCoord;
 layout(location = 2) out mat3 OutTBN;
 
-layout(set = 0, binding = 0) uniform MatricesUBO 
+layout(set = 0, binding = 0) uniform CameraUBO 
 {
     mat4 ProjectionView;
 } UBO;

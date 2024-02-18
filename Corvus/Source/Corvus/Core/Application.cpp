@@ -58,7 +58,7 @@ namespace Corvus
         AssetDrawer.DefaultTextures.Create();
 
         PushLayer(CLayer::Create<CCoreLayer>());
-        // PushLayer(CLayer::Create<CLayerGUI>("GUI", true));
+        // PushLayer(CLayer::Create<CLayerGUI>("GUI", true)); ImGUI not working right now
     }
 
     void CApplication::Run()
@@ -83,6 +83,15 @@ namespace Corvus
 
             CORVUS_EVAL_IF_CONSTEXPR(CFrameProfiler::IsEnabled, CFrameProfiler::RecordFrameProcessingTime, ElapsedTime);
             CORVUS_EVAL_IF_CONSTEXPR(CFrameProfiler::IsEnabled, CFrameProfiler::StopFrame);
+
+#if defined(CORVUS_DEBUG)
+            CRenderer &R = Renderer();
+            if (Renderer().FrameValidationErrors > 0)
+            {
+                CORVUS_DEBUG_BREAK();
+                Renderer().FrameValidationErrors = 0;
+            }
+#endif
         }
 
         Renderer().AwaitIdle();

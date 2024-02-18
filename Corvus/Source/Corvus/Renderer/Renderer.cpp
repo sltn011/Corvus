@@ -65,6 +65,7 @@ namespace Corvus
 
         RenderPass_Deferred.Create();
         RenderPass_Combine.Create();
+        RenderPass_Postprocess.Create();
 
         CreateFramebuffers();
 
@@ -81,6 +82,7 @@ namespace Corvus
 
         DestroyFramebuffers();
 
+        RenderPass_Postprocess.Destroy();
         RenderPass_Combine.Destroy();
         RenderPass_Deferred.Destroy();
 
@@ -122,7 +124,7 @@ namespace Corvus
 
     void CRenderer::BeginFrame()
     {
-        SetCameraMatrices();
+        SetFrameUniforms();
 
         // Wait for the previous frame to finish
         vkWaitForFences(Device, 1, &InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
@@ -165,7 +167,9 @@ namespace Corvus
 
         RenderPass_Deferred.EndRender(CommandBuffer);
 
-        RenderPass_Combine.Render(CommandBuffer, SwapchainImageIndex);
+        RenderPass_Combine.Render(CommandBuffer);
+
+        RenderPass_Postprocess.Render(CommandBuffer);
 
         if (vkEndCommandBuffer(CommandBuffer) != VK_SUCCESS)
         {
@@ -235,10 +239,6 @@ namespace Corvus
 
     void CRenderer::SetModelMatrix(FMatrix4 const &ModelMatrix)
     {
-        // UInt8 *MVPUBOStart         = static_cast<UInt8 *>(MatricesUBOs[m_CurrentFrame].MappedMemory);
-        // UInt8 *ModelMatrixLocation = MVPUBOStart + offsetof(CMVPUBO, Model);
-        // std::memcpy(ModelMatrixLocation, &ModelMatrix, sizeof(ModelMatrix));
-
         CModelPushConstant PushConstant{};
         PushConstant.Model = ModelMatrix;
 
@@ -252,24 +252,39 @@ namespace Corvus
         );
     }
 
-    void CRenderer::SetCameraMatrices()
+    void CRenderer::SetFrameUniforms()
     {
-        CCamera *PlayerCamera = CApplication::GetInstance().Scene.GetPlayerCamera();
-        CORVUS_CORE_ASSERT(PlayerCamera != nullptr);
+        // Camera
+        {
+            UInt8 *CameraUBOStart = static_cast<UInt8 *>(CameraUBOs[m_CurrentFrame].MappedMemory);
 
-        FMatrix4 CameraView       = PlayerCamera->GetViewMatrix();
-        FMatrix4 CameraProjection = PlayerCamera->GetProjectionMatrix();
+            CCamera *PlayerCamera = CApplication::GetInstance().Scene.GetPlayerCamera();
+            CORVUS_CORE_ASSERT(PlayerCamera != nullptr);
 
-        // GLM uses OpenGL's clip coordinates, flip Y to fix
-        // But this flips CW and CCW polygon rotation
-        CameraProjection[1][1] *= -1;
+            FMatrix4 CameraView       = PlayerCamera->GetViewMatrix();
+            FMatrix4 CameraProjection = PlayerCamera->GetProjectionMatrix();
 
-        FMatrix4 CameraProjectionView = CameraProjection * CameraView;
+            // GLM uses OpenGL's clip coordinates, flip Y to fix
+            // But this flips CW and CCW polygon rotation
+            CameraProjection[1][1] *= -1;
 
-        UInt8 *VPUBOStart           = static_cast<UInt8 *>(MatricesUBOs[m_CurrentFrame].MappedMemory);
-        UInt8 *CameraMatrixLocation = VPUBOStart + offsetof(CVPUBO, ProjectionView);
+            CCameraUBO CameraUniformsData;
+            CameraUniformsData.ProjectionView = CameraProjection * CameraView;
 
-        std::memcpy(CameraMatrixLocation, &CameraProjectionView, sizeof(CameraProjectionView));
+            UInt8 *CameraUniformsLocation = CameraUBOStart + offsetof(CCameraUBO, ProjectionView);
+            std::memcpy(CameraUniformsLocation, &CameraUniformsData, sizeof(CameraUniformsData));
+        }
+
+        // RT
+        {
+            UInt8 *RenderTargetUBOStart = static_cast<UInt8 *>(RenderTargetUBOs[m_CurrentFrame].MappedMemory);
+
+            CRenderTargetUBO RTUniformsData;
+            RTUniformsData.RTFullSize = FVector4{SwapchainExtent.width, SwapchainExtent.height, 0, 0};
+
+            UInt8 *RTUniformsLocation = RenderTargetUBOStart + offsetof(CRenderTargetUBO, RTFullSize);
+            std::memcpy(RTUniformsLocation, &RTUniformsData, sizeof(RTUniformsData));
+        }
     }
 
     VkResult CRenderer::GetNextSwapchainImageIndex(UInt32 &ImageIndex)

@@ -15,17 +15,18 @@ namespace Corvus
         void Create();
         void Destroy();
 
-        void Render(VkCommandBuffer CommandBuffer, UInt32 SwapchainImageIndex);
+        void Render(VkCommandBuffer CommandBuffer);
 
     public:
-        VkRenderPass     RenderPass     = VK_NULL_HANDLE;
-        VkPipelineLayout PipelineLayout = VK_NULL_HANDLE;
-        VkPipeline       Pipeline       = VK_NULL_HANDLE;
+        VkRenderPass                         RenderPass = VK_NULL_HANDLE;
+        VkPipeline                           Pipeline   = VK_NULL_HANDLE;
+        CRenderTarget                        RenderTarget;
+        std::vector<VkAttachmentDescription> AttachmentsDescriptions;
 
     private:
         void CreateRenderPass();
-        void CreateLayout();
         void CreatePipeline();
+        void CreateRenderTarget();
     };
 
 } // namespace Corvus

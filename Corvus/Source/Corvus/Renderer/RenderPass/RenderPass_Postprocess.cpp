@@ -1,6 +1,6 @@
 #include "CorvusPCH.h"
 
-#include "Corvus/Renderer/RenderPass/RenderPass_Combine.h"
+#include "Corvus/Renderer/RenderPass/RenderPass_Postprocess.h"
 
 #include "Corvus/Renderer/Data/PushConstants.h"
 #include "Corvus/Renderer/Data/UBOs.h"
@@ -10,16 +10,14 @@
 namespace Corvus
 {
 
-    void CRenderPass_Combine::Create()
+    void CRenderPass_Postprocess::Create()
     {
         CreateRenderPass();
         CreatePipeline();
-        CreateRenderTarget();
     }
 
-    void CRenderPass_Combine::Destroy()
+    void CRenderPass_Postprocess::Destroy()
     {
-        Renderer().DestroyRenderTarget(RenderTarget);
         vkDestroyPipeline(Renderer().Device, Pipeline, nullptr);
         vkDestroyRenderPass(Renderer().Device, RenderPass, nullptr);
 
@@ -27,13 +25,15 @@ namespace Corvus
         RenderPass = VK_NULL_HANDLE;
     }
 
-    void CRenderPass_Combine::Render(VkCommandBuffer CommandBuffer)
+    void CRenderPass_Postprocess::Render(VkCommandBuffer CommandBuffer)
     {
         std::array<VkClearValue, 1> ClearColors;
         ClearColors[0].color = VkClearColorValue{0.0f, 0.0f, 0.0f, 1.0f};
 
+        VkFramebuffer CurrentSwapchainFramebuffer = Renderer().CurrentSwapchainFramebuffer();
+
         VkRenderPassBeginInfo RenderPassBeginInfo = VkInit::RenderPassBeginInfo(
-            RenderPass, RenderTarget.Framebuffer, RenderTarget.Extent, ClearColors.data(), ClearColors.size()
+            RenderPass, CurrentSwapchainFramebuffer, Renderer().SwapchainExtent, ClearColors.data(), ClearColors.size()
         );
 
         vkCmdBeginRenderPass(CommandBuffer, &RenderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
@@ -41,10 +41,10 @@ namespace Corvus
         vkCmdBindPipeline(CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, Pipeline);
 
         // Viewport and Scissor are dynamic - specify them here
-        VkViewport Viewport = VkInit::Viewport(RenderTarget.Extent);
+        VkViewport Viewport = VkInit::Viewport(Renderer().SwapchainExtent);
         vkCmdSetViewport(CommandBuffer, 0, 1, &Viewport);
 
-        VkRect2D Scissor = VkInit::Scissor(RenderTarget.Extent);
+        VkRect2D Scissor = VkInit::Scissor(Renderer().SwapchainExtent);
         vkCmdSetScissor(CommandBuffer, 0, 1, &Scissor);
 
         vkCmdBindDescriptorSets(
@@ -53,7 +53,7 @@ namespace Corvus
             Renderer().PipelineLayout,
             1,
             1,
-            &Renderer().RenderPass_Deferred.RenderTarget.DescriptorSet,
+            &Renderer().RenderPass_Combine.RenderTarget.DescriptorSet,
             0,
             nullptr
         );
@@ -69,19 +69,17 @@ namespace Corvus
         vkCmdEndRenderPass(CommandBuffer);
     }
 
-    void CRenderPass_Combine::CreateRenderPass()
+    void CRenderPass_Postprocess::CreateRenderPass()
     {
-        VkAttachmentDescription CombinedColorAttachment = VkInit::AttachmentDescription(
-            VK_FORMAT_R8G8B8A8_UNORM,
+        VkAttachmentDescription ColorAttachment = VkInit::AttachmentDescription(
+            Renderer().SwapchainImageFormat,
             VK_IMAGE_LAYOUT_UNDEFINED,
-            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-            VK_ATTACHMENT_LOAD_OP_CLEAR,
+            VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+            VK_ATTACHMENT_LOAD_OP_DONT_CARE,
             VK_ATTACHMENT_STORE_OP_STORE,
             VK_ATTACHMENT_LOAD_OP_DONT_CARE,
             VK_ATTACHMENT_STORE_OP_DONT_CARE
         );
-
-        AttachmentsDescriptions.push_back(CombinedColorAttachment);
 
         VkAttachmentReference ColorAttachmentRef =
             VkInit::AttachmentReference(0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
@@ -98,7 +96,7 @@ namespace Corvus
             VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT
         );
 
-        std::array<VkAttachmentDescription, 1> AttachmentDescriptions = {CombinedColorAttachment};
+        std::array<VkAttachmentDescription, 1> AttachmentDescriptions = {ColorAttachment};
 
         VkRenderPassCreateInfo RenderPassInfo = VkInit::RenderPassCreateInfo(
             AttachmentDescriptions.data(), AttachmentDescriptions.size(), &Subpass, 1, &Dependency, 1
@@ -106,16 +104,17 @@ namespace Corvus
 
         if (vkCreateRenderPass(Renderer().Device, &RenderPassInfo, nullptr, &RenderPass) != VK_SUCCESS)
         {
-            CORVUS_CORE_CRITICAL("Failed to create Combine Render Pass!");
+            CORVUS_CORE_CRITICAL("Failed to create Postprocess Render Pass!");
         }
-        CORVUS_CORE_TRACE("Created Combine Render Pass successfully");
+        CORVUS_CORE_TRACE("Created Postprocess Render Pass successfully");
     }
 
-    void CRenderPass_Combine::CreatePipeline()
+    void CRenderPass_Postprocess::CreatePipeline()
     {
         // Programmable stages ===============================================================================
-        std::vector<char> VertexShaderByteCode   = Renderer().ReadSPIRVByteCode("./Assets/Shaders/Combine.vert.spv");
-        std::vector<char> FragmentShaderByteCode = Renderer().ReadSPIRVByteCode("./Assets/Shaders/Combine.frag.spv");
+        std::vector<char> VertexShaderByteCode = Renderer().ReadSPIRVByteCode("./Assets/Shaders/Postprocess.vert.spv");
+        std::vector<char> FragmentShaderByteCode =
+            Renderer().ReadSPIRVByteCode("./Assets/Shaders/Postprocess.frag.spv");
 
         VkShaderModule VertexShaderModule   = Renderer().CreateShaderModule(VertexShaderByteCode);
         VkShaderModule FragmentShaderModule = Renderer().CreateShaderModule(FragmentShaderByteCode);
@@ -201,21 +200,9 @@ namespace Corvus
 
         if (PipelineCreateResult != VK_SUCCESS)
         {
-            CORVUS_CORE_CRITICAL("Failed to create Combine Pipeline!");
+            CORVUS_CORE_CRITICAL("Failed to create Postprocess Pipeline!");
         }
-        CORVUS_CORE_TRACE("Created Combine Pipeline successfully");
-    }
-
-    void CRenderPass_Combine::CreateRenderTarget()
-    {
-        std::vector<CAttachment> Attachments(1);
-        Attachments[0] = Renderer().CreateColorAttachment(
-            AttachmentsDescriptions[0].format, Renderer().SwapchainExtent, AttachmentsDescriptions[0].finalLayout
-        );
-
-        RenderTarget = Renderer().CreateRenderTarget(
-            std::move(Attachments), Renderer().SwapchainExtent, RenderPass, Renderer().PerDrawDescriptorSetLayout
-        );
+        CORVUS_CORE_TRACE("Created Postprocess Pipeline successfully");
     }
 
 } // namespace Corvus

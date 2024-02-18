@@ -6,16 +6,16 @@
 
 namespace Corvus
 {
+    // Better to use Vec4s for variables to not handle problems with layouts
 
-    struct CMVPUBO
+    struct CCameraUBO
     {
-        FMatrix4 Model{};
         FMatrix4 ProjectionView{};
     };
 
-    struct CVPUBO
+    struct CRenderTargetUBO
     {
-        FMatrix4 ProjectionView{};
+        FVector4 RTFullSize{};
     };
 
 } // namespace Corvus

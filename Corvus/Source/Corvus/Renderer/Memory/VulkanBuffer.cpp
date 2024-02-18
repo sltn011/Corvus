@@ -81,21 +81,32 @@ namespace Corvus
     {
         for (UInt32 i = 0; i < s_FramesInFlight; ++i)
         {
-            MatricesUBOs[i] = CreateUniformBuffer<CVPUBO>();
+            CameraUBOs[i] = CreateUniformBuffer<CCameraUBO>();
+        }
+        for (UInt32 i = 0; i < s_FramesInFlight; ++i)
+        {
+            RenderTargetUBOs[i] = CreateUniformBuffer<CRenderTargetUBO>();
         }
         CORVUS_CORE_TRACE("Vulkan Uniform Buffers created");
     }
 
     void CRenderer::DestroyUniformBuffers()
     {
-        if (!MatricesUBOs.empty())
+        if (!CameraUBOs.empty())
         {
             for (UInt32 i = 0; i < s_FramesInFlight; ++i)
             {
-                DestroyBuffer(MatricesUBOs[i]);
+                DestroyBuffer(CameraUBOs[i]);
             }
-            CORVUS_CORE_TRACE("Vulkan Uniform Buffers destroyed");
         }
+        if (!RenderTargetUBOs.empty())
+        {
+            for (UInt32 i = 0; i < s_FramesInFlight; ++i)
+            {
+                DestroyBuffer(RenderTargetUBOs[i]);
+            }
+        }
+        CORVUS_CORE_TRACE("Vulkan Uniform Buffers destroyed");
     }
 
 } // namespace Corvus

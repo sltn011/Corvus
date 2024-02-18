@@ -194,7 +194,7 @@ namespace Corvus
         {
             // Select UNORM format bcz of ImGui issues with sRGB
             // Forced to apply gamma correction in shaders for final image :(
-            if (Format.format == VK_FORMAT_B8G8R8A8_UNORM && Format.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
+            if (Format.format == VK_FORMAT_R8G8B8A8_UNORM && Format.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
             {
                 return Format; // most preferable
             }

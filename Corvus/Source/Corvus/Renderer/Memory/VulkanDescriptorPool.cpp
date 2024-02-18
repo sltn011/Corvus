@@ -10,8 +10,7 @@ namespace Corvus
         // Per-Frame Pool
         {
             std::vector<VkDescriptorPoolSize> DescriptorPoolSizes = {
-                {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, static_cast<UInt32>(s_FramesInFlight)},
-                {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 4 * static_cast<UInt32>(s_FramesInFlight)}};
+                VkInit::DescriptorPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2)};
 
             VkDescriptorPoolCreateInfo DescriptorPoolInfo = VkInit::DescriptorPoolCreateInfo(
                 DescriptorPoolSizes.data(), DescriptorPoolSizes.size(), s_FramesInFlight, 0
@@ -27,7 +26,7 @@ namespace Corvus
         // Per-Draw pool
         {
             std::vector<VkDescriptorPoolSize> DescriptorPoolSizes = {
-                {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 4 * 64}};
+                VkInit::DescriptorPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 4)};
 
             VkDescriptorPoolCreateInfo DescriptorPoolInfo = VkInit::DescriptorPoolCreateInfo(
                 DescriptorPoolSizes.data(),

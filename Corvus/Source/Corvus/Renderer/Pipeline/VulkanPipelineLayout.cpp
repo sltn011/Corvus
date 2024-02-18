@@ -8,24 +8,21 @@ namespace Corvus
 
     void CRenderer::CreatePipelineLayout()
     {
-        std::vector<VkDescriptorSetLayout> DescriptorSetsLayouts = {
-            PerFrameDescriptorSetLayout, PerDrawDescriptorSetLayout};
+        std::vector<VkDescriptorSetLayout> SetLayouts = {
+            Renderer().PerFrameDescriptorSetLayout, Renderer().PerDrawDescriptorSetLayout};
 
         std::vector<VkPushConstantRange> PushConstantsRanges = {
             VkInit::PushConstantRange(0, sizeof(CModelPushConstant), VK_SHADER_STAGE_VERTEX_BIT)};
 
         VkPipelineLayoutCreateInfo PipelineLayoutInfo = VkInit::PipelineLayoutCreateInfo(
-            DescriptorSetsLayouts.data(),
-            DescriptorSetsLayouts.size(),
-            PushConstantsRanges.data(),
-            PushConstantsRanges.size()
+            SetLayouts.data(), SetLayouts.size(), PushConstantsRanges.data(), PushConstantsRanges.size()
         );
 
-        if (vkCreatePipelineLayout(Device, &PipelineLayoutInfo, nullptr, &PipelineLayout) != VK_SUCCESS)
+        if (vkCreatePipelineLayout(Renderer().Device, &PipelineLayoutInfo, nullptr, &PipelineLayout) != VK_SUCCESS)
         {
-            CORVUS_CORE_CRITICAL("Failed to create Vulkan Pipeline Layout!");
+            CORVUS_CORE_CRITICAL("Failed to create Pipeline Layout!");
         }
-        CORVUS_CORE_TRACE("Created Vulkan Pipeline Layout successfully");
+        CORVUS_CORE_TRACE("Created Pipeline Layout successfully");
     }
 
     void CRenderer::DestroyPipelineLayout()

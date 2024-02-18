@@ -13,22 +13,34 @@ namespace Corvus
         // Allocated but not configured yet
         for (UInt32 i = 0; i < s_FramesInFlight; ++i)
         {
-            std::vector<VkWriteDescriptorSet>   DescriptorSetWrites(1);
-            std::vector<VkDescriptorBufferInfo> DescriptorBufferInfo(1);
+            std::vector<VkWriteDescriptorSet>   DescriptorSetWrites(2);
+            std::vector<VkDescriptorBufferInfo> DescriptorBufferInfo(2);
 
             // Write Uniform Buffer to UB Descriptor
             {
-                DescriptorBufferInfo[0] = {VkInit::DescriptorBufferInfo(MatricesUBOs[i].Buffer, 0, sizeof(CVPUBO))};
-
-                DescriptorSetWrites[0] = VkInit::WriteDescriptorSet(
+                DescriptorBufferInfo[0] = {VkInit::DescriptorBufferInfo(CameraUBOs[i].Buffer, 0, sizeof(CCameraUBO))};
+                DescriptorSetWrites[0]  = VkInit::WriteDescriptorSet(
                     PerFrameDescriptorSets[i],
                     0,
                     0,
                     VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                    DescriptorBufferInfo.data(),
+                    &DescriptorBufferInfo[0],
                     nullptr,
                     nullptr,
-                    DescriptorBufferInfo.size()
+                    1
+                );
+
+                DescriptorBufferInfo[1] = {
+                    VkInit::DescriptorBufferInfo(RenderTargetUBOs[i].Buffer, 0, sizeof(CRenderTargetUBO))};
+                DescriptorSetWrites[1] = VkInit::WriteDescriptorSet(
+                    PerFrameDescriptorSets[i],
+                    1,
+                    0,
+                    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                    &DescriptorBufferInfo[1],
+                    nullptr,
+                    nullptr,
+                    1
                 );
             }
 

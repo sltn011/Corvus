@@ -7,7 +7,7 @@
 namespace Corvus
 {
 
-    CAttachment CRenderer::CreateColorAttachment(VkFormat Format, VkExtent2D Extent)
+    CAttachment CRenderer::CreateColorAttachment(VkFormat Format, VkExtent2D Extent, VkImageLayout Layout)
     {
         CAttachment Attachment{};
 
@@ -25,11 +25,12 @@ namespace Corvus
 
         Attachment.Format = Format;
         Attachment.Extent = Extent;
+        Attachment.Layout = Layout;
 
         return Attachment;
     }
 
-    CAttachment CRenderer::CreateDepthStencilAttachment(VkFormat Format, VkExtent2D Extent)
+    CAttachment CRenderer::CreateDepthStencilAttachment(VkFormat Format, VkExtent2D Extent, VkImageLayout Layout)
     {
         CAttachment Attachment{};
 
@@ -47,6 +48,7 @@ namespace Corvus
 
         Attachment.Format = Format;
         Attachment.Extent = Extent;
+        Attachment.Layout = Layout;
 
         return Attachment;
     }
