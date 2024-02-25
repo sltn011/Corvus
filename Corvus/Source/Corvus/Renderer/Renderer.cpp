@@ -280,7 +280,11 @@ namespace Corvus
             UInt8 *RenderTargetUBOStart = static_cast<UInt8 *>(RenderTargetUBOs[m_CurrentFrame].MappedMemory);
 
             CRenderTargetUBO RTUniformsData;
-            RTUniformsData.RTFullSize = FVector4{SwapchainExtent.width, SwapchainExtent.height, 0, 0};
+            RTUniformsData.RTFullSize = FVector4{
+                SwapchainExtent.width,
+                SwapchainExtent.height,
+                1.f / SwapchainExtent.width,
+                1.f / SwapchainExtent.height};
 
             UInt8 *RTUniformsLocation = RenderTargetUBOStart + offsetof(CRenderTargetUBO, RTFullSize);
             std::memcpy(RTUniformsLocation, &RTUniformsData, sizeof(RTUniformsData));

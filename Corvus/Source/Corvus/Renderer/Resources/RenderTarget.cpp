@@ -52,7 +52,7 @@ namespace Corvus
             AttachmentViews[i] = Attachments[i].ImageView;
         }
 
-        std::vector<VkSampler> Samplers(Attachments.size(), Samplers.FilteredSampler);
+        std::vector<VkSampler> Samplers(Attachments.size(), Samplers.RepeatLinear_Linear);
 
         CRenderTarget RenderTarget{};
         RenderTarget.Framebuffer = CreateFramebuffer(RenderPass, Extent, 1, AttachmentViews);

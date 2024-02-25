@@ -11,14 +11,14 @@ namespace Corvus
         {
             std::vector<VkDescriptorSetLayoutBinding> Bindings(2);
 
-            // Camera Uniform
+            // Camera Uniform - 0
             {
                 Bindings[0] = VkInit::DescriptorSetLayoutBinding(
                     0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT
                 );
             }
 
-            // RenderTarget Uniform
+            // RenderTarget Uniform - 1
             {
                 Bindings[1] = VkInit::DescriptorSetLayoutBinding(
                     1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_FRAGMENT_BIT

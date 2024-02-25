@@ -15,7 +15,7 @@ namespace Corvus
 
     struct CRenderTargetUBO
     {
-        FVector4 RTFullSize{};
+        FVector4 RTFullSize{}; // xy - (width, height), zw - (1/width, 1/height)
     };
 
 } // namespace Corvus

@@ -38,7 +38,7 @@ namespace Corvus
                 TextureData.data(), Dimension, Dimension, VK_FORMAT_R8G8B8A8_UNORM, true
             );
 
-            Albedo = Renderer().CreateTexture2D(DefaultAlbedoData, 1, Renderer().Samplers.PixelatedSampler);
+            Albedo = Renderer().CreateTexture2D(DefaultAlbedoData, 1, Renderer().Samplers.RepeatNearest_Linear);
 
             CApplication::GetInstance().AssetDrawer.Textures2D[Albedo.UUID] = Albedo;
         }
@@ -59,7 +59,7 @@ namespace Corvus
             CImageData DefaultNormalData =
                 CImageDataLoader::LoadFromMemory(TextureData.data(), 4, 4, VK_FORMAT_R8G8B8A8_UNORM, false);
 
-            Normal = Renderer().CreateTexture2D(DefaultNormalData, 1, Renderer().Samplers.FilteredSampler);
+            Normal = Renderer().CreateTexture2D(DefaultNormalData, 1, Renderer().Samplers.RepeatLinear_Linear);
 
             CApplication::GetInstance().AssetDrawer.Textures2D[Normal.UUID] = Normal;
         }
