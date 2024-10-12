@@ -9,7 +9,6 @@
 #include "Corvus/Scene/Entity.h"
 #include "Corvus/Scene/Scene.h"
 
-#include <GLFW/glfw3.h>
 #include <imgui.h>
 
 namespace Corvus
@@ -18,7 +17,9 @@ namespace Corvus
     class CPlayground : public CApplication
     {
     public:
-        CPlayground() {}
+        using Super = CApplication;
+
+        CPlayground(SApplicationCreateInfo const &ApplicationCreateInfo) : Super{ApplicationCreateInfo} {}
         ~CPlayground() {}
     };
 
@@ -27,16 +28,167 @@ namespace Corvus
     public:
         CApplicationLayer() : CLayer{"ApplicationLayer", true}
         {
+            CRenderer::EnableDepthTest();
+            CRenderer::EnableBackfaceCulling();
+            CRenderer::SetClearColor({0.6f, 0.8f, 1.0f, 1.0f});
+
             LoadAssets();
             CreateScene();
             WireUpAssets();
         }
 
-        ~CApplicationLayer() {}
-
         virtual void OnUpdate(FTimeDelta const ElapsedTime)
         {
-            CCamera *Camera = CApplication::GetInstance().Scene.GetPlayerCamera();
+            CRenderer::BeginScene();
+
+            UpdateCamera(ElapsedTime);
+
+            CRenderer::Clear();
+            RenderScene(ElapsedTime);
+
+            CRenderer::EndScene();
+        }
+
+        virtual void OnEvent(CEvent &Event)
+        {
+            if (Event.GetEventType() == CEvent::EEventType::MouseButtonPress)
+            {
+                CMouseButtonPressEvent &MBPEvent = CastEvent<CMouseButtonPressEvent>(Event);
+                if (MBPEvent.Button == Mouse::ButtonRight)
+                {
+                    bCameraMode = true;
+                    CInput::SetCursorEnabled(!bCameraMode);
+
+                    Event.SetHandled();
+                }
+            }
+            else if (Event.GetEventType() == CEvent::EEventType::MouseButtonRelease)
+            {
+                CMouseButtonReleaseEvent &MBREvent = CastEvent<CMouseButtonReleaseEvent>(Event);
+                if (MBREvent.Button == Mouse::ButtonRight)
+                {
+                    bCameraMode = false;
+                    CInput::SetCursorEnabled(!bCameraMode);
+
+                    Event.SetHandled();
+                }
+            }
+            else if (Event.GetEventType() == CEvent::EEventType::WindowResize)
+            {
+                CWindowResizeEvent &WREvent = CastEvent<CWindowResizeEvent>(Event);
+                CPerspectiveCamera *Camera  = static_cast<CPerspectiveCamera *>(Scene.GetPlayerCamera());
+                Camera->SetViewportSize(
+                    static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight)
+                );
+            }
+            else if (Event.GetEventType() == CEvent::EEventType::MouseScroll)
+            {
+                CMouseScrollEvent &MSEvent = CastEvent<CMouseScrollEvent>(Event);
+                if (bCameraMode)
+                {
+                    CCamera    *Camera         = static_cast<CCamera *>(Scene.GetPlayerCamera());
+                    float const OldCameraSpeed = Camera->GetMoveSpeed();
+                    float const NewSpeed       = FMath::Max(OldCameraSpeed + MSEvent.OffsetY, 0.0f);
+                    Camera->SetMoveSpeed(NewSpeed);
+                    Event.SetHandled();
+                }
+            }
+        }
+
+        virtual void OnGUIRender(FTimeDelta ElapsedTime) override { ImGui::ShowDemoWindow(); }
+
+        void CreateScene()
+        {
+            AddSceneCamera();
+            PopulateScene();
+        }
+
+        void AddSceneCamera()
+        {
+            UInt32 const WindowWidth  = CApplication::GetInstance().GetWindow().GetWindowWidth();
+            UInt32 const WindowHeight = CApplication::GetInstance().GetWindow().GetWindowHeight();
+
+            TOwn<CPerspectiveCamera> Camera = MakeOwned<CPerspectiveCamera>();
+            Camera->SetViewportSize(static_cast<float>(WindowWidth), static_cast<float>(WindowHeight));
+            Camera->SetFoVAngle(60.0f);
+            Camera->SetClipPlanes(0.01f, 100.0f);
+            Camera->SwitchPlayerControl(true, 1.0f);
+
+            Scene.SetPlayerCamera(std::move(Camera));
+        }
+
+        void PopulateScene()
+        {
+            TOwn<CEntity> Entity = MakeOwned<CEntity>();
+            Entity->TransformComponent->SetPosition(FVector3{5.0f, -1.5f, 0.0f});
+            Entity->TransformComponent->SetRotation(FRotation{{0.0f, -45.0f, 0.0f}});
+            Entity->TransformComponent->SetScale(FVector3{0.01f});
+            Entity->StaticMeshComponent->StaticModelRef.SetUUID(StaticModelsAssets.begin()->first);
+
+            Scene.AddEntity(std::move(Entity));
+        }
+
+        void LoadAssets()
+        {
+            SStaticModelLoadedData LoadedModelData =
+                CModelLoader::LoadStaticModelFromFile("./Assets/Models/sponza.glb");
+
+            // StaticModel
+            StaticModelsAssets.emplace(
+                LoadedModelData.StaticModel.UUID, std::move(LoadedModelData.StaticModel)
+            );
+
+            // Textures
+            for (CTexture2D &Texture : LoadedModelData.Textures)
+            {
+                TexturesAssets.emplace(Texture.UUID, std::move(Texture));
+            }
+
+            // Materials
+            for (CMaterial &Material : LoadedModelData.Materials)
+            {
+                Material.CompileMaterialShader("./Assets/Shaders/TestShader.glsl");
+                MaterialsAssets.emplace(Material.UUID, std::move(Material));
+            }
+        }
+
+        void WireUpAssets()
+        {
+            // Provide materials with their textures
+            for (auto &[MaterialUUID, Material] : MaterialsAssets)
+            {
+                if (Material.AlbedoMap.IsTexture())
+                {
+                    FUUID AlbedoUUID = Material.AlbedoMap.TextureRef.GetUUID();
+                    Material.AlbedoMap.TextureRef.SetRawPtr(&TexturesAssets.at(AlbedoUUID));
+                }
+            }
+
+            // Provide StaticMeshPrimitives with their materials
+            for (auto &[StaticModelUUID, StaticModel] : StaticModelsAssets)
+            {
+                for (CStaticMesh &Mesh : StaticModel)
+                {
+                    for (CStaticMeshPrimitive &Primitive : Mesh)
+                    {
+                        FUUID MaterialUUID = Primitive.MaterialRef.GetUUID();
+                        Primitive.MaterialRef.SetRawPtr(&MaterialsAssets.at(MaterialUUID));
+                    }
+                }
+            }
+
+            // Provide Entities with their StaticModels
+            for (TOwn<CEntity> const &Entity : Scene.GetEntities())
+            {
+                FUUID StaticModelUUID = Entity->StaticMeshComponent->StaticModelRef.GetUUID();
+                Entity->StaticMeshComponent->StaticModelRef.SetRawPtr(&StaticModelsAssets.at(StaticModelUUID)
+                );
+            }
+        }
+
+        void UpdateCamera(FTimeDelta const ElapsedTime)
+        {
+            CCamera *Camera = Scene.GetPlayerCamera();
             if (!Camera)
             {
                 CORVUS_NO_ENTRY_FMT("No Player Camera added to Playground Scene!");
@@ -75,116 +227,28 @@ namespace Corvus
             CursorPos             = NewPos;
             if (bCameraMode)
             {
-                Camera->ProcessRotationInput(Delta.x, Delta.y, 100.0f, ElapsedTime);
+                Camera->ProcessRotationInput(Delta.x, Delta.y, 10.0f, ElapsedTime);
             }
         }
 
-        virtual void OnEvent(CEvent &Event)
+        void RenderScene(FTimeDelta const ElapsedTime)
         {
-            if (Event.GetEventType() == CEvent::EEventType::MouseButtonPress)
+            for (TOwn<CEntity> const &Entity : Scene.GetEntities())
             {
-                CMouseButtonPressEvent &MBPEvent = CastEvent<CMouseButtonPressEvent>(Event);
-                if (MBPEvent.Button == Mouse::ButtonRight)
-                {
-                    bCameraMode = true;
-                    CInput::SetCursorEnabled(!bCameraMode);
-
-                    Event.SetHandled();
-                }
-            }
-            else if (Event.GetEventType() == CEvent::EEventType::MouseButtonRelease)
-            {
-                CMouseButtonReleaseEvent &MBREvent = CastEvent<CMouseButtonReleaseEvent>(Event);
-                if (MBREvent.Button == Mouse::ButtonRight)
-                {
-                    bCameraMode = false;
-                    CInput::SetCursorEnabled(!bCameraMode);
-
-                    Event.SetHandled();
-                }
-            }
-            else if (Event.GetEventType() == CEvent::EEventType::WindowResize)
-            {
-                CWindowResizeEvent &WREvent = CastEvent<CWindowResizeEvent>(Event);
-                CPerspectiveCamera *Camera =
-                    static_cast<CPerspectiveCamera *>(CApplication::GetInstance().Scene.GetPlayerCamera());
-                Camera->SetViewportSize(static_cast<float>(WREvent.NewWidth), static_cast<float>(WREvent.NewHeight));
-            }
-            else if (Event.GetEventType() == CEvent::EEventType::MouseScroll)
-            {
-                CMouseScrollEvent &MSEvent = CastEvent<CMouseScrollEvent>(Event);
-                if (bCameraMode)
-                {
-                    CCamera    *Camera = static_cast<CCamera *>(CApplication::GetInstance().Scene.GetPlayerCamera());
-                    float const OldCameraSpeed = Camera->GetMoveSpeed();
-                    float const NewSpeed       = FMath::Max(OldCameraSpeed + MSEvent.OffsetY, 0.0f);
-                    Camera->SetMoveSpeed(NewSpeed);
-                    Event.SetHandled();
-                }
-            }
-        }
-
-        virtual void Render()
-        {
-            for (TPoolable<CEntity> const &Entity : CApplication::GetInstance().Scene.GetEntities())
-            {
-                CRenderer::GetInstance().SubmitStaticModel(
+                CRenderer::SubmitStaticModel(
                     *Entity->StaticMeshComponent->StaticModelRef.GetRawPtr(),
-                    Entity->TransformComponent->GetTransformMatrix()
-                );
-            }
-        }
-
-        void CreateScene()
-        {
-            AddSceneCamera();
-            PopulateScene();
-        }
-
-        void AddSceneCamera()
-        {
-            UInt32 const WindowWidth  = CApplication::GetInstance().GetWindow().GetWindowWidth();
-            UInt32 const WindowHeight = CApplication::GetInstance().GetWindow().GetWindowHeight();
-
-            TPoolable<CPerspectiveCamera> Camera = ConstructPoolable<CPerspectiveCamera>();
-            Camera->SetViewportSize(static_cast<float>(WindowWidth), static_cast<float>(WindowHeight));
-            Camera->SetFoVAngle(60.0f);
-            Camera->SetClipPlanes(0.01f, 100.0f);
-            Camera->SwitchPlayerControl(true, 1.0f);
-
-            CApplication::GetInstance().Scene.SetPlayerCamera(std::move(Camera));
-        }
-
-        void PopulateScene()
-        {
-            TPoolable<CEntity> Entity = ConstructPoolable<CEntity>();
-            Entity->TransformComponent->SetPosition(FVector3{5.0f, -1.5f, 0.0f});
-            Entity->TransformComponent->SetRotation(FRotation{{0.0f, 0.0f, 0.0f}});
-            Entity->TransformComponent->SetScale(FVector3{1.0f});
-            Entity->StaticMeshComponent->StaticModelRef.SetUUID(ModelUUID);
-
-            CApplication::GetInstance().Scene.AddEntity(std::move(Entity));
-        }
-
-        void LoadAssets()
-        {
-            ModelUUID = CApplication::GetInstance().AssetDrawer.LoadStaticModelFromFile("./Assets/Models/Sponza.glb");
-        }
-
-        void WireUpAssets()
-        {
-            // Provide Entities with their StaticModels
-            for (TPoolable<CEntity> const &Entity : CApplication::GetInstance().Scene.GetEntities())
-            {
-                FUUID StaticModelUUID = Entity->StaticMeshComponent->StaticModelRef.GetUUID();
-                Entity->StaticMeshComponent->StaticModelRef.SetRawPtr(
-                    &CApplication::GetInstance().AssetDrawer.StaticModels[ModelUUID]
+                    Entity->StaticMeshComponent->GetTransformMatrix(),
+                    Scene.GetPlayerCamera()->GetProjectionViewMatrix()
                 );
             }
         }
 
     private:
-        FUUID ModelUUID;
+        CScene Scene;
+
+        std::unordered_map<FUUID, CTexture2D>   TexturesAssets;
+        std::unordered_map<FUUID, CMaterial>    MaterialsAssets;
+        std::unordered_map<FUUID, CStaticModel> StaticModelsAssets;
 
         bool     bCameraMode = false;
         FVector2 CursorPos;
@@ -192,7 +256,13 @@ namespace Corvus
 
     CApplication *CreateApplication()
     {
-        CPlayground *App = new CPlayground;
+        SApplicationCreateInfo ApplicationCreateInfo{};
+        ApplicationCreateInfo.ApplicationName         = "Playground";
+        ApplicationCreateInfo.ApplicationVersion      = "";
+        ApplicationCreateInfo.ApplicationWindowWidth  = 1600;
+        ApplicationCreateInfo.ApplicationWindowHeight = 900;
+
+        CPlayground *App = new CPlayground(ApplicationCreateInfo);
         App->PushLayer(CLayer::Create<CApplicationLayer>());
         return App;
     }

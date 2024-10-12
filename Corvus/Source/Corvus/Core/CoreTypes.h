@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <string>
 #include <string_view>
+#include <type_traits>
 
 using Int8  = std::int8_t;
 using Int16 = std::int16_t;

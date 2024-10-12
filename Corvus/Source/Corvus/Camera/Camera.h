@@ -53,7 +53,7 @@ namespace Corvus
         virtual void RecalculateProjectionViewMatrix() = 0;
 
     protected:
-        TPoolable<CCameraMovementComponent> m_MovementComponent;
+        TOwn<CCameraMovementComponent> m_MovementComponent;
         bool                                m_IsPlayerControlled = false;
 
         FMatrix4 m_ViewMatrix           = FMatrix4(1.0f);

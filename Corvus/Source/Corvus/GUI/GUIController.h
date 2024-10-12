@@ -13,13 +13,13 @@ namespace Corvus
         void Init();
         void Destroy();
 
-        bool IsInitialized() { return s_Instance != nullptr; }
+        bool IsInitialized() { return bInitialized; }
 
         void BeginFrame();
         void EndFrame();
 
     private:
-        static CGUIController *s_Instance;
+        static inline bool bInitialized = false;
     };
 
 } // namespace Corvus

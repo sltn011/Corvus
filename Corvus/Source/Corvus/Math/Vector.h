@@ -3,29 +3,23 @@
 
 #include "Corvus/Math/Math.h"
 
-using FUByteVector2 = glm::u8vec2;
-using FUByteVector3 = glm::u8vec3;
-using FUByteVector4 = glm::u8vec4;
+#include <type_traits>
 
-using FSByteVector2 = glm::i8vec2;
-using FSByteVector3 = glm::i8vec3;
-using FSByteVector4 = glm::i8vec4;
+using FIntVector2 = glm::vec<2, Int32>;
+using FIntVector3 = glm::vec<3, Int32>;
+using FIntVector4 = glm::vec<4, Int32>;
 
-using FUWordVector2 = glm::u8vec2;
-using FUWordVector3 = glm::u8vec3;
-using FUWordVector4 = glm::u8vec4;
+using FByteVector2 = glm::vec<2, Int8>;
+using FByteVector3 = glm::vec<3, Int8>;
+using FByteVector4 = glm::vec<4, Int8>;
 
-using FSWordVector2 = glm::i16vec2;
-using FSWordVector3 = glm::i16vec3;
-using FSWordVector4 = glm::i16vec4;
+using FUByteVector2 = glm::vec<2, UInt8>;
+using FUByteVector3 = glm::vec<3, UInt8>;
+using FUByteVector4 = glm::vec<4, UInt8>;
 
-using FUIntVector2 = glm::uvec2;
-using FUIntVector3 = glm::uvec3;
-using FUIntVector4 = glm::uvec4;
-
-using FSIntVector2 = glm::ivec2;
-using FSIntVector3 = glm::ivec3;
-using FSIntVector4 = glm::ivec4;
+using FUIntVector2 = glm::vec<2, UInt32>;
+using FUIntVector3 = glm::vec<3, UInt32>;
+using FUIntVector4 = glm::vec<4, UInt32>;
 
 using FVector2 = glm::vec2;
 using FVector3 = glm::vec3;
@@ -47,7 +41,7 @@ namespace Corvus::FVector
     }
 
     template<typename TVector>
-    inline TVector Length(TVector const &Vector)
+    inline std::remove_reference_t<decltype(std::declval<TVector>()[0])> Length(TVector const &Vector)
     {
         return glm::length(Vector);
     }
@@ -59,15 +53,15 @@ namespace Corvus::FVector
     }
 
     template<typename TVector>
-    inline float Dot(TVector const &Lhs, TVector const &Rhs)
+    inline float Dot(TVector const &Vector)
     {
-        return glm::dot(Lhs, Rhs);
+        return glm::dot(Vector);
     }
 
     template<typename TVector>
-    inline TVector Cross(TVector const &Lhs, TVector const &Rhs)
+    inline TVector Cross(TVector const &Vector)
     {
-        return glm::cross(Lhs, Rhs);
+        return glm::cross(Vector);
     }
 
     template<typename TVector>
@@ -95,19 +89,20 @@ namespace Corvus::FVector
 
     constexpr bool IsNearlyEqual(FVector3 Vector1, FVector3 Vector2, float Epsilon = Constants::SmallNum)
     {
-        return (FMath::Abs(Vector1.x - Vector2.x) < Epsilon) && (FMath::Abs(Vector1.y - Vector2.y) < Epsilon) &&
-               (FMath::Abs(Vector1.z - Vector2.z) < Epsilon);
+        return (FMath::Abs(Vector1.x - Vector2.x) < Epsilon) &&
+               (FMath::Abs(Vector1.y - Vector2.y) < Epsilon) && (FMath::Abs(Vector1.z - Vector2.z) < Epsilon);
     }
 
     constexpr bool IsNearlyEqual(FVector4 Vector1, FVector4 Vector2, float Epsilon = Constants::SmallNum)
     {
-        return (FMath::Abs(Vector1.x - Vector2.x) < Epsilon) && (FMath::Abs(Vector1.y - Vector2.y) < Epsilon) &&
+        return (FMath::Abs(Vector1.x - Vector2.x) < Epsilon) &&
+               (FMath::Abs(Vector1.y - Vector2.y) < Epsilon) &&
                (FMath::Abs(Vector1.z - Vector2.z) < Epsilon) && (FMath::Abs(Vector1.w - Vector2.w) < Epsilon);
     }
 
-    inline constexpr FVector3 Forward = FVector3{1.0f, 0.0f, 0.0f};
+    inline constexpr FVector3 Forward = FVector3{0.0f, 0.0f, -1.0f};
     inline constexpr FVector3 Up      = FVector3{0.0f, 1.0f, 0.0f};
-    inline constexpr FVector3 Right   = FVector3{0.0f, 0.0f, 1.0f};
+    inline constexpr FVector3 Right   = FVector3{1.0f, 0.0f, 0.0f};
 
     inline constexpr FVector3 ZeroVec = FVector3{0.0f, 0.0f, 0.0f};
     inline constexpr FVector3 OneVec  = FVector3{1.0f, 1.0f, 1.0f};

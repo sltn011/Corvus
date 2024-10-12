@@ -3,331 +3,169 @@
 #include "Corvus/Renderer/Renderer.h"
 
 #include "Corvus/Assets/Model/StaticModel.h"
-#include "Corvus/Assets/Texture/Texture2D.h"
-#include "Corvus/Camera/Camera.h"
-#include "Corvus/Core/Application.h"
-#include "Corvus/Renderer/Data/PushConstants.h"
+#include "Corvus/Profiling/FrameProfiler.h"
+#include "Corvus/Renderer/CoreShaders/RenderScreenQuadShader.h"
+#include "Corvus/Renderer/FrameBuffer.h"
+#include "Corvus/Renderer/GraphicsAPI.h"
+#include "Corvus/Renderer/IndexBuffer.h"
+#include "Corvus/Renderer/Shader.h"
+#include "Corvus/Renderer/VertexArray.h"
+#include "Corvus/Renderer/VertexBuffer.h"
 
 namespace Corvus
 {
-    bool CRenderer::s_bInitialized = false;
+    TOwn<CGraphicsAPI> CRenderer::s_GraphicsAPI = nullptr;
 
-    CRenderer &Renderer()
+    TOwn<CVertexArray> CRenderer::s_ScreenQuad             = nullptr;
+    TOwn<CShader>      CRenderer::s_RenderScreenQuadShader = nullptr;
+
+    void CRenderer::Init()
     {
-        return CRenderer::GetInstance();
-    }
+        s_GraphicsAPI = CGraphicsAPI::Create();
+        s_GraphicsAPI->Init();
 
-    CRenderer &CRenderer::GetInstance()
-    {
-        static CRenderer Renderer;
-        return Renderer;
-    }
+        InitScreenQuad();
 
-    void CRenderer::Create()
-    {
-        CORVUS_ASSERT_FMT(!s_bInitialized, "Renderer was already initialized!");
-
-        s_bInitialized = true;
-
-        CreateInstance(CApplication::GetInstance().GetWindow().GetWindowName(), VK_API_VERSION_1_3);
-
-#ifdef CORVUS_DEBUG
-        CreateDebugCallback();
-#endif // CORVUS_DEBUG
-
-        CreateSurface();
-
-        SelectPhysicalDevice();
-        CreateDevice();
-        RetrieveQueues();
-
-        CreateSwapchain();
-        RetrieveSwapchainImages();
-        CreateSwapchainImageViews();
-
-        CreateCommandPools();
-        AllocateCommandBuffers();
-
-        CreateDescriptorSetLayout();
-        CreateDescriptorPools();
-
-        CreateSamplers();
-
-        CreateDepthResources();
-
-        CreateUniformBuffers();
-
-        CreatePerFrameDescriptorSets();
-
-        CreateRenderPass();
-        CreatePipelineLayout();
-        CreatePipeline();
-
-        RenderPass_Deferred.Create();
-        RenderPass_Combine.Create();
-        RenderPass_Postprocess.Create();
-
-        CreateFramebuffers();
-
-        CreateSyncObjects();
-
-        ScreenQuad.Create();
+        CORVUS_CORE_INFO("Renderer created");
     }
 
     void CRenderer::Destroy()
     {
-        ScreenQuad.Destroy();
-
-        DestroySyncObjects();
-
-        DestroyFramebuffers();
-
-        RenderPass_Postprocess.Destroy();
-        RenderPass_Combine.Destroy();
-        RenderPass_Deferred.Destroy();
-
-        DestroyPipeline();
-        DestroyPipelineLayout();
-        DestroyRenderPass();
-
-        DestroyUniformBuffers();
-
-        DestroyDepthResources();
-
-        DestroySamplers();
-
-        DestroyDescriptorPools();
-        DestroyDescriptorSetLayout();
-
-        DestroyCommandPools();
-
-        DestroySwapchainImageViews();
-        DestroySwapchain();
-
-        DestroyDevice();
-
-        DestroySurface();
-
-#ifdef CORVUS_DEBUG
-        DestroyDebugCallback();
-#endif // CORVUS_DEBUG
-
-        DestroyInstance();
-
-        s_bInitialized = false;
+        CORVUS_CORE_INFO("Renderer destroyed");
     }
 
-    CRenderer::~CRenderer()
+    void CRenderer::BeginScene()
     {
-        CORVUS_ASSERT_FMT(!s_bInitialized, "Renderer was not destroyed properly!");
     }
 
-    void CRenderer::BeginFrame()
+    void CRenderer::EndScene()
     {
-        SetFrameUniforms();
-
-        // Wait for the previous frame to finish
-        vkWaitForFences(Device, 1, &InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
-
-        // Acquire an image from the swap chain
-        VkResult AcquisitionResult = GetNextSwapchainImageIndex(SwapchainImageIndex);
-        if (AcquisitionResult == VK_ERROR_OUT_OF_DATE_KHR) // swapchain not suitable now(after screen resize)
-        {
-            RecreateSwapchain();
-            return;
-        }
-        else if (AcquisitionResult != VK_SUCCESS)
-        {
-            if (AcquisitionResult != VK_SUBOPTIMAL_KHR) // Swapchain properties not matched exactly
-            {
-                CORVUS_CORE_CRITICAL("Failed to acquire Swapchain image!");
-            }
-        }
-
-        // Reset fences here to avoid deadlock
-        vkResetFences(Device, 1, &InFlightFences[m_CurrentFrame]);
-
-        // Start recording a command buffer which draws the scene onto that image
-        VkCommandBuffer CommandBuffer = CommandBuffers[m_CurrentFrame];
-        vkResetCommandBuffer(CommandBuffer, 0);
-
-        VkCommandBufferBeginInfo CommandBufferBeginInfo = VkInit::CommandBufferBeginInfo(0);
-
-        if (vkBeginCommandBuffer(CommandBuffer, &CommandBufferBeginInfo) != VK_SUCCESS)
-        {
-            CORVUS_CORE_CRITICAL("Failed to Begin Vulkan Command Buffer!");
-        }
-
-        RenderPass_Deferred.BeginRender(CommandBuffer);
     }
 
-    void CRenderer::EndFrame()
+    void CRenderer::ViewportResize(UInt32 const Width, UInt32 const Height)
     {
-        VkCommandBuffer CommandBuffer = CommandBuffers[m_CurrentFrame];
-
-        RenderPass_Deferred.EndRender(CommandBuffer);
-
-        RenderPass_Combine.Render(CommandBuffer);
-
-        RenderPass_Postprocess.Render(CommandBuffer);
-
-        if (vkEndCommandBuffer(CommandBuffer) != VK_SUCCESS)
-        {
-            CORVUS_CORE_CRITICAL("Failed to End Vulkan Command Buffer!");
-        }
-
-        // Submit recorded Command Buffer
-        SubmitCommandBuffer(CommandBuffer);
-
-        // Present the swap chain image
-        VkResult QueuePresentResult = PresentResult();
-        if (QueuePresentResult == VK_ERROR_OUT_OF_DATE_KHR || QueuePresentResult == VK_SUBOPTIMAL_KHR ||
-            m_bWindowResizeHappened)
-        {
-            RecreateSwapchain();
-            m_bWindowResizeHappened = false;
-        }
-        else if (QueuePresentResult != VK_SUCCESS)
-        {
-            CORVUS_CORE_CRITICAL("Failed to present Swapchain Image!");
-        }
-
-        m_CurrentFrame = (m_CurrentFrame + 1) % s_FramesInFlight;
+        s_GraphicsAPI->ViewportResize(Width, Height);
     }
 
-    void CRenderer::SubmitStaticModel(CStaticModel &StaticModel, FMatrix4 const &ModelTransformMatrix)
+    void CRenderer::SetClearColor(FVector4 const &ClearColor)
     {
-        SetModelMatrix(ModelTransformMatrix);
+        s_GraphicsAPI->SetClearColor(ClearColor);
+    }
 
-        VkCommandBuffer CommandBuffer = CommandBuffers[m_CurrentFrame];
+    void CRenderer::Clear(bool const bColorBuffer, bool const bDepthBuffer, bool const bStencilBuffer)
+    {
+        s_GraphicsAPI->Clear(bColorBuffer, bDepthBuffer, bStencilBuffer);
+    }
 
+    void CRenderer::EnableDepthTest()
+    {
+        s_GraphicsAPI->EnableDepthTest();
+    }
+
+    void CRenderer::DisableDepthTest()
+    {
+        s_GraphicsAPI->DisableDepthTest();
+    }
+
+    void CRenderer::EnableBackfaceCulling(bool const bIsCulledCCW)
+    {
+        s_GraphicsAPI->EnableBackfaceCulling(bIsCulledCCW);
+    }
+
+    void CRenderer::DisableBackfaceCulling()
+    {
+        s_GraphicsAPI->DisableBackfaceCulling();
+    }
+
+    void CRenderer::SetDefaultRenderTarget()
+    {
+        s_GraphicsAPI->SetDefaultRenderTarget();
+    }
+
+    void CRenderer::SetRenderTarget(CFrameBuffer const &Target)
+    {
+        Target.SetRenderTarget();
+    }
+
+    void CRenderer::Submit(CVertexArray &VAO, CShader &Shader)
+    {
+        Shader.Bind();
+        VAO.Bind();
+
+        UInt64 Vertices  = VAO.GetIndexBuffer().GetNumIndices();
+        UInt64 Triangles = Vertices / 3;
+        UInt64 DrawCalls = 1;
+
+        s_GraphicsAPI->DrawIndexed(VAO.GetIndexBuffer().GetNumIndices());
+
+        CORVUS_EVAL_IF_CONSTEXPR(
+            CFrameProfiler::IsEnabled, CFrameProfiler::RecordRenderCallData, {Vertices, Triangles, DrawCalls}
+        );
+    }
+
+    void CRenderer::SubmitStaticModel(
+        CStaticModel &StaticModel, FMatrix4 const &ModelTransformMatrix, FMatrix4 const &ProjectionViewMatrix
+    )
+    {
         for (CStaticMesh &StaticMesh : StaticModel)
         {
             for (CStaticMeshPrimitive &Primitive : StaticMesh)
             {
-                vkCmdBindDescriptorSets(
-                    CommandBuffer,
-                    VK_PIPELINE_BIND_POINT_GRAPHICS,
-                    PipelineLayout,
-                    1,
-                    1,
-                    &Primitive.Material.DescriptorSet,
-                    0,
-                    nullptr
-                );
+                CMaterial           *Material       = Primitive.MaterialRef.GetRawPtr();
+                TOwn<CShader> const &MaterialShader = Material->GetShader();
 
-                VkBuffer     Buffers[] = {Primitive.VertexBuffer.Buffer};
-                VkDeviceSize Offsets[] = {0};
-                vkCmdBindVertexBuffers(CommandBuffer, 0, 1, Buffers, Offsets);
+                FMatrix4 trs    = ModelTransformMatrix;
 
-                vkCmdBindIndexBuffer(CommandBuffer, Primitive.IndexBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
+                MaterialShader->Bind();
+                MaterialShader->SetMat4("u_Transform", trs);
+                MaterialShader->SetMat4("u_ProjView", ProjectionViewMatrix);
+                Material->LoadInShader();
 
-                vkCmdDrawIndexed(CommandBuffer, static_cast<UInt32>(Primitive.IndexData.size()), 1, 0, 0, 0);
+                Submit(*Primitive.VertexArray, *MaterialShader);
             }
         }
     }
 
-    void CRenderer::NotifyWindowResize()
+    void CRenderer::SubmitFrameBuffer(CFrameBuffer const &FrameBuffer)
     {
-        m_bWindowResizeHappened = true;
+        FrameBuffer.LoadInShader(*s_RenderScreenQuadShader, {"u_ScreenQuadTexture"}, 0);
+        Submit(*s_ScreenQuad, *s_RenderScreenQuadShader);
     }
 
-    void CRenderer::AwaitIdle()
+    void CRenderer::InitScreenQuad()
     {
-        vkDeviceWaitIdle(Device);
-    }
+        CVertexBufferLayout QuadVertexLayout{{EBufferDataType::Vec2}, {EBufferDataType::Vec2}};
 
-    void CRenderer::SetModelMatrix(FMatrix4 const &ModelMatrix)
-    {
-        CModelPushConstant PushConstant{};
-        PushConstant.Model = ModelMatrix;
-
-        vkCmdPushConstants(
-            CommandBuffers[m_CurrentFrame],
-            PipelineLayout,
-            VK_SHADER_STAGE_VERTEX_BIT,
-            0,
-            static_cast<UInt32>(sizeof(PushConstant)),
-            &PushConstant
-        );
-    }
-
-    void CRenderer::SetFrameUniforms()
-    {
-        // Camera
+        // clang-format off
+        FVector2 QuadVertexData[] = 
         {
-            UInt8 *CameraUBOStart = static_cast<UInt8 *>(CameraUBOs[m_CurrentFrame].MappedMemory);
+            // Coordinate  /  UV
+            {-1.0f, -1.0f}, {0.0f, 0.0f},
+            { 1.0f, -1.0f}, {1.0f, 0.0f},
+            { 1.0f,  1.0f}, {1.0f, 1.0f},
+            {-1.0f,  1.0f}, {0.0f, 1.0f},
+        };
+        // clang-format on
 
-            CCamera *PlayerCamera = CApplication::GetInstance().Scene.GetPlayerCamera();
-            CORVUS_CORE_ASSERT(PlayerCamera != nullptr);
+        TOwn<CVertexBuffer> QuadVertexBuffer = CVertexBuffer::Create(QuadVertexData, 4, QuadVertexLayout);
 
-            FMatrix4 CameraView       = PlayerCamera->GetViewMatrix();
-            FMatrix4 CameraProjection = PlayerCamera->GetProjectionMatrix();
-
-            // GLM uses OpenGL's clip coordinates, flip Y to fix
-            // But this flips CW and CCW polygon rotation
-            CameraProjection[1][1] *= -1;
-
-            CCameraUBO CameraUniformsData;
-            CameraUniformsData.ProjectionView = CameraProjection * CameraView;
-
-            UInt8 *CameraUniformsLocation = CameraUBOStart + offsetof(CCameraUBO, ProjectionView);
-            std::memcpy(CameraUniformsLocation, &CameraUniformsData, sizeof(CameraUniformsData));
-        }
-
-        // RT
+        // clang-format off
+        UInt32 QuadIndexData[] = 
         {
-            UInt8 *RenderTargetUBOStart = static_cast<UInt8 *>(RenderTargetUBOs[m_CurrentFrame].MappedMemory);
+            0, 1, 2,
+            0, 2, 3
+        };
+        // clang-format on
 
-            CRenderTargetUBO RTUniformsData;
-            RTUniformsData.RTFullSize = FVector4{
-                SwapchainExtent.width,
-                SwapchainExtent.height,
-                1.f / SwapchainExtent.width,
-                1.f / SwapchainExtent.height};
+        TOwn<CIndexBuffer> QuadIndexBuffer = CIndexBuffer::Create(QuadIndexData, 6);
 
-            UInt8 *RTUniformsLocation = RenderTargetUBOStart + offsetof(CRenderTargetUBO, RTFullSize);
-            std::memcpy(RTUniformsLocation, &RTUniformsData, sizeof(RTUniformsData));
-        }
-    }
+        s_ScreenQuad = CVertexArray::Create();
+        s_ScreenQuad->AddVertexBuffer(std::move(QuadVertexBuffer));
+        s_ScreenQuad->AddIndexBuffer(std::move(QuadIndexBuffer));
 
-    VkResult CRenderer::GetNextSwapchainImageIndex(UInt32 &ImageIndex)
-    {
-        return vkAcquireNextImageKHR(
-            Device, Swapchain, UINT64_MAX, ImageAvailableSemaphores[m_CurrentFrame], VK_NULL_HANDLE, &ImageIndex
+        s_RenderScreenQuadShader = CShader::CreateFromMemory(
+            {CoreShaders::RenderScreenQuadVertexShader}, {CoreShaders::RenderScreenQuadFragmentShader}
         );
-    }
-
-    void CRenderer::SubmitCommandBuffer(VkCommandBuffer CommandBuffer)
-    {
-        std::vector<VkSemaphore>          WaitSemaphores   = {ImageAvailableSemaphores[m_CurrentFrame]};
-        std::vector<VkPipelineStageFlags> WaitStages       = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-        std::vector<VkSemaphore>          SignalSemaphores = {RenderFinishedSemaphores[m_CurrentFrame]};
-
-        VkSubmitInfo SubmitInfo = VkInit::SubmitInfo(
-            CommandBuffer,
-            WaitSemaphores.data(),
-            WaitSemaphores.size(),
-            WaitStages.data(),
-            SignalSemaphores.data(),
-            SignalSemaphores.size()
-        );
-
-        if (vkQueueSubmit(Queues.GraphicsQueue, 1, &SubmitInfo, InFlightFences[m_CurrentFrame]) != VK_SUCCESS)
-        {
-            CORVUS_CORE_CRITICAL("Failed to submit draw Commands Buffer!");
-        }
-    }
-
-    VkResult CRenderer::PresentResult()
-    {
-        VkSwapchainKHR Swapchains[]             = {Swapchain};
-        UInt32         SwapchainImagesIndices[] = {SwapchainImageIndex};
-        VkSemaphore    WaitSemaphores[]         = {RenderFinishedSemaphores[m_CurrentFrame]};
-
-        VkPresentInfoKHR PresentInfo = VkInit::PresentInfo(Swapchains, 1, SwapchainImagesIndices, WaitSemaphores, 1);
-
-        return vkQueuePresentKHR(Queues.GraphicsQueue, &PresentInfo);
     }
 
 } // namespace Corvus

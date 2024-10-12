@@ -19,7 +19,7 @@ namespace Corvus
         virtual void OnUpdate(FTimeDelta ElapsedTime) override;
         virtual void OnEvent(CEvent &Event) override;
 
-        virtual void Render() override;
+        virtual void OnGUIRender(FTimeDelta ElapsedTime) override;
 
     private:
         void OnApplicationEvent(CEvent &Event);

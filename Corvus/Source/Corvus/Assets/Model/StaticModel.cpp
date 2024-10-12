@@ -4,6 +4,31 @@
 
 namespace Corvus
 {
+
+    CStaticModel::CStaticModel() : Super{EAssetType::StaticModel}
+    {
+    }
+
+    SAssetInfo CStaticModel::GetAssetInfo() const
+    {
+        SAssetInfo AssetInfo{};
+        AssetInfo.Type       = AssetType;
+        AssetInfo.UUID       = UUID;
+        AssetInfo.Name       = AssetName;
+        AssetInfo.SourceType = SourceType;
+        AssetInfo.Source     = Source;
+
+        for (CStaticMesh const &Mesh : m_Meshes)
+        {
+            for (CStaticMeshPrimitive const &Primitive : Mesh)
+            {
+                AssetInfo.References.push_back(Primitive.MaterialRef.GetUUID());
+            }
+        }
+
+        return AssetInfo;
+    }
+
     SizeT CStaticModel::AddMesh(CStaticMesh &&Mesh)
     {
         SizeT MeshIndex = GetNumMeshes();
@@ -20,7 +45,7 @@ namespace Corvus
     {
         if (MeshIndex >= GetNumMeshes())
         {
-            CORVUS_CORE_NO_ENTRY_FMT("Invalid StaticMesh Index!");
+            CORVUS_NO_ENTRY_FMT("Invalid StaticMesh Index!");
         }
         return m_Meshes[MeshIndex];
     }

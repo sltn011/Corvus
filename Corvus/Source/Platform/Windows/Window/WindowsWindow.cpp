@@ -5,9 +5,7 @@
 #include "Corvus/Event/ApplicationEvent.h"
 #include "Corvus/Event/KeyboardEvent.h"
 #include "Corvus/Event/MouseEvent.h"
-#include "Corvus/Renderer/Renderer.h"
 
-#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 namespace Corvus
@@ -23,10 +21,12 @@ namespace Corvus
         Destroy();
     }
 
-    void PWindowsWindow::Init(SWindowData const &Settings)
+    void PWindowsWindow::Init(SWindowInitInfo const &InitInfo)
     {
         CORVUS_CORE_ASSERT_FMT(
-            !m_bIsInitialized, "Can not re-initialize already created window \"{0}\"!", m_WindowData.WindowName
+            !m_bIsInitialized,
+            "Can not re-initialize already created window \"{}\"!",
+            m_WindowData.WindowName
         );
 
         if (s_WindowsCount == 0)
@@ -35,18 +35,21 @@ namespace Corvus
             CORVUS_CORE_ASSERT(GLFWInitialized);
             CORVUS_CORE_TRACE("GLFW initialized successfully");
 
-            glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
             glfwSetErrorCallback(WindowErrorCallback);
         }
 
-        m_WindowData = Settings;
+        m_WindowData.WindowName     = InitInfo.WindowName;
+        m_WindowData.WindowSettings = InitInfo.WindowSettings;
 
         m_Window = glfwCreateWindow(
-            static_cast<int>(m_WindowData.WindowWidth),
-            static_cast<int>(m_WindowData.WindowHeight),
+            static_cast<int>(InitInfo.WindowWidth),
+            static_cast<int>(InitInfo.WindowHeight),
             m_WindowData.WindowName.c_str(),
-            m_WindowData.bFullScreen ? glfwGetPrimaryMonitor() : nullptr,
+            nullptr,
             nullptr
         );
 
@@ -56,18 +59,22 @@ namespace Corvus
         if (!m_Window)
         {
             Destroy();
-            CORVUS_CORE_NO_ENTRY_FMT("Failed to create window!");
+            CORVUS_NO_ENTRY_FMT("Failed to create window!");
         }
 
         CORVUS_CORE_INFO("Window \"{0}\" created", m_WindowData.WindowName);
 
         SetupWindowEventsHandlers();
 
+        InitRenderingContext();
+
         glfwSetWindowUserPointer(m_Window, this);
 
-        SetFullScreen(m_WindowData.bFullScreen);
+        SetFullScreen(m_WindowData.WindowSettings.bFullScreen);
+        SetVSyncEnabled(m_WindowData.WindowSettings.bVSyncEnabled);
 
         CORVUS_CORE_ASSERT(m_Window);
+        CORVUS_CORE_ASSERT(m_RenderingContext);
     }
 
     void PWindowsWindow::Destroy()
@@ -78,7 +85,8 @@ namespace Corvus
             return;
         }
 
-        // m_GUIController.Destroy();
+        m_RenderingContext.reset();
+        CORVUS_CORE_INFO("Rendering context destroyed");
 
         glfwDestroyWindow(m_Window);
         m_Window         = nullptr;
@@ -97,14 +105,21 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT(m_bIsInitialized);
         glfwPollEvents();
+        m_RenderingContext->SwapBuffers();
     }
 
-    std::pair<UInt32, UInt32> PWindowsWindow::GetFramebufferSize() const
+    FUIntVector2 PWindowsWindow::GetWindowSize() const
     {
-        std::pair<Int32, Int32> FramebufferSize;
-        glfwGetFramebufferSize(m_Window, &FramebufferSize.first, &FramebufferSize.second);
-        return std::pair<UInt32, UInt32>{
-            static_cast<UInt32>(FramebufferSize.first), static_cast<UInt32>(FramebufferSize.second)};
+        if (!m_bIsInitialized)
+        {
+            CORVUS_CORE_ERROR("Window not initialized - cant get Window size!");
+            return {};
+        }
+
+        FIntVector2 WindowSize{};
+        glfwGetFramebufferSize(m_Window, &WindowSize.x, &WindowSize.y);
+
+        return {static_cast<UInt32>(WindowSize.x), static_cast<UInt32>(WindowSize.y)};
     }
 
     bool PWindowsWindow::ShouldClose() const
@@ -117,6 +132,19 @@ namespace Corvus
         glfwSetWindowShouldClose(m_Window, true);
     }
 
+    void PWindowsWindow::SetVSyncEnabled(bool const bValue)
+    {
+        if (!m_bIsInitialized)
+        {
+            CORVUS_CORE_ERROR("Window not initialized - cant switch VSync on/off!");
+            return;
+        }
+
+        glfwSwapInterval(bValue ? 1 : 0);
+        m_WindowData.WindowSettings.bVSyncEnabled = bValue;
+        CORVUS_CORE_TRACE("Window \"{0}\" VSync {1}", m_WindowData.WindowName, bValue ? "On" : "Off");
+    }
+
     void PWindowsWindow::SetFullScreen(bool const bValue)
     {
         if (!m_bIsInitialized)
@@ -125,25 +153,21 @@ namespace Corvus
             return;
         }
 
+        FUIntVector2 WindowSize   = GetWindowSize();
+        UInt32       WindowWidth  = WindowSize.x;
+        UInt32       WindowHeight = WindowSize.y;
+
         if (bValue)
         {
             glfwSetWindowMonitor(
-                m_Window,
-                glfwGetPrimaryMonitor(),
-                0,
-                0,
-                m_WindowData.WindowWidth,
-                m_WindowData.WindowHeight,
-                GLFW_DONT_CARE
+                m_Window, glfwGetPrimaryMonitor(), 0, 0, WindowWidth, WindowHeight, GLFW_DONT_CARE
             );
         }
         else
         {
-            glfwSetWindowMonitor(
-                m_Window, nullptr, 0, 0, m_WindowData.WindowWidth, m_WindowData.WindowHeight, GLFW_DONT_CARE
-            );
+            glfwSetWindowMonitor(m_Window, nullptr, 0, 0, WindowWidth, WindowHeight, GLFW_DONT_CARE);
 
-            FSIntVector2 MonitorTopLeft{}, MonitorBottomRight{};
+            FIntVector2 MonitorTopLeft{}, MonitorBottomRight{};
             glfwGetMonitorWorkarea(
                 glfwGetPrimaryMonitor(),
                 &MonitorTopLeft.x,
@@ -152,22 +176,17 @@ namespace Corvus
                 &MonitorBottomRight.y
             );
 
-            FSIntVector2 const MonitorCenter = (MonitorBottomRight - MonitorTopLeft) / 2;
+            FIntVector2 const MonitorCenter = (MonitorBottomRight - MonitorTopLeft) / 2;
 
-            FSIntVector2 WindowTopLeft;
-            WindowTopLeft.x = FMath::Max(0, MonitorCenter.x - m_WindowData.WindowWidth / 2);
-            WindowTopLeft.y = FMath::Max(0, MonitorCenter.y - m_WindowData.WindowHeight / 2);
+            FIntVector2 WindowTopLeft;
+            WindowTopLeft.x = FMath::Max(0u, MonitorCenter.x - WindowWidth / 2);
+            WindowTopLeft.y = FMath::Max(0u, MonitorCenter.y - WindowHeight / 2);
 
             glfwSetWindowPos(m_Window, WindowTopLeft.x, WindowTopLeft.y);
         }
 
-        m_WindowData.bFullScreen = bValue;
+        m_WindowData.WindowSettings.bFullScreen = bValue;
         CORVUS_CORE_TRACE("Window \"{0}\" FullScreen {1}", m_WindowData.WindowName, bValue ? "On" : "Off");
-    }
-
-    void PWindowsWindow::AwaitNextEvent() const
-    {
-        glfwWaitEvents();
     }
 
     void *PWindowsWindow::GetRawWindow()
@@ -175,44 +194,17 @@ namespace Corvus
         return m_Window;
     }
 
-    std::vector<char const *> PWindowsWindow::GetRequiredExtensions()
-    {
-        UInt32                    NumExtensions;
-        char const              **Extensions = glfwGetRequiredInstanceExtensions(&NumExtensions);
-        std::vector<char const *> RequiredExtensionsVec(NumExtensions);
-        for (UInt32 i = 0; i < NumExtensions; ++i)
-        {
-            RequiredExtensionsVec[i] = Extensions[i];
-        }
-        return RequiredExtensionsVec;
-    }
-
-    VkSurfaceKHR PWindowsWindow::CreateVulkanSurfaceHandler() const
-    {
-        VkSurfaceKHR SurfaceHandler = VK_NULL_HANDLE;
-        if (glfwCreateWindowSurface(Renderer().VulkanInstance, m_Window, nullptr, &SurfaceHandler) != VK_SUCCESS)
-        {
-            CORVUS_CRITICAL("Failed to create VkSurface!");
-        }
-        CORVUS_TRACE("Created VkSurface successfully");
-        return SurfaceHandler;
-    }
-
     void PWindowsWindow::WindowErrorCallback(int const ErrorCode, char const *const Description)
     {
         CORVUS_CORE_ERROR("GLFW Error - Code: {0}, Description: {1:s}", ErrorCode, Description);
     }
 
-    void PWindowsWindow::CreateGUIController()
+    void PWindowsWindow::InitRenderingContext()
     {
-        m_GUIController.Init();
-        CORVUS_CORE_INFO("GUI Controller initialized created");
-    }
-
-    void PWindowsWindow::DestroyGUIController()
-    {
-        m_GUIController.Destroy();
-        CORVUS_CORE_INFO("GUI Controller destroyed");
+        m_RenderingContext = CRenderingContext::Create(*this);
+        CORVUS_CORE_ASSERT(m_RenderingContext);
+        m_RenderingContext->Init();
+        CORVUS_CORE_INFO("Rendering context created");
     }
 
     void PWindowsWindow::SetupWindowEventsHandlers()
@@ -239,8 +231,11 @@ namespace Corvus
 
         glfwSetKeyCallback(
             m_Window,
-            [](GLFWwindow *const Caller, int const RawKey, int const RawScancode, int const RawAction, int const RawMods
-            )
+            [](GLFWwindow *const Caller,
+               int const         RawKey,
+               int const         RawScancode,
+               int const         RawAction,
+               int const         RawMods)
             {
                 CWindow const *const Owner = static_cast<CWindow *>(glfwGetWindowUserPointer(Caller));
 

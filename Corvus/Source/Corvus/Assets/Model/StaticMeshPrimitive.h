@@ -3,21 +3,19 @@
 
 #include "Corvus/Assets/AssetRef.h"
 #include "Corvus/Assets/Material/Material.h"
-#include "Corvus/Renderer/Data/Vertex.h"
-#include "Corvus/Renderer/Memory/VulkanBuffer.h"
+#include "Corvus/Renderer/VertexArray.h"
 
 namespace Corvus
 {
 
-    struct CStaticMeshPrimitive
+    class CStaticMeshPrimitive
     {
-        CVulkanBuffer        VertexBuffer;
-        std::vector<CVertex> VertexData;
+    public:
+        CStaticMeshPrimitive(TOwn<CVertexArray> &&PrimitiveVertexArray);
 
-        CVulkanBuffer       IndexBuffer;
-        std::vector<UInt16> IndexData;
-
-        CMaterial Material;
+    public:
+        TOwn<CVertexArray>   VertexArray;
+        TAssetRef<CMaterial> MaterialRef;
     };
 
 } // namespace Corvus

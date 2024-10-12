@@ -2,10 +2,11 @@
 
 #include "Corvus/Assets/Model/ModelLoader.h"
 
-#include "Corvus/Assets/Material/Material.h"
 #include "Corvus/Assets/Model/GLTFModelLoader.h"
 #include "Corvus/Assets/Model/StaticModel.h"
-// #include "Corvus/Assets/Texture/Texture2D.h"
+#include "Corvus/Assets/Texture/Texture2D.h"
+#include "Corvus/Renderer/Shader.h"
+#include "Corvus/Renderer/Texture2DBuffer.h"
 
 namespace Corvus
 {
@@ -15,28 +16,45 @@ namespace Corvus
         CORVUS_CORE_TRACE("Loading StaticMesh {}", FilePath);
         FTimePoint ModelLoadStart;
 
-        SizeT FormatPrefixIndex = FilePath.find_last_of('.');
-        if (FormatPrefixIndex == CString::npos)
+        if (!FFileSystem::FileExists(FilePath))
         {
-            CORVUS_CORE_ERROR("Invalid file path passed to ModelLoader: {}", FilePath);
-            return SStaticModelLoadedData();
+            CORVUS_CORE_ERROR("StaticModel file {} not found!", FilePath);
+            return {};
         }
 
-        CString const Format = FilePath.substr(FormatPrefixIndex + 1);
-
         SStaticModelLoadedData LoadedData;
-        if (Format == "gltf") // glTF
+        if (FFileSystem::IsFileExtensionEqual(FilePath, ".gltf")) // glTF
         {
             LoadedData = CGLTFModelLoader::LoadStaticModelFromFile(FilePath, false);
         }
-        else if (Format == "glb") // Binary glTF
+        else if (FFileSystem::IsFileExtensionEqual(FilePath, ".glb")) // Binary glTF
         {
             LoadedData = CGLTFModelLoader::LoadStaticModelFromFile(FilePath, true);
         }
         else
         {
-            CORVUS_CORE_ERROR("Unknown file format \"{}\" passed to ModelLoader: {}", Format, FilePath);
+            CORVUS_CORE_ERROR(
+                "Unknown file format \"{}\" passed to ModelLoader: {}",
+                FFileSystem::GetFileExtension(FilePath),
+                FilePath
+            );
             return LoadedData;
+        }
+
+        LoadedData.StaticModel.AssetName  = FFileSystem::GetFileName(FilePath);
+        LoadedData.StaticModel.SourceType = EAssetSourceType::FromFile;
+        LoadedData.StaticModel.Source     = FilePath;
+
+        for (CTexture2D &Texture : LoadedData.Textures)
+        {
+            Texture.SourceType = EAssetSourceType::ChildAsset;
+            Texture.Source     = LoadedData.StaticModel.UUID.ToString();
+        }
+
+        for (CMaterial &Material : LoadedData.Materials)
+        {
+            Material.SourceType = EAssetSourceType::ChildAsset;
+            Material.Source     = LoadedData.StaticModel.UUID.ToString();
         }
 
         FTimePoint ModelLoadEnd;

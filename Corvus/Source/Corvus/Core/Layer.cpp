@@ -8,9 +8,12 @@
 namespace Corvus
 {
 
-    CLayer::CLayer(CString LayerName, bool const bEnabled) : m_LayerName{std::move(LayerName)}, m_bEnabled{bEnabled}
+    CLayer::CLayer(CString LayerName, bool const bEnabled)
+        : m_LayerName{std::move(LayerName)}, m_bEnabled{bEnabled}
     {
-        CORVUS_CORE_TRACE("Layer \"{0}\" created and set to {1}", m_LayerName, m_bEnabled ? "enabled" : "disabled");
+        CORVUS_CORE_TRACE(
+            "Layer \"{0}\" created and set to {1}", m_LayerName, m_bEnabled ? "enabled" : "disabled"
+        );
     }
 
     void CLayer::SetEnabled(bool const bEnabled)
@@ -42,7 +45,7 @@ namespace Corvus
     {
     }
 
-    void CLayer::Render()
+    void CLayer::OnGUIRender(FTimeDelta ElapsedTime)
     {
     }
 

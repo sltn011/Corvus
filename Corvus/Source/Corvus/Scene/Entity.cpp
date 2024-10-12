@@ -2,18 +2,15 @@
 
 #include "Corvus/Scene/Entity.h"
 
-#include "Corvus/Components/StaticMeshComponent.h"
-#include "Corvus/Components/TransformComponent.h"
-
 namespace Corvus
 {
 
     CEntity::CEntity()
     {
-        TransformComponent  = ConstructPoolable<CTransformComponent>(this);
-        StaticMeshComponent = ConstructPoolable<CStaticMeshComponent>(this);
+        TransformComponent  = MakeOwned<CTransformComponent>(this);
+        StaticMeshComponent = MakeOwned<CStaticMeshComponent>(this);
 
-        TransformComponent->AddChild(StaticMeshComponent.Get());
+        TransformComponent->AddChild(StaticMeshComponent.get());
     }
 
 } // namespace Corvus

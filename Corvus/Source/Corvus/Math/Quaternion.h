@@ -16,6 +16,8 @@ namespace Corvus
     public:
         using FQuaternionBase::FQuaternionBase;
 
+        FQuaternion(FQuaternionBase const &Q) : FQuaternionBase{Q} {}
+
         static FQuaternion Normalize(FQuaternion const &Q) { return glm::normalize(Q); }
 
         static FMatrix4 ToMat4(FQuaternion const &Q) { return glm::toMat4(Q); }

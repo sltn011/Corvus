@@ -1,21 +1,64 @@
 #ifndef CORVUS_SOURCE_CORVUS_ASSETS_MATERIAL_MATERIAL_H
 #define CORVUS_SOURCE_CORVUS_ASSETS_MATERIAL_MATERIAL_H
 
-#include "Corvus/Assets/Texture/Texture2D.h"
-
-#include <vulkan/vulkan.h>
+#include "Corvus/Assets/Asset.h"
+#include "Corvus/Assets/AssetRef.h"
+#include "Corvus/Math/Vector.h"
 
 namespace Corvus
 {
 
-    class CMaterial
+    class CShader;
+    class CTexture2D;
+
+    template<typename OtherT>
+    class TMaterialTexParam
     {
     public:
-        CTexture2D      Albedo;
-        CTexture2D      Normal;
-        VkDescriptorSet DescriptorSet = VK_NULL_HANDLE;
+        TMaterialTexParam() = default;
 
-        FUUID UUID;
+        bool IsTexture() const { return (TextureRef.GetUUID() != FUUID{0}) && m_bUseTexture; }
+        bool IsOther() const { return !IsTexture(); }
+
+        void UseTexture() { m_bUseTexture = true; }
+        void UseOther() { m_bUseTexture = false; }
+
+    public:
+        TAssetRef<CTexture2D> TextureRef;
+        OtherT                Other = OtherT{};
+
+    private:
+        bool m_bUseTexture = false;
+    };
+
+    using CAlbedoMap    = TMaterialTexParam<FVector4>;
+    using CNormalMap    = TMaterialTexParam<FVector3>;
+    using CRoughnessMap = TMaterialTexParam<float>;
+    using CMetallicMap  = TMaterialTexParam<float>;
+
+    class CMaterial : public CAsset
+    {
+    public:
+        using Super = CAsset;
+
+        CMaterial();
+
+        virtual SAssetInfo GetAssetInfo() const override;
+
+        TOwn<CShader> const &GetShader() const;
+
+        void LoadInShader();
+
+        void CompileMaterialShader(CString const &BaseShaderFilePath);
+
+    public:
+        CAlbedoMap    AlbedoMap;
+        CNormalMap    NormalMap;
+        CRoughnessMap RoughnessMap;
+        CMetallicMap  MetallicMap;
+
+    private:
+        TOwn<CShader> m_MaterialShader;
     };
 
 } // namespace Corvus

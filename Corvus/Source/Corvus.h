@@ -30,7 +30,11 @@
 #include "Corvus/Scene/Scene.h"
 
 // Renderer
+#include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Renderer.h"
+#include "Corvus/Renderer/Shader.h"
+#include "Corvus/Renderer/VertexArray.h"
+#include "Corvus/Renderer/VertexBuffer.h"
 
 // Math
 #include "Corvus/Math/Math.h"
@@ -41,11 +45,6 @@
 // Time
 #include "Corvus/Time/TimeDelta.h"
 #include "Corvus/Time/TimePoint.h"
-
-// Memory
-#include "Corvus/Memory/ApplicationPools.h"
-#include "Corvus/Memory/Pool.h"
-#include "Corvus/Memory/Poolable.h"
 
 // Entry Point
 #include "Corvus/Core/EntryPoint.h"

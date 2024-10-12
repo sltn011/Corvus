@@ -12,7 +12,7 @@ namespace Corvus
     {
     }
 
-    void CLayerGUI::Render()
+    void CLayerGUI::OnGUIRender(FTimeDelta ElapsedTime)
     {
         static bool bShow = true;
         ImGui::ShowDemoWindow(&bShow);

@@ -1,7 +1,8 @@
 #ifndef CORVUS_SOURCE_CORVUS_SCENE_ENTITY_H
 #define CORVUS_SOURCE_CORVUS_SCENE_ENTITY_H
 
-#include "Corvus/Memory/Poolable.h"
+#include "Corvus/Components/StaticMeshComponent.h"
+#include "Corvus/Components/TransformComponent.h"
 
 namespace Corvus
 {
@@ -20,8 +21,8 @@ namespace Corvus
         CEntity &operator=(CEntity &&)      = default;
 
     public:
-        TPoolable<CTransformComponent>  TransformComponent;
-        TPoolable<CStaticMeshComponent> StaticMeshComponent;
+        TOwn<CTransformComponent>  TransformComponent;
+        TOwn<CStaticMeshComponent> StaticMeshComponent;
     };
 
 } // namespace Corvus
