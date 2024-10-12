@@ -25,7 +25,7 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT_FMT(
             !m_bIsInitialized,
-            "Can not re-initialize already created window \"{0}\"!",
+            "Can not re-initialize already created window \"{}\"!",
             m_WindowData.WindowName
         );
 

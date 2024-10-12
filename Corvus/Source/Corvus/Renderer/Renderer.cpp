@@ -115,11 +115,6 @@ namespace Corvus
                 TOwn<CShader> const &MaterialShader = Material->GetShader();
 
                 FMatrix4 trs    = ModelTransformMatrix;
-                FVector4 yscale = trs[1];
-                yscale.x *= 3.2f;
-                yscale.y *= 3.2f;
-                yscale.z *= 3.2f;
-                trs[1] = yscale;
 
                 MaterialShader->Bind();
                 MaterialShader->SetMat4("u_Transform", trs);

@@ -3,7 +3,6 @@
 
 #include "Corvus/Components/StaticMeshComponent.h"
 #include "Corvus/Components/TransformComponent.h"
-#include "Corvus/Memory/Poolable.h"
 
 namespace Corvus
 {
@@ -22,8 +21,8 @@ namespace Corvus
         CEntity &operator=(CEntity &&)      = default;
 
     public:
-        TPoolable<CTransformComponent>  TransformComponent;
-        TPoolable<CStaticMeshComponent> StaticMeshComponent;
+        TOwn<CTransformComponent>  TransformComponent;
+        TOwn<CStaticMeshComponent> StaticMeshComponent;
     };
 
 } // namespace Corvus

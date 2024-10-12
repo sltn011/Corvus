@@ -16,7 +16,7 @@ namespace Corvus
         FTimePoint const ShaderCreationEnd;
         FTimeDelta const ShaderCreationTime = ShaderCreationEnd - ShaderCreationBegin;
         CORVUS_CORE_TRACE(
-            "Created OpenGL Shader {0}, took {1}ms", FilePath, ShaderCreationTime.MilliSeconds()
+            "Created OpenGL Shader {}, took {}ms", FilePath, ShaderCreationTime.MilliSeconds()
         );
     }
 
@@ -173,7 +173,7 @@ namespace Corvus
         CString FragmentShaderCodeString;
         if (!IsReadFileSuccessfull(FilePath, VersionString, VertexShaderCodeString, FragmentShaderCodeString))
         {
-            CORVUS_CORE_NO_ENTRY_FMT("Failed to read shader from file{1}", FilePath);
+            CORVUS_CORE_NO_ENTRY_FMT("Failed to read shader from file{}", FilePath);
         }
 
         SizeT                     ShaderCodeStrings = Parameters.size() + 2; // +version string, +shader code
@@ -216,7 +216,7 @@ namespace Corvus
         std::ifstream CodeFile(FilePath);
         if (!CodeFile.is_open())
         {
-            CORVUS_CORE_NO_ENTRY_FMT("Error opening OpenGL Shader file {1}", FilePath);
+            CORVUS_CORE_NO_ENTRY_FMT("Error opening OpenGL Shader file {}", FilePath);
             return false;
         }
 
@@ -258,7 +258,7 @@ namespace Corvus
 
         if (!bVersionFound)
         {
-            CORVUS_CORE_NO_ENTRY_FMT("No #version found in Shader {1}", FilePath);
+            CORVUS_CORE_NO_ENTRY_FMT("No #version found in Shader {}", FilePath);
             return false;
         }
 
@@ -296,7 +296,7 @@ namespace Corvus
             {
                 CORVUS_DUMP(CodePart);
             }
-            CORVUS_CORE_NO_ENTRY_FMT("OpenGLShader failed to link! {1}", LinkError);
+            CORVUS_CORE_NO_ENTRY_FMT("OpenGLShader failed to link! {}", LinkError);
         }
 
         glDeleteShader(VertexShader);
@@ -323,7 +323,7 @@ namespace Corvus
             {
                 CORVUS_DUMP(CodePart);
             }
-            CORVUS_CORE_NO_ENTRY_FMT("OpenGLShader failed to compile! {1}", CompileError);
+            CORVUS_CORE_NO_ENTRY_FMT("OpenGLShader failed to compile! {}", CompileError);
         }
 
         return Shader;
@@ -377,7 +377,7 @@ namespace Corvus
 
         if (Location == -1)
         {
-            CORVUS_CORE_WARN("Invalid OpenGL Shader uniform location for {0} in Programm {1}", Name, m_ID);
+            CORVUS_CORE_WARN("Invalid OpenGL Shader uniform location for {} in Programm {}", Name, m_ID);
         }
 
         return Location;

@@ -1,7 +1,9 @@
 #ifndef CORVUS_SOURCE_CORVUS_SCENE_SCENE_H
 #define CORVUS_SOURCE_CORVUS_SCENE_SCENE_H
 
-#include "Corvus/Memory/Array.h"
+#include "Corvus/Core/Base.h"
+
+#include <vector>
 
 namespace Corvus
 {
@@ -12,19 +14,19 @@ namespace Corvus
     class CScene
     {
     public:
-        void AddEntity(TPoolable<CEntity> &&Entity);
-        void RemoveEntity(TPoolable<CEntity> const &Entity);
+        void AddEntity(TOwn<CEntity> &&Entity);
+        void RemoveEntity(TOwn<CEntity> const &Entity);
 
-        TArray<TPoolable<CEntity>>       &GetEntities();
-        TArray<TPoolable<CEntity>> const &GetEntities() const;
+        std::vector<TOwn<CEntity>>       &GetEntities();
+        std::vector<TOwn<CEntity>> const &GetEntities() const;
 
         CCamera       *GetPlayerCamera();
         CCamera const *GetPlayerCamera() const;
-        void           SetPlayerCamera(TPoolable<CCamera> &&PlayerCamera);
+        void           SetPlayerCamera(TOwn<CCamera> &&PlayerCamera);
 
     private:
-        TPoolable<CCamera>         m_PlayerCamera;
-        TArray<TPoolable<CEntity>> m_Entities;
+        TOwn<CCamera>         m_PlayerCamera;
+        std::vector<TOwn<CEntity>> m_Entities;
     };
 
 } // namespace Corvus
