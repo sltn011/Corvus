@@ -8,37 +8,37 @@
 namespace Corvus
 {
 
-    void CScene::AddEntity(TOwn<CEntity> &&Entity)
+    void CScene::AddEntity(TPoolable<CEntity> &&Entity)
     {
-        m_Entities.emplace_back(std::move(Entity));
+        m_Entities.PushBack(std::move(Entity));
     }
 
-    void CScene::RemoveEntity(TOwn<CEntity> const &Entity)
+    void CScene::RemoveEntity(TPoolable<CEntity> const &Entity)
     {
-        m_Entities.erase(std::remove(m_Entities.begin(), m_Entities.end(), Entity), m_Entities.end());
+        m_Entities.Erase(std::remove(m_Entities.Begin(), m_Entities.End(), Entity), m_Entities.End());
     }
 
-    std::vector<TOwn<CEntity>> &CScene::GetEntities()
+    TArray<TPoolable<CEntity>> &CScene::GetEntities()
     {
         return m_Entities;
     }
 
-    std::vector<TOwn<CEntity>> const &CScene::GetEntities() const
+    TArray<TPoolable<CEntity>> const &CScene::GetEntities() const
     {
         return m_Entities;
     }
 
     CCamera *CScene::GetPlayerCamera()
     {
-        return m_PlayerCamera.get();
+        return m_PlayerCamera.Get();
     }
 
     CCamera const *CScene::GetPlayerCamera() const
     {
-        return m_PlayerCamera.get();
+        return m_PlayerCamera.Get();
     }
 
-    void CScene::SetPlayerCamera(TOwn<CCamera> &&PlayerCamera)
+    void CScene::SetPlayerCamera(TPoolable<CCamera> &&PlayerCamera)
     {
         m_PlayerCamera = std::move(PlayerCamera);
     }

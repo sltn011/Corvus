@@ -28,7 +28,7 @@ namespace Corvus
         m_IsPlayerControlled = IsPlayerControlled;
         if (m_IsPlayerControlled && !m_MovementComponent)
         {
-            m_MovementComponent = MakeOwned<CCameraMovementComponent>(this, CameraMoveSpeed);
+            m_MovementComponent = ConstructPoolable<CCameraMovementComponent>(this, CameraMoveSpeed);
         }
     }
 

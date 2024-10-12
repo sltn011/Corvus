@@ -114,10 +114,8 @@ namespace Corvus
                 CMaterial           *Material       = Primitive.MaterialRef.GetRawPtr();
                 TOwn<CShader> const &MaterialShader = Material->GetShader();
 
-                FMatrix4 trs    = ModelTransformMatrix;
-
                 MaterialShader->Bind();
-                MaterialShader->SetMat4("u_Transform", trs);
+                MaterialShader->SetMat4("u_Transform", ModelTransformMatrix);
                 MaterialShader->SetMat4("u_ProjView", ProjectionViewMatrix);
                 Material->LoadInShader();
 

@@ -142,7 +142,7 @@ namespace Corvus
         UInt32 const WindowWidth  = CApplication::GetInstance().GetWindow().GetWindowWidth();
         UInt32 const WindowHeight = CApplication::GetInstance().GetWindow().GetWindowHeight();
 
-        TOwn<CPerspectiveCamera> Camera = MakeOwned<CPerspectiveCamera>();
+        TPoolable<CPerspectiveCamera> Camera = ConstructPoolable<CPerspectiveCamera>();
         Camera->SetViewportSize(static_cast<float>(WindowWidth), static_cast<float>(WindowHeight));
         Camera->SetFoVAngle(60.0f);
         Camera->SetClipPlanes(0.01f, 100.0f);
@@ -153,7 +153,7 @@ namespace Corvus
 
     void CEditorAppLayer::PopulateScene()
     {
-        TOwn<CEntity> Entity = MakeOwned<CEntity>();
+        TPoolable<CEntity> Entity = ConstructPoolable<CEntity>();
         Entity->TransformComponent->SetPosition(FVector3{0.0f, -1.5f, -5.0f});
         Entity->TransformComponent->SetRotation(FRotation{{0.0f, 45.0f, 0.0f}});
         Entity->TransformComponent->SetScale(FVector3{1.0f});
@@ -227,7 +227,7 @@ namespace Corvus
         }
 
         // Provide Entities with their StaticModels
-        for (TOwn<CEntity> const &Entity : m_Scene.GetEntities())
+        for (TPoolable<CEntity> const &Entity : m_Scene.GetEntities())
         {
             FUUID StaticModelUUID = Entity->StaticMeshComponent->StaticModelRef.GetUUID();
             Entity->StaticMeshComponent->StaticModelRef.SetRawPtr(
@@ -283,7 +283,7 @@ namespace Corvus
 
     void CEditorAppLayer::RenderScene(FTimeDelta const ElapsedTime)
     {
-        for (TOwn<CEntity> const &Entity : m_Scene.GetEntities())
+        for (TPoolable<CEntity> const &Entity : m_Scene.GetEntities())
         {
             CRenderer::SubmitStaticModel(
                 *Entity->StaticMeshComponent->StaticModelRef.GetRawPtr(),
@@ -353,10 +353,10 @@ namespace Corvus
             OnEntitySelected.Broadcast(nullptr);
         }
 
-        std::vector<TOwn<CEntity>> const &Entities = m_Scene.GetEntities();
-        for (SizeT EntityIndex = 0; EntityIndex < Entities.size(); ++EntityIndex)
+        TArray<TPoolable<CEntity>> const &Entities = m_Scene.GetEntities();
+        for (SizeT EntityIndex = 0; EntityIndex < Entities.GetSize(); ++EntityIndex)
         {
-            CEntity *EntityPtr = Entities[EntityIndex].get();
+            CEntity *EntityPtr = Entities[EntityIndex].Get();
             if (EntityPtr == SelectedEntityPtr)
             {
                 OnEntitySelected.Broadcast(EntityPtr);
