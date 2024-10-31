@@ -106,7 +106,7 @@ namespace Corvus
         MakeTransformTreeDirty();
     }
 
-    TArray<CBaseSceneComponent *> &CBaseSceneComponent::GetChildren()
+    std::vector<CBaseSceneComponent *> &CBaseSceneComponent::GetChildren()
     {
         return m_Children;
     }
@@ -115,19 +115,19 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT(Child != nullptr);
 
-        m_Children.PushBack(Child);
+        m_Children.push_back(Child);
         Child->SetParent(this);
     }
 
     bool CBaseSceneComponent::RemoveChild(CBaseSceneComponent *const Child)
     {
-        TArray<CBaseSceneComponent *>::Iterator NewEndIt =
-            std::remove(m_Children.Begin(), m_Children.End(), Child);
-        if (NewEndIt == m_Children.End())
+        std::vector<CBaseSceneComponent *>::iterator NewEndIt =
+            std::remove(m_Children.begin(), m_Children.end(), Child);
+        if (NewEndIt == m_Children.end())
         {
             return false;
         }
-        m_Children.Erase(NewEndIt, m_Children.End());
+        m_Children.erase(NewEndIt, m_Children.end());
         return true;
     }
 

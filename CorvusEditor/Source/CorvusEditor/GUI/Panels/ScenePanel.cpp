@@ -17,18 +17,18 @@ namespace Corvus
     {
         if (ImGui::Begin("Scene", nullptr, EnumRawValue(PanelFlags)))
         {
-            TArray<TPoolable<CEntity>> const &Entities = m_Scene->GetEntities();
+            std::vector<TOwn<CEntity>> const &Entities = m_Scene->GetEntities();
 
             SizeT EntityIndex = 0;
             std::for_each(
-                Entities.Begin(),
-                Entities.End(),
-                [&](TPoolable<CEntity> const &Entity)
+                Entities.begin(),
+                Entities.end(),
+                [&](TOwn<CEntity> const &Entity)
                 {
                     CString EntityName = "Entity " + std::to_string(EntityIndex);
-                    if (ImGui::Selectable(EntityName.c_str(), Entity.Get() == m_SelectedEntity))
+                    if (ImGui::Selectable(EntityName.c_str(), Entity.get() == m_SelectedEntity))
                     {
-                        SetSelectedEntity(Entity.Get());
+                        SetSelectedEntity(Entity.get());
                     }
                 }
             );

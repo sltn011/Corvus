@@ -4,7 +4,8 @@
 #include "Corvus/Components/BaseDataComponent.h"
 #include "Corvus/Math/Transform.h"
 #include "Corvus/Math/TransformCache.h"
-#include "Corvus/Memory/Array.h"
+
+#include <vector>
 
 namespace Corvus
 {
@@ -40,7 +41,7 @@ namespace Corvus
         FTransform GetTransform() const;
         void       SetTransform(FTransform const &Transform);
 
-        TArray<CBaseSceneComponent *> &GetChildren();
+        std::vector<CBaseSceneComponent *> &GetChildren();
         void                           AddChild(CBaseSceneComponent *const Child);
         bool                           RemoveChild(CBaseSceneComponent *const Child);
 
@@ -56,7 +57,7 @@ namespace Corvus
         FTransform      m_Transform;
         FTransformCache m_TransformCache;
 
-        TArray<CBaseSceneComponent *> m_Children;
+        std::vector<CBaseSceneComponent *> m_Children;
         CBaseSceneComponent          *m_Parent = nullptr;
     };
 

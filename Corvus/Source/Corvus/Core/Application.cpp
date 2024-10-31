@@ -6,7 +6,6 @@
 #include "Corvus/Camera/PerspectiveCamera.h"
 #include "Corvus/Core/CoreLayer.h"
 #include "Corvus/GUI/LayerGUI.h"
-#include "Corvus/Memory/ApplicationPools.h"
 #include "Corvus/Profiling/FrameProfiler.h"
 #include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Renderer.h"
@@ -35,8 +34,6 @@ namespace Corvus
 
     void CApplication::Init(SApplicationCreateInfo const &ApplicationCreateInfo)
     {
-        CApplicationPools::Init();
-
         SWindowInitInfo WindowInitInfo{};
         WindowInitInfo.WindowName =
             ApplicationCreateInfo.ApplicationName + " " + ApplicationCreateInfo.ApplicationVersion;

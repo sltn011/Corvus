@@ -108,7 +108,7 @@ namespace Corvus
             UInt32 const WindowWidth  = CApplication::GetInstance().GetWindow().GetWindowWidth();
             UInt32 const WindowHeight = CApplication::GetInstance().GetWindow().GetWindowHeight();
 
-            TPoolable<CPerspectiveCamera> Camera = ConstructPoolable<CPerspectiveCamera>();
+            TOwn<CPerspectiveCamera> Camera = MakeOwned<CPerspectiveCamera>();
             Camera->SetViewportSize(static_cast<float>(WindowWidth), static_cast<float>(WindowHeight));
             Camera->SetFoVAngle(60.0f);
             Camera->SetClipPlanes(0.01f, 100.0f);
@@ -119,7 +119,7 @@ namespace Corvus
 
         void PopulateScene()
         {
-            TPoolable<CEntity> Entity = ConstructPoolable<CEntity>();
+            TOwn<CEntity> Entity = MakeOwned<CEntity>();
             Entity->TransformComponent->SetPosition(FVector3{5.0f, -1.5f, 0.0f});
             Entity->TransformComponent->SetRotation(FRotation{{0.0f, -45.0f, 0.0f}});
             Entity->TransformComponent->SetScale(FVector3{0.01f});
@@ -178,7 +178,7 @@ namespace Corvus
             }
 
             // Provide Entities with their StaticModels
-            for (TPoolable<CEntity> const &Entity : Scene.GetEntities())
+            for (TOwn<CEntity> const &Entity : Scene.GetEntities())
             {
                 FUUID StaticModelUUID = Entity->StaticMeshComponent->StaticModelRef.GetUUID();
                 Entity->StaticMeshComponent->StaticModelRef.SetRawPtr(&StaticModelsAssets.at(StaticModelUUID)
@@ -233,7 +233,7 @@ namespace Corvus
 
         void RenderScene(FTimeDelta const ElapsedTime)
         {
-            for (TPoolable<CEntity> const &Entity : Scene.GetEntities())
+            for (TOwn<CEntity> const &Entity : Scene.GetEntities())
             {
                 CRenderer::SubmitStaticModel(
                     *Entity->StaticMeshComponent->StaticModelRef.GetRawPtr(),
