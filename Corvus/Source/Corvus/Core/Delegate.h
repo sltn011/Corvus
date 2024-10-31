@@ -53,7 +53,7 @@ namespace Corvus
             }
         }
 
-        void InvokeIfBound(Args... args) const
+        void InvokeIfBound(Args &&...args) const
         {
             if (m_Invoker)
             {
@@ -61,20 +61,20 @@ namespace Corvus
             }
         }
 
-        R Invoke(Args... args) const
+        R Invoke(Args &&...args) const
         {
             CORVUS_CORE_ASSERT_FMT(m_Invoker != nullptr, "Nothing bound to delegate!");
             return m_Invoker->Invoke(std::forward<Args>(args)...);
         }
 
-        R operator()(Args... args) const { return Invoke(std::forward<Args>(args)...); }
+        R operator()(Args &&...args) const { return Invoke(std::forward<Args>(args)...); }
 
     private:
         template<typename R, typename... Args>
         class TBaseInvoker
         {
         public:
-            virtual R Invoke(Args... args) const = 0;
+            virtual R Invoke(Args &&...args) const = 0;
         };
 
         template<typename T, typename F, typename R, typename... Args>
@@ -87,7 +87,7 @@ namespace Corvus
                 m_Method = Method;
             }
 
-            virtual R Invoke(Args... args) const override
+            virtual R Invoke(Args &&...args) const override
             {
                 CORVUS_CORE_ASSERT(m_Object != nullptr && m_Method != nullptr);
                 return (m_Object->*m_Method)(std::forward<Args>(args)...);
@@ -104,7 +104,7 @@ namespace Corvus
         public:
             TFunctionInvoker(F const Function) { m_Function = Function; }
 
-            R Invoke(Args... args) const override
+            R Invoke(Args &&...args) const override
             {
                 CORVUS_CORE_ASSERT(m_Function != nullptr);
                 return (*m_Function)(std::forward<Args>(args)...);
@@ -145,7 +145,7 @@ namespace Corvus
             m_Bindings.emplace_back(std::move(NewEntry));
         }
 
-        void Broadcast(Args... args) const
+        void Broadcast(Args &&...args) const
         {
             for (TDelegate<void(Args...)> const &Binding : m_Bindings)
             {
@@ -153,7 +153,7 @@ namespace Corvus
             }
         }
 
-        void operator()(Args... args) const { Broadcast(std::forward<Args>(args)...); }
+        void operator()(Args &&...args) const { Broadcast(std::forward<Args>(args)...); }
 
     private:
         std::vector<TDelegate<void(Args...)>> m_Bindings;

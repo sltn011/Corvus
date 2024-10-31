@@ -8,9 +8,20 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-using FMatrix2 = glm::mat2;
-using FMatrix3 = glm::mat3;
-using FMatrix4 = glm::mat4;
+using FMatrix2   = glm::mat2;
+using FMatrix2_2 = FMatrix2;
+using FMatrix2_3 = glm::mat2x3;
+using FMatrix2_4 = glm::mat2x4;
+
+using FMatrix3   = glm::mat3;
+using FMatrix3_2 = glm::mat3x2;
+using FMatrix3_3 = FMatrix3;
+using FMatrix3_4 = glm::mat3x4;
+
+using FMatrix4   = glm::mat4;
+using FMatrix4_2 = glm::mat4x2;
+using FMatrix4_3 = glm::mat4x3;
+using FMatrix4_4 = FMatrix4;
 
 namespace Corvus::FMatrix
 {
@@ -54,12 +65,6 @@ namespace Corvus::FMatrix
     inline FMatrix4 Ortho(float Left, float Right, float Bottom, float Top, float ClipNear, float ClipFar)
     {
         return glm::ortho(Left, Right, Bottom, Top, ClipNear, ClipFar);
-    }
-
-    template<typename TMatrix>
-    inline float *ValuePtr(TMatrix &FMatrix)
-    {
-        return glm::value_ptr(FMatrix);
     }
 
     template<typename TMatrix>

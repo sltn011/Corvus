@@ -4,8 +4,9 @@
 #include "Corvus/Core/Base.h"
 #include "Corvus/Core/Delegate.h"
 #include "Corvus/Event/Event.h"
-#include "Corvus/Math/Vector.h"
-#include "Corvus/Renderer/RenderingContext.h"
+#include "Corvus/GUI/GUIController.h"
+
+#include <vulkan/vulkan.h>
 
 struct GLFWwindow;
 
@@ -14,24 +15,13 @@ namespace Corvus
 
     CORVUS_DECLARE_MULTICAST_DELEGATE(COnEventDelegate, CEvent &);
 
-    struct SWindowSettings
-    {
-        bool bVSyncEnabled = false;
-        bool bFullScreen   = false;
-    };
-
     struct SWindowData
     {
-        CString         WindowName;
-        SWindowSettings WindowSettings;
-    };
+        CString WindowName;
+        Int32   WindowWidth  = 0;
+        Int32   WindowHeight = 0;
 
-    struct SWindowInitInfo
-    {
-        CString         WindowName;
-        UInt32          WindowWidth  = 0;
-        UInt32          WindowHeight = 0;
-        SWindowSettings WindowSettings;
+        bool bFullScreen = false;
     };
 
     class CWindow
@@ -48,30 +38,34 @@ namespace Corvus
         CWindow(CWindow &&)                 = default;
         CWindow &operator=(CWindow &&)      = default;
 
-        virtual void Init(SWindowInitInfo const &InitInfo) = 0;
-        virtual void InitRenderingContext()                = 0;
+        virtual void Init(SWindowData const &Settings) = 0;
+        virtual void CreateGUIController()             = 0;
+        virtual void DestroyGUIController()            = 0;
 
         virtual void OnUpdate() = 0;
 
-        bool IsInitialized() const { return m_bIsInitialized; }
-
+        bool    IsInitialized() const { return m_bIsInitialized; }
+        UInt32  GetWindowWidth() const { return m_WindowData.WindowWidth; }
+        UInt32  GetWindowHeight() const { return m_WindowData.WindowHeight; }
         CString GetWindowName() const { return m_WindowData.WindowName; }
 
-        // In pixels
-        virtual FUIntVector2 GetWindowSize() const = 0;
-        UInt32               GetWindowWidth() const;
-        UInt32               GetWindowHeight() const;
+        virtual std::pair<UInt32, UInt32> GetFramebufferSize() const = 0;
 
         virtual bool ShouldClose() const = 0;
         virtual void SetShouldClose()    = 0;
 
-        bool         IsVSyncEnabled() const;
-        virtual void SetVSyncEnabled(bool bValue) = 0;
-
         bool         IsFullScreen() const;
         virtual void SetFullScreen(bool bValue) = 0;
 
+        virtual void AwaitNextEvent() const = 0;
+
         virtual void *GetRawWindow() = 0;
+
+        virtual std::vector<char const *> GetRequiredExtensions() = 0;
+
+        virtual VkSurfaceKHR CreateVulkanSurfaceHandler() const = 0;
+
+        CGUIController &GetGUIController();
 
         COnEventDelegate OnEvent;
 
@@ -79,7 +73,7 @@ namespace Corvus
         SWindowData m_WindowData;
         bool        m_bIsInitialized = false;
 
-        TOwn<CRenderingContext> m_RenderingContext;
+        CGUIController m_GUIController;
     };
 
 } // namespace Corvus

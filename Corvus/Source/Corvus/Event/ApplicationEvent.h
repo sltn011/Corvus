@@ -44,9 +44,7 @@ namespace Corvus
     public:
         using Super = CEvent;
 
-        CORVUS_EVENT_GENERATED_BODY(
-            CEvent::EEventCategory::Application, CEvent::EEventType::WindowChangeFocus
-        );
+        CORVUS_EVENT_GENERATED_BODY(CEvent::EEventCategory::Application, CEvent::EEventType::WindowChangeFocus);
 
         CWindowChangeFocusEvent(bool bSetFocusValue) : bSetFocus{bSetFocusValue} {}
 

@@ -66,7 +66,7 @@ namespace Corvus
         float const OrthBottom = -OrthSizeH * 0.5f;
         float const OrthLeft   = -OrthSizeW * 0.5f;
         float const OrthRight  = +OrthSizeW * 0.5f;
-        m_ProjectionMatrix = FMatrix::Ortho(OrthLeft, OrthRight, OrthBottom, OrthTop, m_NearClip, m_FarClip);
+        m_ProjectionMatrix     = FMatrix::Ortho(OrthLeft, OrthRight, OrthBottom, OrthTop, m_NearClip, m_FarClip);
     }
 
     void COrthographicCamera::RecalculateProjectionViewMatrix()

@@ -30,10 +30,6 @@ namespace Corvus
         FRotation GetRotation() const;
         void      SetRotation(FRotation const &Rotation);
 
-        static bool DecomposeTransform(
-            FMatrix4 TransformMatrix, FVector3 &OutTranslation, FQuaternion &OutRotation, FVector3 &OutScale
-        );
-
     private:
         FVector3  m_Position;
         FRotation m_Rotation;

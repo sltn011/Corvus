@@ -7,8 +7,7 @@
 namespace Corvus
 {
 
-    FMatrix4 FTransformCache::GetTransformMatrix(FTransform const &Transform, FMatrix4 const &ParentTransform)
-        const
+    FMatrix4 FTransformCache::GetTransformMatrix(FTransform const &Transform, FMatrix4 const &ParentTransform) const
     {
         if (m_bIsDirty)
         {

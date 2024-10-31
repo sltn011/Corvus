@@ -23,6 +23,7 @@ namespace Corvus
 
     void CBaseSceneComponent::SetPosition(FVector3 const &Position)
     {
+        m_TransformCache.MakeDirty();
         m_Transform.SetPosition(Position);
     }
 
@@ -38,6 +39,7 @@ namespace Corvus
 
     void CBaseSceneComponent::SetRotation(FRotation const &Rotation)
     {
+        m_TransformCache.MakeDirty();
         m_Transform.SetRotation(Rotation);
     }
 
@@ -75,6 +77,7 @@ namespace Corvus
 
     void CBaseSceneComponent::SetScale(FVector3 const &Scale)
     {
+        m_TransformCache.MakeDirty();
         m_Transform.SetScale(Scale);
     }
 
@@ -103,10 +106,10 @@ namespace Corvus
     void CBaseSceneComponent::SetTransform(FTransform const &Transform)
     {
         m_Transform = Transform;
-        MakeTransformTreeDirty();
+        m_TransformCache.MakeDirty();
     }
 
-    std::vector<CBaseSceneComponent *> &CBaseSceneComponent::GetChildren()
+    TArray<CBaseSceneComponent *> &CBaseSceneComponent::GetChildren()
     {
         return m_Children;
     }
@@ -115,19 +118,18 @@ namespace Corvus
     {
         CORVUS_CORE_ASSERT(Child != nullptr);
 
-        m_Children.push_back(Child);
+        m_Children.PushBack(Child);
         Child->SetParent(this);
     }
 
     bool CBaseSceneComponent::RemoveChild(CBaseSceneComponent *const Child)
     {
-        std::vector<CBaseSceneComponent *>::iterator NewEndIt =
-            std::remove(m_Children.begin(), m_Children.end(), Child);
-        if (NewEndIt == m_Children.end())
+        TArray<CBaseSceneComponent *>::Iterator NewEndIt = std::remove(m_Children.Begin(), m_Children.End(), Child);
+        if (NewEndIt == m_Children.End())
         {
             return false;
         }
-        m_Children.erase(NewEndIt, m_Children.end());
+        m_Children.Erase(NewEndIt, m_Children.End());
         return true;
     }
 
@@ -139,21 +141,12 @@ namespace Corvus
     void CBaseSceneComponent::SetParent(CBaseSceneComponent *const Parent)
     {
         m_Parent = Parent;
-        MakeTransformTreeDirty();
+        m_TransformCache.MakeDirty();
     }
 
     void CBaseSceneComponent::ResetParent()
     {
         SetParent(nullptr);
-    }
-
-    void CBaseSceneComponent::MakeTransformTreeDirty()
-    {
-        m_TransformCache.MakeDirty();
-        for (CBaseSceneComponent *Child : m_Children)
-        {
-            Child->MakeTransformTreeDirty();
-        }
     }
 
 } // namespace Corvus

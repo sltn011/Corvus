@@ -2,16 +2,17 @@
 
 #include "Corvus/Core/Application.h"
 
+#include "Corvus/Assets/Model/StaticMesh.h"
+#include "Corvus/Assets/Model/StaticMeshPrimitive.h"
+#include "Corvus/Assets/Model/StaticModel.h"
 #include "Corvus/Camera/OrthographicCamera.h"
 #include "Corvus/Camera/PerspectiveCamera.h"
+#include "Corvus/Components/StaticMeshComponent.h"
 #include "Corvus/Core/CoreLayer.h"
 #include "Corvus/GUI/LayerGUI.h"
+#include "Corvus/Memory/ApplicationPools.h"
 #include "Corvus/Profiling/FrameProfiler.h"
-#include "Corvus/Renderer/IndexBuffer.h"
 #include "Corvus/Renderer/Renderer.h"
-#include "Corvus/Renderer/Shader.h"
-#include "Corvus/Renderer/VertexArray.h"
-#include "Corvus/Renderer/VertexBuffer.h"
 #include "Corvus/Time/TimeDelta.h"
 #include "Corvus/Time/TimePoint.h"
 
@@ -19,37 +20,45 @@ namespace Corvus
 {
     CApplication *CApplication::s_ApplicationInstance = nullptr;
 
-    CApplication::CApplication(SApplicationCreateInfo const &ApplicationCreateInfo)
+    CApplication::CApplication()
     {
         CORVUS_CORE_ASSERT_FMT(!s_ApplicationInstance, "Only one instance of application is allowed!");
 
         s_ApplicationInstance = this;
 
-        Init(ApplicationCreateInfo);
+        Init();
     }
 
     CApplication::~CApplication()
     {
+        while (!m_LayersStack.Empty())
+        {
+            m_LayersStack.PopLayer();
+        }
+
+        AssetDrawer.DestroyRenderData();
+
+        m_Window->DestroyGUIController();
+
+        DestroyRenderer();
+
+        s_ApplicationInstance = nullptr;
     }
 
-    void CApplication::Init(SApplicationCreateInfo const &ApplicationCreateInfo)
+    void CApplication::Init()
     {
-        SWindowInitInfo WindowInitInfo{};
-        WindowInitInfo.WindowName =
-            ApplicationCreateInfo.ApplicationName + " " + ApplicationCreateInfo.ApplicationVersion;
-        WindowInitInfo.WindowWidth                  = ApplicationCreateInfo.ApplicationWindowWidth;
-        WindowInitInfo.WindowHeight                 = ApplicationCreateInfo.ApplicationWindowHeight;
-        WindowInitInfo.WindowSettings.bFullScreen   = false;
-        WindowInitInfo.WindowSettings.bVSyncEnabled = true;
+        CApplicationPools::Init();
 
-        InitWindow(WindowInitInfo);
-
-        InitGUIController();
+        InitWindow();
 
         InitRenderer();
 
+        m_Window->CreateGUIController();
+
+        AssetDrawer.DefaultTextures.Create();
+
         PushLayer(CLayer::Create<CCoreLayer>());
-        // PushLayer(CLayer::Create<CLayerGUI>("GUI", true));
+        // PushLayer(CLayer::Create<CLayerGUI>("GUI", true)); ImGUI not working right now
     }
 
     void CApplication::Run()
@@ -63,16 +72,29 @@ namespace Corvus
             FTimeDelta const ElapsedTime = TimePointNew - TimePointOld;
             TimePointOld                 = TimePointNew;
 
+            Renderer().BeginFrame();
+
             UpdateLayers(ElapsedTime);
-            RenderLayers(ElapsedTime);
+            RenderLayers();
+
+            Renderer().EndFrame();
 
             m_Window->OnUpdate();
 
-            CORVUS_EVAL_IF_CONSTEXPR(
-                CFrameProfiler::IsEnabled, CFrameProfiler::RecordFrameProcessingTime, ElapsedTime
-            );
+            CORVUS_EVAL_IF_CONSTEXPR(CFrameProfiler::IsEnabled, CFrameProfiler::RecordFrameProcessingTime, ElapsedTime);
             CORVUS_EVAL_IF_CONSTEXPR(CFrameProfiler::IsEnabled, CFrameProfiler::StopFrame);
+
+#if defined(CORVUS_DEBUG)
+            CRenderer &R = Renderer();
+            if (Renderer().FrameValidationErrors > 0)
+            {
+                CORVUS_DEBUG_BREAK();
+                Renderer().FrameValidationErrors = 0;
+            }
+#endif
         }
+
+        Renderer().AwaitIdle();
     }
 
     void CApplication::PushLayer(TOwn<CLayer> &&NewLayer)
@@ -80,9 +102,14 @@ namespace Corvus
         m_LayersStack.PushLayer(std::move(NewLayer));
     }
 
-    TOwn<CLayer> CApplication::PopLayer()
+    void CApplication::PopLayer()
     {
-        return m_LayersStack.PopLayer();
+        m_LayersStack.PopLayer();
+    }
+
+    TOwn<CLayer> &CApplication::TopLayer()
+    {
+        return m_LayersStack.TopLayer();
     }
 
     void CApplication::UpdateLayers(FTimeDelta ElapsedTime)
@@ -93,14 +120,14 @@ namespace Corvus
         }
     }
 
-    void CApplication::RenderLayers(FTimeDelta ElapsedTime)
+    void CApplication::RenderLayers()
     {
-        if (!m_GUIController.IsInitialized())
+        if (!m_Window->GetGUIController().IsInitialized())
         {
             return;
         }
 
-        m_GUIController.BeginFrame();
+        m_Window->GetGUIController().BeginFrame();
         for (auto It = m_LayersStack.Begin(); It != m_LayersStack.End(); ++It)
         {
             if (!(*It)->IsEnabled())
@@ -108,9 +135,9 @@ namespace Corvus
                 continue;
             }
 
-            (*It)->OnGUIRender(ElapsedTime);
+            (*It)->Render();
         }
-        m_GUIController.EndFrame();
+        m_Window->GetGUIController().EndFrame();
     }
 
     void CApplication::OnEventReceived(CEvent &Event)
@@ -125,11 +152,21 @@ namespace Corvus
         }
     }
 
-    void CApplication::InitWindow(SWindowInitInfo const &WindowInitInfo)
+    CWindow &CApplication::GetWindow()
     {
+        return *m_Window;
+    }
+
+    void CApplication::InitWindow()
+    {
+        SWindowData WindowSettings;
+        WindowSettings.WindowWidth  = 1600;
+        WindowSettings.WindowHeight = 900;
+        WindowSettings.WindowName   = "TestWindow";
+
         m_Window = CWindow::Create();
         CORVUS_CORE_ASSERT(m_Window);
-        m_Window->Init(WindowInitInfo);
+        m_Window->Init(WindowSettings);
         m_Window->OnEvent.BindObject(this, &CApplication::OnEventReceived);
 
         CORVUS_CORE_INFO(
@@ -140,14 +177,16 @@ namespace Corvus
         );
     }
 
-    void CApplication::InitGUIController()
-    {
-        m_GUIController.Init();
-    }
-
     void CApplication::InitRenderer()
     {
-        CRenderer::Init();
+        Renderer().Create();
+        CORVUS_CORE_INFO("Renderer created");
+    }
+
+    void CApplication::DestroyRenderer()
+    {
+        Renderer().Destroy();
+        CORVUS_CORE_INFO("Renderer destroyed");
     }
 
 } // namespace Corvus

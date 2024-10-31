@@ -1,12 +1,12 @@
-# Corvus 3D Game Engine  
+# Corvus 3D - Vulkan Game Engine  
   
 
 ![Preview from 08-10-2022](https://github.com/sltn011/Corvus/blob/main/PreviewImages/31-12-2022.png)  
   
 Corvus is a 3D Game Engine currenlty being developed for x64 Windows, designed to be a lightweight solution for making high performance games with high quality graphics.  
-Engine uses OpenGL 4.6 as it's Rendering API for now, but is built to allow easy integration of other APIs and Platforms support in future.  
 
 Features:
+- Vulkan Renderer
 - Layers based architecture
 - Custom high perfomance system of memory pools for game objects creation
 - Single and Multicast delegates  
@@ -22,9 +22,12 @@ Planned features:
 - Skeletal animations
 - Scripting
 - Networking
-- Support for other Rendering APIs and Platforms
   
-# Getting Started     
+# Getting Started  
+## 0. Download and install Vulkan SDK  
+Download Vulkan SDK 1.3 from https://vulkan.lunarg.com/sdk/home and install it on your PC.  
+**Make sure that path to SDK was added to your PATH system variable!**  
+
 ## 1. Download repository  
 Clone repository using `git clone --recursive https://github.com/sltn011/Corvus.git` to download it with submodules  
 If repository was cloned non-recursive, open project folder and run ```git submodule update --init``` to download submodules  

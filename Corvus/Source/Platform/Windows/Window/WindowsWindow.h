@@ -17,26 +17,32 @@ namespace Corvus
         PWindowsWindow(PWindowsWindow &&)                 = default;
         PWindowsWindow &operator=(PWindowsWindow &&)      = default;
 
-        virtual void Init(SWindowInitInfo const &InitInfo) override;
+        virtual void Init(SWindowData const &Settings) override;
 
         void Destroy();
 
         virtual void OnUpdate() override;
 
-        virtual FUIntVector2 GetWindowSize() const override;
+        virtual std::pair<UInt32, UInt32> GetFramebufferSize() const override;
 
         virtual bool ShouldClose() const override;
         virtual void SetShouldClose() override;
 
-        virtual void SetVSyncEnabled(bool bValue) override;
         virtual void SetFullScreen(bool bValue) override;
 
+        virtual void AwaitNextEvent() const override;
+
         virtual void *GetRawWindow() override;
+
+        virtual std::vector<char const *> GetRequiredExtensions() override;
+
+        virtual VkSurfaceKHR CreateVulkanSurfaceHandler() const override;
 
         static void WindowErrorCallback(int ErrorCode, char const *Description);
 
     protected:
-        virtual void InitRenderingContext() override;
+        virtual void CreateGUIController() override;
+        virtual void DestroyGUIController() override;
 
         void SetupWindowEventsHandlers();
 

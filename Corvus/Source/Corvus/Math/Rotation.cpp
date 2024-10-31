@@ -57,7 +57,7 @@ namespace Corvus
         }
     }
 
-    FMatrix4 FRotation::GetPitchMatrix() const
+    FMatrix4 FRotation::GetRollMatrix() const
     {
         return FQuaternion::ToMat4(FQuaternion::AngleAxis(m_Degrees.x, FVector::Forward));
     }
@@ -67,46 +67,38 @@ namespace Corvus
         return FQuaternion::ToMat4(FQuaternion::AngleAxis(m_Degrees.y, FVector::Up));
     }
 
-    FMatrix4 FRotation::GetRollMatrix() const
+    FMatrix4 FRotation::GetPitchMatrix() const
     {
         return FQuaternion::ToMat4(FQuaternion::AngleAxis(m_Degrees.z, FVector::Right));
     }
 
     FVector3 FRotation::GetForwardVector() const
     {
-        return GetFURVectors()[0];
+        return FVector::Normalize(FVector3(GetRotationMatrix()[0]));
     }
 
     FVector3 FRotation::GetUpVector() const
     {
-        return GetFURVectors()[1];
+        return FVector::Normalize(FVector3(GetRotationMatrix()[1]));
     }
 
     FVector3 FRotation::GetRightVector() const
     {
-        return GetFURVectors()[2];
+        return FVector::Normalize(FVector3(GetRotationMatrix()[2]));
     }
 
     FMatrix3 FRotation::GetFURVectors() const
     {
-        FMatrix3                  RotationMatrix  = FMatrix3(GetRotationMatrix());
-        static constexpr FMatrix3 LocalFURVectors = FMatrix3{FVector::Forward, FVector::Up, FVector::Right};
-
-        FMatrix3 FURVectors = RotationMatrix * LocalFURVectors;
-        FURVectors[0]       = FVector::Normalize(FURVectors[0]);
-        FURVectors[1]       = FVector::Normalize(FURVectors[1]);
-        FURVectors[2]       = FVector::Normalize(FURVectors[2]);
+        FMatrix3 FURVectors = FMatrix3(GetRotationMatrix());
+        FVector::Normalize(FURVectors[0]);
+        FVector::Normalize(FURVectors[1]);
+        FVector::Normalize(FURVectors[2]);
         return FURVectors;
     }
 
-    void FRotation::AddDegrees(FVector3 Degrees)
+    void FRotation::AddRollDegrees(float const RollDegree)
     {
-        m_Degrees += Degrees;
-    }
-
-    void FRotation::AddPitchDegrees(float const PitchDegree)
-    {
-        m_Degrees.x += PitchDegree;
+        m_Degrees.x += RollDegree;
     }
 
     void FRotation::AddYawDegrees(float const YawDegree)
@@ -114,17 +106,12 @@ namespace Corvus
         m_Degrees.y += YawDegree;
     }
 
-    void FRotation::AddRollDegrees(float const RollDegree)
+    void FRotation::AddPitchDegrees(float const PitchDegree)
     {
-        m_Degrees.z += RollDegree;
+        m_Degrees.z += PitchDegree;
     }
 
-    FVector3 FRotation::GetDegrees() const
-    {
-        return m_Degrees;
-    }
-
-    float FRotation::GetPitchDegrees() const
+    float FRotation::GetRollDegrees() const
     {
         return m_Degrees.x;
     }
@@ -134,19 +121,14 @@ namespace Corvus
         return m_Degrees.y;
     }
 
-    float FRotation::GetRollDegrees() const
+    float FRotation::GetPitchDegrees() const
     {
         return m_Degrees.z;
     }
 
-    void FRotation::SetDegrees(FVector3 Degrees)
+    void FRotation::SetRollDegrees(float const RollDegree)
     {
-        m_Degrees = Degrees;
-    }
-
-    void FRotation::SetPitchDegrees(float const PitchDegree)
-    {
-        m_Degrees.x = PitchDegree;
+        m_Degrees.x = RollDegree;
     }
 
     void FRotation::SetYawDegrees(float const YawDegree)
@@ -154,9 +136,9 @@ namespace Corvus
         m_Degrees.y = YawDegree;
     }
 
-    void FRotation::SetRollDegrees(float const RollDegree)
+    void FRotation::SetPitchDegrees(float const PitchDegree)
     {
-        m_Degrees.z = RollDegree;
+        m_Degrees.z = PitchDegree;
     }
 
     ERotationOrder FRotation::GetRotationOrder() const

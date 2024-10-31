@@ -32,8 +32,7 @@ namespace Corvus
 
             for (spdlog::sink_ptr &Sink : LogSinks)
             {
-                Sink->set_pattern("%^[%D %T][%l] %n: %v%$"
-                ); // COLOR([MM/DD/YY HH:MM:SS][loglevel] LogName: Message)
+                Sink->set_pattern("%^[%D %T][%l] %n: %v%$"); // COLOR([MM/DD/YY HH:MM:SS][loglevel] LogName: Message)
             }
 
             s_EngineLogger = MakeRef<spdlog::logger>("CORVUS", LogSinks.begin(), LogSinks.end());
@@ -53,9 +52,8 @@ namespace Corvus
             DumpLogSinks.push_back(MakeRef<spdlog::sinks::basic_file_sink_st>("CorvusDump.log", true));
 
             s_DumpLogger = MakeRef<spdlog::logger>("DUMP", DumpLogSinks.begin(), DumpLogSinks.end());
-            TOwn<spdlog::pattern_formatter> Formatter = MakeOwned<spdlog::pattern_formatter>(
-                "%v", spdlog::pattern_time_type::local, CString{""}
-            ); // No \n
+            TOwn<spdlog::pattern_formatter> Formatter =
+                MakeOwned<spdlog::pattern_formatter>("%v", spdlog::pattern_time_type::local, CString{""}); // No \n
             s_DumpLogger->set_formatter(std::move(Formatter));
             s_EngineLogger->set_level(spdlog::level::trace);
             s_EngineLogger->flush_on(spdlog::level::trace);

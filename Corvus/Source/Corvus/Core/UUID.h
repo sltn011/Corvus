@@ -16,8 +16,6 @@ namespace Corvus
         FUUID();
         FUUID(UInt64 UUID);
 
-        CString ToString() const;
-
         bool operator==(FUUID const &Rhs) const { return m_Value == Rhs.m_Value; }
         bool operator!=(FUUID const &Rhs) const { return m_Value != Rhs.m_Value; }
         bool operator<(FUUID const &Rhs) const { return m_Value < Rhs.m_Value; }
@@ -36,10 +34,7 @@ namespace std
     template<>
     struct hash<::Corvus::FUUID>
     {
-        inline size_t operator()(::Corvus::FUUID const &UUID) const noexcept
-        {
-            return hash<UInt64>{}(UUID.m_Value);
-        }
+        inline size_t operator()(::Corvus::FUUID const &UUID) const noexcept { return hash<UInt64>{}(UUID.m_Value); }
     };
 
 } // namespace std
