@@ -6,12 +6,18 @@ namespace Corvus
 {
 
     VkImageView CRenderer::CreateImageView(
-        VkImage Image, UInt32 MipLevels, VkFormat Format, VkImageAspectFlags AspectFlags
+        VkImage            Image,
+        VkImageViewType    ViewType,
+        UInt32             MipLevels,
+        VkFormat           Format,
+        VkImageAspectFlags AspectFlags,
+        UInt32             LayerCount
     )
     {
         VkImageView ImageView = VK_NULL_HANDLE;
 
-        VkImageViewCreateInfo CreateInfo = VkInit::ImageViewCreateInfo(Image, Format, AspectFlags, MipLevels);
+        VkImageViewCreateInfo CreateInfo =
+            VkInit::ImageViewCreateInfo(Image, Format, ViewType, AspectFlags, MipLevels, LayerCount);
 
         if (vkCreateImageView(Device, &CreateInfo, nullptr, &ImageView) != VK_SUCCESS)
         {

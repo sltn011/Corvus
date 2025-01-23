@@ -5,7 +5,7 @@
 #include "Corvus/Assets/Material/Material.h"
 #include "Corvus/Assets/Model/GLTFModelLoader.h"
 #include "Corvus/Assets/Model/StaticModel.h"
-// #include "Corvus/Assets/Texture/Texture2D.h"
+// #include "Corvus/Assets/Texture/Texture.h"
 
 namespace Corvus
 {

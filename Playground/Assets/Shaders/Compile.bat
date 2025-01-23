@@ -11,4 +11,5 @@ set VulkanPath=%VULKAN_SDK%
 "%VulkanPath%\Bin\glslc.exe" -I .\include .\Postprocess.vert -o Postprocess.vert.spv
 "%VulkanPath%\Bin\glslc.exe" -I .\include .\Postprocess.frag -o Postprocess.frag.spv
 
+
 pause

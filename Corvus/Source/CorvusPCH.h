@@ -16,6 +16,7 @@
 #include "Corvus/Math/Constants.h"
 #include "Corvus/Math/Math.h"
 #include "Corvus/Math/Matrix.h"
+#include "Corvus/Math/Types.h"
 #include "Corvus/Math/Vector.h"
 #include "Corvus/Renderer/Initializers.h"
 #include "Corvus/Time/TimeDelta.h"

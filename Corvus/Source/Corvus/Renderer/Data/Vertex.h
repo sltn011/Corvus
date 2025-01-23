@@ -2,6 +2,7 @@
 #define CORVUS_SOURCE_CORVUS_RENDERER_DATA_VERTEX_H
 
 #include "Corvus/Core/Base.h"
+#include "Corvus/Math/Vector.h"
 
 #include <array>
 #include <glm/glm.hpp>
@@ -21,7 +22,7 @@ namespace Corvus
         static std::vector<VkVertexInputAttributeDescription> GetInputAttributeDescriptions();
     };
 
-    struct CQuadVertex
+    struct CUVVertex
     {
         FVector3 Position;
         FVector2 UVCoord;

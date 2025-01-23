@@ -8,6 +8,7 @@
 
 namespace Corvus
 {
+    class CBaseShape;
 
     struct CStaticMeshPrimitive
     {
@@ -18,6 +19,8 @@ namespace Corvus
         std::vector<UInt16> IndexData;
 
         CMaterial Material;
+
+        static CStaticMeshPrimitive FromShape(CBaseShape &&Shape);
     };
 
 } // namespace Corvus

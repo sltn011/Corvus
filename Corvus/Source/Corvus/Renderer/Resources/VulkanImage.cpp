@@ -14,13 +14,22 @@ namespace Corvus
         VkFormat              Format,
         VkImageTiling         Tiling,
         VkImageUsageFlags     Usage,
-        VkMemoryPropertyFlags Properties
+        VkMemoryPropertyFlags Properties,
+        UInt32                ArrayLayers,
+        VkImageCreateFlags    Flags
     )
     {
         CVulkanImage Image;
 
         VkImageCreateInfo ImageCreateInfo = VkInit::ImageCreateInfo(
-            VkExtent3D{Width, Height, 1}, MipLevels, Format, Tiling, Usage, VK_SHARING_MODE_EXCLUSIVE
+            VkExtent3D{Width, Height, 1},
+            MipLevels,
+            Format,
+            Tiling,
+            Usage,
+            ArrayLayers,
+            Flags,
+            VK_SHARING_MODE_EXCLUSIVE
         );
 
         if (vkCreateImage(Device, &ImageCreateInfo, nullptr, &Image.Image) != VK_SUCCESS)
@@ -39,6 +48,8 @@ namespace Corvus
 
         vkBindImageMemory(Device, Image.Image, Image.Memory, 0);
 
+        Image.Format    = Format;
+        Image.Extent    = VkExtent3D{Width, Height, 1};
         Image.MipLevels = MipLevels;
 
         return Image;
@@ -123,10 +134,17 @@ namespace Corvus
     }
 
     void CRenderer::TransitionImageLayout(
-        VkImage Image, UInt32 MipLevels, VkFormat Format, VkImageLayout OldLayout, VkImageLayout NewLayout
+        VkImage                        Image,
+        UInt32                         MipLevels,
+        VkFormat                       Format,
+        VkImageLayout                  OldLayout,
+        VkImageLayout                  NewLayout,
+        VkImageSubresourceRange const *pSubresourceRange,
+        VkCommandBuffer                ExternalCommandBuffer
     )
     {
-        VkCommandBuffer CommandBuffer = BeginSingleTimeCommand();
+        VkCommandBuffer CommandBuffer =
+            ExternalCommandBuffer == VK_NULL_HANDLE ? BeginSingleTimeCommand() : ExternalCommandBuffer;
 
         VkAccessFlags        SrcAccessMask = VK_ACCESS_NONE;
         VkAccessFlags        DstAccessMask = VK_ACCESS_NONE;
@@ -164,12 +182,25 @@ namespace Corvus
             DstStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
         }
 
-        VkImageMemoryBarrier Barrier =
-            VkInit::ImageMemoryBarrier(Image, OldLayout, NewLayout, 0, MipLevels, SrcAccessMask, DstAccessMask);
+        VkImageMemoryBarrier Barrier;
+        if (pSubresourceRange)
+        {
+            Barrier = VkInit::ImageMemoryBarrier(
+                Image, OldLayout, NewLayout, 0, MipLevels, SrcAccessMask, DstAccessMask, *pSubresourceRange
+            );
+        }
+        else
+        {
+            Barrier =
+                VkInit::ImageMemoryBarrier(Image, OldLayout, NewLayout, 0, MipLevels, SrcAccessMask, DstAccessMask);
+        }
 
         vkCmdPipelineBarrier(CommandBuffer, SrcStage, DstStage, 0, 0, nullptr, 0, nullptr, 1, &Barrier);
 
-        EndSingleTimeCommand(CommandBuffer);
+        if (ExternalCommandBuffer == VK_NULL_HANDLE)
+        {
+            EndSingleTimeCommand(CommandBuffer);
+        }
     }
 
     void CRenderer::GenerateMips(
@@ -314,7 +345,8 @@ namespace Corvus
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
         );
 
-        DepthImageView = CreateImageView(DepthImage.Image, 1, DepthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+        DepthImageView =
+            CreateImageView(DepthImage.Image, VK_IMAGE_VIEW_TYPE_2D, 1, DepthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
 
         // Don't need to transition layout here, will be done in RenderPass
     }

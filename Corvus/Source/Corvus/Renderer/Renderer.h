@@ -13,7 +13,9 @@
 #include "Corvus/Renderer/Resources/Attachment.h"
 #include "Corvus/Renderer/Resources/RenderTarget.h"
 #include "Corvus/Renderer/Resources/Samplers.h"
-#include "Corvus/Renderer/Resources/ScreenQuad.h"
+#include "Corvus/Renderer/Resources/Shapes/BaseShape.h"
+#include "Corvus/Renderer/Resources/Shapes/ScreenQuad.h"
+#include "Corvus/Renderer/Resources/Shapes/UVCube.h"
 #include "Corvus/Renderer/Resources/VulkanImage.h"
 
 #include <vulkan/vulkan.h>
@@ -22,8 +24,9 @@ namespace Corvus
 {
     class CStaticModel;
     class CImageData;
-    class CTexture2D;
+    class CTexture;
     class CMaterial;
+    class CCubemap;
 
     class CRenderer
     {
@@ -52,7 +55,10 @@ namespace Corvus
         void BeginFrame();
         void EndFrame();
 
-        void SubmitStaticModel(CStaticModel &StaticModel, FMatrix4 const &ModelTransformMatrix);
+        void SubmitStaticModel(
+            CStaticModel &StaticModel, FMatrix4 const &ModelTransformMatrix = FMatrix::Identity<FMatrix4>()
+        );
+        void SubmitShape(CBaseShape &Shape, FMatrix4 const &ModelTransformMatrix = FMatrix::Identity<FMatrix4>());
 
         void NotifyWindowResize();
 
@@ -83,7 +89,9 @@ namespace Corvus
 
     public:
         // RenderTarget
-        CAttachment CreateColorAttachment(VkFormat Format, VkExtent2D Extent, VkImageLayout Layout);
+        CAttachment CreateColorAttachment(
+            VkFormat Format, VkExtent2D Extent, VkImageLayout Layout, VkImageUsageFlags Usage
+        );
         CAttachment CreateDepthStencilAttachment(VkFormat Format, VkExtent2D Extent, VkImageLayout Layout);
         void        DestroyAttachment(CAttachment &Attachment);
 
@@ -97,8 +105,8 @@ namespace Corvus
 
     public:
         // Textures
-        CTexture2D CreateTexture2D(CImageData const &ImageData, UInt32 MipLevels, VkSampler TextureSampler);
-        void       DestroyTexture2D(CTexture2D &Texture2D);
+        CTexture CreateTexture(CImageData const &ImageData, UInt32 MipLevels, VkSampler TextureSampler);
+        void     DestroyTexture(CTexture &Texture);
 
     public:
         // Materials
@@ -301,7 +309,7 @@ namespace Corvus
         std::vector<VkImageView> SwapchainImageViews;
         UInt32                   SwapchainImageIndex = 0;
 
-    private:
+    public:
         // VkImage
         CVulkanImage CreateImage(
             UInt32                Width,
@@ -310,17 +318,26 @@ namespace Corvus
             VkFormat              Format,
             VkImageTiling         Tiling,
             VkImageUsageFlags     Usage,
-            VkMemoryPropertyFlags Properties
+            VkMemoryPropertyFlags Properties,
+            UInt32                ArrayLevels = 1,
+            VkImageCreateFlags    Flags       = 0
         );
         CVulkanImage CreateTextureImage(CImageData const &ImageData, UInt32 MipLevels);
         void         DestroyImage(CVulkanImage &Image);
 
         void TransitionImageLayout(
-            VkImage Image, UInt32 MipLevels, VkFormat Format, VkImageLayout OldLayout, VkImageLayout NewLayout
+            VkImage                        Image,
+            UInt32                         MipLevels,
+            VkFormat                       Format,
+            VkImageLayout                  OldLayout,
+            VkImageLayout                  NewLayout,
+            VkImageSubresourceRange const *pSubresourceRange     = nullptr,
+            VkCommandBuffer                ExternalCommandBuffer = VK_NULL_HANDLE
         );
 
         void GenerateMips(VkImage Image, UInt32 MipLevels, UInt32 ImageWidth, UInt32 ImageHeight, VkFormat Format);
 
+    private:
         bool bFormatSupportsStencilData(VkFormat Format);
 
         // Depth VkImage
@@ -333,10 +350,17 @@ namespace Corvus
         CVulkanImage DepthImage;
         VkImageView  DepthImageView = VK_NULL_HANDLE;
 
-    private:
+    public:
         // VkImageView
-        VkImageView CreateImageView(VkImage Image, UInt32 MipLevels, VkFormat Format, VkImageAspectFlags AspectFlags);
-        void        DestroyImageView(VkImageView &ImageView);
+        VkImageView CreateImageView(
+            VkImage            Image,
+            VkImageViewType    ViewType,
+            UInt32             MipLevels,
+            VkFormat           Format,
+            VkImageAspectFlags AspectFlags,
+            UInt32             LayerCount = 1
+        );
+        void DestroyImageView(VkImageView &ImageView);
 
     private:
         // VkRenderPass
@@ -382,6 +406,7 @@ namespace Corvus
         // VkCommandBuffer
         void AllocateCommandBuffers();
 
+    public:
         VkCommandBuffer BeginSingleTimeCommand();
         void            EndSingleTimeCommand(VkCommandBuffer CommandBuffer);
 
@@ -428,6 +453,11 @@ namespace Corvus
             VkDescriptorPool Pool, VkDescriptorSetLayout Layout
         );
         void FreeDescriptorSets(VkDescriptorPool Pool, VkDescriptorSet *pSets, SizeT Amount);
+
+        template<SizeT TAmount>
+        void ConfigureDescriptorSet(
+            VkDevice Device, VkDescriptorSet DescriptorSet, VkImageView *pImageViews, VkSampler *pSamplers
+        );
 
         void CreatePerFrameDescriptorSets();
 

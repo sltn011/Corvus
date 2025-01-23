@@ -3,7 +3,7 @@
 #include "Corvus/Renderer/Renderer.h"
 
 #include "Corvus/Assets/Model/StaticModel.h"
-#include "Corvus/Assets/Texture/Texture2D.h"
+#include "Corvus/Assets/Texture/Texture.h"
 #include "Corvus/Camera/Camera.h"
 #include "Corvus/Core/Application.h"
 #include "Corvus/Renderer/Data/PushConstants.h"
@@ -227,6 +227,21 @@ namespace Corvus
         }
     }
 
+    void CRenderer::SubmitShape(CBaseShape &Shape, FMatrix4 const &ModelTransformMatrix)
+    {
+        SetModelMatrix(ModelTransformMatrix);
+
+        VkCommandBuffer CommandBuffer = CommandBuffers[m_CurrentFrame];
+
+        VkBuffer     Buffers[] = {Shape.VertexBuffer.Buffer};
+        VkDeviceSize Offsets[] = {0};
+        vkCmdBindVertexBuffers(CommandBuffer, 0, 1, Buffers, Offsets);
+
+        vkCmdBindIndexBuffer(CommandBuffer, Shape.IndexBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
+
+        vkCmdDrawIndexed(CommandBuffer, static_cast<UInt32>(Shape.IndexData.size()), 1, 0, 0, 0);
+    }
+
     void CRenderer::NotifyWindowResize()
     {
         m_bWindowResizeHappened = true;
@@ -270,6 +285,8 @@ namespace Corvus
 
             CCameraUBO CameraUniformsData;
             CameraUniformsData.ProjectionView = CameraProjection * CameraView;
+            CameraUniformsData.View           = CameraView;
+            CameraUniformsData.Projection     = CameraProjection;
 
             UInt8 *CameraUniformsLocation = CameraUBOStart + offsetof(CCameraUBO, ProjectionView);
             std::memcpy(CameraUniformsLocation, &CameraUniformsData, sizeof(CameraUniformsData));

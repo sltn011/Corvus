@@ -2,6 +2,7 @@
 
 #include "Corvus/Renderer/RenderPass/RenderPass_Deferred.h"
 
+#include "Corvus/Core/Application.h"
 #include "Corvus/Renderer/Data/PushConstants.h"
 #include "Corvus/Renderer/Data/UBOs.h"
 #include "Corvus/Renderer/Data/Vertex.h"
@@ -13,18 +14,18 @@ namespace Corvus
     void CRenderPass_Deferred::Create()
     {
         CreateRenderPass();
-        CreatePipeline();
+        CreateScenePipeline();
         CreateRenderTarget();
     }
 
     void CRenderPass_Deferred::Destroy()
     {
         Renderer().DestroyRenderTarget(RenderTarget);
-        vkDestroyPipeline(Renderer().Device, Pipeline, nullptr);
+        vkDestroyPipeline(Renderer().Device, ScenePipeline, nullptr);
         vkDestroyRenderPass(Renderer().Device, RenderPass, nullptr);
 
-        Pipeline   = VK_NULL_HANDLE;
-        RenderPass = VK_NULL_HANDLE;
+        ScenePipeline = VK_NULL_HANDLE;
+        RenderPass    = VK_NULL_HANDLE;
     }
 
     void CRenderPass_Deferred::BeginRender(VkCommandBuffer CommandBuffer)
@@ -41,7 +42,7 @@ namespace Corvus
 
         vkCmdBeginRenderPass(CommandBuffer, &RenderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-        vkCmdBindPipeline(CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, Pipeline);
+        vkCmdBindPipeline(CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, ScenePipeline);
 
         // Viewport and Scissor are dynamic - specify them here
         VkViewport Viewport = VkInit::Viewport(RenderTarget.Extent);
@@ -70,10 +71,7 @@ namespace Corvus
     void CRenderPass_Deferred::CreateRenderPass()
     {
         std::array<VkAttachmentDescription, 3> ColorAttachments{};
-        std::array<VkAttachmentReference, 3>   ColorAttachmentRefs{};
-
-        VkAttachmentDescription DepthAttachment{};
-        VkAttachmentReference   DepthAttachmentRef{};
+        VkAttachmentDescription                DepthAttachment{};
 
         // Position
         {
@@ -88,8 +86,6 @@ namespace Corvus
             );
 
             AttachmentsDescriptions.push_back(ColorAttachments[0]);
-
-            ColorAttachmentRefs[0] = VkInit::AttachmentReference(0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
         }
 
         // Albedo
@@ -105,8 +101,6 @@ namespace Corvus
             );
 
             AttachmentsDescriptions.push_back(ColorAttachments[1]);
-
-            ColorAttachmentRefs[1] = VkInit::AttachmentReference(1, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
         }
 
         // Normal
@@ -122,8 +116,6 @@ namespace Corvus
             );
 
             AttachmentsDescriptions.push_back(ColorAttachments[2]);
-
-            ColorAttachmentRefs[2] = VkInit::AttachmentReference(2, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
         }
 
         // Depth
@@ -145,15 +137,33 @@ namespace Corvus
             );
 
             AttachmentsDescriptions.push_back(DepthAttachment);
-
-            DepthAttachmentRef = VkInit::AttachmentReference(3, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
         }
 
-        VkSubpassDescription Subpass = VkInit::SubpassDescription(
-            VK_PIPELINE_BIND_POINT_GRAPHICS, ColorAttachmentRefs.data(), ColorAttachmentRefs.size(), &DepthAttachmentRef
-        );
+        std::array<VkSubpassDescription, 1> Subpasses{};
 
-        VkSubpassDependency Dependency = VkInit::SubpassDependency(
+        // Scene
+        {
+            std::array<VkAttachmentReference, 3> ColorAttachmentRefs{};
+            VkAttachmentReference                DepthAttachmentRef{};
+
+            ColorAttachmentRefs[0] = VkInit::AttachmentReference(0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+            ColorAttachmentRefs[1] = VkInit::AttachmentReference(1, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+            ColorAttachmentRefs[2] = VkInit::AttachmentReference(2, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+            DepthAttachmentRef     = VkInit::AttachmentReference(3, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+
+            Subpasses[0] = VkInit::SubpassDescription(
+                VK_PIPELINE_BIND_POINT_GRAPHICS,
+                nullptr,
+                0,
+                ColorAttachmentRefs.data(),
+                ColorAttachmentRefs.size(),
+                &DepthAttachmentRef
+            );
+        }
+
+        std::array<VkSubpassDependency, 1> Dependencies{};
+
+        Dependencies[0] = VkInit::SubpassDependency(
             VK_SUBPASS_EXTERNAL,
             0,
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
@@ -163,10 +173,16 @@ namespace Corvus
         );
 
         std::array<VkAttachmentDescription, 4> AttachmentDescriptions = {
-            ColorAttachments[0], ColorAttachments[1], ColorAttachments[2], DepthAttachment};
+            ColorAttachments[0], ColorAttachments[1], ColorAttachments[2], DepthAttachment
+        };
 
         VkRenderPassCreateInfo RenderPassInfo = VkInit::RenderPassCreateInfo(
-            AttachmentDescriptions.data(), AttachmentDescriptions.size(), &Subpass, 1, &Dependency, 1
+            AttachmentDescriptions.data(),
+            AttachmentDescriptions.size(),
+            Subpasses.data(),
+            Subpasses.size(),
+            Dependencies.data(),
+            Dependencies.size()
         );
 
         if (vkCreateRenderPass(Renderer().Device, &RenderPassInfo, nullptr, &RenderPass) != VK_SUCCESS)
@@ -176,7 +192,7 @@ namespace Corvus
         CORVUS_CORE_TRACE("Created Deferred Render Pass successfully");
     }
 
-    void CRenderPass_Deferred::CreatePipeline()
+    void CRenderPass_Deferred::CreateScenePipeline()
     {
         // Programmable stages ===============================================================================
         std::vector<char> VertexShaderByteCode   = Renderer().ReadSPIRVByteCode("./Assets/Shaders/Deferred.vert.spv");
@@ -230,7 +246,7 @@ namespace Corvus
 
         // Depth and Stencil testing =========================================================================
         VkPipelineDepthStencilStateCreateInfo DepthStencilTestStateInfo =
-            VkInit::PipelineDepthStencilStateCreateInfo(true, true);
+            VkInit::PipelineDepthStencilStateCreateInfo(true, true, VK_COMPARE_OP_LESS);
         // ===================================================================================================
 
         // Color Blending ====================================================================================
@@ -256,33 +272,44 @@ namespace Corvus
             DepthStencilTestStateInfo,
             ColorBlendState,
             Renderer().PipelineLayout,
-            RenderPass
+            RenderPass,
+            0
         );
 
-        VkResult PipelineCreateResult =
-            vkCreateGraphicsPipelines(Renderer().Device, VK_NULL_HANDLE, 1, &PipelineCreateInfo, nullptr, &Pipeline);
+        VkResult PipelineCreateResult = vkCreateGraphicsPipelines(
+            Renderer().Device, VK_NULL_HANDLE, 1, &PipelineCreateInfo, nullptr, &ScenePipeline
+        );
 
         Renderer().DestroyShaderModule(FragmentShaderModule);
         Renderer().DestroyShaderModule(VertexShaderModule);
 
         if (PipelineCreateResult != VK_SUCCESS)
         {
-            CORVUS_CORE_CRITICAL("Failed to create Deferred Pipeline!");
+            CORVUS_CORE_CRITICAL("Failed to create Deferred Scene Pipeline!");
         }
-        CORVUS_CORE_TRACE("Created Deferred Pipeline successfully");
+        CORVUS_CORE_TRACE("Created Deferred Scene Pipeline successfully");
     }
 
     void CRenderPass_Deferred::CreateRenderTarget()
     {
         std::vector<CAttachment> Attachments(4);
         Attachments[0] = Renderer().CreateColorAttachment(
-            AttachmentsDescriptions[0].format, Renderer().SwapchainExtent, AttachmentsDescriptions[0].finalLayout
+            AttachmentsDescriptions[0].format,
+            Renderer().SwapchainExtent,
+            AttachmentsDescriptions[0].finalLayout,
+            VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT
         );
         Attachments[1] = Renderer().CreateColorAttachment(
-            AttachmentsDescriptions[1].format, Renderer().SwapchainExtent, AttachmentsDescriptions[1].finalLayout
+            AttachmentsDescriptions[1].format,
+            Renderer().SwapchainExtent,
+            AttachmentsDescriptions[1].finalLayout,
+            VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT
         );
         Attachments[2] = Renderer().CreateColorAttachment(
-            AttachmentsDescriptions[2].format, Renderer().SwapchainExtent, AttachmentsDescriptions[2].finalLayout
+            AttachmentsDescriptions[2].format,
+            Renderer().SwapchainExtent,
+            AttachmentsDescriptions[2].finalLayout,
+            VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT
         );
         Attachments[3] = Renderer().CreateDepthStencilAttachment(
             AttachmentsDescriptions[3].format, Renderer().SwapchainExtent, AttachmentsDescriptions[3].finalLayout

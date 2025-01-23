@@ -9,7 +9,7 @@
 namespace Corvus
 {
 
-    class CTexture2D;
+    class CTexture;
     class CMaterial;
     class CStaticModel;
 
@@ -21,7 +21,7 @@ namespace Corvus
         void DestroyRenderData();
 
     public:
-        std::unordered_map<FUUID, CTexture2D>   Textures2D;
+        std::unordered_map<FUUID, CTexture>     Textures;
         std::unordered_map<FUUID, CMaterial>    Materials;
         std::unordered_map<FUUID, CStaticModel> StaticModels;
 

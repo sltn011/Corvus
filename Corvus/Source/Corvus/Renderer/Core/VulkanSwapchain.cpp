@@ -133,8 +133,9 @@ namespace Corvus
         SwapchainImageViews.resize(SwapchainImages.size());
         for (UInt32 i = 0; i < SwapchainImageViews.size(); ++i)
         {
-            SwapchainImageViews[i] =
-                CreateImageView(SwapchainImages[i], 1, SwapchainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
+            SwapchainImageViews[i] = CreateImageView(
+                SwapchainImages[i], VK_IMAGE_VIEW_TYPE_2D, 1, SwapchainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT
+            );
         }
 
         CORVUS_CORE_TRACE("Swapchain Image Views created");

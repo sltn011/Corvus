@@ -114,6 +114,11 @@ namespace Corvus::FMath
         return log2(Value);
     }
 
+    inline float Pow(float Base, float Power)
+    {
+        return glm::pow(Base, Power);
+    }
+
     UInt64 Random();
 
     UInt64 Random(UInt64 Min, UInt64 Max);

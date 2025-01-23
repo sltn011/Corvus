@@ -3,7 +3,9 @@
 #include "Corvus/Assets/Material/Material.h"
 #include "Corvus/Assets/Model/ModelLoader.h"
 #include "Corvus/Assets/Model/StaticModel.h"
-#include "Corvus/Assets/Texture/Texture2D.h"
+#include "Corvus/Assets/Texture/ImageData.h"
+#include "Corvus/Assets/Texture/ImageDataLoader.h"
+#include "Corvus/Assets/Texture/Texture.h"
 #include "Corvus/Components/StaticMeshComponent.h"
 #include "Corvus/Components/TransformComponent.h"
 #include "Corvus/Scene/Entity.h"
@@ -128,7 +130,7 @@ namespace Corvus
         {
             for (TPoolable<CEntity> const &Entity : CApplication::GetInstance().Scene.GetEntities())
             {
-                CRenderer::GetInstance().SubmitStaticModel(
+                Renderer().SubmitStaticModel(
                     *Entity->StaticMeshComponent->StaticModelRef.GetRawPtr(),
                     Entity->TransformComponent->GetTransformMatrix()
                 );
@@ -157,18 +159,21 @@ namespace Corvus
 
         void PopulateScene()
         {
-            TPoolable<CEntity> Entity = ConstructPoolable<CEntity>();
-            Entity->TransformComponent->SetPosition(FVector3{5.0f, -1.5f, 0.0f});
-            Entity->TransformComponent->SetRotation(FRotation{{0.0f, 0.0f, 0.0f}});
-            Entity->TransformComponent->SetScale(FVector3{1.0f});
-            Entity->StaticMeshComponent->StaticModelRef.SetUUID(ModelUUID);
+            {
+                TPoolable<CEntity> Entity = ConstructPoolable<CEntity>();
+                Entity->TransformComponent->SetPosition(FVector3{5.0f, -1.5f, 0.0f});
+                Entity->TransformComponent->SetRotation(FRotation{{0.0f, 0.0f, 0.0f}});
+                Entity->TransformComponent->SetScale(FVector3{1.0f});
+                Entity->StaticMeshComponent->StaticModelRef.SetUUID(ModelUUID);
 
-            CApplication::GetInstance().Scene.AddEntity(std::move(Entity));
+                CApplication::GetInstance().Scene.AddEntity(std::move(Entity));
+            }
         }
 
         void LoadAssets()
         {
-            ModelUUID = CApplication::GetInstance().AssetDrawer.LoadStaticModelFromFile("./Assets/Models/Sponza.glb");
+            ModelUUID =
+                CApplication::GetInstance().AssetDrawer.LoadStaticModelFromFile("./Assets/Models/DamagedHelmet.gltf");
         }
 
         void WireUpAssets()
@@ -178,7 +183,7 @@ namespace Corvus
             {
                 FUUID StaticModelUUID = Entity->StaticMeshComponent->StaticModelRef.GetUUID();
                 Entity->StaticMeshComponent->StaticModelRef.SetRawPtr(
-                    &CApplication::GetInstance().AssetDrawer.StaticModels[ModelUUID]
+                    &CApplication::GetInstance().AssetDrawer.StaticModels[StaticModelUUID]
                 );
             }
         }

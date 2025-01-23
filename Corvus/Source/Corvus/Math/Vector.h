@@ -2,34 +2,7 @@
 #define CORVUS_SOURCE_CORVUS_MATH_VECTOR_H
 
 #include "Corvus/Math/Math.h"
-
-using FUByteVector2 = glm::u8vec2;
-using FUByteVector3 = glm::u8vec3;
-using FUByteVector4 = glm::u8vec4;
-
-using FSByteVector2 = glm::i8vec2;
-using FSByteVector3 = glm::i8vec3;
-using FSByteVector4 = glm::i8vec4;
-
-using FUWordVector2 = glm::u8vec2;
-using FUWordVector3 = glm::u8vec3;
-using FUWordVector4 = glm::u8vec4;
-
-using FSWordVector2 = glm::i16vec2;
-using FSWordVector3 = glm::i16vec3;
-using FSWordVector4 = glm::i16vec4;
-
-using FUIntVector2 = glm::uvec2;
-using FUIntVector3 = glm::uvec3;
-using FUIntVector4 = glm::uvec4;
-
-using FSIntVector2 = glm::ivec2;
-using FSIntVector3 = glm::ivec3;
-using FSIntVector4 = glm::ivec4;
-
-using FVector2 = glm::vec2;
-using FVector3 = glm::vec3;
-using FVector4 = glm::vec4;
+#include "Corvus/Math/Types.h"
 
 namespace Corvus::FVector
 {
@@ -103,6 +76,22 @@ namespace Corvus::FVector
     {
         return (FMath::Abs(Vector1.x - Vector2.x) < Epsilon) && (FMath::Abs(Vector1.y - Vector2.y) < Epsilon) &&
                (FMath::Abs(Vector1.z - Vector2.z) < Epsilon) && (FMath::Abs(Vector1.w - Vector2.w) < Epsilon);
+    }
+
+    inline FVector4 CalculateTangentVec(FVector3 const Position[3], FVector2 const UV[3])
+    {
+        FVector3 const E[2]  = {Position[0] - Position[1], Position[2] - Position[1]};
+        float const    dU[2] = {UV[0].x - UV[1].x, UV[2].x - UV[1].x};
+        float const    dV[2] = {UV[0].y - UV[1].y, UV[2].y - UV[1].y};
+        float const    Coeff = 1.f / (dU[0] * dV[1] - dU[1] * dV[0]);
+
+        FMatrix2 const   Lhs = {dV[1], -dU[1], -dV[0], dU[0]};
+        FMatrix3_2 const Rhs = {E[0].x, E[1].x, E[0].y, E[1].y, E[0].z, E[1].z};
+
+        FMatrix3_2 const TB = Coeff * Lhs * Rhs;
+        FVector3 const   T  = {TB[0].x, TB[1].x, TB[2].x};
+
+        return FVector4{FVector::Normalize(T), 1.f};
     }
 
     inline constexpr FVector3 Forward = FVector3{1.0f, 0.0f, 0.0f};

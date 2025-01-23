@@ -87,7 +87,7 @@ namespace Corvus
             VkInit::AttachmentReference(0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
         VkSubpassDescription Subpass =
-            VkInit::SubpassDescription(VK_PIPELINE_BIND_POINT_GRAPHICS, &ColorAttachmentRef, 1, nullptr);
+            VkInit::SubpassDescription(VK_PIPELINE_BIND_POINT_GRAPHICS, nullptr, 0, &ColorAttachmentRef, 1, nullptr);
 
         VkSubpassDependency Dependency = VkInit::SubpassDependency(
             VK_SUBPASS_EXTERNAL,
@@ -132,9 +132,9 @@ namespace Corvus
 
         // Vertex Input ======================================================================================
         std::vector<VkVertexInputBindingDescription> VertexInputBindingDescriptions = {
-            CQuadVertex::GetInputBindingDescription()};
+            CUVVertex::GetInputBindingDescription()};
         std::vector<VkVertexInputAttributeDescription> VertexInputAttributeDescriptions =
-            CQuadVertex::GetInputAttributeDescriptions();
+            CUVVertex::GetInputAttributeDescriptions();
 
         VkPipelineVertexInputStateCreateInfo VertexInputStateInfo = VkInit::PipelineVertexInputStateInfo(
             VertexInputBindingDescriptions.data(),
@@ -210,7 +210,10 @@ namespace Corvus
     {
         std::vector<CAttachment> Attachments(1);
         Attachments[0] = Renderer().CreateColorAttachment(
-            AttachmentsDescriptions[0].format, Renderer().SwapchainExtent, AttachmentsDescriptions[0].finalLayout
+            AttachmentsDescriptions[0].format,
+            Renderer().SwapchainExtent,
+            AttachmentsDescriptions[0].finalLayout,
+            VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT
         );
 
         RenderTarget = Renderer().CreateRenderTarget(

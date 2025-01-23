@@ -304,6 +304,8 @@ namespace Corvus
 
         inline VkSubpassDescription SubpassDescription(
             VkPipelineBindPoint          PipelineBindPoint,
+            VkAttachmentReference const *pInputAttachmentsRefs,
+            SizeT                        NumInputAttachmentsRefs,
             VkAttachmentReference const *pColorAttachmentsRefs,
             SizeT                        NumColorAttachmentsRefs,
             VkAttachmentReference       *pDepthStencilAttachmentRef
@@ -311,6 +313,8 @@ namespace Corvus
         {
             VkSubpassDescription Subpass{};
             Subpass.pipelineBindPoint       = PipelineBindPoint;
+            Subpass.inputAttachmentCount    = static_cast<UInt32>(NumInputAttachmentsRefs);
+            Subpass.pInputAttachments       = pInputAttachmentsRefs;
             Subpass.colorAttachmentCount    = static_cast<UInt32>(NumColorAttachmentsRefs);
             Subpass.pColorAttachments       = pColorAttachmentsRefs;
             Subpass.pDepthStencilAttachment = pDepthStencilAttachmentRef;
@@ -524,7 +528,7 @@ namespace Corvus
         }
 
         inline VkPipelineDepthStencilStateCreateInfo PipelineDepthStencilStateCreateInfo(
-            bool bDepthTestEnabled, bool bDepthTestWrite
+            bool bDepthTestEnabled, bool bDepthTestWrite, VkCompareOp DepthCompareOp = VK_COMPARE_OP_ALWAYS
         )
         {
             VkBool32 bDoDepthTest  = bDepthTestEnabled ? VK_TRUE : VK_FALSE;
@@ -534,7 +538,7 @@ namespace Corvus
             DepthStencilTestStateInfo.sType            = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
             DepthStencilTestStateInfo.depthTestEnable  = bDoDepthTest;
             DepthStencilTestStateInfo.depthWriteEnable = bDoDepthWrite;
-            DepthStencilTestStateInfo.depthCompareOp   = VK_COMPARE_OP_LESS;
+            DepthStencilTestStateInfo.depthCompareOp   = DepthCompareOp;
             DepthStencilTestStateInfo.depthBoundsTestEnable = VK_FALSE;
             DepthStencilTestStateInfo.minDepthBounds        = 0.0f;
             DepthStencilTestStateInfo.maxDepthBounds        = 1.0f;
@@ -588,7 +592,8 @@ namespace Corvus
             VkPipelineDepthStencilStateCreateInfo const  &DepthStencilTestStateInfo,
             VkPipelineColorBlendStateCreateInfo const    &ColorBlendState,
             VkPipelineLayout                              PipelineLayout,
-            VkRenderPass                                  RenderPass
+            VkRenderPass                                  RenderPass,
+            UInt32 const                                  SubPassIndex = 0
         )
         {
             VkGraphicsPipelineCreateInfo PipelineCreateInfo{};
@@ -613,7 +618,7 @@ namespace Corvus
 
             // RenderPass and it's Subpass in which Pipeline is used
             PipelineCreateInfo.renderPass = RenderPass;
-            PipelineCreateInfo.subpass    = 0;
+            PipelineCreateInfo.subpass    = SubPassIndex;
 
             PipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE;
             PipelineCreateInfo.basePipelineIndex  = -1;
@@ -667,12 +672,14 @@ namespace Corvus
         }
 
         inline VkImageCreateInfo ImageCreateInfo(
-            VkExtent3D        Extent,
-            UInt32            MipLevels,
-            VkFormat          Format,
-            VkImageTiling     Tiling,
-            VkImageUsageFlags Usage,
-            VkSharingMode     SharingMode
+            VkExtent3D         Extent,
+            UInt32             MipLevels,
+            VkFormat           Format,
+            VkImageTiling      Tiling,
+            VkImageUsageFlags  Usage,
+            UInt32             ArrayLayers,
+            VkImageCreateFlags Flags,
+            VkSharingMode      SharingMode
         )
         {
             VkImageCreateInfo CreateInfo{};
@@ -682,13 +689,14 @@ namespace Corvus
             CreateInfo.extent.height = Extent.height;
             CreateInfo.extent.depth  = Extent.depth;
             CreateInfo.mipLevels     = MipLevels;
-            CreateInfo.arrayLayers   = 1;
+            CreateInfo.arrayLayers   = ArrayLayers;
             CreateInfo.format        = Format;
             CreateInfo.tiling        = Tiling;
             CreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
             CreateInfo.usage         = Usage;
             CreateInfo.samples       = VK_SAMPLE_COUNT_1_BIT;
             CreateInfo.sharingMode   = SharingMode;
+            CreateInfo.flags         = Flags;
             return CreateInfo;
         }
 
@@ -739,14 +747,43 @@ namespace Corvus
             return Barrier;
         }
 
+        inline VkImageMemoryBarrier ImageMemoryBarrier(
+            VkImage                 Image,
+            VkImageLayout           OldLayout,
+            VkImageLayout           NewLayout,
+            UInt32                  BaseMipLevel,
+            UInt32                  MipLevels,
+            VkAccessFlags           SrcAccessMask,
+            VkAccessFlags           DstAccessMask,
+            VkImageSubresourceRange SubresourceRange
+        )
+        {
+            VkImageMemoryBarrier Barrier{};
+            Barrier.sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+            Barrier.image               = Image;
+            Barrier.oldLayout           = OldLayout;
+            Barrier.newLayout           = NewLayout;
+            Barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+            Barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+            Barrier.subresourceRange    = SubresourceRange;
+            Barrier.srcAccessMask       = SrcAccessMask;
+            Barrier.dstAccessMask       = DstAccessMask;
+            return Barrier;
+        }
+
         inline VkImageViewCreateInfo ImageViewCreateInfo(
-            VkImage Image, VkFormat Format, VkImageAspectFlags AspectFlags, UInt32 MipLevels
+            VkImage            Image,
+            VkFormat           Format,
+            VkImageViewType    ViewType,
+            VkImageAspectFlags AspectFlags,
+            UInt32             MipLevels,
+            UInt32             LayerCount = 1
         )
         {
             VkImageViewCreateInfo CreateInfo{};
             CreateInfo.sType                           = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
             CreateInfo.image                           = Image;
-            CreateInfo.viewType                        = VK_IMAGE_VIEW_TYPE_2D;
+            CreateInfo.viewType                        = ViewType;
             CreateInfo.format                          = Format;
             CreateInfo.components.r                    = VK_COMPONENT_SWIZZLE_IDENTITY; // Default mapping
             CreateInfo.components.g                    = VK_COMPONENT_SWIZZLE_IDENTITY;
@@ -756,7 +793,7 @@ namespace Corvus
             CreateInfo.subresourceRange.baseMipLevel   = 0;
             CreateInfo.subresourceRange.levelCount     = MipLevels;
             CreateInfo.subresourceRange.baseArrayLayer = 0;
-            CreateInfo.subresourceRange.layerCount     = 1;
+            CreateInfo.subresourceRange.layerCount     = LayerCount;
             return CreateInfo;
         }
 

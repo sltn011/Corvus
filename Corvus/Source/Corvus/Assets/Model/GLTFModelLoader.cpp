@@ -8,7 +8,7 @@
 #include "Corvus/Assets/Model/StaticModel.h"
 #include "Corvus/Assets/Texture/ImageData.h"
 #include "Corvus/Assets/Texture/ImageDataLoader.h"
-#include "Corvus/Assets/Texture/Texture2D.h"
+#include "Corvus/Assets/Texture/Texture.h"
 #include "Corvus/Core/Application.h"
 #include "Corvus/Math/Matrix.h"
 #include "Corvus/Math/Quaternion.h"
@@ -153,9 +153,9 @@ namespace Corvus
             return CImageDataLoader::LoadFromMemory(Image.image.data(), Image.width, Image.height, PixelFormat, false);
         }
 
-        std::vector<CTexture2D> LoadTextures(tinygltf::Model const &GLTFModel)
+        std::vector<CTexture> LoadTextures(tinygltf::Model const &GLTFModel)
         {
-            std::vector<CTexture2D> Textures(GLTFModel.textures.size());
+            std::vector<CTexture> Textures(GLTFModel.textures.size());
 
             for (SizeT i = 0; i < Textures.size(); ++i)
             {
@@ -177,13 +177,13 @@ namespace Corvus
                 CImageData Image = ProcessImage(GLTFModel.images[ImageIndex]);
 
                 Textures[i] =
-                    Renderer().CreateTexture2D(Image, Image.GetMaxMipLevel(), Renderer().Samplers.RepeatLinear_Linear);
+                    Renderer().CreateTexture(Image, Image.GetMaxMipLevel(), Renderer().Samplers.RepeatLinear_Linear);
             }
 
             return Textures;
         }
 
-        std::vector<CMaterial> LoadMaterials(tinygltf::Model const &GLTFModel, std::vector<CTexture2D> const &Textures)
+        std::vector<CMaterial> LoadMaterials(tinygltf::Model const &GLTFModel, std::vector<CTexture> const &Textures)
         {
             std::vector<CMaterial> Materials(GLTFModel.materials.size());
 
@@ -407,22 +407,6 @@ namespace Corvus
             }
         }
 
-        FVector4 CalculateTangentVec(FVector3 const Position[3], FVector2 const UV[3])
-        {
-            FVector3 const E[2]  = {Position[0] - Position[1], Position[2] - Position[1]};
-            float const    dU[2] = {UV[0].x - UV[1].x, UV[2].x - UV[1].x};
-            float const    dV[2] = {UV[0].y - UV[1].y, UV[2].y - UV[1].y};
-            float const    Coeff = 1.f / (dU[0] * dV[1] - dU[1] * dV[0]);
-
-            FMatrix2 const   Lhs = {dV[1], -dU[1], -dV[0], dU[0]};
-            FMatrix3_2 const Rhs = {E[0].x, E[1].x, E[0].y, E[1].y, E[0].z, E[1].z};
-
-            FMatrix3_2 const TB = Coeff * Lhs * Rhs;
-            FVector3 const   T  = {TB[0].x, TB[1].x, TB[2].x};
-
-            return FVector4{FVector::Normalize(T), 1.f};
-        }
-
         void TransformAttributeData(
             FVector3 *SrcData, SizeT const NumElements, CString const &AttributeKey, FMatrix4 const &TransformMatrix
         )
@@ -641,7 +625,7 @@ namespace Corvus
                 FVector3 const Position[3] = {Vertex[0].Position, Vertex[1].Position, Vertex[2].Position};
                 FVector2 const UV[3]       = {Vertex[0].UVCoord, Vertex[1].UVCoord, Vertex[2].UVCoord};
 
-                FVector4 const Tangent       = CalculateTangentVec(Position, UV);
+                FVector4 const Tangent       = FVector::CalculateTangentVec(Position, UV);
                 VertexData[Index[0]].Tangent = Tangent;
                 VertexData[Index[1]].Tangent = Tangent;
                 VertexData[Index[2]].Tangent = Tangent;
@@ -716,8 +700,8 @@ namespace Corvus
 
         SStaticModelLoadedData ProcessModel(tinygltf::Model const &GLTFModel)
         {
-            std::vector<CTexture2D> Textures  = LoadTextures(GLTFModel);
-            std::vector<CMaterial>  Materials = LoadMaterials(GLTFModel, Textures);
+            std::vector<CTexture>  Textures  = LoadTextures(GLTFModel);
+            std::vector<CMaterial> Materials = LoadMaterials(GLTFModel, Textures);
 
             CStaticModel StaticModel;
 

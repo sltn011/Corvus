@@ -19,14 +19,14 @@ namespace Corvus
         void EndRender(VkCommandBuffer CommandBuffer);
 
     public:
-        VkRenderPass                         RenderPass = VK_NULL_HANDLE;
-        VkPipeline                           Pipeline   = VK_NULL_HANDLE;
+        VkRenderPass                         RenderPass    = VK_NULL_HANDLE;
+        VkPipeline                           ScenePipeline = VK_NULL_HANDLE;
         CRenderTarget                        RenderTarget;
         std::vector<VkAttachmentDescription> AttachmentsDescriptions;
 
     private:
         void CreateRenderPass();
-        void CreatePipeline();
+        void CreateScenePipeline();
         void CreateRenderTarget();
     };
 

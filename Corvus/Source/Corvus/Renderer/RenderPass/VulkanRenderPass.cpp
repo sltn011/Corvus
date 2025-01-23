@@ -36,7 +36,12 @@ namespace Corvus
             VkInit::AttachmentReference(1, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
         std::vector<VkSubpassDescription> SubpassesDescription = {VkInit::SubpassDescription(
-            VK_PIPELINE_BIND_POINT_GRAPHICS, ColorAttachmentsRef.data(), ColorAttachmentsRef.size(), &DepthAttachmentRef
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            nullptr,
+            0,
+            ColorAttachmentsRef.data(),
+            ColorAttachmentsRef.size(),
+            &DepthAttachmentRef
         )};
 
         std::vector<VkSubpassDependency> DependenciesDescription = {VkInit::SubpassDependency(

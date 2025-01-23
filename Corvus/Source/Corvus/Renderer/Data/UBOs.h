@@ -11,6 +11,8 @@ namespace Corvus
     struct CCameraUBO
     {
         FMatrix4 ProjectionView{};
+        FMatrix4 View{};
+        FMatrix4 Projection{};
     };
 
     struct CRenderTargetUBO

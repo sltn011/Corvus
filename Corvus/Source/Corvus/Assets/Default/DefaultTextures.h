@@ -1,7 +1,7 @@
 #ifndef CORVUS_SOURCE_CORVUS_ASSETS_DEFAULT_DEFAULTTEXTURES_H
 #define CORVUS_SOURCE_CORVUS_ASSETS_DEFAULT_DEFAULTTEXTURES_H
 
-#include "Corvus/Assets/Texture/Texture2D.h"
+#include "Corvus/Assets/Texture/Texture.h"
 
 #include <vulkan/vulkan.h>
 
@@ -12,8 +12,8 @@ namespace Corvus
     {
         void Create();
 
-        CTexture2D Albedo;
-        CTexture2D Normal;
+        CTexture Albedo;
+        CTexture Normal;
     };
 
 } // namespace Corvus

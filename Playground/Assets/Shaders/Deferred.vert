@@ -12,6 +12,8 @@ layout(location = 2) out mat3 OutTBN;
 layout(set = 0, binding = 0) uniform CameraUBO 
 {
     mat4 ProjectionView;
+    mat4 View;
+    mat4 Projection;
 } UBO;
 
 layout(push_constant) uniform constants

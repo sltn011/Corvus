@@ -26,18 +26,18 @@ namespace Corvus
         return {PositionAttribute, UVCoordAttribute, NormalAttribute, TangentAttribute};
     }
 
-    VkVertexInputBindingDescription CQuadVertex::GetInputBindingDescription()
+    VkVertexInputBindingDescription CUVVertex::GetInputBindingDescription()
     {
-        return VkInit::VertexInputBindingDescription(sizeof(CQuadVertex), VK_VERTEX_INPUT_RATE_VERTEX);
+        return VkInit::VertexInputBindingDescription(sizeof(CUVVertex), VK_VERTEX_INPUT_RATE_VERTEX);
     }
 
-    std::vector<VkVertexInputAttributeDescription> CQuadVertex::GetInputAttributeDescriptions()
+    std::vector<VkVertexInputAttributeDescription> CUVVertex::GetInputAttributeDescriptions()
     {
         VkVertexInputAttributeDescription PositionAttribute =
-            VkInit::VertexInputAttributeDescription(0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(CQuadVertex, Position));
+            VkInit::VertexInputAttributeDescription(0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(CUVVertex, Position));
 
         VkVertexInputAttributeDescription UVCoordAttribute =
-            VkInit::VertexInputAttributeDescription(0, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(CQuadVertex, UVCoord));
+            VkInit::VertexInputAttributeDescription(0, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(CUVVertex, UVCoord));
 
         return {PositionAttribute, UVCoordAttribute};
     }
